@@ -77,6 +77,9 @@ class VegaServerAdminJDialog extends Dialog
 			implements IButtonListener, IListListener, WindowListener
 {
 	static private File selectedDirectory;
+	
+	private TabbedPane tabpane;
+	
 	private Button butClose;
 	private Button butNewUserOk;
 	private Button butPing;
@@ -136,7 +139,7 @@ class VegaServerAdminJDialog extends Dialog
 		this.addWindowListener(this);
 		
 		// ---------------
-		TabbedPane tabpane = new TabbedPane();
+		tabpane = new TabbedPane();
 		
 		// ---------------
 		Panel panUsersOuter = new Panel(new GridBagLayout());
@@ -357,7 +360,11 @@ class VegaServerAdminJDialog extends Dialog
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 				
 		if (this.clientConfigAdmin == null)
+		{
 			tabpane.setSelectedComponent(panAuthOuter);
+			tabpane.setEnabledAt(0, false);
+			tabpane.setEnabledAt(1, false);
+		}
 		
 		this.pack();
 		this.setLocationRelativeTo(parent);	
@@ -393,12 +400,20 @@ class VegaServerAdminJDialog extends Dialog
 			
 			File file = fc.getSelectedFile();
 				
+			ClientConfiguration clientConfigAdminBefore = this.clientConfigAdmin;
 			this.clientConfigAdmin = ClientConfiguration.readFromFile(file.getAbsolutePath());
 			
 			if (this.clientConfigAdmin != null)
 			{
 				this.serverAdminCredentialsFile = file.getAbsolutePath();
+				
 				this.fillAuthCredentials(this.clientConfigAdmin);
+				
+				if (clientConfigAdminBefore == null)
+				{
+					tabpane.setEnabledAt(0, true);
+					tabpane.setEnabledAt(1, true);
+				}
 			}
 			else
 				DialogWindow.showError(
