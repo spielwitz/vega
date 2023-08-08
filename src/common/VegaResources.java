@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: E6
+		// Last used symbolic key: E7
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -547,6 +547,7 @@ public class VegaResources
 		symbolDict.put("E4","GetIp_E4");
 		symbolDict.put("E5","HideOrShowSpaceships_E5");
 		symbolDict.put("E6","UserIsActive_E6");
+		symbolDict.put("E7","CountShort_E7");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -660,7 +661,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Language [0C]
+	   * Language/Sprache [0C]
 	   */
 	public static String Language(boolean symbol) {
 		return symbol ? "£0C£":messages.getString("Language_0C");
@@ -4143,5 +4144,12 @@ public class VegaResources
 	   */
 	public static String UserIsActive(boolean symbol) {
 		return symbol ? "£E6£":messages.getString("UserIsActive_E6");
+	}
+
+	/**
+	   * Count [E7]
+	   */
+	public static String CountShort(boolean symbol) {
+		return symbol ? "£E7£":messages.getString("CountShort_E7");
 	}
 }

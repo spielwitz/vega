@@ -2516,7 +2516,7 @@ public class Game extends EmailTransportBase implements Serializable
 		
 		headers.add(
 				new ScreenContentPlanetsColoredListHeaderColumn(
-						VegaResources.Count(true),
+						VegaResources.CountShort(true),
 						5,
 						true));
 		
