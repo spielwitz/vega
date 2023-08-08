@@ -546,12 +546,24 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 		{
 			if (playerIndex < this.playersCount)
 			{
-				this.panPlayers[playerIndex].setVisible(true);
+				this.panPlayers[playerIndex].setEnabled(true);
+				this.canvasPlayerColors[playerIndex].showColor(true);
 				this.canvasPlayerColors[playerIndex].setEnabled(enabled);
-				this.tfPlayer[playerIndex].setEditable(enabled);
+				this.tfPlayer[playerIndex].setEnabled(enabled);
+				
+				if (this.tfPlayer[playerIndex].getText().length() == 0)
+				{
+					this.tfPlayer[playerIndex].setText(VegaResources.Player(false)+(playerIndex+1));
+				}
 			}
 			else
-				this.panPlayers[playerIndex].setVisible(false);			
+			{
+				this.panPlayers[playerIndex].setEnabled(false);
+				this.canvasPlayerColors[playerIndex].showColor(false);
+				this.canvasPlayerColors[playerIndex].setEnabled(false);
+				this.tfPlayer[playerIndex].setEnabled(false);
+				this.tfPlayer[playerIndex].setText("");
+			}
 		}
 	}
 	
