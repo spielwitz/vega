@@ -20,6 +20,7 @@ enum PlanetListContent
 {
 	BATTLESHIPS,
 	ALL_SHIPS,
+	ACTIVE_SPIES,
 	SPY,
 	TRANSPORT,
 	PATROL,

@@ -1368,25 +1368,21 @@ public class Game extends EmailTransportBase implements Serializable
 		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT)
 		{
 			PlanetListContent[] contentTypes = PlanetListContent.values();
+			int maxIndex = 
+					!this.isMoveEnteringOpen() || this.getCurrentPlayerIndex() == Player.NEUTRAL ?
+							3 : contentTypes.length;
 			
-			if (!this.isMoveEnteringOpen() || this.getCurrentPlayerIndex() == Player.NEUTRAL)
-			{
-				if (this.planetListContentStateOrdinal == 1)
-					this.planetListContentStateOrdinal = 0;
-				else
-					this.planetListContentStateOrdinal = 1;
-			}
-			else if (keyCode == KeyEvent.VK_LEFT)
+			if (keyCode == KeyEvent.VK_LEFT)
 			{
 				this.planetListContentStateOrdinal--;
-				this.planetListContentStateOrdinal += contentTypes.length;
+				this.planetListContentStateOrdinal += maxIndex;
 			}
 			else
 			{
 				this.planetListContentStateOrdinal++;
 			}
 			
-			this.planetListContentStateOrdinal = this.planetListContentStateOrdinal % contentTypes.length;
+			this.planetListContentStateOrdinal = this.planetListContentStateOrdinal % maxIndex;
 			
 			this.updatePlanetList(
 					this.isMoveEnteringOpen() ? this.getCurrentPlayerIndex() : Player.NEUTRAL, 
@@ -2765,14 +2761,16 @@ public class Game extends EmailTransportBase implements Serializable
 				{
 					if (playerIndex != Player.NEUTRAL)
 					{
-						if (shipTypeDisplay == ShipType.ALLIANCES)
+						if (shipTypeDisplay == ShipType.ALLIANCES ||
+							shipTypeDisplay == ShipType.ACTIVE_SPIES)
 						{
-							text.add("[" + Integer.toString(playerIndex+1) + "]");
+							text.add("["+(playerIndex+1)+"]" + this.players[playerIndex].getName());
 						}
 						else
 						{
 							text.add(this.players[playerIndex].getName());
 						}
+
 						textCol.add(this.players[playerIndex].getColorIndex());
 					}
 					isFirstLine = false;
@@ -2788,38 +2786,48 @@ public class Game extends EmailTransportBase implements Serializable
 				{
 					shipCount = Integer.toString(this.planets[planetIndex].getShipsCount(ShipType.BATTLESHIPS));
 				}
-				else if (shipTypeDisplay == ShipType.ALLIANCES)
+				else if (shipTypeDisplay == ShipType.ACTIVE_SPIES)
 				{
-					if (planet.areDetailsVisibleForPlayer(playerIndexEnterMoves))
+					StringBuilder playerIndices = new StringBuilder();
+					
+					for (int playerIndex2 = 0; playerIndex2 < this.playersCount; playerIndex2++)
 					{
-						if (planet.allianceExists())
+						if (this.planets[planetIndex].hasRadioStation(playerIndex2))
 						{
-							boolean[] allianceMembers = planet.getAllianceMembers();
-							StringBuilder sbAlliance = new StringBuilder();
-							
-							for (int playerIndex2 = 0; playerIndex2 < this.playersCount; playerIndex2++)
-							{
-								if (allianceMembers[playerIndex2] && playerIndex2 != planet.getOwner())
-								{
-									sbAlliance.append(Integer.toString(playerIndex2 + 1));
-								}
-							}
-							
-							shipCount = sbAlliance.toString();
-						}
-						else
-						{
-							shipCount = "-";
+							playerIndices.append(playerIndex2 + 1);
 						}
 					}
-					else
-					{
+					
+					if (playerIndices.length() == 0)
 						continue;
-					}
+					else
+						shipCount = playerIndices.toString();
 				}
 				else if (!planet.areDetailsVisibleForPlayer(playerIndexEnterMoves))
 				{
 					continue;
+				}
+				else if (shipTypeDisplay == ShipType.ALLIANCES)
+				{
+					if (planet.allianceExists())
+					{
+						boolean[] allianceMembers = planet.getAllianceMembers();
+						StringBuilder sbAlliance = new StringBuilder();
+						
+						for (int playerIndex2 = 0; playerIndex2 < this.playersCount; playerIndex2++)
+						{
+							if (allianceMembers[playerIndex2] && playerIndex2 != planet.getOwner())
+							{
+								sbAlliance.append(Integer.toString(playerIndex2 + 1));
+							}
+						}
+						
+						shipCount = sbAlliance.toString();
+					}
+					else
+					{
+						shipCount = "-";
+					}
 				}
 				else if (shipTypeDisplay == ShipType.DEFENSIVE_BATTLESHIPS)
 				{
@@ -2874,6 +2882,9 @@ public class Game extends EmailTransportBase implements Serializable
 			break;
 		case SPY:
 			title = VegaResources.Spies(true);
+			break;
+		case ACTIVE_SPIES:
+			title = VegaResources.ActiveSpies(true);
 			break;
 		case PATROL:
 			title = VegaResources.Patrols(true);
