@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: E8
+		// Last used symbolic key: E9
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -549,6 +549,7 @@ public class VegaResources
 		symbolDict.put("E6","UserIsActive_E6");
 		symbolDict.put("E7","CountShort_E7");
 		symbolDict.put("E8","ActiveSpies_E8");
+		symbolDict.put("E9","PlanetConqueredNeutral_E9");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -1537,7 +1538,7 @@ public class VegaResources
 	}
 
 	/**
-	   * {0} conquered the planet! [3T]
+	   * {0} has conquered the planet! [3T]
 	   */
 	public static String PlanetConquered(boolean symbol, String arg0) {
 		return symbol ? "£3T§"+arg0+"£":MessageFormat.format(messages.getString("PlanetConquered_3T"), arg0);
@@ -4159,5 +4160,12 @@ public class VegaResources
 	   */
 	public static String ActiveSpies(boolean symbol) {
 		return symbol ? "£E8£":messages.getString("ActiveSpies_E8");
+	}
+
+	/**
+	   * The neutral fleet has conquered the planet. The $ production has halved. [E9]
+	   */
+	public static String PlanetConqueredNeutral(boolean symbol) {
+		return symbol ? "£E9£":messages.getString("PlanetConqueredNeutral_E9");
 	}
 }
