@@ -1368,8 +1368,11 @@ public class Game extends EmailTransportBase implements Serializable
 		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT)
 		{
 			PlanetListContent[] contentTypes = PlanetListContent.values();
+			boolean isMoveEnteringOpen = this.isMoveEnteringOpen();
+			int currentPlayerIndex = this.getCurrentPlayerIndex();
+			
 			int maxIndex = 
-					!this.isMoveEnteringOpen() || this.getCurrentPlayerIndex() == Player.NEUTRAL ?
+					!isMoveEnteringOpen || currentPlayerIndex == Player.NEUTRAL ?
 							3 : contentTypes.length;
 			
 			if (keyCode == KeyEvent.VK_LEFT)
@@ -2160,6 +2163,7 @@ public class Game extends EmailTransportBase implements Serializable
 		do
 		{
 			boolean readyForEvaluation = false;
+			this.setPlayerIndexEnteringMoves(Player.NEUTRAL);
 
 			this.setEnableParameterChange(true);
 			
