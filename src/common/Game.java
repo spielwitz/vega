@@ -69,7 +69,7 @@ public class Game extends EmailTransportBase implements Serializable
 	static final int				DEFENSIVE_BATTLESHIPS_BUY_SELL = 350;
 	static final int				DEFENSIVE_BATTLESHIPSS_COUNT_MAX = 700;
 	static final int 				DEFENSIVE_BATTLESHIPS_COUNT_INITIAL_PLAYERS = 350;
-	static final int 				MONEY_PRODUCTION_PURCHASE = 4;
+	static final int 				MONEY_PRODUCTION_PURCHASE = 5;
 	static final int 				TRANSPORT_MONEY_MAX = 30;
 	static final int 				BATTLESHIPS_COUNT_INITIAL_PLAYERS = 350;
 	static final int 				BATTLESHIPS_COUNT_INITIAL_NEUTRAL_MAX = 10;

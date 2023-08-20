@@ -2364,7 +2364,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Planets]\n\nThe number of planets you own determines victory or defeat. In addition, planets form your base for the production of new spaceships.\n\nPlanets produce between $1 to $15 annually. For every $ produced, a new battleship is created. While entering your moves, you can change the default production of battleships on your planet and use the saved $ supply to buy other types of spaceships and defensive battleships. For $, you can also increase the planet's production in $4 increments up to $100/year.\n\nNow open the planet editor for your planet ![color=3|LM]. To do this, first press the ![inverse|1] key for "Alice" in the main menu to start entering your moves. In the move input menu, now select ![inverse|0] for "Planet" and then type "LM". [74]
+	   * ![size=1.5;color=1;bold|Planets]\n\nThe number of planets you own determines victory or defeat. In addition, planets form your base for the production of new spaceships.\n\nPlanets produce between $1 to $15 annually. For every $ produced, a new battleship is created. While entering your moves, you can change the default production of battleships on your planet and use the saved $ supply to buy other types of spaceships and defensive battleships. For $, you can also increase the planet's production in $5 increments up to $100/year.\n\nNow open the planet editor for your planet ![color=3|LM]. To do this, first press the ![inverse|1] key for "Alice" in the main menu to start entering your moves. In the move input menu, now select ![inverse|0] for "Planet" and then type "LM". [74]
 	   */
 	public static String TutorialText04(boolean symbol) {
 		return symbol ? "£74£":messages.getString("TutorialText04_74");
