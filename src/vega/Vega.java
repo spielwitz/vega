@@ -1765,7 +1765,11 @@ public class Vega extends Frame // NO_UCD (use default)
 			this.menuEmailSend.setEnabled(false);
 		}
 		
-		this.menuServerGames.setEnabled(this.config.isServerCommunicationEnabled());
+		this.menuServerGames.setEnabled(
+				this.config.isServerCommunicationEnabled() &&
+				this.client != null &&
+				!this.client.getConfig().getUserId().equals(User.ADMIN_USER_ID));
+		
 		this.menuServerHighscores.setEnabled(this.config.isServerCommunicationEnabled());
 		
 		this.updateTitle();

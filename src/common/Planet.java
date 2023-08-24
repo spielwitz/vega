@@ -220,6 +220,11 @@ class Planet implements Serializable
 		
 		if (ship != null)
 			this.mergeBattleships(playersCount, ship);
+		
+		if (newOwner == Player.NEUTRAL)
+		{
+			this.moneyProduction = CommonUtils.round((double)this.moneyProduction / 2);
+		}
 	}
 	
 	Alliance copyAllianceStructure(int[] reductions)

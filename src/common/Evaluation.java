@@ -668,10 +668,20 @@ class Evaluation
 			planet.conquer(this.game.getPlayersCount(), ship.getOwner(), ship);
 
 			this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-			this.game.getConsole().appendText(
-					VegaResources.PlanetConquered(
-							true,
-							playerNameOffender));
+			
+			if (ship.getOwner() == Player.NEUTRAL)
+			{
+				this.game.getConsole().appendText(
+						VegaResources.PlanetConqueredNeutral(
+								true));
+			}
+			else
+			{
+				this.game.getConsole().appendText(
+						VegaResources.PlanetConquered(
+								true,
+								playerNameOffender));
+			}
 		}
 		else
 		{

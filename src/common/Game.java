@@ -42,12 +42,12 @@ import com.google.gson.JsonObject;
 public class Game extends EmailTransportBase implements Serializable
 {
 	/// The current build
-	public static final String		BUILD = "0001";
+	public static final String		BUILD = "0002";
 	
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0001";
+	public static final String 		BUILD_COMPATIBLE = "0002";
 
 	// Game board dimensions 
 	public static final int 		BOARD_MAX_X = 20;
@@ -69,7 +69,7 @@ public class Game extends EmailTransportBase implements Serializable
 	static final int				DEFENSIVE_BATTLESHIPS_BUY_SELL = 350;
 	static final int				DEFENSIVE_BATTLESHIPSS_COUNT_MAX = 700;
 	static final int 				DEFENSIVE_BATTLESHIPS_COUNT_INITIAL_PLAYERS = 350;
-	static final int 				MONEY_PRODUCTION_PURCHASE = 4;
+	static final int 				MONEY_PRODUCTION_PURCHASE = 5;
 	static final int 				TRANSPORT_MONEY_MAX = 30;
 	static final int 				BATTLESHIPS_COUNT_INITIAL_PLAYERS = 350;
 	static final int 				BATTLESHIPS_COUNT_INITIAL_NEUTRAL_MAX = 10;
@@ -1368,25 +1368,24 @@ public class Game extends EmailTransportBase implements Serializable
 		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT)
 		{
 			PlanetListContent[] contentTypes = PlanetListContent.values();
+			boolean isMoveEnteringOpen = this.isMoveEnteringOpen();
+			int currentPlayerIndex = this.getCurrentPlayerIndex();
 			
-			if (!this.isMoveEnteringOpen() || this.getCurrentPlayerIndex() == Player.NEUTRAL)
-			{
-				if (this.planetListContentStateOrdinal == 1)
-					this.planetListContentStateOrdinal = 0;
-				else
-					this.planetListContentStateOrdinal = 1;
-			}
-			else if (keyCode == KeyEvent.VK_LEFT)
+			int maxIndex = 
+					!isMoveEnteringOpen || currentPlayerIndex == Player.NEUTRAL ?
+							3 : contentTypes.length;
+			
+			if (keyCode == KeyEvent.VK_LEFT)
 			{
 				this.planetListContentStateOrdinal--;
-				this.planetListContentStateOrdinal += contentTypes.length;
+				this.planetListContentStateOrdinal += maxIndex;
 			}
 			else
 			{
 				this.planetListContentStateOrdinal++;
 			}
 			
-			this.planetListContentStateOrdinal = this.planetListContentStateOrdinal % contentTypes.length;
+			this.planetListContentStateOrdinal = this.planetListContentStateOrdinal % maxIndex;
 			
 			this.updatePlanetList(
 					this.isMoveEnteringOpen() ? this.getCurrentPlayerIndex() : Player.NEUTRAL, 
@@ -2164,6 +2163,7 @@ public class Game extends EmailTransportBase implements Serializable
 		do
 		{
 			boolean readyForEvaluation = false;
+			this.setPlayerIndexEnteringMoves(Player.NEUTRAL);
 
 			this.setEnableParameterChange(true);
 			
@@ -2516,7 +2516,7 @@ public class Game extends EmailTransportBase implements Serializable
 		
 		headers.add(
 				new ScreenContentPlanetsColoredListHeaderColumn(
-						VegaResources.Count(true),
+						VegaResources.CountShort(true),
 						5,
 						true));
 		
@@ -2765,14 +2765,16 @@ public class Game extends EmailTransportBase implements Serializable
 				{
 					if (playerIndex != Player.NEUTRAL)
 					{
-						if (shipTypeDisplay == ShipType.ALLIANCES)
+						if (shipTypeDisplay == ShipType.ALLIANCES ||
+							shipTypeDisplay == ShipType.ACTIVE_SPIES)
 						{
-							text.add("[" + Integer.toString(playerIndex+1) + "]");
+							text.add("["+(playerIndex+1)+"]" + this.players[playerIndex].getName());
 						}
 						else
 						{
 							text.add(this.players[playerIndex].getName());
 						}
+
 						textCol.add(this.players[playerIndex].getColorIndex());
 					}
 					isFirstLine = false;
@@ -2788,38 +2790,48 @@ public class Game extends EmailTransportBase implements Serializable
 				{
 					shipCount = Integer.toString(this.planets[planetIndex].getShipsCount(ShipType.BATTLESHIPS));
 				}
-				else if (shipTypeDisplay == ShipType.ALLIANCES)
+				else if (shipTypeDisplay == ShipType.ACTIVE_SPIES)
 				{
-					if (planet.areDetailsVisibleForPlayer(playerIndexEnterMoves))
+					StringBuilder playerIndices = new StringBuilder();
+					
+					for (int playerIndex2 = 0; playerIndex2 < this.playersCount; playerIndex2++)
 					{
-						if (planet.allianceExists())
+						if (this.planets[planetIndex].hasRadioStation(playerIndex2))
 						{
-							boolean[] allianceMembers = planet.getAllianceMembers();
-							StringBuilder sbAlliance = new StringBuilder();
-							
-							for (int playerIndex2 = 0; playerIndex2 < this.playersCount; playerIndex2++)
-							{
-								if (allianceMembers[playerIndex2] && playerIndex2 != planet.getOwner())
-								{
-									sbAlliance.append(Integer.toString(playerIndex2 + 1));
-								}
-							}
-							
-							shipCount = sbAlliance.toString();
-						}
-						else
-						{
-							shipCount = "-";
+							playerIndices.append(playerIndex2 + 1);
 						}
 					}
-					else
-					{
+					
+					if (playerIndices.length() == 0)
 						continue;
-					}
+					else
+						shipCount = playerIndices.toString();
 				}
 				else if (!planet.areDetailsVisibleForPlayer(playerIndexEnterMoves))
 				{
 					continue;
+				}
+				else if (shipTypeDisplay == ShipType.ALLIANCES)
+				{
+					if (planet.allianceExists())
+					{
+						boolean[] allianceMembers = planet.getAllianceMembers();
+						StringBuilder sbAlliance = new StringBuilder();
+						
+						for (int playerIndex2 = 0; playerIndex2 < this.playersCount; playerIndex2++)
+						{
+							if (allianceMembers[playerIndex2] && playerIndex2 != planet.getOwner())
+							{
+								sbAlliance.append(Integer.toString(playerIndex2 + 1));
+							}
+						}
+						
+						shipCount = sbAlliance.toString();
+					}
+					else
+					{
+						shipCount = "-";
+					}
 				}
 				else if (shipTypeDisplay == ShipType.DEFENSIVE_BATTLESHIPS)
 				{
@@ -2874,6 +2886,9 @@ public class Game extends EmailTransportBase implements Serializable
 			break;
 		case SPY:
 			title = VegaResources.Spies(true);
+			break;
+		case ACTIVE_SPIES:
+			title = VegaResources.ActiveSpies(true);
 			break;
 		case PATROL:
 			title = VegaResources.Patrols(true);

@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: E6
+		// Last used symbolic key: E9
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -547,6 +547,9 @@ public class VegaResources
 		symbolDict.put("E4","GetIp_E4");
 		symbolDict.put("E5","HideOrShowSpaceships_E5");
 		symbolDict.put("E6","UserIsActive_E6");
+		symbolDict.put("E7","CountShort_E7");
+		symbolDict.put("E8","ActiveSpies_E8");
+		symbolDict.put("E9","PlanetConqueredNeutral_E9");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -660,7 +663,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Language [0C]
+	   * Language/Sprache [0C]
 	   */
 	public static String Language(boolean symbol) {
 		return symbol ? "£0C£":messages.getString("Language_0C");
@@ -1535,7 +1538,7 @@ public class VegaResources
 	}
 
 	/**
-	   * {0} conquered the planet! [3T]
+	   * {0} has conquered the planet! [3T]
 	   */
 	public static String PlanetConquered(boolean symbol, String arg0) {
 		return symbol ? "£3T§"+arg0+"£":MessageFormat.format(messages.getString("PlanetConquered_3T"), arg0);
@@ -2361,7 +2364,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Planets]\n\nThe number of planets you own determines victory or defeat. In addition, planets form your base for the production of new spaceships.\n\nPlanets produce between $1 to $15 annually. For every $ produced, a new battleship is created. While entering your moves, you can change the default production of battleships on your planet and use the saved $ supply to buy other types of spaceships and defensive battleships. For $, you can also increase the planet's production in $4 increments up to $100/year.\n\nNow open the planet editor for your planet ![color=3|LM]. To do this, first press the ![inverse|1] key for "Alice" in the main menu to start entering your moves. In the move input menu, now select ![inverse|0] for "Planet" and then type "LM". [74]
+	   * ![size=1.5;color=1;bold|Planets]\n\nThe number of planets you own determines victory or defeat. In addition, planets form your base for the production of new spaceships.\n\nPlanets produce between $1 to $15 annually. For every $ produced, a new battleship is created. While entering your moves, you can change the default production of battleships on your planet and use the saved $ supply to buy other types of spaceships and defensive battleships. For $, you can also increase the planet's production in $5 increments up to $100/year.\n\nNow open the planet editor for your planet ![color=3|LM]. To do this, first press the ![inverse|1] key for "Alice" in the main menu to start entering your moves. In the move input menu, now select ![inverse|0] for "Planet" and then type "LM". [74]
 	   */
 	public static String TutorialText04(boolean symbol) {
 		return symbol ? "£74£":messages.getString("TutorialText04_74");
@@ -4143,5 +4146,26 @@ public class VegaResources
 	   */
 	public static String UserIsActive(boolean symbol) {
 		return symbol ? "£E6£":messages.getString("UserIsActive_E6");
+	}
+
+	/**
+	   * Count [E7]
+	   */
+	public static String CountShort(boolean symbol) {
+		return symbol ? "£E7£":messages.getString("CountShort_E7");
+	}
+
+	/**
+	   * Active Spies [E8]
+	   */
+	public static String ActiveSpies(boolean symbol) {
+		return symbol ? "£E8£":messages.getString("ActiveSpies_E8");
+	}
+
+	/**
+	   * The neutral fleet has conquered the planet. The $ production has halved. [E9]
+	   */
+	public static String PlanetConqueredNeutral(boolean symbol) {
+		return symbol ? "£E9£":messages.getString("PlanetConqueredNeutral_E9");
 	}
 }
