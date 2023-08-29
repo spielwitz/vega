@@ -42,12 +42,12 @@ import com.google.gson.JsonObject;
 public class Game extends EmailTransportBase implements Serializable
 {
 	/// The current build
-	public static final String		BUILD = "0002";
+	public static final String		BUILD = "0003";
 	
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0002";
+	public static final String 		BUILD_COMPATIBLE = "0003";
 
 	// Game board dimensions 
 	public static final int 		BOARD_MAX_X = 20;

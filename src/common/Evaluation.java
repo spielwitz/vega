@@ -17,6 +17,7 @@
 package common;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 import spielwitz.biDiServer.Tuple;
@@ -992,10 +993,12 @@ class Evaluation
 		}
 	}
 
-	private void processAllianceChanges()
+	private HashSet<Integer> processAllianceChanges()
 	{
 		Hashtable<Integer, Hashtable<Integer,Integer>> allianceChangesPerPlanet =
 				new Hashtable<Integer, Hashtable<Integer,Integer>>();
+		
+		HashSet<Integer> planetsWithTerminatedAlliances = new HashSet<Integer>(); 
 
 		for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
 		{
@@ -1058,52 +1061,7 @@ class Evaluation
 
 			if (terminateAlliance)
 			{
-				for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
-				{
-					if (playerIndex == planet.getOwner())
-					{
-						continue;
-					}
-
-					int battleshipsCount = planet.getBattleshipsCount(playerIndex);
-
-					if (battleshipsCount > 0)
-					{
-						Ship obj = new Ship(
-								Planet.NO_PLANET,
-								Planet.NO_PLANET,
-								this.game.getPlanets()[planetIndex].getPosition(),
-								this.game.getPlanets()[planetIndex].getPosition(),
-								ShipType.BATTLESHIPS,
-								battleshipsCount,
-								playerIndex,
-								false,
-								false,
-								null);
-
-						obj.setStopped(true);
-
-						this.game.getShips().add(obj);
-
-						this.game.updateBoard(this.game.getSimpleFrameObjekt(planetIndex, Colors.WHITE), 0);
-
-						this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
-
-						this.game.getConsole().appendText(
-								VegaResources.BattleshipsMustLeavePlanet(
-										true,
-										Integer.toString(obj.getCount()),
-										this.game.getPlayers()[playerIndex].getName(),
-										this.game.getPlanetNameFromIndex(planetIndex)));
-						this.game.getConsole().lineBreak();
-						this.game.getConsole().appendText(
-								VegaResources.BattleshipsWaiting(true));
-						this.waitForKeyPressed();
-					}
-				}
-
-				planet.dissolveAlliance();
-
+				planetsWithTerminatedAlliances.add(planetIndex);
 				continue;
 			}
 
@@ -1152,6 +1110,63 @@ class Evaluation
 				}
 			}	
 		}
+		
+		return planetsWithTerminatedAlliances;
+	}
+	
+	private void processAllianceTerminations(HashSet<Integer> planetsWithTerminatedAlliances)
+	{
+		for (int planetIndex: planetsWithTerminatedAlliances)
+		{
+			Planet planet = this.game.getPlanets()[planetIndex];
+			
+			for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
+			{
+				if (playerIndex == planet.getOwner())
+				{
+					continue;
+				}
+
+				int battleshipsCount = planet.getBattleshipsCount(playerIndex);
+
+				if (battleshipsCount > 0)
+				{
+					Ship obj = new Ship(
+							Planet.NO_PLANET,
+							Planet.NO_PLANET,
+							this.game.getPlanets()[planetIndex].getPosition(),
+							this.game.getPlanets()[planetIndex].getPosition(),
+							ShipType.BATTLESHIPS,
+							battleshipsCount,
+							playerIndex,
+							false,
+							false,
+							null);
+
+					obj.setStopped(true);
+
+					this.game.getShips().add(obj);
+
+					this.game.updateBoard(this.game.getSimpleFrameObjekt(planetIndex, Colors.WHITE), 0);
+
+					this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
+
+					this.game.getConsole().appendText(
+							VegaResources.BattleshipsMustLeavePlanet(
+									true,
+									Integer.toString(obj.getCount()),
+									this.game.getPlayers()[playerIndex].getName(),
+									this.game.getPlanetNameFromIndex(planetIndex)));
+					this.game.getConsole().lineBreak();
+					this.game.getConsole().appendText(
+							VegaResources.BattleshipsWaiting(true));
+					this.waitForKeyPressed();
+				}
+			}
+
+			planet.dissolveAlliance();
+
+		}
 	}
 
 	private void processCapitulations()
@@ -1197,6 +1212,8 @@ class Evaluation
 
 	private void processMoves()
 	{
+		HashSet<Integer> planetsWithTerminatedAlliances = this.processAllianceChanges();
+		
 		int[] playersSequence = CommonUtils.getRandomList(this.game.getPlayersCount());
 
 		for (int i = 0; i < this.game.getPlayersCount(); i++)
@@ -1239,11 +1256,17 @@ class Evaluation
 						{
 							boolean ok = true;
 
-							if (planet.getAllianceMembers() == null || planet.getAllianceMembers().length <= 1)
+							if (planet.getAllianceMembers() == null ||
+								planet.getAllianceMembers().length <= 1 ||
+								planetsWithTerminatedAlliances.contains(ship.getPlanetIndexStart()))
+							{
 								ok = false;
+							}
 							else if (!(planet.getBattleshipsCount(playerIndex) > 0  &&
 									planet.getShipsCount(ShipType.BATTLESHIPS) >= ship.getCount()))
+							{
 								ok = false;
+							}
 
 							if (ok)
 							{
@@ -1307,7 +1330,7 @@ class Evaluation
 				}
 				else if (move.getAllianceChanges() != null)
 				{
-					// Alliance changes will be processed next
+					// Alliance change moves have already been processed
 				}
 				else if (move.getPlanetAfter() != null)
 				{
@@ -1315,8 +1338,8 @@ class Evaluation
 				}
 			}
 		}
-
-		this.processAllianceChanges();
+		
+		this.processAllianceTerminations(planetsWithTerminatedAlliances);
 
 		this.game.setMoves(new Hashtable<Integer, ArrayList<Move>>());
 	}
