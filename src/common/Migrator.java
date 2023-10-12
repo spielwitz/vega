@@ -17,6 +17,7 @@
 package common;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 public class Migrator
 {
@@ -24,20 +25,33 @@ public class Migrator
 	
 	public static void migrate(JsonObject jobj)
 	{
-//		String build =
-//				jobj.has(PROP_BUILD) ?
-//						jobj.get(PROP_BUILD).getAsString() :
-//						"0000";
+		String build =
+				jobj.has(PROP_BUILD) ?
+						jobj.get(PROP_BUILD).getAsString() :
+						"0000";
 		
-//		if (build.compareTo("0001") < 0)
-//		{
-//			jobj.addProperty(PROP_BUILD, "0001");
-//			migrate(jobj);
-//		}
-//		else
-//		{
+		if (build.compareTo("0004") < 0)
+		{
+			JsonObject jsonObjectEditorPrices = (JsonObject)jobj.get("editorPrices");
+			
+			if (jsonObjectEditorPrices != null)
+			{
+				int patrolPrice =
+						CommonUtils.getRandomInteger(
+								Planet.PRICES_MIN_MAX.get(ShipType.PATROL).getMax() -
+								Planet.PRICES_MIN_MAX.get(ShipType.PATROL).getMin() + 1) +
+						Planet.PRICES_MIN_MAX.get(ShipType.PATROL).getMin();
+				
+				jsonObjectEditorPrices.add("PATROL", new JsonPrimitive(patrolPrice));
+			}
+			
+			jobj.addProperty(PROP_BUILD, "0004");
+			migrate(jobj);
+		}
+		else
+		{
 			jobj.addProperty(PROP_BUILD, Game.BUILD);
 			return;
-//		}
+		}
 	}
 }
