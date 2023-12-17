@@ -39,7 +39,7 @@ class Planet implements Serializable
 		PRICES_MIN_MAX.put(ShipType.BATTLESHIP_PRODUCTION, new PriceRange(0, 0));
 		
 		PRICES_MIN_MAX.put(ShipType.SPY, new PriceRange(3, 6));
-		PRICES_MIN_MAX.put(ShipType.PATROL, new PriceRange(6, 10));
+		PRICES_MIN_MAX.put(ShipType.PATROL, new PriceRange(12, 18));
 		PRICES_MIN_MAX.put(ShipType.TRANSPORT, new PriceRange(4, 7));
 		PRICES_MIN_MAX.put(ShipType.MINESWEEPER, new PriceRange(20, 28));
 		
