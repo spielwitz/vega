@@ -968,6 +968,8 @@ public class Vega extends Frame // NO_UCD (use default)
 				
 				if(returnVal != JFileChooser.APPROVE_OPTION)
 				{
+					this.inputEnabled = true;
+					this.redrawScreen();
 					return;
 				}
 				
