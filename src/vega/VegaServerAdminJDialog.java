@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2023 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -185,7 +185,7 @@ class VegaServerAdminJDialog extends Dialog
 		
 		panUsersOuter.add(panUsersInner, cPanOuter);
 		
-		tabpane.addTab(VegaResources.CreateNewUser(false), panUsersOuter);
+		tabpane.addTab(VegaResources.Users(false), panUsersOuter);
 		
 		// ---------------
 		Panel panShutdownOuter = new Panel(new GridBagLayout());

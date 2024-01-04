@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2023 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -28,7 +28,7 @@ public class VegaAbout
 				parent, 
 				new MessageWithLink(
 						parent,
-						"VEGA - (c) 1989-2023 Michael Schweitzer - <a href=\""+UiConstants.VEGA_URL+"\">"+UiConstants.VEGA_URL+"</a>"),
+						"VEGA - (c) 1989-2024 Michael Schweitzer - <a href=\""+UiConstants.VEGA_URL+"\">"+UiConstants.VEGA_URL+"</a>"),
 				"Build " + Game.BUILD);
 	}
 }
