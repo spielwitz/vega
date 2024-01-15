@@ -1194,7 +1194,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		if (result == DialogWindowResult.YES &&
 			this.client != null)
 		{
-			this.client.disconnect();
+			this.disconnectClient();
 		}
 
 		return result == DialogWindowResult.YES; 
@@ -1212,7 +1212,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		
 		this.client = new VegaClient(clientConfiguration, true, this);
 		this.client.start();
-		this.messages = new Messages(this.client.getUserId());
+		this.messages = Messages.readFromFile(this.client.getUserId());
 	}
 
 	private void createBackup (String fileName) throws IOException
@@ -1367,6 +1367,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		if (this.client != null)
 		{
+			this.messages.writeToFile(this.client.getUserId());
 			this.client.disconnect();
 		}
 		
