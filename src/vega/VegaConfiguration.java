@@ -32,8 +32,8 @@ import common.VegaResources;
 
 class VegaConfiguration
 {
-	private static final String FILE_NAME = "VegaConfiguration";
 	private static final String PROPERTIES_FILE_NAME = "VegaProperties";
+	private static String fileName = "VegaConfiguration";
 	private static Gson	serializer = new Gson();
 	
 	static VegaConfiguration get()
@@ -46,7 +46,7 @@ class VegaConfiguration
 		}
 		else
 		{
-			try (BufferedReader br = new BufferedReader(new FileReader(new File(FILE_NAME))))
+			try (BufferedReader br = new BufferedReader(new FileReader(new File(fileName))))
 			{
 				String json = br.readLine();
 				config = serializer.fromJson(json, VegaConfiguration.class);
@@ -124,6 +124,12 @@ class VegaConfiguration
 		
 		return config;
 	}
+	
+	static void setFileName(String name)
+	{
+		fileName = name;
+	}
+	
 	private String 				directoryNameLast;
 	private ArrayList<String> 	emailAddresses;
 	private String				serverAdminCredentialFile;
@@ -291,7 +297,7 @@ class VegaConfiguration
 	{
 		boolean success = true;
 		
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME)))
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName)))
 		{
 			bw.write(serializer.toJson(this));			
 		} catch (IOException e)

@@ -121,7 +121,16 @@ public class Vega extends Frame // NO_UCD (use default)
 	}
 	public static void main(String[] args)
 	{
+		parseCommandLineArguments(args);
 		new Vega();
+	}
+	
+	private static void parseCommandLineArguments(String[] args)
+	{
+		if (args.length == 1)
+		{
+			VegaConfiguration.setFileName(args[0]);
+		}
 	}
 	
 	static void showDefaultCursor(Component parentComponent)
