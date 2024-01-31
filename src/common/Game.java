@@ -47,7 +47,7 @@ public class Game extends EmailTransportBase implements Serializable
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0004";
+	public static final String 		BUILD_COMPATIBLE = "0006";
 
 	// Game board dimensions 
 	public static final int 		BOARD_MAX_X = 20;
@@ -81,7 +81,7 @@ public class Game extends EmailTransportBase implements Serializable
 	static final int 				MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W1 = 15;
 	static final int 				MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W2 = 200;
 	static final int 				MONEY_PRODUCTION_MAX = 100;
-	static final int				MONEY_PRODUCTION_NEARBY_PLANETS_AVERAGE = 6;
+	static final int				MONEY_PRODUCTION_NEARBY_PLANETS = 25;
 	static final int 				PLANET_NAME_LENGTH_MAX = 2;
 	public static final int 		GAME_NAME_LENGTH_MIN = 3;
 	public static final int 		GAME_NAME_LENGTH_MAX = 18;
@@ -2015,31 +2015,30 @@ public class Game extends EmailTransportBase implements Serializable
   	private int[] getMoneyProductionsOfNearbyPlanets(int planetsNearbyCount)
 	{
 		int[] result = new int[planetsNearbyCount];
-		int targetSum = MONEY_PRODUCTION_NEARBY_PLANETS_AVERAGE * planetsNearbyCount;
 		
-		int actualSum = 0;
+		int sum = 0;
 		
 		for (int i = 0; i < planetsNearbyCount; i++)
 		{
 			result[i] = this.getRandomProductionOfNeutralPlanet();
-			actualSum += result[i]; 
+			sum += result[i]; 
 		}
 		
-		while (actualSum != targetSum)
+		while (sum != MONEY_PRODUCTION_NEARBY_PLANETS)
 		{
 			int indexToChange = CommonUtils.getRandomInteger(planetsNearbyCount);
 			
-			if (actualSum < targetSum &&
+			if (sum < MONEY_PRODUCTION_NEARBY_PLANETS &&
 					result[indexToChange] < MONEY_PRODUCTION_INITIAL_NEUTRAL + MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA)
 			{
 				result[indexToChange]++;
-				actualSum++;
+				sum++;
 			}
-			else if (actualSum > targetSum &&
+			else if (sum > MONEY_PRODUCTION_NEARBY_PLANETS &&
 					result[indexToChange] > 1)
 			{
 				result[indexToChange]--;
-				actualSum--;
+				sum--;
 			}
 		}
 		
