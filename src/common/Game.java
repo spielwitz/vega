@@ -1759,9 +1759,7 @@ public class Game extends EmailTransportBase implements Serializable
 			}
 			else
 			{
-				moneyProduction = CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL) + 1;
-				if (CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W2) < MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W1)
-					moneyProduction += (CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA)+1);
+				moneyProduction = this.getRandomProductionOfNeutralPlanet();
 			}
 			
 	        Hashtable<ShipType, Integer> ships = new Hashtable<ShipType, Integer>();
@@ -1802,6 +1800,15 @@ public class Game extends EmailTransportBase implements Serializable
 		this.buildPlanetMap();
 		this.calculateScores();	
 	}
+  	
+  	private int getRandomProductionOfNeutralPlanet()
+  	{
+  		int moneyProduction = CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL) + 1;
+		if (CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W2) < MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W1)
+			moneyProduction += (CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA)+1);
+		
+		return moneyProduction;
+  	}
   	
   	private void distributePlanetsInHomeGalaxy(int playerIndex, Circle circle, Point[] positions)
 	{
@@ -2008,29 +2015,33 @@ public class Game extends EmailTransportBase implements Serializable
   	private int[] getMoneyProductionsOfNearbyPlanets(int planetsNearbyCount)
 	{
 		int[] result = new int[planetsNearbyCount];
+		int targetSum = MONEY_PRODUCTION_NEARBY_PLANETS_AVERAGE * planetsNearbyCount;
 		
-		boolean ok;
+		int actualSum = 0;
 		
-		do
+		for (int i = 0; i < planetsNearbyCount; i++)
 		{
-			ok = false;
-			int sum = 0;
+			result[i] = this.getRandomProductionOfNeutralPlanet();
+			actualSum += result[i]; 
+		}
+		
+		while (actualSum != targetSum)
+		{
+			int indexToChange = CommonUtils.getRandomInteger(planetsNearbyCount);
 			
-			for (int i = 0; i < planetsNearbyCount - 1; i++)
+			if (actualSum < targetSum &&
+					result[indexToChange] < MONEY_PRODUCTION_INITIAL_NEUTRAL + MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA)
 			{
-				result[i] = CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL + MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA) + 1;
-				sum += result[i]; 
+				result[indexToChange]++;
+				actualSum++;
 			}
-			
-			if (sum < (planetsNearbyCount - 1) * MONEY_PRODUCTION_NEARBY_PLANETS_AVERAGE)
+			else if (actualSum > targetSum &&
+					result[indexToChange] > 1)
 			{
-				int rest = planetsNearbyCount * MONEY_PRODUCTION_NEARBY_PLANETS_AVERAGE - sum;
-				result[planetsNearbyCount - 1] = rest;
-				
-				ok = rest <= MONEY_PRODUCTION_INITIAL_NEUTRAL + MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA;
+				result[indexToChange]--;
+				actualSum--;
 			}
-			
-		} while (!ok);
+		}
 		
 		return result;
 	}
