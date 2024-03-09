@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import common.Colors;
 import common.Game;
 import common.GameOptions;
+import common.PlanetDistribution;
 import common.Player;
 import common.VegaResources;
 import common.CommonUtils;
@@ -435,7 +436,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 	{
 		int planetCountMin = 
 				this.mode == GameParametersDialogMode.NEW_GAME ?
-						Game.getMinimumPlanetCount(playersCount) :
+						PlanetDistribution.getPlanetCountMin(playersCount) :
 						Game.PLAYERS_COUNT_MAX;
 		
 		String[] planets = new String[Game.PLANETS_COUNT_MAX - planetCountMin + 1];

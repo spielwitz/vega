@@ -53,15 +53,6 @@ public class Game extends EmailTransportBase implements Serializable
 	public static final int 		BOARD_MAX_X = 20;
 	public static final int 		BOARD_MAX_Y = 18;
 	
-	private static final double		BOARD_REGULAR_SIZE_X = 20;
-	private static final double		BOARD_REGULAR_SIZE_Y = 18;
-	private static final double		BOARD_REGULAR_PLANET_COUNT = 42;
-	private static final double		BOARD_RATIO = BOARD_REGULAR_SIZE_X / BOARD_REGULAR_SIZE_Y;
-	private static final double		BOARD_SECTORS_PER_PLANET = (BOARD_REGULAR_SIZE_X * BOARD_REGULAR_SIZE_Y) / BOARD_REGULAR_PLANET_COUNT;
-	private static final double		BOARD_PLANETS_PER_PLAYER = 7; 
-	private static final int 		BOARD_PLANETS_NEARBY_COUNT = 4;
-	private static final int 		BOARD_PLANETS_NEARBY_RADIUS = 4;
-	
 	static final int 				DAYS_OF_YEAR_COUNT = 365;
 	public static final int 		PLAYERS_COUNT_MAX = 6;
 	public static final int 		PLAYERS_COUNT_MIN = 2;
@@ -138,10 +129,6 @@ public class Game extends EmailTransportBase implements Serializable
 		return new Gson().fromJson(jobj, Game.class);
 	}
 	
-	public static int getMinimumPlanetCount(int playersCount)
-	{
-		return (int)(playersCount * BOARD_PLANETS_PER_PLAYER);
-	}
 	public static HashSet<GameOptions> getOptionsDefault()
 	{
 		HashSet<GameOptions> options = new HashSet<GameOptions>();
@@ -1645,157 +1632,72 @@ public class Game extends EmailTransportBase implements Serializable
 		this.buildRequired = BUILD_COMPATIBLE;
 		this.finalized = false;
 		this.initial = true;
-		
 		this.archive = new Hashtable<Integer,Archive>();
 		this.replayLast = new ArrayList<ScreenContent>();
 		this.year = 0;
-		
 		this.mines = new Hashtable<String,Mine>();
-		
 		this.ships = new ArrayList<Ship>();
-		
 		this.planets = new Planet[planetsCount];
-		
 		this.screenContent = null;
-		
 		this.dateStart = System.currentTimeMillis();
 		
-		double h = Math.sqrt(BOARD_SECTORS_PER_PLANET * (double)planetsCount / BOARD_RATIO);
-		double w = BOARD_RATIO * h;
+		PlanetDistribution planetDistribution = new PlanetDistribution(players.length, planetsCount);
 		
-		this.boardHeight = CommonUtils.round(h);
-		this.boardWidth = CommonUtils.round(w);
+		this.boardWidth = (int) planetDistribution.getBoardSize().x;
+		this.boardHeight = (int) planetDistribution.getBoardSize().y;
 		
 		this.boardXOffset = (int)((double)(BOARD_MAX_X - this.boardWidth) / 2.);
 		this.boardYOffset = (int)((double)(BOARD_MAX_Y - this.boardHeight) / 2.);
 		
-		int[][] moneyProductionsNearbyPlanets = new int[players.length][BOARD_PLANETS_NEARBY_COUNT];
-		for (int playerIndex = 0; playerIndex < players.length; playerIndex++)
-		{
-			moneyProductionsNearbyPlanets[playerIndex] = this.getMoneyProductionsOfNearbyPlanets(BOARD_PLANETS_NEARBY_COUNT);
-		}
-		
-		Point[] positions = new Point[this.planets.length];
-		
-		CirclePlacing homeGalaxies = new CirclePlacing(
-				players.length, 
-				BOARD_PLANETS_NEARBY_RADIUS, 
-				new Point(this.boardWidth, this.boardHeight));
+		Point ptOffset = new Point(this.boardXOffset, this.boardYOffset);
 		
 		for (int playerIndex = 0; playerIndex < players.length; playerIndex++)
 		{
-			this.distributePlanetsInHomeGalaxy(playerIndex, homeGalaxies.circles[playerIndex], positions);
-		}
-	
-		ArrayList<Point> validPositions = new ArrayList<Point>(); 
-		
-		for (int x = 0; x < this.boardWidth; x++)
-		{
-			for (int y = 0; y < this.boardHeight; y++)
+			int homePlanetIndex = planetDistribution.getHomePlanetIndices()[playerIndex];
+			
+			this.planets[homePlanetIndex] = new Planet(
+					planetDistribution.getPositions()[homePlanetIndex].add(ptOffset),
+					null,
+					new Hashtable<ShipType, Integer>(){{put(ShipType.BATTLESHIPS, BATTLESHIPS_COUNT_INITIAL_PLAYERS);}},
+					playerIndex, 
+					DEFENSIVE_BATTLESHIPS_COUNT_INITIAL_PLAYERS,
+					MONEY_SUPPLY_INITIAL_PLAYERS,
+					MONEY_PRODUCTION_INITIAL_PLAYERS,
+					MONEY_PRODUCTION_INITIAL_PLAYERS);
+			
+			int[] moneyProductionsNearbyPlanets = this.getMoneyProductionsOfNearbyPlanets(PlanetDistribution.NEARBY_PLANETS_COUNT);
+			
+			for (int i = 0; i < planetDistribution.getNearbyPlanetIndicesPerPlayer()[playerIndex].length; i++)
 			{
-				Point pos = new Point(x, y);
+				int nearbyPlanetIndex = planetDistribution.getNearbyPlanetIndicesPerPlayer()[playerIndex][i];
 				
-				boolean ok = true;
-				
-				for (int playerIndex = 0; playerIndex < players.length; playerIndex++)
-				{
-					if (homeGalaxies.circles[playerIndex].pos.distance(pos) <= BOARD_PLANETS_NEARBY_RADIUS)
-					{
-						ok = false;
-						break;
-					}
-				}
-				
-				if (ok)
-				{
-					validPositions.add(pos);
-				}
+				this.planets[nearbyPlanetIndex] = new Planet(
+						planetDistribution.getPositions()[nearbyPlanetIndex].add(ptOffset),
+						null,
+						new Hashtable<ShipType, Integer>(){{put(ShipType.BATTLESHIPS, CommonUtils.getRandomInteger(BATTLESHIPS_COUNT_INITIAL_NEUTRAL_MAX + 1));}},
+						Player.NEUTRAL,
+						0,
+						CommonUtils.getRandomInteger(MONEY_SUPPLY_INITIAL_NEUTRAL_MAX + 1),
+						moneyProductionsNearbyPlanets[i],
+						moneyProductionsNearbyPlanets[i]);
 			}
 		}
 		
-		for (int planetIndex = this.players.length * (BOARD_PLANETS_NEARBY_COUNT + 1); planetIndex < this.planets.length; planetIndex++)
+		for (int planetIndex = planetDistribution.getStartIndexRegularPlanets(); planetIndex < this.planets.length; planetIndex++)
 		{
-			Point position = null;
-			int k = 0;
-			
-			do
-			{
-				k = CommonUtils.getRandomInteger(validPositions.size());
-				
-				position = validPositions.get(k);
-				
-			} while (this.isPlanetPositionInvalid(validPositions.get(k), positions));
-			
-			validPositions.remove(k);
-			positions[planetIndex] = position;
-		}
-		
-		for (int planetIndex = 0; planetIndex < this.planets.length; planetIndex++)
-		{
-			boolean isPlanetHome = (planetIndex < this.players.length * (BOARD_PLANETS_NEARBY_COUNT + 1) &&
-									planetIndex % (BOARD_PLANETS_NEARBY_COUNT  + 1) == 0);
-											
-			int owner =
-					isPlanetHome ?
-							planetIndex / (BOARD_PLANETS_NEARBY_COUNT  + 1) :
-							Player.NEUTRAL;
-			
-			int battleshipsCount = isPlanetHome ? 
-								BATTLESHIPS_COUNT_INITIAL_PLAYERS : 
-								CommonUtils.getRandomInteger(BATTLESHIPS_COUNT_INITIAL_NEUTRAL_MAX + 1);
-			
-			int moneyProduction;
-			
-			if (isPlanetHome)
-			{
-				moneyProduction = MONEY_PRODUCTION_INITIAL_PLAYERS;
-			}
-			else if (planetIndex < this.players.length * (BOARD_PLANETS_NEARBY_COUNT + 1))
-			{
-				int playerIndex = planetIndex / (BOARD_PLANETS_NEARBY_COUNT  + 1);
-				int seqIndex = planetIndex % (BOARD_PLANETS_NEARBY_COUNT  + 1) - 1;
-				
-				moneyProduction = moneyProductionsNearbyPlanets[playerIndex][seqIndex];
-			}
-			else
-			{
-				moneyProduction = this.getRandomProductionOfNeutralPlanet();
-			}
-			
-	        Hashtable<ShipType, Integer> ships = new Hashtable<ShipType, Integer>();
-	        ships.put(ShipType.BATTLESHIPS, battleshipsCount);
-	        
-	        int moneySupply = isPlanetHome ?
-	        						MONEY_SUPPLY_INITIAL_PLAYERS :
-			        				CommonUtils.getRandomInteger(MONEY_SUPPLY_INITIAL_NEUTRAL_MAX + 1);
-			
-			int defensiveBattleshipsCount = isPlanetHome ? 
-					DEFENSIVE_BATTLESHIPS_COUNT_INITIAL_PLAYERS :
-					0;
+			int moneyProduction = getRandomProductionOfNeutralPlanet();
 			
 			this.planets[planetIndex] = new Planet(
-					new Point(
-							positions[planetIndex].getX() + this.boardXOffset,
-							positions[planetIndex].getY() + this.boardYOffset),
+					planetDistribution.getPositions()[planetIndex].add(ptOffset),
 					null,
-					ships,
-					owner, 
-					defensiveBattleshipsCount,
-					moneySupply,
+					new Hashtable<ShipType, Integer>(){{put(ShipType.BATTLESHIPS, CommonUtils.getRandomInteger(BATTLESHIPS_COUNT_INITIAL_NEUTRAL_MAX + 1));}},
+					Player.NEUTRAL,
+					0,
+					CommonUtils.getRandomInteger(MONEY_SUPPLY_INITIAL_NEUTRAL_MAX + 1),
 					moneyProduction,
 					moneyProduction);
 		}
-		
-		for (int playerIndex = 1; playerIndex < players.length; playerIndex++)
-		{
-			int homePlanetIndexBefore = playerIndex * (BOARD_PLANETS_NEARBY_COUNT + 1);
-			int homePlanetIndexNew = playerIndex;
-			
-			Planet planetSwap = (Planet)CommonUtils.klon(this.planets[homePlanetIndexNew]);
-			
-			this.planets[homePlanetIndexNew] = (Planet)CommonUtils.klon(this.planets[homePlanetIndexBefore]);
-			this.planets[homePlanetIndexBefore] = planetSwap;
-		}
+	
 				
 		this.buildPlanetMap();
 		this.calculateScores();	
@@ -1809,65 +1711,6 @@ public class Game extends EmailTransportBase implements Serializable
 		
 		return moneyProduction;
   	}
-  	
-  	private void distributePlanetsInHomeGalaxy(int playerIndex, Circle circle, Point[] positions)
-	{
-		ArrayList<Point> validPositions = new ArrayList<Point>();
-		
-		for (int x = (int) (circle.pos.x - BOARD_PLANETS_NEARBY_RADIUS); x <= circle.pos.x + BOARD_PLANETS_NEARBY_RADIUS; x++)
-		{
-			for (int y = (int) (circle.pos.y - BOARD_PLANETS_NEARBY_RADIUS); y <= circle.pos.y + BOARD_PLANETS_NEARBY_RADIUS; y++)
-			{
-				Point pos = new Point(x, y); 
-				
-				if (pos.x < 0 || pos.x >= this.boardWidth || pos.y < 0 || pos.y >= this.boardHeight)
-				{
-					continue;
-				}
-				
-				if (circle.pos.distance(pos) < BOARD_PLANETS_NEARBY_RADIUS / 2 ||
-					circle.pos.distance(pos) > BOARD_PLANETS_NEARBY_RADIUS)
-				{
-					continue;
-				}
-				
-				validPositions.add(pos);
-			}
-		}
-		
-		int homePlanetIndex = playerIndex * (BOARD_PLANETS_NEARBY_COUNT + 1);
-		
-		positions[homePlanetIndex] = circle.pos;
-		
-		boolean ok;
-		
-		do
-		{
-			ok = true;
-			
-			for (int planetIndexOffset = 1; planetIndexOffset <= BOARD_PLANETS_NEARBY_COUNT; planetIndexOffset++)
-			{
-				int k = CommonUtils.getRandomInteger(validPositions.size());
-				
-				if (this.isPlanetPositionInvalid(validPositions.get(k), positions))
-				{
-					ok = false;
-					break;
-				}
-				
-				positions[homePlanetIndex + planetIndexOffset] = validPositions.get(k);
-			}
-			
-			if (!ok)
-			{
-				for (int planetIndexOffset = 1; planetIndexOffset <= BOARD_PLANETS_NEARBY_COUNT; planetIndexOffset++)
-				{
-					positions[homePlanetIndex + planetIndexOffset] = null;
-				}
-			}
-		}
-		while (!ok);
-	}
   	
 	private void emailMenu()
 	{
@@ -2100,34 +1943,7 @@ public class Game extends EmailTransportBase implements Serializable
 		else
 			return null;
 	}
-  	
-	private boolean isPlanetPositionInvalid (Point position, Point[] positions)
-	{
-		boolean retval = false;
-		
-		if (position.x < 0 ||
-			position.x >= this.boardWidth ||
-			position.y < 0 ||
-			position.y >= this.boardHeight)
-		{
-			return true;
-		}
-		
-		for (int i = 0; i < positions.length; i++)
-		{
-			if (positions[i] == null)
-				continue;
-			
-			if (positions[i].distance(position) < 2)
-			{
-				retval = true;
-				break;
-			}
-		}
-		
-		return retval;
-	}
-		
+  			
 	private void mainLoop()
 	{
 		if (this.moves == null)

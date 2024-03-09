@@ -102,7 +102,14 @@ class Point extends Point2D.Double implements Serializable
 	Point klon()
 	{
 		return new Point(this.x, this.y);
-	}	
+	}
+	
+	Point add(Point pt)
+	{
+		return new Point(
+				this.getX() + pt.getX(),
+				this.getY() + pt.getY());
+	}
 	
 	Point subtract(Point pt)
 	{
