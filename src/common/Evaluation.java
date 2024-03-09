@@ -90,32 +90,35 @@ class Evaluation
 	}
 	
 	private Game game;
-
-	private ArrayList<ScreenContent> replay = new ArrayList<ScreenContent>(); 
+	private EvaluationEvents events;
 
 	// First key: Hashcode of the sighted ship
 	// Second key: Hashcode of the patrol
 	// Values: Events
-	private Hashtable<Integer, Hashtable<Integer, ArrayList<ScreenContent>>> events = new Hashtable<Integer, Hashtable<Integer, ArrayList<ScreenContent>>>();
+	private Hashtable<Integer, Hashtable<Integer, ArrayList<ScreenContent>>> patrolEvents = new Hashtable<Integer, Hashtable<Integer, ArrayList<ScreenContent>>>();
 
-	@SuppressWarnings("unchecked")
 	Evaluation(Game game)
 	{
 		this.game = game;
+		this.events = new EvaluationEvents(game);
 
-		this.replay = new ArrayList<ScreenContent>();
+//		this.game.getConsole().setMode(Console.ConsoleModus.EVALUATION);
+//
+//		this.game.getConsole().setHeaderText(
+//				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.Evaluation(true),
+//				Colors.NEUTRAL);
+//
+//		this.game.getConsole().clear();
+//		this.printDayBeginOfYear();		
+//		this.game.getConsole().appendText(
+//				VegaResources.EvaluationBegins(true));
+		this.events.addConsoleLine(
+				0,
+				VegaResources.EvaluationBegins(true), 
+				Colors.WHITE);
 
-		this.game.getConsole().setMode(Console.ConsoleModus.EVALUATION);
-
-		this.game.getConsole().setHeaderText(
-				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.Evaluation(true),
-				Colors.NEUTRAL);
-
-		this.game.getConsole().clear();
-		this.printDayBeginOfYear();
-		this.game.getConsole().appendText(
-				VegaResources.EvaluationBegins(true));
-		this.waitForKeyPressed();
+//		this.waitForKeyPressed();
+		this.events.waitForKeyPressed();
 
 		this.processMoves();
 
@@ -127,12 +130,19 @@ class Evaluation
 		this.game.launchNeutralFleet();
 		Ship blackHoleShip = this.game.setBlackHoleDirection();
 
-		this.game.updatePlanetList(false);
-		this.game.updateBoard();
+		//this.game.updatePlanetList(false);
+		//this.game.updateBoard();
+		this.events.addAllPlanets();
+		this.events.addStartedShips();
 
-		this.game.getConsole().appendText(
-				VegaResources.ShipsLaunched(true));
-		this.waitForKeyPressed();
+//		this.game.getConsole().appendText(
+//				VegaResources.ShipsLaunched(true));
+		this.events.addConsoleLine(
+				0, 
+				VegaResources.ShipsLaunched(true), 
+				Colors.WHITE);
+		//this.waitForKeyPressed();
+		this.events.waitForKeyPressed();
 
 		this.processCapitulations();
 
@@ -200,9 +210,9 @@ class Evaluation
 		this.game.getConsole().enableEvaluationProgressBar(false);
 		this.game.getConsole().setMode(Console.ConsoleModus.TEXT_INPUT);
 
-		this.reducePatrolEvents(this.events);
+		this.reducePatrolEvents(this.patrolEvents);
 
-		this.game.setReplayLast((ArrayList<ScreenContent>) CommonUtils.klon(this.replay));
+		//this.game.setReplayLast((ArrayList<ScreenContent>) CommonUtils.klon(this.replay));
 
 		this.game.incYear();
 		this.game.calculateScores();
@@ -217,7 +227,7 @@ class Evaluation
 		cont.setSnapshot();
 		cont.getConsole().clearKeys();
 		cont.getConsole().setProgressBarDay(day);
-		this.replay.add(cont);
+		//this.replay.add(cont);
 	}
 
 	private void blackHoleDoWatch(Ship blackHoleShip, int day)
@@ -235,48 +245,57 @@ class Evaluation
 			
 			if (blackHoleShip.getPositionOnDay(day).distance(ship.getPositionOnDay(day)) < Game.BLACK_HOLE_RANGE)
 			{
-				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+				String text;
 				
 				switch (ship.getType())
 				{
 					case BATTLESHIPS:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleDestroyedBattleships(
+						text = VegaResources.BlackHoleDestroyedBattleships(
 										true, 
-										Integer.toString(ship.getCount())));
+										Integer.toString(ship.getCount()));
+						
+//						this.game.getConsole().appendText(
+//								VegaResources.BlackHoleDestroyedBattleships(
+//										true, 
+//										Integer.toString(ship.getCount())));
 						break;
 						
 					case SPY:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleSpy(true));
+						text = VegaResources.BlackHoleSpy(true);
 						break;
 						
 					case TRANSPORT:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleTransport(true));
+						text = VegaResources.BlackHoleTransport(true);
 						break;
 						
 					case PATROL:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHolePatrol(true));
+						text = VegaResources.BlackHolePatrol(true);
 						break;
 						
 					case MINE50:
 					case MINE100:
 					case MINE250:
 					case MINE500:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleMine(true));
+						text = VegaResources.BlackHoleMine(true);
 						break;
 						
 					case MINESWEEPER:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleMinesweeper(true));
+						text = VegaResources.BlackHoleMinesweeper(true);
 						break;
 						
 					default:
 						continue;
 				}
+				
+				this.events.addConsoleLine(
+						day, 
+						text, 
+						ship.getOwnerColorIndex(this.game));
+				
+				this.events.addHighlight(
+						day, 
+						ship.getPositionOnDay(day),
+						EvaluationEventsHighlightType.CROSSHAIR);
 		
 				this.game.updateBoard(
 						this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
@@ -284,6 +303,7 @@ class Evaluation
 
 				this.waitForKeyPressed();
 				
+				this.events.stopShip(day, ship, true);
 				ship.setToBeDeleted();
 			}
 		}
@@ -513,30 +533,46 @@ class Evaluation
 		if (ship.getType() == ShipType.BLACK_HOLE)
 		{
 			this.game.getMines().remove(sector.getString());
+			this.events.setMine(day, sector, 0);
 			
-			this.printDayEvent(day);
-			
-			this.game.getConsole().appendText(
+			//this.printDayEvent(day);
+			this.events.addConsoleLine(
+					day, 
 					VegaResources.BlackHoleMines(
 							true, 
-							Integer.toString(mine.getStrength())));
+							Integer.toString(mine.getStrength())), 
+					Colors.WHITE);
+			
+//			this.game.getConsole().appendText(
+//					VegaResources.BlackHoleMines(
+//							true, 
+//							Integer.toString(mine.getStrength())));
 		}
 		else
 		{
 			String playerName = ship.getOwnerName(this.game);
-			this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+			byte colorIndex = ship.getOwnerColorIndex(this.game);
+			//this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
 	
 			if (ship.getType() == ShipType.BATTLESHIPS)
 			{
-				this.printDayEvent(day);
+				//this.printDayEvent(day);
 	
 				if (ship.getCount() >= mine.getStrength())
 				{
-					this.game.getConsole().appendText(
+					this.events.addConsoleLine(
+							day, 
 							VegaResources.BattleshipsKilledByMine2(
 									true,
 									playerName,
-									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
+									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))), 
+							colorIndex);
+					
+//					this.game.getConsole().appendText(
+//							VegaResources.BattleshipsKilledByMine2(
+//									true,
+//									playerName,
+//									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
 	
 					ship.subtractBattleships(mine.getStrength(), ship.getOwner());
 	
@@ -544,51 +580,85 @@ class Evaluation
 						deleteShip = true;
 	
 					this.game.getMines().remove(sector.getString());
+					this.events.setMine(day, sector, 0);
 				}
 				else
 				{
-					this.game.getConsole().appendText(
+					this.events.addConsoleLine(
+							day, 
 							VegaResources.BattleshipsKilledByMine(
 									true, 
 									playerName,
-									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
+									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))), 
+							colorIndex);
+//					this.game.getConsole().appendText(
+//							VegaResources.BattleshipsKilledByMine(
+//									true, 
+//									playerName,
+//									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
 	
 					deleteShip = true;
 	
-					mine.setStrength(mine.getStrength() - ship.getCount());
+					int mineStrength = mine.getStrength() - ship.getCount();
+					mine.setStrength(mineStrength);
+					this.events.setMine(day, sector, mineStrength);
 				}
 			}
 			else if (ship.getType() == ShipType.MINESWEEPER)
 			{
-				this.printDayEvent(day);
-				this.game.getConsole().appendText (
+				//this.printDayEvent(day);
+				this.events.addConsoleLine(
+						day, 
 						VegaResources.MessageFromSector(true,
 								ship.getOwnerName(this.game),
 								Game.getSectorNameFromPositionStatic(
 										new Point(mine.getPositionX(), mine.getPositionY())
-										)));
-				this.game.getConsole().lineBreak();
-				this.game.getConsole().appendText (
+										)), 
+						colorIndex);
+				
+//				this.game.getConsole().appendText (
+//						VegaResources.MessageFromSector(true,
+//								ship.getOwnerName(this.game),
+//								Game.getSectorNameFromPositionStatic(
+//										new Point(mine.getPositionX(), mine.getPositionY())
+//										)));
+				//this.game.getConsole().lineBreak();
+				
+				this.events.addConsoleLine(
+						day, 
 						VegaResources.MineFieldSwept(
 								true,
-								Integer.toString(mine.getStrength())));
-	
+								Integer.toString(mine.getStrength())), 
+						colorIndex);
+//				this.game.getConsole().appendText (
+//						VegaResources.MineFieldSwept(
+//								true,
+//								Integer.toString(mine.getStrength())));
+//	
 	
 				this.game.getMines().remove(sector.getString());
+				this.events.setMine(day, sector, 0);
 			}
 			else
 				return;
 	
 		}
 		
-		this.game.updateBoard(
-				this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
-				day);
+		this.events.addHighlight(
+				day, 
+				ship.getPositionOnDay(day), 
+				EvaluationEventsHighlightType.CROSSHAIR);
+//		this.game.updateBoard(
+//				this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
+//				day);
 
-		this.waitForKeyPressed();
+		this.events.waitForKeyPressed();
 
 		if (deleteShip)
+		{
 			ship.setToBeDeleted();
+			this.events.stopShip(day, ship, true);
+		}
 	}
 
 	private void checkIfPlayerIsDead()
@@ -627,13 +697,19 @@ class Evaluation
 
 			this.game.getPlayers()[playerIndex].setDead(true);
 
-			this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
-			this.printDayEndOfYear();
-			this.game.getConsole().appendText(
+			this.events.addConsoleLine(
+					Game.DAYS_OF_YEAR_COUNT, 
 					VegaResources.PlayerGameOver(
 							true, 
-							this.game.getPlayers()[playerIndex].getName()));
-			this.waitForKeyPressed();
+							this.game.getPlayers()[playerIndex].getName()), 
+					this.game.getPlayers()[playerIndex].getColorIndex());
+			//this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
+			//this.printDayEndOfYear();
+//			this.game.getConsole().appendText(
+//					VegaResources.PlayerGameOver(
+//							true, 
+//							this.game.getPlayers()[playerIndex].getName()));
+			this.events.waitForKeyPressed();
 		}
 	}
 
@@ -741,7 +817,7 @@ class Evaluation
 			patrols.put(patrolHashCode, eventList);
 		}
 
-		eventList.add(this.replay.get(this.replay.size() - 1));
+		//eventList.add(this.replay.get(this.replay.size() - 1));
 	}
 
 	private boolean patrolCombat(Ship patrol, Ship otherPatrol, int day)
@@ -887,7 +963,7 @@ class Evaluation
 		this.patrolAddEvent(
 				otherShip.hashCode(),
 				patrol.hashCode(),
-				this.events);
+				this.patrolEvents);
 	}
 
 	private void patrolsDoWatch(int day)
@@ -968,30 +1044,30 @@ class Evaluation
 			mine.addToStrength(strength);
 	}
 
-	private void printDayBeginOfYear()
-	{
-		this.game.getConsole().appendText(">>> ");
-		this.game.getConsole().enableEvaluationProgressBar(true);
-	}
-
-	private void printDayEndOfYear()
-	{
-		this.game.getConsole().appendText(">>> ");
-		this.game.getConsole().setEvaluationProgressBarDay(Game.DAYS_OF_YEAR_COUNT);
-	}
-
-	private void printDayEvent(int day)
-	{
-		if (day < 1)
-			printDayBeginOfYear();
-		else if (day >= Game.DAYS_OF_YEAR_COUNT)
-			printDayEndOfYear();
-		else
-		{		
-			this.game.getConsole().appendText(">>> ");
-			this.game.getConsole().setEvaluationProgressBarDay(day);
-		}
-	}
+//	private void printDayBeginOfYear()
+//	{
+//		this.game.getConsole().appendText(">>> ");
+//		this.game.getConsole().enableEvaluationProgressBar(true);
+//	}
+//
+//	private void printDayEndOfYear()
+//	{
+//		this.game.getConsole().appendText(">>> ");
+//		this.game.getConsole().setEvaluationProgressBarDay(Game.DAYS_OF_YEAR_COUNT);
+//	}
+//
+//	private void printDayEvent(int day)
+//	{
+//		if (day < 1)
+//			printDayBeginOfYear();
+//		else if (day >= Game.DAYS_OF_YEAR_COUNT)
+//			printDayEndOfYear();
+//		else
+//		{		
+//			this.game.getConsole().appendText(">>> ");
+//			this.game.getConsole().setEvaluationProgressBarDay(day);
+//		}
+//	}
 
 	private HashSet<Integer> processAllianceChanges()
 	{
@@ -1181,17 +1257,26 @@ class Evaluation
 			{
 				ship.setToBeDeleted();
 				
-				this.printDayEvent(0);
+				//this.printDayEvent(0);
 
-				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-				this.game.getConsole().appendText(
+//				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//				this.game.getConsole().appendText(
+//						VegaResources.PlayerCapitulated(
+//								true,
+//								ship.getOwnerName(this.game)));
+				
+				this.events.addConsoleLine(
+						0, 
 						VegaResources.PlayerCapitulated(
 								true,
-								ship.getOwnerName(this.game)));
+								ship.getOwnerName(this.game)), 
+						ship.getOwnerColorIndex(this.game));
 
 				for (Planet planet: this.game.getPlanets())
 				{
 					planet.changeOwner(ship.getOwner(), Player.NEUTRAL);
+					
+					this.events.addPlanetInfo(0, planet);
 				}
 
 				for (Ship ship2: this.game.getShips())
@@ -1199,13 +1284,15 @@ class Evaluation
 					if (ship2.isPlayerInvolved(ship.getOwner()))
 					{
 						ship2.setToBeDeleted();
+						
+						this.events.stopShip(0, ship2, true);
 					}
 				}
 
-				this.game.updatePlanetList(false);
-				this.game.updateBoard(0);
+//				this.game.updatePlanetList(false);
+//				this.game.updateBoard(0);
 				
-				this.waitForKeyPressed();
+				this.events.waitForKeyPressed();
 			}
 		}
 	}
@@ -1282,14 +1369,25 @@ class Evaluation
 
 							if (!ok)
 							{
-								this.game.updateBoard(this.game.getSimpleFrameObjekt(ship.getPlanetIndexStart(), Colors.WHITE), 0);
-								this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-								this.game.getConsole().appendText(
+								//this.game.updateBoard(this.game.getSimpleFrameObjekt(ship.getPlanetIndexStart(), Colors.WHITE), 0);
+								this.events.addHighlight(
+										0,
+										this.game.getPlanets()[ship.getPlanetIndexStart()].getPosition(),
+										EvaluationEventsHighlightType.FRAME);
+								//this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+								this.events.addConsoleLine(
+										0,
 										VegaResources.BattleshipsNotLaunchedFromPlanet(
 												true,
 												ship.getOwnerName(this.game),
-												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())));
-								this.waitForKeyPressed();
+												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())), 
+										ship.getOwnerColorIndex(this.game));
+//								this.game.getConsole().appendText(
+//										VegaResources.BattleshipsNotLaunchedFromPlanet(
+//												true,
+//												ship.getOwnerName(this.game),
+//												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())));
+								this.events.waitForKeyPressed();
 								continue;
 							}
 						}
@@ -1297,14 +1395,25 @@ class Evaluation
 						{
 							if (planet.getBattleshipsCount(ship.getOwner()) < ship.getCount())
 							{
-								this.game.updateBoard(this.game.getSimpleFrameObjekt(ship.getPlanetIndexStart(), Colors.WHITE), 0);
-								this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-								this.game.getConsole().appendText(
+								//this.game.updateBoard(this.game.getSimpleFrameObjekt(ship.getPlanetIndexStart(), Colors.WHITE), 0);
+								this.events.addHighlight(
+										0,
+										this.game.getPlanets()[ship.getPlanetIndexStart()].getPosition(),
+										EvaluationEventsHighlightType.FRAME);
+								//this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//								this.game.getConsole().appendText(
+//										VegaResources.BattleshipsNotLaunchedFromPlanet(
+//												true,
+//												ship.getOwnerName(this.game),
+//												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())));
+								this.events.addConsoleLine(
+										0,
 										VegaResources.BattleshipsNotLaunchedFromPlanet(
 												true,
 												ship.getOwnerName(this.game),
-												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())));
-								this.waitForKeyPressed();
+												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())), 
+										ship.getOwnerColorIndex(this.game));
+								this.events.waitForKeyPressed();
 
 								continue;
 							}
@@ -1362,7 +1471,7 @@ class Evaluation
 						continue;
 					}
 
-					this.replay.remove(eventList.get(eventIndex));
+					//this.replay.remove(eventList.get(eventIndex));
 				}
 			}
 		}
@@ -1374,6 +1483,6 @@ class Evaluation
 
 		ScreenContent cont = (ScreenContent)CommonUtils.klon(this.game.getScreenContent());
 		cont.setPlanetEditor(null);
-		this.replay.add(cont);
+		//this.replay.add(cont);
 	}
 }

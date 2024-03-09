@@ -37,7 +37,7 @@ class Ship implements Serializable
 		
 		return getTravelTimeInternal(dist, v);
 	}
-	private static int getSpeed(ShipType type, boolean transfer)
+	static int getSpeed(ShipType type, boolean transfer)
 	{
 		if (type == ShipType.SPY && !transfer)
 			return SPEED_FAST;
