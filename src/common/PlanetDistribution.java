@@ -102,6 +102,18 @@ public class PlanetDistribution
 		}
 	}
 
+	private ArrayList<String> cloneList(ArrayList<String> list)
+	{
+		ArrayList<String> cloneList = new ArrayList<String>();
+		
+		for (String line: list)
+		{
+			cloneList.add(line);
+		}
+		
+		return cloneList;
+	}
+
 	private void placeHomePlanets()
 	{
 		Circle[] circles = new Circle[this.homePlanetIndices.length];
@@ -183,8 +195,7 @@ public class PlanetDistribution
 				this.statistics.loopNearbyPlanetsByPlayer[playerIndex]++;
 				ok = true;
 
-				@SuppressWarnings("unchecked")
-				ArrayList<String> potentialSectors = (ArrayList<String>) CommonUtils.klon(potentialSectorsMaster);
+				ArrayList<String> potentialSectors = this.cloneList(potentialSectorsMaster);
 				planetPositions = new Point[NEARBY_PLANETS_COUNT];
 
 				for (int i = 0; i < NEARBY_PLANETS_COUNT; i++)
@@ -226,7 +237,7 @@ public class PlanetDistribution
 
 		return new Point(posX, posY);
 	}
-
+	
 	private void placeRegularPlanets()
 	{
 		ArrayList<String> potentialSectorsMaster = new ArrayList<String>((int) (this.boardSize.x * this.boardSize.y));
@@ -266,8 +277,7 @@ public class PlanetDistribution
 			this.statistics.loopsRegularPlanets++;
 			ok = true;
 
-			@SuppressWarnings("unchecked")
-			ArrayList<String> potentialSectors = (ArrayList<String>) CommonUtils.klon(potentialSectorsMaster);
+			ArrayList<String> potentialSectors = this.cloneList(potentialSectorsMaster);
 
 			for (int planetIndex = startIndexRegularPlanets; planetIndex < positions.length; planetIndex++)
 			{
