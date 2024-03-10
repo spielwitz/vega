@@ -124,19 +124,19 @@ public class CommonUtils
 				ObjectOutputStream os = new ObjectOutputStream(out);
 				os.writeObject(obj);
 				os.flush();
-	
+				os.close();
+
 				ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 				ObjectInputStream is = new ObjectInputStream(in);
 				retval = (Object)is.readObject();
 				is.close();
-				os.close();
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
 				retval = null;
 			}
-	
+
 			return retval;
 		}
 	}
