@@ -310,10 +310,10 @@ public class PlanetDistribution
 
 			this.blockedSectors = new ArrayList<String>();
 
-			for (int x = Math.max(posX - 2 * NEARBY_PLANETS_RADIUS + 1, 0); x <= Math
+			for (int x = Math.max(posX - 2 * NEARBY_PLANETS_RADIUS, 0); x <= Math
 					.min(posX + 2 * NEARBY_PLANETS_RADIUS, boardSize.x-1); x++)
 			{
-				for (int y = Math.max(posY - 2 * NEARBY_PLANETS_RADIUS + 1, 0); y <= Math
+				for (int y = Math.max(posY - 2 * NEARBY_PLANETS_RADIUS, 0); y <= Math
 						.min(posY + 2 * NEARBY_PLANETS_RADIUS, boardSize.y-1); y++)
 				{
 					if (this.pos.distance(new Point(x, y)) <= 2 * NEARBY_PLANETS_RADIUS)
