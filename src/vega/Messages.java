@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2023 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -16,16 +16,26 @@
 
 package vega;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
+
+import com.google.gson.Gson;
 
 import spielwitz.biDiServer.Tuple;
 
 class Messages
 {
 	private static final String RECIPIENTS_SEPARATOR = ">";
+	private static final String MESSAGES_FOLDER = "Messages";
+	
 	static ArrayList<String> getRecipientsFromRecipientsString(String recipientsString, String ownUserId)
 	{
 		ArrayList<String> retval = new ArrayList<String>();
@@ -127,5 +137,40 @@ class Messages
 	protected HashSet<String> getUnreadMessages()
 	{
 		return unreadMessages;
+	}
+	
+	void writeToFile(String userId)
+	{
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(getFile(userId).getAbsolutePath())))
+		{
+			String json = new Gson().toJson(this);
+			bw.write(json);			
+		} catch (IOException e)
+		{
+		}
+	}
+	
+	static Messages readFromFile(String userId)
+	{
+		try (BufferedReader br = new BufferedReader(new FileReader(getFile(userId))))
+		{
+			String json = br.readLine();
+			return new Gson().fromJson(json, Messages.class);
+		} catch (Exception e)
+		{
+			return new Messages(userId); 
+		}
+	}
+	
+	private static File getFile(String userId)
+	{
+		File dir = new File(MESSAGES_FOLDER);
+		
+		if (!dir.exists())
+		{
+			dir.mkdirs();
+		}
+		
+		return new File(MESSAGES_FOLDER, "Messages_" + userId);
 	}
 }

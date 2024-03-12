@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2023 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -124,19 +124,19 @@ public class CommonUtils
 				ObjectOutputStream os = new ObjectOutputStream(out);
 				os.writeObject(obj);
 				os.flush();
-	
+				os.close();
+
 				ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 				ObjectInputStream is = new ObjectInputStream(in);
 				retval = (Object)is.readObject();
 				is.close();
-				os.close();
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
 				retval = null;
 			}
-	
+
 			return retval;
 		}
 	}

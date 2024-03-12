@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2023 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -121,7 +121,16 @@ public class Vega extends Frame // NO_UCD (use default)
 	}
 	public static void main(String[] args)
 	{
+		parseCommandLineArguments(args);
 		new Vega();
+	}
+	
+	private static void parseCommandLineArguments(String[] args)
+	{
+		if (args.length == 1)
+		{
+			VegaConfiguration.setFileName(args[0]);
+		}
 	}
 	
 	static void showDefaultCursor(Component parentComponent)
@@ -1194,7 +1203,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		if (result == DialogWindowResult.YES &&
 			this.client != null)
 		{
-			this.client.disconnect();
+			this.disconnectClient();
 		}
 
 		return result == DialogWindowResult.YES; 
@@ -1212,7 +1221,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		
 		this.client = new VegaClient(clientConfiguration, true, this);
 		this.client.start();
-		this.messages = new Messages(this.client.getUserId());
+		this.messages = Messages.readFromFile(this.client.getUserId());
 	}
 
 	private void createBackup (String fileName) throws IOException
@@ -1367,6 +1376,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		if (this.client != null)
 		{
+			this.messages.writeToFile(this.client.getUserId());
 			this.client.disconnect();
 		}
 		

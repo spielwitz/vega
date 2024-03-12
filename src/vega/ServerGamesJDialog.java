@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2023 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -39,6 +39,7 @@ import common.VegaResources;
 import common.CommonUtils;
 import common.GameInfo;
 import common.GameOptions;
+import common.PlanetDistribution;
 import common.PlanetInfo;
 import commonServer.ResponseMessageGamesAndUsers;
 import commonUi.DialogWindow;
@@ -576,7 +577,7 @@ class ServerGamesJDialog extends Dialog
 	
 	private String[] getPlanetComboBoxValues(int playersCount)
 	{
-		int planetCountMin = Game.getMinimumPlanetCount(playersCount);
+		int planetCountMin = PlanetDistribution.getPlanetCountMin(playersCount);
 		
 		String[] planets = new String[Game.PLANETS_COUNT_MAX - planetCountMin + 1];
 		for (int i = planetCountMin; i <= Game.PLANETS_COUNT_MAX; i++)

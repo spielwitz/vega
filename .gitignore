@@ -8,8 +8,9 @@ VegaDisplayProperties
 VegaDisplayConfiguration
 VegaHighscores
 VegaProperties
-VegaConfiguration
+VegaConfiguration*
 ServerData*
 Users*
+Messages*
 Web
 docs/.~lock.*

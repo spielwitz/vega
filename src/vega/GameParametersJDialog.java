@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2023 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import common.Colors;
 import common.Game;
 import common.GameOptions;
+import common.PlanetDistribution;
 import common.Player;
 import common.VegaResources;
 import common.CommonUtils;
@@ -435,7 +436,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 	{
 		int planetCountMin = 
 				this.mode == GameParametersDialogMode.NEW_GAME ?
-						Game.getMinimumPlanetCount(playersCount) :
+						PlanetDistribution.getPlanetCountMin(playersCount) :
 						Game.PLAYERS_COUNT_MAX;
 		
 		String[] planets = new String[Game.PLANETS_COUNT_MAX - planetCountMin + 1];

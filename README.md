@@ -35,7 +35,7 @@ Manual: [German](resources/VegaHelp_de-DE.pdf), [English](resources/VegaHelp_en-
 
 ## Built With
 
-Eclipse, Java 1.8
+Eclipse, Java 8
 
 ## License
 

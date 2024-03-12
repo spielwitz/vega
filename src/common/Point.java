@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2023 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -102,7 +102,14 @@ class Point extends Point2D.Double implements Serializable
 	Point klon()
 	{
 		return new Point(this.x, this.y);
-	}	
+	}
+	
+	Point add(Point pt)
+	{
+		return new Point(
+				this.getX() + pt.getX(),
+				this.getY() + pt.getY());
+	}
 	
 	Point subtract(Point pt)
 	{
