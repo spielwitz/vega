@@ -952,7 +952,7 @@ class ServerGamesJDialog extends Dialog
 				int x = CommonUtils.round(offset + plInfo.positionX * PIXEL_PER_SECTOR);
 				int y = CommonUtils.round(offset + plInfo.positionY * PIXEL_PER_SECTOR);
 				
-				if (!this.showOwners  && plInfo.isHomePlanet)
+				if (!this.showOwners  && plInfo.colorIndex != Colors.NEUTRAL)
 				{
 					g.fillOval(x - radiusDiff, y - radiusDiff, radiusLarge, radiusLarge);
 				}

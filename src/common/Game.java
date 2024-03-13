@@ -42,7 +42,7 @@ import com.google.gson.JsonObject;
 public class Game extends EmailTransportBase implements Serializable
 {
 	/// The current build
-	public static final String		BUILD = "0006";
+	public static final String		BUILD = "0007";
 	
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
@@ -442,8 +442,7 @@ public class Game extends EmailTransportBase implements Serializable
 			retval.add(new PlanetInfo(
 					(int)planet.getPosition().getX(), 
 					(int)planet.getPosition().getY(), 
-					planet.getOwnerColorIndex(this),
-					planetIndex < this.playersCount));
+					planet.getOwnerColorIndex(this)));
 		}
 		
 		return retval;
