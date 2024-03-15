@@ -1,0 +1,6 @@
+package vega;
+
+class ServerCredentials
+{
+
+}
