@@ -14,13 +14,16 @@ import java.util.Collections;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import common.Game;
 import common.VegaResources;
 import commonServer.ResponseMessageChangeUser;
 import commonUi.DialogWindow;
 import commonUi.DialogWindowResult;
 import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
+import spielwitz.biDiServer.PayloadResponseMessageChangeUser;
 import spielwitz.biDiServer.ResponseInfo;
+import spielwitz.biDiServer.Tuple;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -387,45 +390,95 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				
 				return this.clientConfig;
 			}
+			
+			private void activateUser()
+			{
+				PayloadResponseMessageChangeUser userActivationData = 
+						new PayloadResponseMessageChangeUser(
+								ServerCredentials.getUserId(this.clientConfig), 
+								ServerCredentials.getActivationCode(this.clientConfig), 
+								this.clientConfig.getUrl(), 
+								this.clientConfig.getPort(),
+								this.clientConfig.getAdminEmail(), 
+								this.clientConfig.getServerPublicKey());
+								
+				Tuple<ClientConfiguration, ResponseInfo> tuple = VegaClient.activateUser(
+						userActivationData,
+						VegaResources.getLocale(),
+						Game.BUILD);
+									
+				if (tuple.getE2().isSuccess())
+				{
+					DialogWindow.showInformation(
+							this,
+							VegaResources.UserActivationSuccess(false),
+						    VegaResources.ActivateUser(false));
+					
+					this.clientConfig = tuple.getE1();
+					this.setValues(this.clientConfig);
+					serverCredentials.setCredentials(
+							ServerCredentials.getCredentialKey(this.clientConfig), 
+							this.clientConfig, 
+							password);
+				}
+				else
+				{
+					Vega.showServerError(this, tuple.getE2());
+				}
+			}
+			
+			private void connectionTest()
+			{
+				ClientConfiguration testClientConfig = this.getClientConfig();
+				
+				VegaClient client = new VegaClient(testClientConfig, false, null);
+				
+				Vega.showWaitCursor(parent);
+				ResponseInfo info = client.pingServer();
+				Vega.showDefaultCursor(parent);
+				
+				if (info.isSuccess())
+				{
+					DialogWindow.showInformation(
+							parent, 
+							VegaResources.ConnectionSuccessful(false), 
+							VegaResources.ConnectionTest(false));
+				}
+				else
+				{
+					Vega.showServerError(parent, info);
+				}
+			}
+			
+			private void writeAdminEmail()
+			{
+				ClientConfiguration testClientConfig = this.getClientConfig();
+				
+				EmailToolkit.launchEmailClient(
+						parent, 
+						testClientConfig.getAdminEmail(), 
+						VegaResources.VegaServer(
+								false, 
+								testClientConfig.getUrl()),
+						"", 
+						null, 
+						null);
+			}
 
 			@Override
 			public void buttonClicked(Button source)
 			{
-				if (source == this.butConnectionTest)
+				if (source == this.butActivate)
 				{
-					ClientConfiguration testClientConfig = this.getClientConfig();
-					
-					VegaClient client = new VegaClient(testClientConfig, false, null);
-					
-					Vega.showWaitCursor(parent);
-					ResponseInfo info = client.pingServer();
-					Vega.showDefaultCursor(parent);
-					
-					if (info.isSuccess())
-					{
-						DialogWindow.showInformation(
-								parent, 
-								VegaResources.ConnectionSuccessful(false), 
-								VegaResources.ConnectionTest(false));
-					}
-					else
-					{
-						Vega.showServerError(parent, info);
-					}
+					this.activateUser();
+				}
+				else if (source == this.butConnectionTest)
+				{
+					this.connectionTest();
 				}
 				else if (source == this.butWriteAdminEmail)
 				{
-					ClientConfiguration testClientConfig = this.getClientConfig();
-					
-					EmailToolkit.launchEmailClient(
-							parent, 
-							testClientConfig.getAdminEmail(), 
-							VegaResources.VegaServer(
-									false, 
-									testClientConfig.getUrl()),
-							"", 
-							null, 
-							null);
+					this.writeAdminEmail();
 				}
 			}
 		}
