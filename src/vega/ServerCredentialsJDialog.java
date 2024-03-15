@@ -170,6 +170,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			private TextField tfUserId;
 			private TextField tfAdminEmail;
 			
+			private Button butActivate;
 			private Button butConnectionTest;
 			private Button butWriteAdminEmail;
 			
@@ -182,7 +183,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				super(new GridBagLayout());
 				
 				this.parent = parent;
-				this.clientConfig = clientConfig;
 				
 				GridBagConstraints c = new GridBagConstraints();
 				
@@ -199,6 +199,10 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.tfUserId = new TextField(textFieldColumns);
 				this.tfUserId.setEditable(false);
 				this.add(this.tfUserId, c);
+				
+				c.gridx = 3; c.gridy = 0; c.gridwidth = 1;
+				this.butActivate = new Button(VegaResources.Activate(false), this);
+				this.add(this.butActivate, c);
 				
 				c.gridx = 0; c.gridy = 1; c.gridwidth = 1;
 				this.add(new Label(VegaResources.ServerUrl(false)), c);
@@ -236,22 +240,47 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.butWriteAdminEmail = new Button(VegaResources.WriteEmail(false), this);
 				this.add(this.butWriteAdminEmail, c);
 				
-				if (this.clientConfig == null) return;
+				this.setValues(clientConfig);
+			}
+			
+			private void setValues(ClientConfiguration clientConfig)
+			{
+				this.clientConfig = clientConfig;
 				
-				this.tfUrl.setText(
-						clientConfig.getUrl() == null ? VegaResources.NoFileSelected(false): clientConfig.getUrl());
+				this.tfUrl.setEditable(clientConfig != null);
+				this.tfPort.setEditable(clientConfig != null);
+				this.tfTimeout.setEditable(clientConfig != null);
+				this.tfAdminEmail.setEditable(clientConfig != null);
 				
-				this.tfPort.setText(
-						clientConfig.getPort() == 0 ? "" : Integer.toString(clientConfig.getPort()));
+				this.butActivate.setEnabled(clientConfig != null);
+				this.butConnectionTest.setEnabled(clientConfig != null);
+				this.butWriteAdminEmail.setEnabled(clientConfig != null);
 				
-				this.tfUserId.setText(
-						clientConfig.getUserId() == null ? "" : clientConfig.getUserId());		
-				
-				this.tfAdminEmail.setText(
-						clientConfig.getAdminEmail() == null ? "" : clientConfig.getAdminEmail());
-				
-				this.tfTimeout.setText(
-						Integer.toString(clientConfig.getTimeout()));
+				if (clientConfig == null)
+				{
+					this.tfUserId.setText("");
+					this.tfUrl.setText("");
+					this.tfPort.setText("");
+					this.tfTimeout.setText("");
+					this.tfAdminEmail.setText("");
+				}
+				else
+				{
+					this.tfUserId.setText(
+							clientConfig.getUserId() == null ? "" : clientConfig.getUserId());
+					
+					this.tfUrl.setText(
+							clientConfig.getUrl() == null ? "": clientConfig.getUrl());
+					
+					this.tfPort.setText(
+							clientConfig.getPort() == 0 ? "" : Integer.toString(clientConfig.getPort()));
+										
+					this.tfTimeout.setText(
+							Integer.toString(clientConfig.getTimeout()));
+					
+					this.tfAdminEmail.setText(
+							clientConfig.getAdminEmail() == null ? "" : clientConfig.getAdminEmail());
+				}
 			}
 			
 			private ClientConfiguration getClientConfig()
