@@ -1626,40 +1626,43 @@ public class Vega extends Frame // NO_UCD (use default)
 
 	private void openServerCredentialsDialog()
 	{
-		this.inputEnabled = false;
-		this.redrawScreen();
-		
-		VegaServerCredentialsJDialog dlg = new VegaServerCredentialsJDialog(
-				this, 
-				this.config.isServerCommunicationEnabled(),
-				this.config.getServerUserCredentialsFile());
+		ServerCredentialsJDialog dlg = new ServerCredentialsJDialog(this, null);
 		dlg.setVisible(true);
 		
-		if (dlg.ok)
-		{
-			this.config.setServerUserCredentialsFile(dlg.serverUserCredentialsFile);
-			this.config.setServerCommunicationEnabled(dlg.serverCommunicationEnabled);
-			
-			if (this.config.isServerCommunicationEnabled())
-			{
-				if (this.client != null)
-				{
-					this.disconnectClient();
-				}
-				
-				this.connectClient();
-				this.updateConnectionAndMessageStatus();
-			}
-			else
-			{
-				this.disconnectClient();
-			}
-			
-			this.setMenuEnabled();
-		}
-		
-		this.inputEnabled = true;
-		this.redrawScreen();
+//		this.inputEnabled = false;
+//		this.redrawScreen();
+//		
+//		VegaServerCredentialsJDialog dlg = new VegaServerCredentialsJDialog(
+//				this, 
+//				this.config.isServerCommunicationEnabled(),
+//				this.config.getServerUserCredentialsFile());
+//		dlg.setVisible(true);
+//		
+//		if (dlg.ok)
+//		{
+//			this.config.setServerUserCredentialsFile(dlg.serverUserCredentialsFile);
+//			this.config.setServerCommunicationEnabled(dlg.serverCommunicationEnabled);
+//			
+//			if (this.config.isServerCommunicationEnabled())
+//			{
+//				if (this.client != null)
+//				{
+//					this.disconnectClient();
+//				}
+//				
+//				this.connectClient();
+//				this.updateConnectionAndMessageStatus();
+//			}
+//			else
+//			{
+//				this.disconnectClient();
+//			}
+//			
+//			this.setMenuEnabled();
+//		}
+//		
+//		this.inputEnabled = true;
+//		this.redrawScreen();
 
 	}
 
