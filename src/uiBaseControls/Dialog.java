@@ -55,8 +55,9 @@ public abstract class Dialog extends JDialog implements ActionListener
 				LookAndFeel.dialogInsets, 
 				LookAndFeel.dialogInsets);
 		
-		c.gridx = 0;
-		c.gridy = 0;
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.gridheight = GridBagConstraints.REMAINDER;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		c.fill = GridBagConstraints.BOTH;
 		c.weightx = 1;
 		c.weighty = 1;
