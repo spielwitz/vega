@@ -1,10 +1,13 @@
 package vega;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import spielwitz.biDiServer.ClientConfiguration;
 
-class ServerCredentials
+@SuppressWarnings("serial")
+class ServerCredentials implements Serializable
 {
 	private static final String ACTIVATION_CODE_SEPARATOR = "@";
 	
@@ -17,6 +20,13 @@ class ServerCredentials
 		this.credentialsEncrypted = new Hashtable<String,String>();
 		this.userCredentialsSelected = "";
 		this.adminCredentialsSelected = "";
+	}
+	
+	ArrayList<String> getCredentialKeys()
+	{
+		ArrayList<String> credentialKeys = new ArrayList<String>();
+		credentialKeys.addAll(this.credentialsEncrypted.keySet());
+		return credentialKeys;
 	}
 	
 	boolean credentialsExist(String key)

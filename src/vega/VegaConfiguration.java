@@ -302,6 +302,7 @@ class VegaConfiguration
 	void setServerCredentials(ServerCredentials serverCredentials)
 	{
 		this.serverCredentials = serverCredentials;
+		this.writeToFile();
 	}
 	
 	private boolean writeToFile()

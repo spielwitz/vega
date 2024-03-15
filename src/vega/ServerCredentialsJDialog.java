@@ -14,6 +14,9 @@ import java.util.Collections;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import com.google.gson.Gson;
+
+import common.CommonUtils;
 import common.Game;
 import common.VegaResources;
 import commonServer.ResponseMessageChangeUser;
@@ -46,7 +49,10 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	private UsersPanel panUsers;
 	
 	private ServerCredentials serverCredentials;
+	private ServerCredentials serverCredentialsBefore;
 	private String password = "1234";
+	
+	public boolean ok;
 	
 	ServerCredentialsJDialog(
 			Vega parent,
@@ -54,7 +60,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	{
 		super(parent, "Server-Zugangsdaten", new BorderLayout());
 		
-		this.serverCredentials = credentials;
+		this.serverCredentialsBefore = credentials;
+		this.serverCredentials = (ServerCredentials) CommonUtils.klon(credentials);
 		
 		this.tabpane = new TabbedPane();
 		
@@ -88,12 +95,45 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	{
 		return serverCredentials;
 	}
+	
+	protected void close()
+	{
+		super.close();
+	}
 
 	@Override
 	public void buttonClicked(Button source)
 	{
-		// TODO Auto-generated method stub
-		
+		if (source == this.butClose)
+		{
+			Gson serializer = new Gson();
+			String json = serializer.toJson(this.serverCredentials);
+			String jsonBefore = serializer.toJson(this.serverCredentialsBefore);
+			
+			if (!json.equals(jsonBefore))
+			{
+				DialogWindowResult dialogResult = DialogWindow.showYesNoCancel(
+						this, 
+						"Sie haben Änderungen gemacht!", 
+						"Änderungen gehen verloren");
+				
+				if (dialogResult == DialogWindowResult.YES)
+				{
+					this.ok = true;
+				}
+				else if (dialogResult == DialogWindowResult.CANCEL)
+				{
+					return;
+				}
+			}
+			
+			this.close();
+		}
+		else if (source == this.butOk)
+		{
+			this.ok = true;
+			super.close();
+		}
 	}
 	
 	private class UsersPanel extends Panel implements IButtonListener, IListListener, ActionListener
@@ -127,7 +167,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 10));
 			
-			this.listUsersModel = new ArrayList<String>();
+			this.listUsersModel = serverCredentials.getCredentialKeys();			
 			this.listUsers = new List(this.listUsersModel, this);
 			this.listUsers.setPreferredSize(new Dimension(300, 300));
 			panUsersList.addToInnerPanel(this.listUsers, BorderLayout.CENTER);
@@ -151,6 +191,17 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.panCredentials = new CredentialsPanel(parent, null);
 			panCredentials.addToInnerPanel(this.panCredentials, BorderLayout.NORTH);
 			this.add(panCredentials, BorderLayout.CENTER);
+			
+			if (serverCredentials.userCredentialsSelected != null &&
+				this.listUsersModel.contains(serverCredentials.userCredentialsSelected))
+			{
+				this.listUsers.setSelectedValue(serverCredentials.userCredentialsSelected);
+			}
+			else if (this.listUsersModel.size() > 0)
+			{
+				this.listUsers.setSelectedIndex(0);
+			}
+			this.setCredentialsPanelValues();
 		}
 
 		@Override
@@ -387,12 +438,15 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.clientConfig.setUrl(this.tfUrl.getText());
 				this.clientConfig.setPort(this.tfPort.getTextInt());
 				this.clientConfig.setTimeout(this.tfTimeout.getTextInt());
+				this.clientConfig.setAdminEmail(this.tfAdminEmail.getText());
 				
 				return this.clientConfig;
 			}
 			
 			private void activateUser()
 			{
+				this.getClientConfig();
+				
 				PayloadResponseMessageChangeUser userActivationData = 
 						new PayloadResponseMessageChangeUser(
 								ServerCredentials.getUserId(this.clientConfig), 
