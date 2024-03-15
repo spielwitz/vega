@@ -146,9 +146,12 @@ class VegaConfiguration
 	
 	private boolean				firstTimeStart;
 	
+	private ServerCredentials	serverCredentials;
+	
 	VegaConfiguration()
 	{
 		this.emailAddresses = new ArrayList<String>();
+		this.serverCredentials = new ServerCredentials();
 		this.firstTimeStart = true;
 	}
 	
@@ -291,8 +294,16 @@ class VegaConfiguration
 		this.webserverPort = webserverPort;
 		this.writeToFile();
 	}
-
-
+	
+	ServerCredentials getServerCredentials()
+	{
+		return serverCredentials;
+	}
+	void setServerCredentials(ServerCredentials serverCredentials)
+	{
+		this.serverCredentials = serverCredentials;
+	}
+	
 	private boolean writeToFile()
 	{
 		boolean success = true;

@@ -1626,7 +1626,7 @@ public class Vega extends Frame // NO_UCD (use default)
 
 	private void openServerCredentialsDialog()
 	{
-		ServerCredentialsJDialog dlg = new ServerCredentialsJDialog(this, null);
+		ServerCredentialsJDialog dlg = new ServerCredentialsJDialog(this, this.config.getServerCredentials());
 		dlg.setVisible(true);
 		
 //		this.inputEnabled = false;

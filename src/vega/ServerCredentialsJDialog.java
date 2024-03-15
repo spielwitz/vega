@@ -9,12 +9,16 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import common.VegaResources;
+import commonServer.ResponseMessageChangeUser;
 import commonUi.DialogWindow;
+import commonUi.DialogWindowResult;
+import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.ResponseInfo;
 import uiBaseControls.Button;
@@ -28,6 +32,7 @@ import uiBaseControls.PanelWithInsets;
 import uiBaseControls.TabbedPane;
 import uiBaseControls.TextField;
 
+@SuppressWarnings("serial")
 class ServerCredentialsJDialog extends Dialog implements IButtonListener
 {
 	private TabbedPane tabpane;
@@ -37,7 +42,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	
 	private UsersPanel panUsers;
 	
-	private ServerCredentials credentials;
+	private ServerCredentials serverCredentials;
+	private String password = "1234";
 	
 	ServerCredentialsJDialog(
 			Vega parent,
@@ -45,7 +51,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	{
 		super(parent, "Server-Zugangsdaten", new BorderLayout());
 		
-		this.credentials = credentials;
+		this.serverCredentials = credentials;
 		
 		this.tabpane = new TabbedPane();
 		
@@ -75,6 +81,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.setLocationRelativeTo(parent);	
 	}
 	
+	ServerCredentials getServerCredentials()
+	{
+		return serverCredentials;
+	}
+
 	@Override
 	public void buttonClicked(Button source)
 	{
@@ -84,6 +95,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	
 	private class UsersPanel extends Panel implements IButtonListener, IListListener, ActionListener
 	{
+		private ArrayList<String> listUsersModel;
 		private List listUsers;
 		private Button butAdd;
 		private Button butDelete;
@@ -93,10 +105,13 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		private JMenuItem popupMenuItemUser;
 		private JMenuItem popupMenuItemAdmin;
 		
+		private Dialog parent;
+		
 		private UsersPanel(Dialog parent)
 		{
 			super(new BorderLayout());
 			
+			this.parent = parent;
 			this.popupMenu = new JPopupMenu();
 			
 			this.popupMenuItemUser = new JMenuItem ("User (Spieler)");
@@ -109,7 +124,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 10));
 			
-			this.listUsers = new List(new ArrayList<String>(), this);
+			this.listUsersModel = new ArrayList<String>();
+			this.listUsers = new List(this.listUsersModel, this);
 			this.listUsers.setPreferredSize(new Dimension(300, 300));
 			panUsersList.addToInnerPanel(this.listUsers, BorderLayout.CENTER);
 			
@@ -156,8 +172,86 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			// TODO Auto-generated method stub
+			if (e.getSource() == this.popupMenuItemUser)
+			{
+				this.importUser();
+			}
+			else if (e.getSource() == this.popupMenuItemAdmin)
+			{
+				this.importAdminCredentials();
+			}
+		}
+		
+		private void importUser()
+		{
+			ClipboardImportJDialog<ResponseMessageChangeUser> dlg = 
+					new ClipboardImportJDialog<ResponseMessageChangeUser>(
+							parent, ResponseMessageChangeUser.class, true);
 			
+			dlg.setVisible(true);
+			
+			if (dlg.dlgResult == DialogWindowResult.OK)
+			{
+				ResponseMessageChangeUser newUser = (ResponseMessageChangeUser)dlg.obj;
+				
+				if (newUser != null)
+				{
+					ClientConfiguration clientConfiguration = 
+							new ClientConfiguration(
+									newUser.userId, 
+									newUser.serverUrl, 
+									newUser.serverPort, 
+									Client.CLIENT_SOCKET_TIMEOUT, 
+									null,
+									newUser.serverPublicKey, 
+									newUser.adminEmail);
+					
+					ServerCredentials.setActivationCode(clientConfiguration, newUser.activationCode);
+					
+					String credentialsKey = ServerCredentials.getCredentialKey(clientConfiguration);
+					
+					if (serverCredentials.credentialsExist(credentialsKey))
+					{
+						DialogWindowResult dialogResult = DialogWindow.showOkCancel(
+								parent,
+								"Zugangsdaten für diesen User, Server und Port existieren bereits. Möchten Sie diese ersetzen?",
+							    "Zugangsdaten ersetzen?");
+						
+						if (dialogResult != DialogWindowResult.OK)
+							return;
+					}
+					else
+					{
+						this.listUsersModel.add(credentialsKey);
+						Collections.sort(this.listUsersModel);
+						this.listUsers.refreshListModel(this.listUsersModel);
+					}
+					
+					serverCredentials.setCredentials(credentialsKey, clientConfiguration, password);
+					this.listUsers.setSelectedValue(credentialsKey);
+					this.setCredentialsPanelValues();
+				}
+			}
+		}
+		
+		private void importAdminCredentials()
+		{
+			
+		}
+		
+		private void setCredentialsPanelValues()
+		{
+			String credentialsKey = this.listUsers.getSelectedValue();
+			
+			if (credentialsKey == null)
+			{
+				this.panCredentials.setValues(null);
+			}
+			else
+			{
+				ClientConfiguration clientConfiguration = serverCredentials.getCredentials(credentialsKey, password);
+				this.panCredentials.setValues(clientConfiguration);
+			}
 		}
 		
 		private class CredentialsPanel extends Panel implements IButtonListener
@@ -252,8 +346,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.tfTimeout.setEditable(clientConfig != null);
 				this.tfAdminEmail.setEditable(clientConfig != null);
 				
-				this.butActivate.setEnabled(clientConfig != null);
-				this.butConnectionTest.setEnabled(clientConfig != null);
+				this.butActivate.setEnabled(ServerCredentials.getActivationCode(clientConfig) != null);
+				this.butConnectionTest.setEnabled(clientConfig != null && ServerCredentials.getActivationCode(clientConfig) == null);
 				this.butWriteAdminEmail.setEnabled(clientConfig != null);
 				
 				if (clientConfig == null)
@@ -267,7 +361,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				else
 				{
 					this.tfUserId.setText(
-							clientConfig.getUserId() == null ? "" : clientConfig.getUserId());
+							ServerCredentials.getUserId(clientConfig));
 					
 					this.tfUrl.setText(
 							clientConfig.getUrl() == null ? "": clientConfig.getUrl());
