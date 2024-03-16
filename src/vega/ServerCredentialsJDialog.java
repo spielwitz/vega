@@ -177,11 +177,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.parent = parent;
 			this.popupMenu = new JPopupMenu();
 			
-			this.popupMenuItemUser = new JMenuItem ("User (Spieler)");
+			this.popupMenuItemUser = new JMenuItem ("Kopieren & Einfügen");
 		    this.popupMenuItemUser.addActionListener(this);
 		    popupMenu.add (this.popupMenuItemUser);
 		    
-		    this.popupMenuItemAdmin = new JMenuItem ("Server-Admin");
+		    this.popupMenuItemAdmin = new JMenuItem ("Admin-Zugangsdaten aus Datei importieren");
 		    this.popupMenuItemAdmin.addActionListener(this);
 		    popupMenu.add (this.popupMenuItemAdmin);
 			
@@ -247,15 +247,15 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		{
 			if (e.getSource() == this.popupMenuItemUser)
 			{
-				this.importUser();
+				this.importCopyPaste();
 			}
 			else if (e.getSource() == this.popupMenuItemAdmin)
 			{
-				this.importAdminCredentials();
+				this.importFromFile();
 			}
 		}
 		
-		private void importUser()
+		private void importCopyPaste()
 		{
 			ClipboardImportJDialog<ResponseMessageChangeUser> dlg = 
 					new ClipboardImportJDialog<ResponseMessageChangeUser>(
@@ -286,7 +286,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 		}
 		
-		private void importAdminCredentials()
+		private void importFromFile()
 		{
 			JFileChooser fc = new JFileChooser();
 			
@@ -314,7 +314,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			ClientConfiguration clientConfiguration = ClientConfiguration.readFromFile(file.getAbsolutePath()); 
 			
-			if (clientConfiguration != null)
+			if (clientConfiguration != null && clientConfiguration.getUserId() != null)
 			{
 				this.confirmImportedClientConfiguration(clientConfiguration);
 			}
