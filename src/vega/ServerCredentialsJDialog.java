@@ -1,3 +1,19 @@
+/**	VEGA - a strategy game
+    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
+
 package vega;
 
 import java.awt.BorderLayout;
@@ -8,9 +24,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -50,7 +68,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	
 	private ServerCredentials serverCredentials;
 	private ServerCredentials serverCredentialsBefore;
-	private String password = "1234";
+	
+	private static String password = "1234";
+	private static String lastSelectedDirectory;
 	
 	public boolean ok;
 	
@@ -219,8 +239,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		@Override
 		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
 		{
-			// TODO Auto-generated method stub
-			
+			this.setCredentialsPanelValues();
 		}
 		
 		@Override
@@ -262,35 +281,76 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					
 					ServerCredentials.setActivationCode(clientConfiguration, newUser.activationCode);
 					
-					String credentialsKey = ServerCredentials.getCredentialKey(clientConfiguration);
-					
-					if (serverCredentials.credentialsExist(credentialsKey))
-					{
-						DialogWindowResult dialogResult = DialogWindow.showOkCancel(
-								parent,
-								"Zugangsdaten für diesen User, Server und Port existieren bereits. Möchten Sie diese ersetzen?",
-							    "Zugangsdaten ersetzen?");
-						
-						if (dialogResult != DialogWindowResult.OK)
-							return;
-					}
-					else
-					{
-						this.listUsersModel.add(credentialsKey);
-						Collections.sort(this.listUsersModel);
-						this.listUsers.refreshListModel(this.listUsersModel);
-					}
-					
-					serverCredentials.setCredentials(credentialsKey, clientConfiguration, password);
-					this.listUsers.setSelectedValue(credentialsKey);
-					this.setCredentialsPanelValues();
+					this.confirmImportedClientConfiguration(clientConfiguration);
 				}
 			}
 		}
 		
 		private void importAdminCredentials()
 		{
+			JFileChooser fc = new JFileChooser();
 			
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fc.setDialogTitle(VegaResources.AuthenticationFile(false));
+			
+			if (lastSelectedDirectory != null)
+			{
+				fc.setSelectedFile(new File(lastSelectedDirectory));
+			}
+			else
+			{
+				fc.setSelectedFile(new File(System.getProperty("user.dir")));
+			}
+			
+			int returnVal = fc.showOpenDialog(parent);
+			
+			if(returnVal != JFileChooser.APPROVE_OPTION)
+			{
+				return;
+			}
+			
+			File file = fc.getSelectedFile();
+			lastSelectedDirectory = file.getParent();
+			
+			ClientConfiguration clientConfiguration = ClientConfiguration.readFromFile(file.getAbsolutePath()); 
+			
+			if (clientConfiguration != null)
+			{
+				this.confirmImportedClientConfiguration(clientConfiguration);
+			}
+			else
+			{
+				DialogWindow.showError(
+					parent,
+					VegaResources.FileContainsInvalidCredentials(false, file.getAbsolutePath().toString()),
+				    VegaResources.Error(false));
+			}
+		}
+		
+		private void confirmImportedClientConfiguration(ClientConfiguration clientConfiguration)
+		{
+			String credentialsKey = ServerCredentials.getCredentialKey(clientConfiguration);
+			
+			if (serverCredentials.credentialsExist(credentialsKey))
+			{
+				DialogWindowResult dialogResult = DialogWindow.showOkCancel(
+						parent,
+						"Zugangsdaten für diesen User, Server und Port existieren bereits. Möchten Sie diese ersetzen?",
+					    "Zugangsdaten ersetzen?");
+				
+				if (dialogResult != DialogWindowResult.OK)
+					return;
+			}
+			else
+			{
+				this.listUsersModel.add(credentialsKey);
+				Collections.sort(this.listUsersModel);
+				this.listUsers.refreshListModel(this.listUsersModel);
+			}
+			
+			serverCredentials.setCredentials(credentialsKey, clientConfiguration, password);
+			this.listUsers.setSelectedValue(credentialsKey);
+			this.setCredentialsPanelValues();
 		}
 		
 		private void setCredentialsPanelValues()
@@ -464,7 +524,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				if (tuple.getE2().isSuccess())
 				{
 					DialogWindow.showInformation(
-							this,
+							parent,
 							VegaResources.UserActivationSuccess(false),
 						    VegaResources.ActivateUser(false));
 					
