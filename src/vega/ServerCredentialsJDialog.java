@@ -49,6 +49,7 @@ import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
 import uiBaseControls.IListListener;
+import uiBaseControls.ITextFieldListener;
 import uiBaseControls.Label;
 import uiBaseControls.List;
 import uiBaseControls.Panel;
@@ -281,7 +282,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					
 					ServerCredentials.setActivationCode(clientConfiguration, newUser.activationCode);
 					
-					this.confirmImportedClientConfiguration(clientConfiguration);
+					this.confirmImportedClientConfiguration(clientConfiguration, true);
 				}
 			}
 		}
@@ -316,7 +317,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			if (clientConfiguration != null && clientConfiguration.getUserId() != null)
 			{
-				this.confirmImportedClientConfiguration(clientConfiguration);
+				this.confirmImportedClientConfiguration(clientConfiguration, true);
 			}
 			else
 			{
@@ -327,11 +328,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 		}
 		
-		private void confirmImportedClientConfiguration(ClientConfiguration clientConfiguration)
+		private void confirmImportedClientConfiguration(ClientConfiguration clientConfiguration, boolean warnForOverride)
 		{
 			String credentialsKey = ServerCredentials.getCredentialKey(clientConfiguration);
 			
-			if (serverCredentials.credentialsExist(credentialsKey))
+			if (warnForOverride && serverCredentials.credentialsExist(credentialsKey))
 			{
 				DialogWindowResult dialogResult = DialogWindow.showOkCancel(
 						parent,
@@ -368,7 +369,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 		}
 		
-		private class CredentialsPanel extends Panel implements IButtonListener
+		private class CredentialsPanel extends Panel implements IButtonListener, ITextFieldListener
 		{
 			private Dialog parent;
 			
@@ -383,6 +384,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			private Button butWriteAdminEmail;
 			
 			private ClientConfiguration clientConfig;
+			private String currentCredentialsKey;
 			
 			private CredentialsPanel(
 					Dialog parent,
@@ -416,7 +418,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.add(new Label(VegaResources.ServerUrl(false)), c);
 				
 				c.gridx = 1; c.gridy = 1; c.gridwidth = 2;
-				this.tfUrl = new TextField(textFieldColumns); 
+				this.tfUrl = new TextField("", null, textFieldColumns, 0, this); 
 				this.add(this.tfUrl, c);
 				
 				c.gridx = 3; c.gridy = 1; c.gridwidth = 1;
@@ -427,21 +429,21 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.add(new Label(VegaResources.ServerPort(false)), c);
 				
 				c.gridx = 1; c.gridy = 2; c.gridwidth = 2;
-				this.tfPort = new TextField("", "[0-9]*", textFieldColumns, 5, null);
+				this.tfPort = new TextField("", "[0-9]*", textFieldColumns, 5, this);
 				this.add(this.tfPort, c);
 				
 				c.gridx = 0; c.gridy = 3;
 				this.add(new Label(VegaResources.Timeout(false)), c);
 				
 				c.gridx = 1; c.gridy = 3; c.gridwidth = 2;
-				this.tfTimeout = new TextField("", "[0-9]*", textFieldColumns, 8, null);
+				this.tfTimeout = new TextField("", "[0-9]*", textFieldColumns, 8, this);
 				this.add(this.tfTimeout, c);
 				
 				c.gridx = 0; c.gridy = 4; c.gridwidth = 1;
 				this.add(new Label(VegaResources.EmailAdmin(false)), c);
 				
 				c.gridx = 1; c.gridy = 4; c.gridwidth = 2;
-				this.tfAdminEmail = new TextField(textFieldColumns);
+				this.tfAdminEmail = new TextField("", null, textFieldColumns, 0, this);
 				this.add(this.tfAdminEmail, c);
 				
 				c.gridx = 3; c.gridy = 4; c.gridwidth = 1;
@@ -471,6 +473,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.tfPort.setText("");
 					this.tfTimeout.setText("");
 					this.tfAdminEmail.setText("");
+					
+					this.currentCredentialsKey = null;
 				}
 				else
 				{
@@ -488,6 +492,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					
 					this.tfAdminEmail.setText(
 							clientConfig.getAdminEmail() == null ? "" : clientConfig.getAdminEmail());
+					
+					this.currentCredentialsKey = ServerCredentials.getCredentialKey(clientConfig);
 				}
 			}
 			
@@ -593,6 +599,23 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				else if (source == this.butWriteAdminEmail)
 				{
 					this.writeAdminEmail();
+				}
+			}
+
+			@Override
+			public void textFieldFocusLost(TextField source)
+			{
+				this.getClientConfig();
+				String credentialsKey = ServerCredentials.getCredentialKey(this.clientConfig);
+				
+				if (credentialsKey.equals(this.currentCredentialsKey))
+				{
+					serverCredentials.setCredentials(credentialsKey, this.clientConfig, password);
+				}
+				else
+				{
+					serverCredentials.deleteCredentials(this.currentCredentialsKey);
+					confirmImportedClientConfiguration(this.clientConfig, false);
 				}
 			}
 		}
