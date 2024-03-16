@@ -383,7 +383,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			private Button butActivate;
 			private Button butConnectionTest;
 			private Button butWriteAdminEmail;
-			private Button butAcceptChanges;
 			
 			private ClientConfiguration clientConfig;
 			
@@ -451,10 +450,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.butWriteAdminEmail = new Button(VegaResources.WriteEmail(false), this);
 				this.add(this.butWriteAdminEmail, c);
 				
-				c.gridx = 1; c.gridy = 5; c.gridwidth = 2;
-				this.butAcceptChanges = new Button("Änderungen übernehmen", this);
-				this.add(this.butAcceptChanges, c);
-				
 				this.setValues(clientConfig);
 			}
 			
@@ -470,7 +465,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.butActivate.setEnabled(ServerCredentials.getActivationCode(clientConfig) != null);
 				this.butConnectionTest.setEnabled(clientConfig != null && ServerCredentials.getActivationCode(clientConfig) == null);
 				this.butWriteAdminEmail.setEnabled(clientConfig != null);
-				this.butAcceptChanges.setEnabled(false);
 				
 				if (clientConfig == null)
 				{
@@ -582,6 +576,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			{
 				if (this.clientConfig == null);
 				
+				boolean credentialDisplayStringChanged = false;
+				
+				credentialDisplayStringChanged = !this.tfUrl.getText().equals(this.clientConfig.getUrl());
+				credentialDisplayStringChanged |= this.tfPort.getTextInt() != this.clientConfig.getPort();
+				
 				this.clientConfig.setUrl(this.tfUrl.getText());
 				this.clientConfig.setPort(this.tfPort.getTextInt());
 				this.clientConfig.setTimeout(this.tfTimeout.getTextInt());
@@ -589,12 +588,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 
 				UUID credentialsKey = (UUID) listUsers.getSelectedListItem().getHandle();
 				serverCredentials.setCredentials(credentialsKey, this.clientConfig, password);
-				createListUsersModel();
-				listUsers.refreshListItems(listUsersModel);
-				int index = getListIndexByCredentialsKey(credentialsKey);
-				listUsers.setSelectedIndex(index);
 				
-				this.butAcceptChanges.setEnabled(false);
+				if (credentialDisplayStringChanged)
+				{
+					createListUsersModel();
+					listUsers.refreshListItems(listUsersModel);
+					int index = getListIndexByCredentialsKey(credentialsKey);
+					listUsers.setSelectedIndex(index);
+				}
 			}
 
 			@Override
@@ -612,10 +613,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				{
 					this.writeAdminEmail();
 				}
-				else if (source == this.butAcceptChanges)
-				{
-					this.acceptChanges();
-				}
 			}
 
 			@Override
@@ -626,14 +623,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			@Override
 			public void textChanged(TextField source)
 			{
-				boolean hasChanges = false;
-				
-				hasChanges = !this.tfUrl.getText().equals(this.clientConfig.getUrl());
-				hasChanges |= this.tfPort.getTextInt() != this.clientConfig.getPort();
-				hasChanges |= this.tfTimeout.getTextInt() != this.clientConfig.getTimeout();
-				hasChanges |= !this.tfAdminEmail.getText().equals(this.clientConfig.getAdminEmail());
-
-				this.butAcceptChanges.setEnabled(hasChanges);
+				this.acceptChanges();
 			}
 		}
 	}
