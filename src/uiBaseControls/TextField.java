@@ -54,15 +54,10 @@ public class TextField extends JTextField implements DocumentListener, FocusList
 		this.maxChars = maxChars;
 		this.allowedKeysRegexPattern = allowedKeysRegexPattern;
 		
-		if (this.allowedKeysRegexPattern != null ||
-			this.maxChars > 0)
-		{
-			this.getDocument().addDocumentListener(this);
-		}
-		
 		if (callback != null)
 		{
 			this.addFocusListener(this);
+			this.getDocument().addDocumentListener(this);
 		}
 	}
 	
@@ -117,6 +112,7 @@ public class TextField extends JTextField implements DocumentListener, FocusList
 	{
 		this.documentListenerDisabled = true;
 		super.setText(text);
+		this.previousText = text;
 		this.documentListenerDisabled = false;
 	}
 
@@ -127,20 +123,29 @@ public class TextField extends JTextField implements DocumentListener, FocusList
 			return;
 		}
 		
-		if (this.maxChars > 0 && this.getText().length() > this.maxChars)
+		if (this.allowedKeysRegexPattern != null ||
+			this.maxChars > 0)
 		{
-			this.undoChange();
-			return;
+			if (this.maxChars > 0 && this.getText().length() > this.maxChars)
+			{
+				this.undoChange();
+				return;
+			}
+			
+			if (this.allowedKeysRegexPattern != null &&
+				!Pattern.matches(this.allowedKeysRegexPattern, this.getText()))
+			{
+				this.undoChange();
+				return;
+			}
+			
+			this.previousText = this.getText();
 		}
 		
-		if (this.allowedKeysRegexPattern != null &&
-			!Pattern.matches(this.allowedKeysRegexPattern, this.getText()))
+		if (this.callback != null)
 		{
-			this.undoChange();
-			return;
+			this.callback.textChanged(this);
 		}
-		
-		this.previousText = this.getText();
 	}
 
 	private void undoChange()

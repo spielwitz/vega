@@ -229,4 +229,9 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 		
 		Collections.sort(this.emailAdresses);		
 	}
+
+	@Override
+	public void textChanged(TextField source)
+	{
+	}
 }

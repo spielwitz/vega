@@ -19,6 +19,7 @@ package vega;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.UUID;
 
 import spielwitz.biDiServer.ClientConfiguration;
 
@@ -41,7 +42,7 @@ class ServerCredentials implements Serializable
 			return null;
 		}
 	}
-	static String getCredentialKey(ClientConfiguration clientConfiguration)
+	static String getCredentialsDisplayName(ClientConfiguration clientConfiguration)
 	{
 		return getUserId(clientConfiguration) + "@" + clientConfiguration.getUrl() + ":" + clientConfiguration.getPort(); 
 	}
@@ -76,35 +77,33 @@ class ServerCredentials implements Serializable
 		clientConfiguration.setUserId(clientConfiguration.getUserId() + ACTIVATION_CODE_SEPARATOR + activationCode);
 	}
 	
-	String adminCredentialsSelected;
-	String userCredentialsSelected;
-	private Hashtable<String,String> credentialsEncrypted;
+	UUID adminCredentialsSelected;
+	UUID userCredentialsSelected;
+	private Hashtable<UUID,String> credentialsEncrypted;
 	
 	ServerCredentials()
 	{
-		this.credentialsEncrypted = new Hashtable<String,String>();
-		this.userCredentialsSelected = "";
-		this.adminCredentialsSelected = "";
+		this.credentialsEncrypted = new Hashtable<UUID,String>();
 	}
 	
-	boolean credentialsExist(String key)
+	boolean credentialsExist(UUID key)
 	{
 		return this.credentialsEncrypted.containsKey(key);
 	}
 	
-	void deleteCredentials(String key)
+	void deleteCredentials(UUID key)
 	{
 		this.credentialsEncrypted.remove(key);
 	}
 	
-	ArrayList<String> getCredentialKeys()
+	ArrayList<UUID> getCredentialKeys()
 	{
-		ArrayList<String> credentialKeys = new ArrayList<String>();
+		ArrayList<UUID> credentialKeys = new ArrayList<UUID>();
 		credentialKeys.addAll(this.credentialsEncrypted.keySet());
 		return credentialKeys;
 	}
 	
-	ClientConfiguration getCredentials(String key, String password)
+	ClientConfiguration getCredentials(UUID key, String password)
 	{
 		return (ClientConfiguration) VegaUtils.convertFromBase64(
 					this.credentialsEncrypted.get(key), 
@@ -112,7 +111,7 @@ class ServerCredentials implements Serializable
 					password);
 	}
 	
-	void setCredentials(String key, ClientConfiguration credentials, String password)
+	void setCredentials(UUID key, ClientConfiguration credentials, String password)
 	{
 		this.credentialsEncrypted.put(
 					key, 

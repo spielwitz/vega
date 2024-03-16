@@ -16,8 +16,35 @@
 
 package uiBaseControls;
 
-public interface ITextFieldListener
+import java.util.Comparator;
+
+public class ListItem implements Comparator<ListItem> 
 {
-	void textFieldFocusLost(TextField source);
-	void textChanged(TextField source);
+	private String displayString;
+	private Object handle;
+	
+	public ListItem() {}
+	
+	public ListItem(String displayString, Object handle)
+	{
+		this.displayString = displayString;
+		this.handle = handle;
+	}
+
+	public String getDisplayString()
+	{
+		return displayString;
+	}
+
+	public Object getHandle()
+	{
+		return handle;
+	}
+
+	@Override
+	public int compare(ListItem o1, ListItem o2)
+	{
+		// TODO Auto-generated method stub
+		return o1.getDisplayString().compareTo(o2.getDisplayString());
+	}
 }

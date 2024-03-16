@@ -27,12 +27,11 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.UUID;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-
-import com.google.gson.Gson;
 
 import common.CommonUtils;
 import common.Game;
@@ -52,6 +51,7 @@ import uiBaseControls.IListListener;
 import uiBaseControls.ITextFieldListener;
 import uiBaseControls.Label;
 import uiBaseControls.List;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 import uiBaseControls.PanelWithInsets;
 import uiBaseControls.TabbedPane;
@@ -68,7 +68,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	private UsersPanel panUsers;
 	
 	private ServerCredentials serverCredentials;
-	private ServerCredentials serverCredentialsBefore;
 	
 	private static String password = "1234";
 	private static String lastSelectedDirectory;
@@ -81,7 +80,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	{
 		super(parent, "Server-Zugangsdaten", new BorderLayout());
 		
-		this.serverCredentialsBefore = credentials;
 		this.serverCredentials = (ServerCredentials) CommonUtils.klon(credentials);
 		
 		this.tabpane = new TabbedPane();
@@ -96,7 +94,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.butOk = new Button(VegaResources.OK(false), this);
 		panButtons.add(this.butOk);
 		
-		this.butClose = new Button(VegaResources.Close(false), this);
+		this.butClose = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butClose);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
@@ -127,27 +125,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	{
 		if (source == this.butClose)
 		{
-			Gson serializer = new Gson();
-			String json = serializer.toJson(this.serverCredentials);
-			String jsonBefore = serializer.toJson(this.serverCredentialsBefore);
-			
-			if (!json.equals(jsonBefore))
-			{
-				DialogWindowResult dialogResult = DialogWindow.showYesNoCancel(
-						this, 
-						"Sie haben Änderungen gemacht!", 
-						"Änderungen gehen verloren");
-				
-				if (dialogResult == DialogWindowResult.YES)
-				{
-					this.ok = true;
-				}
-				else if (dialogResult == DialogWindowResult.CANCEL)
-				{
-					return;
-				}
-			}
-			
 			this.close();
 		}
 		else if (source == this.butOk)
@@ -159,7 +136,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	
 	private class UsersPanel extends Panel implements IButtonListener, IListListener, ActionListener
 	{
-		private ArrayList<String> listUsersModel;
+		private ArrayList<ListItem> listUsersModel;
 		private List listUsers;
 		private Button butAdd;
 		private Button butDelete;
@@ -188,8 +165,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 10));
 			
-			this.listUsersModel = serverCredentials.getCredentialKeys();			
-			this.listUsers = new List(this.listUsersModel, this);
+			this.createListUsersModel();
+			this.listUsers = new List(this, this.listUsersModel);
 			this.listUsers.setPreferredSize(new Dimension(300, 300));
 			panUsersList.addToInnerPanel(this.listUsers, BorderLayout.CENTER);
 			
@@ -213,16 +190,54 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			panCredentials.addToInnerPanel(this.panCredentials, BorderLayout.NORTH);
 			this.add(panCredentials, BorderLayout.CENTER);
 			
-			if (serverCredentials.userCredentialsSelected != null &&
-				this.listUsersModel.contains(serverCredentials.userCredentialsSelected))
+			int index = this.getListIndexByCredentialsKey(serverCredentials.userCredentialsSelected);
+			
+			if (index >= 0)
 			{
-				this.listUsers.setSelectedValue(serverCredentials.userCredentialsSelected);
+				this.listUsers.setSelectedIndex(index);
 			}
 			else if (this.listUsersModel.size() > 0)
 			{
 				this.listUsers.setSelectedIndex(0);
 			}
 			this.setCredentialsPanelValues();
+		}
+		
+		private void createListUsersModel()
+		{
+			ArrayList<UUID> credentialKeys = serverCredentials.getCredentialKeys();
+			this.listUsersModel = new ArrayList<ListItem>();
+			
+			for (UUID credentialKey: credentialKeys)
+			{
+				ClientConfiguration clientConfiguration = serverCredentials.getCredentials(credentialKey, password);
+				this.listUsersModel.add(
+						new ListItem(
+								ServerCredentials.getCredentialsDisplayName(clientConfiguration),
+								credentialKey));
+			}
+			
+			Collections.sort(this.listUsersModel, new ListItem());
+		}
+		
+		private int getListIndexByCredentialsKey(UUID key)
+		{
+			if (key == null) return -1;
+			
+			int index = -1;
+			
+			for (int i = 0; i < this.listUsersModel.size(); i++)
+			{
+				UUID handle = (UUID)this.listUsersModel.get(i).getHandle();
+				
+				if (handle.equals(key))
+				{
+					index = i;
+					break;
+				}
+			}
+			
+			return index;
 		}
 
 		@Override
@@ -282,7 +297,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					
 					ServerCredentials.setActivationCode(clientConfiguration, newUser.activationCode);
 					
-					this.confirmImportedClientConfiguration(clientConfiguration, true);
+					this.addNew(clientConfiguration);
 				}
 			}
 		}
@@ -317,7 +332,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			if (clientConfiguration != null && clientConfiguration.getUserId() != null)
 			{
-				this.confirmImportedClientConfiguration(clientConfiguration, true);
+				this.addNew(clientConfiguration);
 			}
 			else
 			{
@@ -328,43 +343,29 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 		}
 		
-		private void confirmImportedClientConfiguration(ClientConfiguration clientConfiguration, boolean warnForOverride)
+		private void addNew(ClientConfiguration clientConfiguration)
 		{
-			String credentialsKey = ServerCredentials.getCredentialKey(clientConfiguration);
-			
-			if (warnForOverride && serverCredentials.credentialsExist(credentialsKey))
-			{
-				DialogWindowResult dialogResult = DialogWindow.showOkCancel(
-						parent,
-						"Zugangsdaten für diesen User, Server und Port existieren bereits. Möchten Sie diese ersetzen?",
-					    "Zugangsdaten ersetzen?");
-				
-				if (dialogResult != DialogWindowResult.OK)
-					return;
-			}
-			else
-			{
-				this.listUsersModel.add(credentialsKey);
-				Collections.sort(this.listUsersModel);
-				this.listUsers.refreshListModel(this.listUsersModel);
-			}
-			
+			UUID credentialsKey = UUID.randomUUID();
 			serverCredentials.setCredentials(credentialsKey, clientConfiguration, password);
-			this.listUsers.setSelectedValue(credentialsKey);
+			
+			this.createListUsersModel();
+			this.listUsers.refreshListItems(this.listUsersModel);
+			
+			this.listUsers.setSelectedIndex(this.getListIndexByCredentialsKey(credentialsKey));
 			this.setCredentialsPanelValues();
 		}
 		
 		private void setCredentialsPanelValues()
 		{
-			String credentialsKey = this.listUsers.getSelectedValue();
+			ListItem selectedListItem = this.listUsers.getSelectedListItem();
 			
-			if (credentialsKey == null)
+			if (selectedListItem == null)
 			{
 				this.panCredentials.setValues(null);
 			}
 			else
 			{
-				ClientConfiguration clientConfiguration = serverCredentials.getCredentials(credentialsKey, password);
+				ClientConfiguration clientConfiguration = serverCredentials.getCredentials((UUID)selectedListItem.getHandle(), password);
 				this.panCredentials.setValues(clientConfiguration);
 			}
 		}
@@ -382,9 +383,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			private Button butActivate;
 			private Button butConnectionTest;
 			private Button butWriteAdminEmail;
+			private Button butAcceptChanges;
 			
 			private ClientConfiguration clientConfig;
-			private String currentCredentialsKey;
 			
 			private CredentialsPanel(
 					Dialog parent,
@@ -450,6 +451,10 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.butWriteAdminEmail = new Button(VegaResources.WriteEmail(false), this);
 				this.add(this.butWriteAdminEmail, c);
 				
+				c.gridx = 1; c.gridy = 5; c.gridwidth = 2;
+				this.butAcceptChanges = new Button("Änderungen übernehmen", this);
+				this.add(this.butAcceptChanges, c);
+				
 				this.setValues(clientConfig);
 			}
 			
@@ -465,6 +470,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.butActivate.setEnabled(ServerCredentials.getActivationCode(clientConfig) != null);
 				this.butConnectionTest.setEnabled(clientConfig != null && ServerCredentials.getActivationCode(clientConfig) == null);
 				this.butWriteAdminEmail.setEnabled(clientConfig != null);
+				this.butAcceptChanges.setEnabled(false);
 				
 				if (clientConfig == null)
 				{
@@ -473,8 +479,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.tfPort.setText("");
 					this.tfTimeout.setText("");
 					this.tfAdminEmail.setText("");
-					
-					this.currentCredentialsKey = null;
 				}
 				else
 				{
@@ -492,26 +496,12 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					
 					this.tfAdminEmail.setText(
 							clientConfig.getAdminEmail() == null ? "" : clientConfig.getAdminEmail());
-					
-					this.currentCredentialsKey = ServerCredentials.getCredentialKey(clientConfig);
 				}
-			}
-			
-			private ClientConfiguration getClientConfig()
-			{
-				if (this.clientConfig == null) return null;
-				
-				this.clientConfig.setUrl(this.tfUrl.getText());
-				this.clientConfig.setPort(this.tfPort.getTextInt());
-				this.clientConfig.setTimeout(this.tfTimeout.getTextInt());
-				this.clientConfig.setAdminEmail(this.tfAdminEmail.getText());
-				
-				return this.clientConfig;
 			}
 			
 			private void activateUser()
 			{
-				this.getClientConfig();
+				this.acceptChanges();
 				
 				PayloadResponseMessageChangeUser userActivationData = 
 						new PayloadResponseMessageChangeUser(
@@ -536,8 +526,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					
 					this.clientConfig = tuple.getE1();
 					this.setValues(this.clientConfig);
+					
+					ListItem selectedListItem = listUsers.getSelectedListItem();
+					
 					serverCredentials.setCredentials(
-							ServerCredentials.getCredentialKey(this.clientConfig), 
+							(UUID)selectedListItem.getHandle(), 
 							this.clientConfig, 
 							password);
 				}
@@ -549,9 +542,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			private void connectionTest()
 			{
-				ClientConfiguration testClientConfig = this.getClientConfig();
+				this.acceptChanges();
 				
-				VegaClient client = new VegaClient(testClientConfig, false, null);
+				VegaClient client = new VegaClient(this.clientConfig, false, null);
 				
 				Vega.showWaitCursor(parent);
 				ResponseInfo info = client.pingServer();
@@ -572,17 +565,36 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			private void writeAdminEmail()
 			{
-				ClientConfiguration testClientConfig = this.getClientConfig();
+				this.acceptChanges();
 				
 				EmailToolkit.launchEmailClient(
 						parent, 
-						testClientConfig.getAdminEmail(), 
+						this.clientConfig.getAdminEmail(), 
 						VegaResources.VegaServer(
 								false, 
-								testClientConfig.getUrl()),
+								this.clientConfig.getUrl()),
 						"", 
 						null, 
 						null);
+			}
+			
+			private void acceptChanges()
+			{
+				if (this.clientConfig == null);
+				
+				this.clientConfig.setUrl(this.tfUrl.getText());
+				this.clientConfig.setPort(this.tfPort.getTextInt());
+				this.clientConfig.setTimeout(this.tfTimeout.getTextInt());
+				this.clientConfig.setAdminEmail(this.tfAdminEmail.getText());
+
+				UUID credentialsKey = (UUID) listUsers.getSelectedListItem().getHandle();
+				serverCredentials.setCredentials(credentialsKey, this.clientConfig, password);
+				createListUsersModel();
+				listUsers.refreshListItems(listUsersModel);
+				int index = getListIndexByCredentialsKey(credentialsKey);
+				listUsers.setSelectedIndex(index);
+				
+				this.butAcceptChanges.setEnabled(false);
 			}
 
 			@Override
@@ -600,23 +612,28 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				{
 					this.writeAdminEmail();
 				}
+				else if (source == this.butAcceptChanges)
+				{
+					this.acceptChanges();
+				}
 			}
 
 			@Override
 			public void textFieldFocusLost(TextField source)
 			{
-				this.getClientConfig();
-				String credentialsKey = ServerCredentials.getCredentialKey(this.clientConfig);
+			}
+			
+			@Override
+			public void textChanged(TextField source)
+			{
+				boolean hasChanges = false;
 				
-				if (credentialsKey.equals(this.currentCredentialsKey))
-				{
-					serverCredentials.setCredentials(credentialsKey, this.clientConfig, password);
-				}
-				else
-				{
-					serverCredentials.deleteCredentials(this.currentCredentialsKey);
-					confirmImportedClientConfiguration(this.clientConfig, false);
-				}
+				hasChanges = !this.tfUrl.getText().equals(this.clientConfig.getUrl());
+				hasChanges |= this.tfPort.getTextInt() != this.clientConfig.getPort();
+				hasChanges |= this.tfTimeout.getTextInt() != this.clientConfig.getTimeout();
+				hasChanges |= !this.tfAdminEmail.getText().equals(this.clientConfig.getAdminEmail());
+
+				this.butAcceptChanges.setEnabled(hasChanges);
 			}
 		}
 	}

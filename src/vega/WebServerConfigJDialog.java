@@ -222,6 +222,11 @@ import vega.qrCode.*;
 			this.port = Integer.parseInt(this.tfPort.getText());
 		}
 	}
+	
+	@Override
+	public void textChanged(TextField source)
+	{
+	}
 
 	protected void close()
 	{
