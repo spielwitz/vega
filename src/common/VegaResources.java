@@ -2658,7 +2658,7 @@ public class VegaResources
 	}
 
 	/**
-	   * VEGA server {0} [8A]
+	   * [VEGA] server user {0} [8A]
 	   */
 	public static String VegaServer(boolean symbol, String arg0) {
 		return symbol ? "£8A§"+arg0+"£":MessageFormat.format(messages.getString("VegaServer_8A"), arg0);

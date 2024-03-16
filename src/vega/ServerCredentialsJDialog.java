@@ -566,7 +566,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 						this.clientConfig.getAdminEmail(), 
 						VegaResources.VegaServer(
 								false, 
-								this.clientConfig.getUrl()),
+								ServerCredentials.getCredentialsDisplayName(this.clientConfig)),
 						"", 
 						null, 
 						null);
