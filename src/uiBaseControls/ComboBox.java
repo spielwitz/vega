@@ -18,6 +18,8 @@ package uiBaseControls;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.swing.JComboBox;
 
@@ -25,18 +27,40 @@ import javax.swing.JComboBox;
 public class ComboBox extends JComboBox<String> implements ActionListener
 {
 	private IComboBoxListener callback;
-	private String selectedItem;
+	private ArrayList<ListItem> listItems;
+	private ListItem selectedItem;
 	private boolean eventsEnabled;
 	
 	public ComboBox(String[] data, int widthNumCharacters, String selectedItem, IComboBoxListener callback)
 	{
 		super(data);
+		ArrayList<ListItem> listItems = getListItems(data);
+		Optional<ListItem> selectedListItem = listItems.stream().filter(i -> i.getDisplayString().equals(selectedItem)).findFirst();
 		
+		if (selectedListItem.isPresent())
+		{
+			this.initialize(listItems, widthNumCharacters, selectedListItem.get(), callback);
+		}
+		else
+		{
+			this.initialize(listItems, widthNumCharacters, null, callback);
+		}
+	}
+	
+	public ComboBox(ArrayList<ListItem> listItems, int widthNumCharacters, ListItem selectedItem, IComboBoxListener callback)
+	{
+		super(getStringData(listItems));
+		this.initialize(listItems, widthNumCharacters, selectedItem, callback);
+	}
+	
+	private void initialize(ArrayList<ListItem> listItems, int widthNumCharacters, ListItem selectedItem, IComboBoxListener callback)
+	{
 		this.callback = callback;
+		this.listItems = listItems;
 		
 		this.setPrototypeDisplayValue( new String(new char[widthNumCharacters]).replace('\0', ' '));
 		
-		if (data.length > 0 && selectedItem != null)
+		if (listItems.size() > 0 && selectedItem != null)
 		{
 			this.selectedItem = selectedItem;
 			this.setSelectedItem(selectedItem);
@@ -49,6 +73,30 @@ public class ComboBox extends JComboBox<String> implements ActionListener
 		}
 	}
 	
+	private static ArrayList<ListItem> getListItems(String[] data)
+	{
+		ArrayList<ListItem> listItems = new ArrayList<ListItem>();
+		
+		for (String value: data)
+		{
+			listItems.add(new ListItem(value, null));
+		}
+		
+		return listItems;
+	}
+	
+	private static String[] getStringData(ArrayList<ListItem> listItems)
+	{
+		String[] data = new String[listItems.size()];
+		
+		for (int i = 0; i < listItems.size(); i++)
+		{
+			data[i] = listItems.get(i).getDisplayString();
+		}
+		
+		return data;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent event)
 	{
@@ -57,13 +105,18 @@ public class ComboBox extends JComboBox<String> implements ActionListener
 			return;
 		}
 		
-		String newSelectedItem = (String)this.getSelectedItem();
+		int index = this.getSelectedIndex();
+		
+		ListItem newSelectedItem = 
+				index >= 0 ?
+						this.listItems.get(index) :
+						null;
 		
 		if (this.selectedItem == null ||
 			!this.selectedItem.equals(newSelectedItem))
 		{
 			this.selectedItem = newSelectedItem;
-			this.callback.comboBoxItemSelected(this, this.selectedItem);
+			this.callback.comboBoxItemSelected(this, this.selectedItem.getDisplayString());
 		}
 	}
 	
@@ -86,6 +139,7 @@ public class ComboBox extends JComboBox<String> implements ActionListener
 		this.removeActionListener(this);
 		super.removeAllItems();
 		this.selectedItem = null;
+		this.listItems = getListItems(data);
 		
 		for (String value: data)
 		{
