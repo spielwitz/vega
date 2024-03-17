@@ -45,6 +45,7 @@ import uiBaseControls.Frame;
 import uiBaseControls.IButtonListener;
 import uiBaseControls.IComboBoxListener;
 import uiBaseControls.Label;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 import uiBaseControls.TextField;
 
@@ -338,6 +339,11 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 			
 			this.setControlsEnabled();
 		}
+	}
+	
+	@Override
+	public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+	{
 	}
 	
 	public String getEmailGameHost()

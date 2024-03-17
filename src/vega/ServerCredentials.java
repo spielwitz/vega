@@ -81,7 +81,9 @@ class ServerCredentials implements Serializable
 	
 	UUID adminCredentialsSelected;
 	UUID userCredentialsSelected;
+	boolean connectionActive;
 	private Hashtable<UUID,String> credentialsEncrypted;
+	
 	private transient String password;
 	
 	ServerCredentials()
@@ -165,6 +167,17 @@ class ServerCredentials implements Serializable
 		{
 			if (!other.credentialsExist(credentialsKey)) return true;
 			if (!this.credentialsEncrypted.get(credentialsKey).equals(other.credentialsEncrypted.get(credentialsKey))) return true;
+			if (this.connectionActive != other.connectionActive) return true;
+			
+			if (this.userCredentialsSelected == null && other.userCredentialsSelected != null) return true;
+			if (this.userCredentialsSelected != null && other.userCredentialsSelected == null) return true;
+			if (this.userCredentialsSelected != null && other.userCredentialsSelected != null &&
+				!this.userCredentialsSelected.equals(other.userCredentialsSelected)) return true;
+			
+			if (this.adminCredentialsSelected == null && other.adminCredentialsSelected != null) return true;
+			if (this.adminCredentialsSelected != null && other.adminCredentialsSelected == null) return true;
+			if (this.adminCredentialsSelected != null && other.adminCredentialsSelected != null &&
+				!this.adminCredentialsSelected.equals(other.adminCredentialsSelected)) return true;
 		}
 		
 		return false;

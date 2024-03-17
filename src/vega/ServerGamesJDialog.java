@@ -56,6 +56,7 @@ import uiBaseControls.IListListener;
 import uiBaseControls.IRadioButtonListener;
 import uiBaseControls.Label;
 import uiBaseControls.List;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 import uiBaseControls.RadioButton;
 import uiBaseControls.TextField;
@@ -370,7 +371,11 @@ class ServerGamesJDialog extends Dialog
 		{
 			this.newGame(false);
 		}
-		
+	}
+	
+	@Override
+	public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+	{
 	}
 	
 	@Override

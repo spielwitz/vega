@@ -32,6 +32,7 @@ import java.util.UUID;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 
 import common.Game;
 import common.VegaResources;
@@ -43,9 +44,14 @@ import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.PayloadResponseMessageChangeUser;
 import spielwitz.biDiServer.ResponseInfo;
 import spielwitz.biDiServer.Tuple;
+import spielwitz.biDiServer.User;
 import uiBaseControls.Button;
+import uiBaseControls.CheckBox;
+import uiBaseControls.ComboBox;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
+import uiBaseControls.ICheckBoxListener;
+import uiBaseControls.IComboBoxListener;
 import uiBaseControls.IListListener;
 import uiBaseControls.ITextFieldListener;
 import uiBaseControls.Label;
@@ -67,6 +73,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	private Button butOk;
 	
 	private UsersPanel panUsers;
+	private ActivateServerConnectionPanel panActivateConnection;
+	
 	private ServerCredentials serverCredentials;
 	private ServerCredentials serverCredentialsBefore;
 	
@@ -82,6 +90,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.serverCredentials = credentials.getClone();
 		
 		this.tabpane = new TabbedPane();
+		
+		this.panActivateConnection = new ActivateServerConnectionPanel();
+		this.tabpane.addTab("Verbindung aktivieren", this.panActivateConnection);
 		
 		this.panUsers = new UsersPanel(this);
 		this.tabpane.addTab("Users", this.panUsers);
@@ -149,6 +160,57 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		}
 		
 		return true;
+	}
+	
+	private class ActivateServerConnectionPanel extends Panel implements IComboBoxListener, ICheckBoxListener
+	{
+		private ComboBox comboCredentials;
+		private CheckBox cbActivate;
+		private ArrayList<ListItem> comboUserModelUser;
+		
+		private ActivateServerConnectionPanel()
+		{
+			super(new BorderLayout());
+			
+			PanelWithInsets panCredentials = new PanelWithInsets(new FlowLayout(FlowLayout.LEFT));
+			
+			this.cbActivate = new CheckBox(
+					"Verbinden als Spieler mit Zugangsdaten", 
+					serverCredentials.connectionActive, 
+					this);
+			panCredentials.addToInnerPanel(this.cbActivate);
+			
+			panCredentials.addToInnerPanel(new JSeparator());
+			
+			this.comboUserModelUser = new ArrayList<ListItem>();
+			this.comboCredentials = new ComboBox(this.comboUserModelUser, 40, null, this);
+			panCredentials.addToInnerPanel(this.comboCredentials);
+			
+			this.add(panCredentials, BorderLayout.NORTH);
+		}
+
+		@Override
+		public void comboBoxItemSelected(ComboBox source, String selectedValue)
+		{
+		}
+		
+		@Override
+		public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+		{
+			if (source == this.comboCredentials)
+			{
+				serverCredentials.userCredentialsSelected = (UUID)selectedListItem.getHandle();
+			}
+		}
+
+		@Override
+		public void checkBoxValueChanged(CheckBox source, boolean newValue)
+		{
+			if (source == this.cbActivate)
+			{
+				serverCredentials.connectionActive = newValue;
+			}
+		}
 	}
 	
 	private class UsersPanel extends Panel implements IButtonListener, IListListener, ActionListener
@@ -267,17 +329,48 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		{
 			ArrayList<UUID> credentialKeys = serverCredentials.getCredentialKeys();
 			this.listUsersModel = new ArrayList<ListItem>();
+			panActivateConnection.comboUserModelUser = new ArrayList<ListItem>();
 			
 			for (UUID credentialKey: credentialKeys)
 			{
 				ClientConfiguration clientConfiguration = serverCredentials.getCredentials(credentialKey);
+				
 				this.listUsersModel.add(
 						new ListItem(
 								ServerCredentials.getCredentialsDisplayName(clientConfiguration),
 								credentialKey));
+				
+				if (clientConfiguration.getUserId().equals(User.ADMIN_USER_ID))
+				{
+					// ####
+				}
+				else
+				{
+					panActivateConnection.comboUserModelUser.add(
+							new ListItem(
+									ServerCredentials.getCredentialsDisplayName(clientConfiguration),
+									credentialKey));
+				}
 			}
 			
 			Collections.sort(this.listUsersModel, new ListItem());
+			
+			Collections.sort(panActivateConnection.comboUserModelUser, new ListItem());
+			panActivateConnection.comboCredentials.setItems(panActivateConnection.comboUserModelUser);
+			
+			if (!panActivateConnection.comboCredentials.setSelectedListItemByHandle(serverCredentials.userCredentialsSelected))
+			{
+				if (panActivateConnection.comboUserModelUser.size() > 0)
+				{
+					ListItem selectedListItem = panActivateConnection.comboUserModelUser.get(0);
+					panActivateConnection.comboCredentials.setSelectedListItemByHandle(selectedListItem.getHandle());
+					serverCredentials.userCredentialsSelected = (UUID)selectedListItem.getHandle();
+				}
+				else
+				{
+					serverCredentials.userCredentialsSelected = null;
+				}
+			}
 		}
 		
 		private int getListIndexByCredentialsKey(UUID key)

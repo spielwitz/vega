@@ -47,6 +47,7 @@ import uiBaseControls.ICheckBoxListener;
 import uiBaseControls.IComboBoxListener;
 import uiBaseControls.ITextFieldListener;
 import uiBaseControls.Label;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 import uiBaseControls.TextField;
 import vega.qrCode.*;
@@ -209,7 +210,12 @@ import vega.qrCode.*;
 	{
 		this.setControlsEnabled();
 	}
-
+	
+	@Override
+	public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+	{
+	}
+	
 	@Override
 	public void textChanged(TextField source)
 	{
