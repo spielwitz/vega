@@ -78,44 +78,44 @@ class VegaServerAdminJDialog extends Dialog
 {
 	static private File selectedDirectory;
 	
-	private TabbedPane tabpane;
-	
-	private Button butClose;
-	private Button butNewUserOk;
-	private Button butPing;
-	private Button butAuthBrowse;
-	private Button butShutdown;
-	private Button butAddUser;
-	private Button butDeleteUser;
-	private Button butRefreshUserList;
-	private Button butServerLogDownload;
-	private Button butServerLogLevelChange;
-	
-	private Button butServerStatusRefresh;
-	private TextField tfServerStartDate;
-	private TextField tfServerLogSize;
-	private TextField tfServerBuild;
-	private TextField tfClientBuild;
-	private ComboBox comboServerLogLevel;
-	private TextField tfAuthUrl;
-	private TextField tfAuthPort;
-	private TextField tfAuthUserId;
-	private TextField tfAuthFile;
-	
-	private TextField tfTimeout;
-	
-	private PanelUserData panUsersDetailsInner;
 	String serverAdminCredentialsFile;
 	
-	private ClientConfiguration clientConfigAdmin;
-	private List listUsers;
-
-	private Hashtable<String, User> usersOnServer;
-	private Component parent;
+	private int authPortBefore;
 	private String authUrlBefore;
+	private Button butAddUser;
+	private Button butAuthBrowse;
+	private Button butClose;
+	private Button butDeleteUser;
+	private Button butNewUserOk;
+	private Button butPing;
+	private Button butRefreshUserList;
+	private Button butServerLogDownload;
+	
+	private Button butServerLogLevelChange;
+	private Button butServerStatusRefresh;
+	private Button butShutdown;
+	private ClientConfiguration clientConfigAdmin;
+	private ComboBox comboServerLogLevel;
+	private List listUsers;
+	private PanelUserData panUsersDetailsInner;
+	private Component parent;
+	private TabbedPane tabpane;
+	private TextField tfAuthFile;
+	
+	private TextField tfAuthPort;
+	
+	private TextField tfAuthUrl;
+	private TextField tfAuthUserId;
+	
+	private TextField tfClientBuild;
+	private TextField tfServerBuild;
+
+	private TextField tfServerLogSize;
+	private TextField tfServerStartDate;
+	private TextField tfTimeout;
 	private int timeoutBefore;
 	
-	private int authPortBefore;
+	private Hashtable<String, User> usersOnServer;
 	
 	VegaServerAdminJDialog(
 			Vega parent,
@@ -588,6 +588,12 @@ class VegaServerAdminJDialog extends Dialog
 		}
 		
 		super.close();
+	}
+	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 
 	private void fillAuthCredentials(ClientConfiguration clientConfigAdmin)
@@ -1159,29 +1165,29 @@ class VegaServerAdminJDialog extends Dialog
 
 	private enum Mode 
 	{
-		NoUserSelected,
 		ChangeUser,
 		NewUser,
+		NoUserSelected,
 		RenewCredentials
 	}
 
 	// ----------------------
 	private class PanelUserData extends Panel implements ICheckBoxListener
 	{
-		private TextField tfUserId;
-		private TextField tfName;
-		private TextField tfEmail;
-		private Label labUserId;
-		private Label labName;
-		private Label labEmail;
-		private Label labPassword1;
-		private Label labPassword2;
-		private PasswordField tfPassword1;
-		private PasswordField tfPassword2;
 		private CheckBox cbCredentials;
 		private CheckBox cbUserActive;
-		
+		private Label labEmail;
+		private Label labName;
+		private Label labPassword1;
+		private Label labPassword2;
+		private Label labUserId;
 		private Mode mode;
+		private TextField tfEmail;
+		private TextField tfName;
+		private PasswordField tfPassword1;
+		private PasswordField tfPassword2;
+		
+		private TextField tfUserId;
 		
 		public PanelUserData(Mode mode)
 		{

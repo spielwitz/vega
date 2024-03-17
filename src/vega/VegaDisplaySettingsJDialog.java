@@ -40,22 +40,22 @@ import uiBaseControls.TextField;
 @SuppressWarnings("serial") 
 class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener, ICheckBoxListener
 {
+	public String myIpAddress;
 	private Button butClose;
-	private Button butRefreshClients;
 	private Button butGetIp;
 	
-	private TextField tfIpAddress;
+	private Button butRefreshClients;
 	
-	private CheckBox cbServerEnabled;
-    private CheckBox cbInactiveWhileEnterMoves;
+	private CheckBox cbInactiveWhileEnterMoves;
+    private CheckBox cbServerEnabled;
+	private boolean inactiveWhileEnterMoves;
+	
 	private List listClients;
-	
-	private VegaDisplayFunctions serverFunctions;
 	
 	private Vega parent;
 	
-	public String myIpAddress;
-	private boolean inactiveWhileEnterMoves;
+	private VegaDisplayFunctions serverFunctions;
+	private TextField tfIpAddress;
 	
 	VegaDisplaySettingsJDialog(
 			Vega parent,
@@ -217,6 +217,12 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener, IChe
 	{
 		this.myIpAddress = this.tfIpAddress.getText();
 		super.close();
+	}
+	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 
 	private void setControlsEnabled()

@@ -42,18 +42,18 @@ import uiBaseControls.TextField;
 @SuppressWarnings("serial") 
 class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 {
-	private Button butConnect;
 	private Button butClose;
+	private Button butConnect;
 	private Button butGetMyIpAddress;
-	private TextField tfServerIpAddress;
-	private TextField tfMyIpAddress;
-	private PasswordField tfClientCode;
-	private TextField tfMyName;
-	private Label labStatus;
-
 	private VegaDisplayConfiguration config;
-	
+	private Label labStatus;
 	private VegaDisplay parent;
+	private PasswordField tfClientCode;
+	private TextField tfMyIpAddress;
+
+	private TextField tfMyName;
+	
+	private TextField tfServerIpAddress;
 	
 	VegaDisplaySettingsJDialog(
 			VegaDisplay parent,
@@ -216,6 +216,12 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		}
 	}
 	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+
 	private void updateConnectionStatus()
 	{
 		boolean authorized = false;
@@ -250,7 +256,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		
 		this.labStatus.setText(text);
 	}
-
+	
 	private void updateSettings()
 	{
 		this.config.setClientCode(this.tfClientCode.getText());

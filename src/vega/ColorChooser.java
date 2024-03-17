@@ -38,11 +38,11 @@ import uiBaseControls.Panel;
 @SuppressWarnings("serial") 
 class ColorChooser extends Dialog implements IButtonListener
 {
-	private ColorPanel[] colorPanels;
-	private Button butOk;
-	private Button butCancel;
 	boolean abort = true;
 	byte selectedColor;
+	private Button butCancel;
+	private Button butOk;
+	private ColorPanel[] colorPanels;
 	
 	ColorChooser(Dialog parent, byte currentColor)
 	{
@@ -94,6 +94,12 @@ class ColorChooser extends Dialog implements IButtonListener
 		}
 	}
 	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+	
 	private void colorChanged(byte colorIndex)
 	{
 		this.selectedColor = colorIndex;
@@ -106,9 +112,9 @@ class ColorChooser extends Dialog implements IButtonListener
 	{
 		private static final int BORDER_SIZE = 5;
 		
-		private boolean selected;
 		private byte colorIndex;
 		private ColorChooser parent;
+		private boolean selected;
 		
 		public ColorPanel(ColorChooser parent, byte colorIndex)
 		{

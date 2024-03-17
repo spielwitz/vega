@@ -29,12 +29,12 @@ import java.util.Hashtable;
 import java.util.regex.Pattern;
 
 import common.Colors;
+import common.CommonUtils;
 import common.Game;
 import common.GameOptions;
 import common.PlanetDistribution;
 import common.Player;
 import common.VegaResources;
-import common.CommonUtils;
 import commonUi.DialogWindow;
 import spielwitz.biDiServer.User;
 import uiBaseControls.Button;
@@ -80,29 +80,29 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 		
 		return ok;
 	}
-	private ArrayList<Player> players;
-	private String emailGameHost;
-	private int playersCount;
-	private int planetsCount;
-	private int yearMax;
-	
-	private HashSet<GameOptions> options;
-	
 	private boolean abort;
-	private GameParametersDialogMode mode;
-	private Panel[] panPlayers;
-	private TextField[] tfPlayer;
-	private PlayerColorButton[] canvasPlayerColors;
-	private Hashtable<GameOptions,CheckBox> cbOptions;
-	private ComboBox comboYearLast;
-	private ComboBox comboPlayers;
-	private ComboBox comboPlanets;
-	private Button butOk;
 	private Button butCancel;
-	
 	private Button butEmailConfiguration;
+	private Button butOk;
+	private PlayerColorButton[] canvasPlayerColors;
 	
+	private Hashtable<GameOptions,CheckBox> cbOptions;
+	
+	private ComboBox comboPlanets;
+	private ComboBox comboPlayers;
+	private ComboBox comboYearLast;
+	private String emailGameHost;
 	private ArrayList<String> emails;
+	private GameParametersDialogMode mode;
+	private HashSet<GameOptions> options;
+	private Panel[] panPlayers;
+	private int planetsCount;
+	private ArrayList<Player> players;
+	private int playersCount;
+	
+	private TextField[] tfPlayer;
+	
+	private int yearMax;
 	
 	GameParametersJDialog (
 			Frame parent,
@@ -371,6 +371,12 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 		return abort;
 	}
 	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void getInitialValues(Game game)
 	{
@@ -445,7 +451,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 
 		return planets;
 	}
-	
+
 	private Panel getPlayerPanel(int playerIndex)
 	{
 		this.panPlayers[playerIndex] = new Panel(new FlowLayout(FlowLayout.LEFT));
@@ -525,7 +531,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 
 		return ok;
 	}
-
+	
 	private void setControlsEnabled()
 	{
 		boolean enabled = (this.mode != GameParametersDialogMode.FINALIZED_GAME &&

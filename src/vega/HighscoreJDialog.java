@@ -155,6 +155,12 @@ class HighscoreJDialog extends Dialog implements IButtonListener
 		this.close();
 	}
 	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+	
 	private String padStringWithSpaces(String text, int length)
 	{
 		String textWithSpaces = String.format("%" + length + "c", ' ') + text;

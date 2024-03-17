@@ -60,19 +60,19 @@ import uiBaseControls.TextField;
 @SuppressWarnings("serial")
 class ServerCredentialsJDialog extends Dialog implements IButtonListener
 {
-	private TabbedPane tabpane;
-	
-	private Button butOk;
-	private Button butClose;
-	
-	private UsersPanel panUsers;
-	
-	private ServerCredentials serverCredentials;
-	
-	private static String password = "1234";
 	private static String lastSelectedDirectory;
 	
+	private static String password = "1234";
 	public boolean ok;
+	
+	private Button butClose;
+	
+	private Button butOk;
+	
+	private UsersPanel panUsers;
+	private ServerCredentials serverCredentials;
+	
+	private TabbedPane tabpane;
 	
 	ServerCredentialsJDialog(
 			Vega parent,
@@ -110,16 +110,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.setLocationRelativeTo(parent);	
 	}
 	
-	ServerCredentials getServerCredentials()
-	{
-		return serverCredentials;
-	}
-	
-	protected void close()
-	{
-		super.close();
-	}
-
 	@Override
 	public void buttonClicked(Button source)
 	{
@@ -134,19 +124,29 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		}
 	}
 	
+	ServerCredentials getServerCredentials()
+	{
+		return serverCredentials;
+	}
+
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+	
 	private class UsersPanel extends Panel implements IButtonListener, IListListener, ActionListener
 	{
-		private ArrayList<ListItem> listUsersModel;
-		private List listUsers;
 		private Button butAdd;
 		private Button butDelete;
+		private List listUsers;
+		private ArrayList<ListItem> listUsersModel;
 		private CredentialsPanel panCredentials;
 		
+		private Dialog parent;
 		private JPopupMenu popupMenu;
-		private JMenuItem popupMenuItemUser;
 		private JMenuItem popupMenuItemAdmin;
 		
-		private Dialog parent;
+		private JMenuItem popupMenuItemUser;
 		
 		private UsersPanel(Dialog parent)
 		{
@@ -203,6 +203,49 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.setCredentialsPanelValues();
 		}
 		
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			if (e.getSource() == this.popupMenuItemUser)
+			{
+				this.importCopyPaste();
+			}
+			else if (e.getSource() == this.popupMenuItemAdmin)
+			{
+				this.importFromFile();
+			}
+		}
+		
+		@Override
+		public void buttonClicked(Button source)
+		{
+			if (source == this.butAdd)
+			{
+				popupMenu.show(
+						butAdd, 
+						butAdd.getBounds().x, 
+						butAdd.getBounds().y + butAdd.getBounds().height);
+			}
+		}
+
+		@Override
+		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
+		{
+			this.setCredentialsPanelValues();
+		}
+
+		private void addNew(ClientConfiguration clientConfiguration)
+		{
+			UUID credentialsKey = UUID.randomUUID();
+			serverCredentials.setCredentials(credentialsKey, clientConfiguration, password);
+			
+			this.createListUsersModel();
+			this.listUsers.refreshListItems(this.listUsersModel);
+			
+			this.listUsers.setSelectedIndex(this.getListIndexByCredentialsKey(credentialsKey));
+			this.setCredentialsPanelValues();
+		}
+		
 		private void createListUsersModel()
 		{
 			ArrayList<UUID> credentialKeys = serverCredentials.getCredentialKeys();
@@ -238,37 +281,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 			
 			return index;
-		}
-
-		@Override
-		public void buttonClicked(Button source)
-		{
-			if (source == this.butAdd)
-			{
-				popupMenu.show(
-						butAdd, 
-						butAdd.getBounds().x, 
-						butAdd.getBounds().y + butAdd.getBounds().height);
-			}
-		}
-
-		@Override
-		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
-		{
-			this.setCredentialsPanelValues();
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			if (e.getSource() == this.popupMenuItemUser)
-			{
-				this.importCopyPaste();
-			}
-			else if (e.getSource() == this.popupMenuItemAdmin)
-			{
-				this.importFromFile();
-			}
 		}
 		
 		private void importCopyPaste()
@@ -343,18 +355,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 		}
 		
-		private void addNew(ClientConfiguration clientConfiguration)
-		{
-			UUID credentialsKey = UUID.randomUUID();
-			serverCredentials.setCredentials(credentialsKey, clientConfiguration, password);
-			
-			this.createListUsersModel();
-			this.listUsers.refreshListItems(this.listUsersModel);
-			
-			this.listUsers.setSelectedIndex(this.getListIndexByCredentialsKey(credentialsKey));
-			this.setCredentialsPanelValues();
-		}
-		
 		private void setCredentialsPanelValues()
 		{
 			ListItem selectedListItem = this.listUsers.getSelectedListItem();
@@ -372,19 +372,19 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		
 		private class CredentialsPanel extends Panel implements IButtonListener, ITextFieldListener
 		{
-			private Dialog parent;
-			
-			private TextField tfUrl;
-			private TextField tfPort;
-			private TextField tfTimeout;
-			private TextField tfUserId;
-			private TextField tfAdminEmail;
-			
 			private Button butActivate;
+			
 			private Button butConnectionTest;
 			private Button butWriteAdminEmail;
-			
 			private ClientConfiguration clientConfig;
+			private Dialog parent;
+			private TextField tfAdminEmail;
+			
+			private TextField tfPort;
+			private TextField tfTimeout;
+			private TextField tfUrl;
+			
+			private TextField tfUserId;
 			
 			private CredentialsPanel(
 					Dialog parent,
@@ -453,43 +453,57 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.setValues(clientConfig);
 			}
 			
-			private void setValues(ClientConfiguration clientConfig)
+			@Override
+			public void buttonClicked(Button source)
 			{
-				this.clientConfig = clientConfig;
-				
-				this.tfUrl.setEditable(clientConfig != null);
-				this.tfPort.setEditable(clientConfig != null);
-				this.tfTimeout.setEditable(clientConfig != null);
-				this.tfAdminEmail.setEditable(clientConfig != null);
-				
-				this.butActivate.setEnabled(ServerCredentials.getActivationCode(clientConfig) != null);
-				this.butConnectionTest.setEnabled(clientConfig != null && ServerCredentials.getActivationCode(clientConfig) == null);
-				this.butWriteAdminEmail.setEnabled(clientConfig != null);
-				
-				if (clientConfig == null)
+				if (source == this.butActivate)
 				{
-					this.tfUserId.setText("");
-					this.tfUrl.setText("");
-					this.tfPort.setText("");
-					this.tfTimeout.setText("");
-					this.tfAdminEmail.setText("");
+					this.activateUser();
 				}
-				else
+				else if (source == this.butConnectionTest)
 				{
-					this.tfUserId.setText(
-							ServerCredentials.getUserId(clientConfig));
-					
-					this.tfUrl.setText(
-							clientConfig.getUrl() == null ? "": clientConfig.getUrl());
-					
-					this.tfPort.setText(
-							clientConfig.getPort() == 0 ? "" : Integer.toString(clientConfig.getPort()));
-										
-					this.tfTimeout.setText(
-							Integer.toString(clientConfig.getTimeout()));
-					
-					this.tfAdminEmail.setText(
-							clientConfig.getAdminEmail() == null ? "" : clientConfig.getAdminEmail());
+					this.connectionTest();
+				}
+				else if (source == this.butWriteAdminEmail)
+				{
+					this.writeAdminEmail();
+				}
+			}
+			
+			@Override
+			public void textChanged(TextField source)
+			{
+				this.acceptChanges();
+			}
+			
+			@Override
+			public void textFieldFocusLost(TextField source)
+			{
+			}
+			
+			private void acceptChanges()
+			{
+				if (this.clientConfig == null);
+				
+				boolean credentialDisplayStringChanged = false;
+				
+				credentialDisplayStringChanged = !this.tfUrl.getText().equals(this.clientConfig.getUrl());
+				credentialDisplayStringChanged |= this.tfPort.getTextInt() != this.clientConfig.getPort();
+				
+				this.clientConfig.setUrl(this.tfUrl.getText());
+				this.clientConfig.setPort(this.tfPort.getTextInt());
+				this.clientConfig.setTimeout(this.tfTimeout.getTextInt());
+				this.clientConfig.setAdminEmail(this.tfAdminEmail.getText());
+
+				UUID credentialsKey = (UUID) listUsers.getSelectedListItem().getHandle();
+				serverCredentials.setCredentials(credentialsKey, this.clientConfig, password);
+				
+				if (credentialDisplayStringChanged)
+				{
+					createListUsersModel();
+					listUsers.refreshListItems(listUsersModel);
+					int index = getListIndexByCredentialsKey(credentialsKey);
+					listUsers.setSelectedIndex(index);
 				}
 			}
 			
@@ -533,7 +547,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					Vega.showServerError(this, tuple.getE2());
 				}
 			}
-			
+
 			private void connectionTest()
 			{
 				this.acceptChanges();
@@ -556,6 +570,46 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					Vega.showServerError(parent, info);
 				}
 			}
+
+			private void setValues(ClientConfiguration clientConfig)
+			{
+				this.clientConfig = clientConfig;
+				
+				this.tfUrl.setEditable(clientConfig != null);
+				this.tfPort.setEditable(clientConfig != null);
+				this.tfTimeout.setEditable(clientConfig != null);
+				this.tfAdminEmail.setEditable(clientConfig != null);
+				
+				this.butActivate.setEnabled(ServerCredentials.getActivationCode(clientConfig) != null);
+				this.butConnectionTest.setEnabled(clientConfig != null && ServerCredentials.getActivationCode(clientConfig) == null);
+				this.butWriteAdminEmail.setEnabled(clientConfig != null);
+				
+				if (clientConfig == null)
+				{
+					this.tfUserId.setText("");
+					this.tfUrl.setText("");
+					this.tfPort.setText("");
+					this.tfTimeout.setText("");
+					this.tfAdminEmail.setText("");
+				}
+				else
+				{
+					this.tfUserId.setText(
+							ServerCredentials.getUserId(clientConfig));
+					
+					this.tfUrl.setText(
+							clientConfig.getUrl() == null ? "": clientConfig.getUrl());
+					
+					this.tfPort.setText(
+							clientConfig.getPort() == 0 ? "" : Integer.toString(clientConfig.getPort()));
+										
+					this.tfTimeout.setText(
+							Integer.toString(clientConfig.getTimeout()));
+					
+					this.tfAdminEmail.setText(
+							clientConfig.getAdminEmail() == null ? "" : clientConfig.getAdminEmail());
+				}
+			}
 			
 			private void writeAdminEmail()
 			{
@@ -570,60 +624,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 						"", 
 						null, 
 						null);
-			}
-			
-			private void acceptChanges()
-			{
-				if (this.clientConfig == null);
-				
-				boolean credentialDisplayStringChanged = false;
-				
-				credentialDisplayStringChanged = !this.tfUrl.getText().equals(this.clientConfig.getUrl());
-				credentialDisplayStringChanged |= this.tfPort.getTextInt() != this.clientConfig.getPort();
-				
-				this.clientConfig.setUrl(this.tfUrl.getText());
-				this.clientConfig.setPort(this.tfPort.getTextInt());
-				this.clientConfig.setTimeout(this.tfTimeout.getTextInt());
-				this.clientConfig.setAdminEmail(this.tfAdminEmail.getText());
-
-				UUID credentialsKey = (UUID) listUsers.getSelectedListItem().getHandle();
-				serverCredentials.setCredentials(credentialsKey, this.clientConfig, password);
-				
-				if (credentialDisplayStringChanged)
-				{
-					createListUsersModel();
-					listUsers.refreshListItems(listUsersModel);
-					int index = getListIndexByCredentialsKey(credentialsKey);
-					listUsers.setSelectedIndex(index);
-				}
-			}
-
-			@Override
-			public void buttonClicked(Button source)
-			{
-				if (source == this.butActivate)
-				{
-					this.activateUser();
-				}
-				else if (source == this.butConnectionTest)
-				{
-					this.connectionTest();
-				}
-				else if (source == this.butWriteAdminEmail)
-				{
-					this.writeAdminEmail();
-				}
-			}
-
-			@Override
-			public void textFieldFocusLost(TextField source)
-			{
-			}
-			
-			@Override
-			public void textChanged(TextField source)
-			{
-				this.acceptChanges();
 			}
 		}
 	}

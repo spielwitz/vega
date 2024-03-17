@@ -25,13 +25,15 @@ import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 
 @SuppressWarnings("serial")
-public abstract class Dialog extends JDialog implements ActionListener
+public abstract class Dialog extends JDialog implements ActionListener, WindowListener
 {
 	private Panel panInner;
 	
@@ -44,6 +46,9 @@ public abstract class Dialog extends JDialog implements ActionListener
 				title);
 		
 		this.setModal(true);
+		
+		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		this.addWindowListener(this);
 
 		Panel panBase = new Panel(new GridBagLayout());
 		
@@ -83,6 +88,36 @@ public abstract class Dialog extends JDialog implements ActionListener
 		}
 	}
 	
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+	
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e)
+	{
+		this.close();
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+	
 	protected void addToInnerPanel(Component comp) // NO_UCD (unused code)
 	{
 		this.panInner.add(comp);
@@ -95,7 +130,12 @@ public abstract class Dialog extends JDialog implements ActionListener
 	
 	protected void close() // NO_UCD (unused code)
 	{
-		this.setVisible(false);
-		this.dispose();
+		if (this.confirmClose())
+		{
+			this.setVisible(false);
+			this.dispose();
+		}
 	}
+	
+	protected abstract boolean confirmClose();
 }

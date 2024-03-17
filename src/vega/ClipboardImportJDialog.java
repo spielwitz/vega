@@ -39,20 +39,20 @@ import uiBaseControls.TextArea;
 class ClipboardImportJDialog<T> extends Dialog
 				implements IButtonListener
 {
-	private Button butOk;
+	DialogWindowResult dlgResult = DialogWindowResult.CANCEL;
+	Object obj;
 	private Button butCancel;
-	private Button butImport;
 	private Button butDelete;
 	
-	private PasswordField tfPassword;
+	private Button butImport;
 	
-	private TextArea taImportData;
+	private Button butOk;
 	private Class<T> expectedClass;
 	
 	private boolean passwordProtected;
 	
-	DialogWindowResult dlgResult = DialogWindowResult.CANCEL;
-	Object obj;
+	private TextArea taImportData;
+	private PasswordField tfPassword;
 	
 	ClipboardImportJDialog(
 			Component parent, 
@@ -167,6 +167,11 @@ class ClipboardImportJDialog<T> extends Dialog
 							VegaResources.LoadError(false));
 			}
 		}
-		
+	}
+
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 }

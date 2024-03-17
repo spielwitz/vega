@@ -46,19 +46,19 @@ class EmailCreatorJDialog extends Dialog
 {
 	private static final String[] separators = new String[] {";", ","};
 	
-	private Hashtable<CheckBox, String> checkbox2emailMap;
-	private Button butLaunchEmailClient;
+	boolean launched = false;
+	String separatorPreset;
 	
-	private Button butCancel;
-	
-	private ComboBox comboSeparators;
 	private String body;
 	
-	private String subject;
-	String separatorPreset;
-	boolean launched = false;
+	private Button butCancel;
+	private Button butLaunchEmailClient;
 	
+	private Hashtable<CheckBox, String> checkbox2emailMap;
+	private ComboBox comboSeparators;
 	private Component parent;
+	
+	private String subject;
 	
 	EmailCreatorJDialog(
 			Component parent,
@@ -224,4 +224,9 @@ class EmailCreatorJDialog extends Dialog
 		this.butLaunchEmailClient.setEnabled(checkBoxesSelected > 0);
 	}
 
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
 }

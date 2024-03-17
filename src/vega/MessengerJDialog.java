@@ -125,6 +125,12 @@ class MessengerJDialog extends Dialog implements ChangeListener
 		}
 	}
 	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+	
 	private MessagePanel addMessagePanel(String recipientsString)
 	{
 		synchronized(this.messagePanelsByRecipientStrings)
@@ -256,16 +262,16 @@ class MessengerJDialog extends Dialog implements ChangeListener
 	private class MessagePanel extends Panel implements IButtonListener, DocumentListener
 	{
 		private static final int MAX_CHARACTERS_COUNT = 1000;
-		private TextArea taMessages;
-		private TextArea taComposeMessage;
-		private Button butTo;
 		private Button butSend;
-		
+		private Button butTo;
 		private Label labCharactersLeft;
 		private ArrayList<String> recipients;
-		private String recipientsString;
 		
+		private String recipientsString;
 		private int tabIndex;
+		private TextArea taComposeMessage;
+		
+		private TextArea taMessages;
 		
 		public MessagePanel(String recipientsString, ArrayList<Message> messages, int tabIndex)
 		{
@@ -454,13 +460,13 @@ class MessengerJDialog extends Dialog implements ChangeListener
 	
 	private class RecipientsSelector extends Dialog implements IButtonListener, IListListener
 	{
-		private List listRecipients;
-		private Button butAbort;
-		private Button butOk;
-		
-		private ArrayList<String> userIds;
 		boolean ok = false;
-		ArrayList<String> recipients = new ArrayList<String>(); 
+		ArrayList<String> recipients = new ArrayList<String>();
+		private Button butAbort;
+		
+		private Button butOk;
+		private List listRecipients;
+		private ArrayList<String> userIds; 
 		
 		public RecipientsSelector(Component parent, ArrayList<String> selectedUserIds, ArrayList<String> allUserIds)
 		{
@@ -536,13 +542,19 @@ class MessengerJDialog extends Dialog implements ChangeListener
 				this.close();
 			}
 		}
+		
+		@Override
+		protected boolean confirmClose()
+		{
+			return true;
+		}
 	}
 	
 	private class TabLabelComponent extends JPanel implements IIconLabelListener
 	{
-		private int tabIndex;
-		private String recipientsString;
 		private NewMessageIndicator newMessageIndicator;
+		private String recipientsString;
+		private int tabIndex;
 		
 		TabLabelComponent(TabbedPane pane, String recipientsString, int tabIndex)
 		{

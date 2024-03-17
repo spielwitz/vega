@@ -48,28 +48,28 @@ import uiBaseControls.TextField;
 @SuppressWarnings("serial") 
 class VegaServerCredentialsJDialog extends Dialog implements IButtonListener, ICheckBoxListener
 {
-	private Button butOk;
-	private Button butClose;
-	private Button butPing;
-	private Button butAuthBrowse;
+	boolean ok = false;
+	boolean serverCommunicationEnabled;
+	String serverUserCredentialsFile;
+	private int authPortBefore;
+	private String authUrlBefore;
 	private Button butAuthActivate;
+	private Button butAuthBrowse;
+	private Button butClose;
+	private Button butOk;
+	private Button butPing;
 	private Button butWriteEmail;
-	private TextField tfAuthUrl;
-	private TextField tfAuthPort;
-	private TextField tfTimeout;
-	private TextField tfAuthUserId;
-	private TextField tfAdminEmail;
-	private TextField tfAuthFile;
-	
 	private CheckBox cbServerCommunicationEnabled;
 	
-	String serverUserCredentialsFile;
-	boolean serverCommunicationEnabled;
 	private ClientConfiguration clientConfig;
-	private String authUrlBefore;
-	private int authPortBefore;
+	
+	private TextField tfAdminEmail;
+	private TextField tfAuthFile;
+	private TextField tfAuthPort;
+	private TextField tfAuthUrl;
+	private TextField tfAuthUserId;
+	private TextField tfTimeout;
 	private int timeoutBefore;
-	boolean ok = false;
 	
 	VegaServerCredentialsJDialog(
 			Vega parent,
@@ -408,6 +408,12 @@ class VegaServerCredentialsJDialog extends Dialog implements IButtonListener, IC
 	protected void close()
 	{
 		super.close();
+	}
+	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 
 	private void fillAuthCredentials(ClientConfiguration clientConfig)

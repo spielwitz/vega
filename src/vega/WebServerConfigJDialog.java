@@ -53,24 +53,24 @@ import vega.qrCode.*;
 
 @SuppressWarnings("serial") class WebServerConfigJDialog extends Dialog implements IButtonListener, ICheckBoxListener, IComboBoxListener, ITextFieldListener
 {
+	String ipAddress;
+	int port;
+	
 	private Button butClose;
+	
 	private Button butGetIp;
-	
-	private QrCodePanel	panQrCode;
-	
 	private CheckBox cbServerEnabled;
-	private TextField tfIpAddress;
-	private TextField tfPort;
+	private ComboBox comboViews;
 	
 	private HyperlinkLabel labUrl;
 	
+	private QrCodePanel	panQrCode;
+	
+	private TextField tfIpAddress;
+	private TextField tfPort;
 	private ArrayList<String[]> urls;
 	
-	String ipAddress;
-	int port;
 	private Vega vega;
-	
-	private ComboBox comboViews;
 	
 	WebServerConfigJDialog(Vega vega, String myIpAddress, int port)
 	{
@@ -211,6 +211,11 @@ import vega.qrCode.*;
 	}
 
 	@Override
+	public void textChanged(TextField source)
+	{
+	}
+	
+	@Override
 	public void textFieldFocusLost(TextField source)
 	{
 		if (source == this.tfIpAddress)
@@ -223,11 +228,6 @@ import vega.qrCode.*;
 		}
 	}
 	
-	@Override
-	public void textChanged(TextField source)
-	{
-	}
-
 	protected void close()
 	{
 		if (this.vega.getWebserver() != null)
@@ -237,6 +237,12 @@ import vega.qrCode.*;
 		}
 		
 		super.close();
+	}
+
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 	
 	private void collectUrls()

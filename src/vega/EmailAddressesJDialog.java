@@ -37,15 +37,15 @@ class EmailAddressesJDialog extends Dialog
 			implements 	IButtonListener,
 						IListListener
 {
+	int selectedIndex = -1;
 	private Button butCancel;
-	private Button butSelect;
 	private Button butDelete;
 	
+	private Button butSelect;
 	private ArrayList<String> emailAddresses;
 	private List list;
-	private int[] seq;
 	
-	int selectedIndex = -1;
+	private int[] seq;
 	
 	EmailAddressesJDialog(
 			Component parent,
@@ -110,6 +110,12 @@ class EmailAddressesJDialog extends Dialog
 		}
 	}
 	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+
 	private void close(boolean abort)
 	{
 		if (abort)
@@ -134,7 +140,7 @@ class EmailAddressesJDialog extends Dialog
 		
 		this.setControlsEnabled();
 	}
-
+	
 	private void setControlsEnabled()
 	{
 		this.butDelete.setEnabled(!this.list.isSelectionEmpty());
