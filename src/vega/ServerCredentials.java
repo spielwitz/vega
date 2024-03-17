@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.UUID;
 
+import common.CommonUtils;
 import spielwitz.biDiServer.ClientConfiguration;
 
 @SuppressWarnings("serial")
@@ -46,6 +47,7 @@ class ServerCredentials implements Serializable
 	{
 		return getUserId(clientConfiguration) + "@" + clientConfiguration.getUrl() + ":" + clientConfiguration.getPort(); 
 	}
+	
 	static String getUserId(ClientConfiguration clientConfiguration)
 	{
 		if (clientConfiguration == null) return null;
@@ -69,7 +71,6 @@ class ServerCredentials implements Serializable
 		{
 			clientConfiguration.setUserId(clientConfiguration.getUserId().substring(0, pos));
 		}
-			
 	}
 	
 	static void setActivationCode(ClientConfiguration clientConfiguration, String activationCode)
@@ -80,10 +81,43 @@ class ServerCredentials implements Serializable
 	UUID adminCredentialsSelected;
 	UUID userCredentialsSelected;
 	private Hashtable<UUID,String> credentialsEncrypted;
+	private transient String password;
 	
 	ServerCredentials()
 	{
 		this.credentialsEncrypted = new Hashtable<UUID,String>();
+	}
+	
+	boolean areCredentialsLocked()
+	{
+		return this.password == null;
+	}
+	
+	boolean changePassword(String oldPassword, String newPassword)
+	{
+		if (this.unlockCredentials(oldPassword))
+		{
+			Hashtable<UUID, ClientConfiguration> credentials = new Hashtable<UUID, ClientConfiguration>();
+			
+			for (UUID credentialKey: this.credentialsEncrypted.keySet())
+			{
+				credentials.put(credentialKey, this.getCredentials(credentialKey)); 
+			}
+			
+			this.password = newPassword;
+			this.credentialsEncrypted.clear();
+			
+			for (UUID credentialKey: credentials.keySet())
+			{
+				this.setCredentials(credentialKey, credentials.get(credentialKey));
+			}
+			
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	boolean credentialsExist(UUID key)
@@ -96,6 +130,14 @@ class ServerCredentials implements Serializable
 		this.credentialsEncrypted.remove(key);
 	}
 	
+	ServerCredentials getClone()
+	{
+		ServerCredentials clone = (ServerCredentials)CommonUtils.klon(this);
+		clone.password = this.password;
+		
+		return clone;
+	}
+	
 	ArrayList<UUID> getCredentialKeys()
 	{
 		ArrayList<UUID> credentialKeys = new ArrayList<UUID>();
@@ -103,18 +145,64 @@ class ServerCredentials implements Serializable
 		return credentialKeys;
 	}
 	
-	ClientConfiguration getCredentials(UUID key, String password)
+	ClientConfiguration getCredentials(UUID key)
 	{
-		return (ClientConfiguration) VegaUtils.convertFromBase64(
-					this.credentialsEncrypted.get(key), 
-					ClientConfiguration.class, 
-					password);
+		return 
+				this.password == null ?
+						null :
+						(ClientConfiguration) VegaUtils.convertFromBase64(
+							this.credentialsEncrypted.get(key), 
+							ClientConfiguration.class, 
+							this.password);
 	}
 	
-	void setCredentials(UUID key, ClientConfiguration credentials, String password)
+	boolean hasChanges(ServerCredentials other)
 	{
+		if (this.credentialsEncrypted.size() != other.credentialsEncrypted.size()) return true;
+		
+		for (UUID credentialsKey: this.credentialsEncrypted.keySet())
+		{
+			if (!other.credentialsExist(credentialsKey)) return true;
+			if (!this.credentialsEncrypted.get(credentialsKey).equals(other.credentialsEncrypted.get(credentialsKey))) return true;
+		}
+		
+		return false;
+	}
+	
+	void setCredentials(UUID key, ClientConfiguration credentials)
+	{
+		if (this.password == null) return;
+		
 		this.credentialsEncrypted.put(
 					key, 
-					VegaUtils.convertToBase64(credentials, password));
+					VegaUtils.convertToBase64(credentials, this.password));
+	}
+	
+	boolean unlockCredentials(String password)
+	{
+		boolean passwordIsValid = true;
+		
+		this.password = password;
+		
+		for (UUID credentialKey: this.credentialsEncrypted.keySet())
+		{
+			ClientConfiguration clientConfiguration = null;
+			
+			try
+			{
+				clientConfiguration = this.getCredentials(credentialKey); 
+			}
+			catch (Exception x)
+			{
+			}
+			
+			if (clientConfiguration == null)
+			{
+				passwordIsValid = false;
+				break;
+			}
+		}
+		
+		return passwordIsValid;
 	}
 }

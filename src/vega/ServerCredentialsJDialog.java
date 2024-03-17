@@ -62,7 +62,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 {
 	private static String lastSelectedDirectory;
 	
-	private static String password = "1234";
 	public boolean ok;
 	
 	private Button butClose;
@@ -71,6 +70,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	
 	private UsersPanel panUsers;
 	private ServerCredentials serverCredentials;
+	private ServerCredentials serverCredentialsBefore;
 	
 	private TabbedPane tabpane;
 	
@@ -80,7 +80,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	{
 		super(parent, "Server-Zugangsdaten", new BorderLayout());
 		
-		this.serverCredentials = (ServerCredentials) CommonUtils.klon(credentials);
+		this.serverCredentialsBefore = credentials;
+		this.serverCredentials = credentials.getClone();
 		
 		this.tabpane = new TabbedPane();
 		
@@ -131,6 +132,24 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 
 	protected boolean confirmClose()
 	{
+		if (!this.ok &&
+			 this.serverCredentials.hasChanges(this.serverCredentialsBefore))
+		{
+			DialogWindowResult result = DialogWindow.showYesNoCancel(
+					this, 
+					"Sie haben Änderungen vorgenommen. Möchten Sie diese übernehmen?", 
+					"Ungesicherte Änderungen");
+			
+			if (result == DialogWindowResult.YES)
+			{
+				this.ok = true;
+			}
+			else if (result == DialogWindowResult.CANCEL)
+			{
+				return false;
+			}
+		}
+		
 		return true;
 	}
 	
@@ -237,7 +256,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		private void addNew(ClientConfiguration clientConfiguration)
 		{
 			UUID credentialsKey = UUID.randomUUID();
-			serverCredentials.setCredentials(credentialsKey, clientConfiguration, password);
+			serverCredentials.setCredentials(credentialsKey, clientConfiguration);
 			
 			this.createListUsersModel();
 			this.listUsers.refreshListItems(this.listUsersModel);
@@ -253,7 +272,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			for (UUID credentialKey: credentialKeys)
 			{
-				ClientConfiguration clientConfiguration = serverCredentials.getCredentials(credentialKey, password);
+				ClientConfiguration clientConfiguration = serverCredentials.getCredentials(credentialKey);
 				this.listUsersModel.add(
 						new ListItem(
 								ServerCredentials.getCredentialsDisplayName(clientConfiguration),
@@ -365,7 +384,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 			else
 			{
-				ClientConfiguration clientConfiguration = serverCredentials.getCredentials((UUID)selectedListItem.getHandle(), password);
+				ClientConfiguration clientConfiguration = serverCredentials.getCredentials((UUID)selectedListItem.getHandle());
 				this.panCredentials.setValues(clientConfiguration);
 			}
 		}
@@ -496,7 +515,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				this.clientConfig.setAdminEmail(this.tfAdminEmail.getText());
 
 				UUID credentialsKey = (UUID) listUsers.getSelectedListItem().getHandle();
-				serverCredentials.setCredentials(credentialsKey, this.clientConfig, password);
+				serverCredentials.setCredentials(credentialsKey, this.clientConfig);
 				
 				if (credentialDisplayStringChanged)
 				{
@@ -539,8 +558,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					
 					serverCredentials.setCredentials(
 							(UUID)selectedListItem.getHandle(), 
-							this.clientConfig, 
-							password);
+							this.clientConfig);
 				}
 				else
 				{
