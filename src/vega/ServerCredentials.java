@@ -199,7 +199,7 @@ class ServerCredentials implements Serializable
 	
 	private Hashtable<UUID,ClientConfiguration> decryptCredentials()
 	{
-		if (this.credentialsEncrypted != null && this.password != null)
+		if (this.credentialsEncrypted != null)
 		{
 			ServerCredentialsDict dict = (ServerCredentialsDict) VegaUtils.convertFromBase64(credentialsEncrypted, ServerCredentialsDict.class, password);
 			return dict.dict;

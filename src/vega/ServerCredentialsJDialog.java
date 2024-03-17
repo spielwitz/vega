@@ -428,8 +428,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		{
 			JFileChooser fc = new JFileChooser();
 			
-			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			//fc.setFileSelectionMode(JFileChooser);
 			fc.setDialogTitle(VegaResources.AuthenticationFile(false));
+			fc.setMultiSelectionEnabled(true);
 			
 			if (lastSelectedDirectory != null)
 			{
@@ -447,21 +448,33 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				return;
 			}
 			
-			File file = fc.getSelectedFile();
-			lastSelectedDirectory = file.getParent();
+			File[] files = fc.getSelectedFiles();
+			lastSelectedDirectory = files[0].getParent();
 			
-			ClientConfiguration clientConfiguration = ClientConfiguration.readFromFile(file.getAbsolutePath()); 
+			ArrayList<ClientConfiguration> clientConfigurations = new ArrayList<ClientConfiguration>();
 			
-			if (clientConfiguration != null && clientConfiguration.getUserId() != null)
+			for (File file: files)
+			{
+				ClientConfiguration clientConfiguration = ClientConfiguration.readFromFile(file.getAbsolutePath());
+				
+				if (clientConfiguration != null && clientConfiguration.getUserId() != null)
+				{
+					clientConfigurations.add(clientConfiguration);
+				}
+				else
+				{
+					DialogWindow.showError(
+						parent,
+						VegaResources.FileContainsInvalidCredentials(false, file.getAbsolutePath().toString()),
+					    VegaResources.Error(false));
+					
+					return;
+				}
+			}
+			
+			for (ClientConfiguration clientConfiguration: clientConfigurations)
 			{
 				this.addNew(clientConfiguration);
-			}
-			else
-			{
-				DialogWindow.showError(
-					parent,
-					VegaResources.FileContainsInvalidCredentials(false, file.getAbsolutePath().toString()),
-				    VegaResources.Error(false));
 			}
 		}
 		
