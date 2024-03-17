@@ -80,15 +80,14 @@ class ServerCredentials implements Serializable
 	}
 	
 	UUID adminCredentialsSelected;
-	UUID userCredentialsSelected;
 	boolean connectionActive;
-	private Hashtable<UUID,String> credentialsEncrypted;
+	UUID userCredentialsSelected;
+	private String credentialsEncrypted;
 	
 	private transient String password;
 	
 	ServerCredentials()
 	{
-		this.credentialsEncrypted = new Hashtable<UUID,String>();
 	}
 	
 	boolean areCredentialsLocked()
@@ -100,20 +99,9 @@ class ServerCredentials implements Serializable
 	{
 		if (this.unlockCredentials(oldPassword))
 		{
-			Hashtable<UUID, ClientConfiguration> credentials = new Hashtable<UUID, ClientConfiguration>();
-			
-			for (UUID credentialKey: this.credentialsEncrypted.keySet())
-			{
-				credentials.put(credentialKey, this.getCredentials(credentialKey)); 
-			}
-			
+			Hashtable<UUID, ClientConfiguration> dict = this.decryptCredentials();
 			this.password = newPassword;
-			this.credentialsEncrypted.clear();
-			
-			for (UUID credentialKey: credentials.keySet())
-			{
-				this.setCredentials(credentialKey, credentials.get(credentialKey));
-			}
+			this.encryptCredentials(dict);
 			
 			return true;
 		}
@@ -125,12 +113,14 @@ class ServerCredentials implements Serializable
 	
 	boolean credentialsExist(UUID key)
 	{
-		return this.credentialsEncrypted.containsKey(key);
+		return this.decryptCredentials().containsKey(key);
 	}
 	
 	void deleteCredentials(UUID key)
 	{
-		this.credentialsEncrypted.remove(key);
+		Hashtable<UUID,ClientConfiguration> dict = this.decryptCredentials();
+		dict.remove(key);
+		this.encryptCredentials(dict);
 	}
 	
 	ServerCredentials getClone()
@@ -144,29 +134,26 @@ class ServerCredentials implements Serializable
 	ArrayList<UUID> getCredentialKeys()
 	{
 		ArrayList<UUID> credentialKeys = new ArrayList<UUID>();
-		credentialKeys.addAll(this.credentialsEncrypted.keySet());
+		credentialKeys.addAll(this.decryptCredentials().keySet());
 		return credentialKeys;
 	}
 	
 	ClientConfiguration getCredentials(UUID key)
 	{
-		return 
-				this.password == null ?
-						null :
-						(ClientConfiguration) VegaUtils.convertFromBase64(
-							this.credentialsEncrypted.get(key), 
-							ClientConfiguration.class, 
-							this.password);
+		return this.decryptCredentials().get(key);
 	}
 	
 	boolean hasChanges(ServerCredentials other)
 	{
-		if (this.credentialsEncrypted.size() != other.credentialsEncrypted.size()) return true;
+		Hashtable<UUID,ClientConfiguration> thisDict = this.decryptCredentials();
+		Hashtable<UUID,ClientConfiguration> otherDict = other.decryptCredentials();
 		
-		for (UUID credentialsKey: this.credentialsEncrypted.keySet())
+		if (thisDict.size() != otherDict.size()) return true;
+		
+		for (UUID credentialsKey: thisDict.keySet())
 		{
-			if (!other.credentialsExist(credentialsKey)) return true;
-			if (!this.credentialsEncrypted.get(credentialsKey).equals(other.credentialsEncrypted.get(credentialsKey))) return true;
+			if (!otherDict.containsKey(credentialsKey)) return true;
+			if (!thisDict.get(credentialsKey).equals(otherDict.get(credentialsKey))) return true;
 			if (this.connectionActive != other.connectionActive) return true;
 			
 			if (this.userCredentialsSelected == null && other.userCredentialsSelected != null) return true;
@@ -187,9 +174,9 @@ class ServerCredentials implements Serializable
 	{
 		if (this.password == null) return;
 		
-		this.credentialsEncrypted.put(
-					key, 
-					VegaUtils.convertToBase64(credentials, this.password));
+		Hashtable<UUID,ClientConfiguration> dict = this.decryptCredentials();
+		dict.put(key, credentials);
+		this.encryptCredentials(dict); 
 	}
 	
 	boolean unlockCredentials(String password)
@@ -198,25 +185,47 @@ class ServerCredentials implements Serializable
 		
 		this.password = password;
 		
-		for (UUID credentialKey: this.credentialsEncrypted.keySet())
+		try
 		{
-			ClientConfiguration clientConfiguration = null;
-			
-			try
-			{
-				clientConfiguration = this.getCredentials(credentialKey); 
-			}
-			catch (Exception x)
-			{
-			}
-			
-			if (clientConfiguration == null)
-			{
-				passwordIsValid = false;
-				break;
-			}
+			this.decryptCredentials();
+		}
+		catch (Exception x)
+		{
+			passwordIsValid = false;
 		}
 		
 		return passwordIsValid;
+	}
+	
+	private Hashtable<UUID,ClientConfiguration> decryptCredentials()
+	{
+		if (this.credentialsEncrypted != null && this.password != null)
+		{
+			ServerCredentialsDict dict = (ServerCredentialsDict) VegaUtils.convertFromBase64(credentialsEncrypted, ServerCredentialsDict.class, password);
+			return dict.dict;
+		}
+		else
+		{
+			return new Hashtable<UUID,ClientConfiguration>();
+		}
+	}
+	
+	private void encryptCredentials(Hashtable<UUID,ClientConfiguration> dict)
+	{
+		if (dict.size() > 0)
+		{
+			ServerCredentialsDict scd = new ServerCredentialsDict();
+			scd.dict = dict;
+			this.credentialsEncrypted = VegaUtils.convertToBase64(scd, password);
+		}
+		else
+		{
+			this.credentialsEncrypted = null;
+		}
+	}
+	
+	class ServerCredentialsDict
+	{
+		Hashtable<UUID,ClientConfiguration> dict;
 	}
 }
