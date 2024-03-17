@@ -34,6 +34,7 @@ public class ComboBox extends JComboBox<String> implements ActionListener
 	public ComboBox(String[] data, int widthNumCharacters, String selectedItem, IComboBoxListener callback)
 	{
 		super(data);
+		
 		ArrayList<ListItem> listItems = getListItems(data);
 		Optional<ListItem> selectedListItem = listItems.stream().filter(i -> i.getDisplayString().equals(selectedItem)).findFirst();
 		
@@ -63,7 +64,7 @@ public class ComboBox extends JComboBox<String> implements ActionListener
 		if (listItems.size() > 0 && selectedItem != null)
 		{
 			this.selectedItem = selectedItem;
-			this.setSelectedItem(selectedItem);
+			this.setSelectedItem(selectedItem.getDisplayString());
 		}
 		
 		if (callback != null)
@@ -105,19 +106,28 @@ public class ComboBox extends JComboBox<String> implements ActionListener
 			return;
 		}
 		
-		int index = this.getSelectedIndex();
-		
-		ListItem newSelectedItem = 
-				index >= 0 ?
-						this.listItems.get(index) :
-						null;
+		ListItem newSelectedItem = this.getSelectedListItem();
 		
 		if (this.selectedItem == null ||
 			!this.selectedItem.equals(newSelectedItem))
 		{
 			this.selectedItem = newSelectedItem;
-			this.callback.comboBoxItemSelected(this, this.selectedItem.getDisplayString());
+			this.callback.comboBoxItemSelected(
+					this, 
+					this.selectedItem != null ?
+							this.selectedItem.getDisplayString() :
+							null);
 		}
+	}
+	
+	public ListItem getSelectedListItem()
+	{
+		int index = this.getSelectedIndex();
+		
+		return 
+				index >= 0 ?
+						this.listItems.get(index) :
+						null;
 	}
 	
 	public void enableEvents(boolean enabled)
@@ -136,14 +146,19 @@ public class ComboBox extends JComboBox<String> implements ActionListener
 	
 	public void setItems(String[] data)
 	{
+		this.setItems(getListItems(data));
+	}
+	
+	public void setItems(ArrayList<ListItem> listItems)
+	{
 		this.removeActionListener(this);
 		super.removeAllItems();
 		this.selectedItem = null;
-		this.listItems = getListItems(data);
+		this.listItems = listItems;
 		
-		for (String value: data)
+		for (ListItem listItem: listItems)
 		{
-			this.addItem(value);
+			this.addItem(listItem.getDisplayString());
 		}
 		this.addActionListener(this);
 	}
