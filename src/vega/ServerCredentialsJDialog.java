@@ -33,7 +33,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import common.CommonUtils;
 import common.Game;
 import common.VegaResources;
 import commonServer.ResponseMessageChangeUser;
@@ -62,10 +61,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 {
 	private static String lastSelectedDirectory;
 	
-	public boolean ok;
+	boolean ok;
 	
-	private Button butClose;
-	
+	private Button butCancel;
 	private Button butOk;
 	
 	private UsersPanel panUsers;
@@ -95,8 +93,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.butOk = new Button(VegaResources.OK(false), this);
 		panButtons.add(this.butOk);
 		
-		this.butClose = new Button(VegaResources.Cancel(false), this);
-		panButtons.add(this.butClose);
+		this.butCancel = new Button(VegaResources.Cancel(false), this);
+		panButtons.add(this.butCancel);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 				
@@ -114,7 +112,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	@Override
 	public void buttonClicked(Button source)
 	{
-		if (source == this.butClose)
+		if (source == this.butCancel)
 		{
 			this.close();
 		}

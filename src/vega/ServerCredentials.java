@@ -27,6 +27,7 @@ import spielwitz.biDiServer.ClientConfiguration;
 @SuppressWarnings("serial")
 class ServerCredentials implements Serializable
 {
+	static final int PASSWORD_MIN_LENGTH = 4;
 	private static final String ACTIVATION_CODE_SEPARATOR = "@";
 	
 	static String getActivationCode(ClientConfiguration clientConfiguration)
