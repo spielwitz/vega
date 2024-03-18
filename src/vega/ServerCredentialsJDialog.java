@@ -22,12 +22,20 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -39,11 +47,13 @@ import common.Player;
 import common.VegaResources;
 import commonServer.ClientServerConstants;
 import commonServer.ResponseMessageChangeUser;
+import commonServer.ServerUtils;
 import commonUi.MessageBox;
 import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.LogLevel;
+import spielwitz.biDiServer.PayloadRequestMessageChangeUser;
 import spielwitz.biDiServer.PayloadResponseMessageChangeUser;
 import spielwitz.biDiServer.PayloadResponseMessageGetServerStatus;
 import spielwitz.biDiServer.PayloadResponseMessageGetUsers;
@@ -73,6 +83,7 @@ import uiBaseControls.TextField;
 class ServerCredentialsJDialog extends Dialog implements IButtonListener
 {
 	private static String lastSelectedDirectory;
+	static private File selectedDirectoryActivationFile;
 	
 	boolean ok;
 	
@@ -100,7 +111,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.tabpane = new TabbedPane();
 		
 		this.panActivateConnection = new ActivateServerConnectionPanel();
-		this.panAdmin = new AdminPanel();
+		this.panAdmin = new AdminPanel(this);
 		
 		this.tabpane.addTab("Server-Spiele aktivieren", this.panActivateConnection);
 		
@@ -857,12 +868,13 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		private Button butSubmit;
 		
 		private PanelUserData panUserDetails;
-		//private Hashtable<String, User> usersOnServer;
+		private Dialog parent;
 		
-		private AdminPanel()
+		private AdminPanel(Dialog parent)
 		{
 			super(new BorderLayout());
 			
+			this.parent = parent;
 			PanelWithInsets panMain = new PanelWithInsets(new BorderLayout(10, 10));
 			
 			Panel panAdminCredentials = new Panel(new FlowLayout(FlowLayout.LEFT));
@@ -1018,6 +1030,28 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			{
 				this.refresh();
 			}
+			else if (source == this.butAdd)
+			{
+				this.panUserDetails.setMode(PanelUserDataMode.NewUser);
+				this.setControlsEnabledUsers();
+			}
+			else if (source == this.butSubmit)
+			{
+				String userId =  this.panUserDetails.tfUserId.getText().trim();
+				
+				if (this.panUserDetails.mode == PanelUserDataMode.NewUser)
+				{
+					this.submitNewUser(userId);
+				}
+				else if (this.panUserDetails.mode == PanelUserDataMode.ChangeUser)
+				{
+					this.submitChangeUser(userId);
+				}
+				else if (this.panUserDetails.mode == PanelUserDataMode.RenewCredentials)
+				{
+					this.submitRenewCredentials(userId);
+				}
+			}
 		}
 
 		@Override
@@ -1030,6 +1064,223 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		{
 			serverCredentials.adminCredentialsSelected = (UUID)selectedListItem.getHandle();
 			this.clearData();
+		}
+		
+		private void submitNewUser(String userId)
+		{
+			if (!this.submitCheckPasswords()) return;
+			if (!this.submitCheckEmail(userId)) return;
+			
+			if (MessageBox.showOkCancel(
+					this,
+					VegaResources.CreateUserQuestion(false, userId),
+				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
+			
+			this.submitExecute(true, true);
+		}
+		
+		private void submitChangeUser(String userId)
+		{
+			if (!this.submitCheckEmail(userId)) return;
+			
+			if(MessageBox.showOkCancel(
+					this,
+					VegaResources.UpdateUserQuestion(false, userId),
+				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
+			
+			this.submitExecute(false, false);
+		}
+		
+		private void submitRenewCredentials(String userId)
+		{
+			if (!this.submitCheckPasswords()) return;
+			if (!this.submitCheckEmail(userId)) return;
+			
+			if (MessageBox.showOkCancel(
+					this,
+					VegaResources.RenewUserCredentialsQuestion(false, userId),
+				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
+			
+			this.submitExecute(false, true);
+		}
+		
+		private boolean submitCheckPasswords()
+		{
+			if (!this.panUserDetails.tfPassword1.arePasswordsEqual(this.panUserDetails.tfPassword2))
+			{
+				MessageBox.showError(
+						this,
+						VegaResources.PasswordsNotEqual(false),
+					    VegaResources.Users(false));
+				return false;
+			}
+			
+			if (this.panUserDetails.tfPassword1.getPassword().length < 3)
+			{
+				MessageBox.showError(
+						this,
+						VegaResources.ActivationPasswordTooShort(false),
+					    VegaResources.Users(false));
+				return false;
+			}
+			
+			return true;
+		}
+		
+		private void submitExecute(boolean create, boolean renew)
+		{
+			Hashtable<String,String> customData = new Hashtable<String,String>();
+			customData.put(ClientServerConstants.USER_EMAIL_KEY, this.panUserDetails.tfEmail.getText().trim());
+			
+			PayloadRequestMessageChangeUser reqMsgChangeUser = new PayloadRequestMessageChangeUser(
+					this.panUserDetails.tfUserId.getText().trim(), 
+					customData,
+					this.panUserDetails.tfName.getText().trim(), 
+					create,
+					renew);
+			
+			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
+			VegaClient client = new VegaClient(clientConfiguration, false, null);
+			
+			Vega.showWaitCursor(this);
+			Response<PayloadResponseMessageChangeUser> response = client.changeUser(reqMsgChangeUser);
+			Vega.showDefaultCursor(this);
+			
+			if (!response.getResponseInfo().isSuccess())
+			{
+				Vega.showServerError(this, response.getResponseInfo());
+				return;
+			}
+			
+			if (renew)
+			{
+				int result = MessageBox.showCustomButtons(
+						this, 
+						VegaResources.SendActivationDataQuestion(false, reqMsgChangeUser.getUserId()), 
+						VegaResources.Users(false), 
+						new String[] {
+								VegaResources.Email(false),
+								VegaResources.TextFile(false),
+								VegaResources.CopyToClipboard(false)
+						});
+				
+				ResponseMessageChangeUser activationData = ResponseMessageChangeUser.GetInstance(response.getPayload());
+				
+				if (result == 0)
+				{
+					EmailToolkit.launchEmailClient(
+							parent,
+							customData.get(ClientServerConstants.USER_EMAIL_KEY), 
+							VegaResources.EmailSubjectNewUser(false, reqMsgChangeUser.getUserId()), 
+							VegaResources.NewUserEmailBody(
+									false, 
+									reqMsgChangeUser.getName(), 
+									reqMsgChangeUser.getUserId(), 
+									clientConfiguration.getUrl(), 
+									Integer.toString(clientConfiguration.getPort()),
+									response.getResponseInfo().getServerBuild()), 
+							VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()),
+							activationData);
+				}
+				else if (result == 1)
+				{
+					JFileChooser fc = new JFileChooser();
+					
+					fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					fc.setDialogTitle(VegaResources.AuthenticationFile(false));
+					fc.setCurrentDirectory(
+							selectedDirectoryActivationFile != null ?
+									selectedDirectoryActivationFile :
+									new File(ServerUtils.getHomeFolder()));
+					
+					String filename = ServerUtils.getCredentialFileName(
+															reqMsgChangeUser.getUserId(),
+															clientConfiguration.getUrl(),
+															clientConfiguration.getPort())
+									+ "_activation.txt";
+					
+					fc.setSelectedFile(new File(filename));
+					
+					int returnVal = fc.showSaveDialog(this);
+					
+					if (returnVal == JFileChooser.APPROVE_OPTION)
+					{
+						File file = fc.getSelectedFile();
+						selectedDirectoryActivationFile = fc.getCurrentDirectory();
+					
+						String base64 = EmailToolkit.getEmailObjectPayload(
+								VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()), 
+								activationData);
+						
+						try (BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath())))
+						{
+							bw.write(base64);
+							
+							MessageBox.showInformation(
+									parent, 
+									VegaResources.SaveFileSuccess(false),
+									VegaResources.Success(false));
+						} catch (IOException e)
+						{
+							MessageBox.showError(
+									parent, 
+									VegaResources.ActionNotPossible(false, e.getMessage()),
+									VegaResources.Success(false));
+						}
+					}
+				}
+				else
+				{
+					String base64 = 
+							EmailToolkit.getEmailObjectPayload(
+									VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()), 
+									activationData);
+					
+					try
+					{
+						StringSelection selection = new StringSelection(base64);
+						Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						clipboard.setContents(selection, selection);
+						
+						MessageBox.showInformation(
+								parent, 
+								VegaResources.CopiedToClipboard(false),
+								VegaResources.Success(false));
+					}
+					catch (Exception e)
+					{
+						MessageBox.showError(
+								parent, 
+								VegaResources.ActionNotPossible(false, e.getMessage()),
+								VegaResources.Success(false));
+					}
+				}
+			}
+			else
+			{
+				MessageBox.showInformation(
+						parent, 
+						VegaResources.UserUpdated(false, reqMsgChangeUser.getUserId()), 
+						VegaResources.Users(false));
+			}
+		}
+		
+		private boolean submitCheckEmail(String userId)
+		{
+			String eMail = this.panUserDetails.tfEmail.getText().trim();
+			
+			if (!Pattern.matches(EmailToolkit.EMAIL_REGEX_PATTERN, eMail))
+			{
+				MessageBox.showError(
+						this,
+						VegaResources.EmailAddressInvalid(
+								false, 
+								userId),
+						VegaResources.Error(false));
+				return false;
+			}
+			
+			return true;
 		}
 		
 		private void userListClearSelection()
@@ -1058,7 +1309,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			Vega.showWaitCursor(this);
 			Response<PayloadResponseMessageGetUsers> responseUsers = client.getUsers();
-			Response<PayloadResponseMessageGetServerStatus> responseServerStatus = client.getServerStatus();
 			Vega.showDefaultCursor(this);
 			
 			if (!responseUsers.getResponseInfo().isSuccess())
@@ -1066,6 +1316,10 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				Vega.showServerError(this, responseUsers.getResponseInfo());
 				return;
 			}
+			
+			Vega.showWaitCursor(this);
+			Response<PayloadResponseMessageGetServerStatus> responseServerStatus = client.getServerStatus();
+			Vega.showDefaultCursor(this);
 			
 			if (!responseServerStatus.getResponseInfo().isSuccess())
 			{

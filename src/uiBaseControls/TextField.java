@@ -54,10 +54,16 @@ public class TextField extends JTextField implements DocumentListener, FocusList
 		this.maxChars = maxChars;
 		this.allowedKeysRegexPattern = allowedKeysRegexPattern;
 		
+		if (callback != null ||
+			this.allowedKeysRegexPattern != null ||
+			this.maxChars > 0)
+		{
+			this.getDocument().addDocumentListener(this);
+		}
+		
 		if (callback != null)
 		{
 			this.addFocusListener(this);
-			this.getDocument().addDocumentListener(this);
 		}
 	}
 	
