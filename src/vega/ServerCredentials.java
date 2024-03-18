@@ -89,7 +89,7 @@ class ServerCredentials implements Serializable
 	UUID userCredentialsSelected;
 	private String credentialsEncrypted;
 	
-	private transient String password;
+	private transient byte[] password;
 	
 	ServerCredentials()
 	{
@@ -100,7 +100,7 @@ class ServerCredentials implements Serializable
 		return this.password == null;
 	}
 	
-	boolean changePassword(String oldPassword, String newPassword)
+	boolean changePassword(byte[] oldPassword, byte[] newPassword)
 	{
 		if (this.unlockCredentials(oldPassword))
 		{
@@ -184,11 +184,11 @@ class ServerCredentials implements Serializable
 		this.encryptCredentials(dict); 
 	}
 	
-	boolean unlockCredentials(String password)
+	boolean unlockCredentials(byte[] passwordBytes)
 	{
 		boolean passwordIsValid = true;
 		
-		this.password = password;
+		this.password = passwordBytes;
 		
 		try
 		{

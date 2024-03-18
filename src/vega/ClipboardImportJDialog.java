@@ -130,14 +130,17 @@ class ClipboardImportJDialog<T> extends Dialog
 			this.taImportData.setText(EmailToolkit.getClipboardContent());
 		else if (source == this.butOk)
 		{
-			String password = this.passwordProtected ?
-								new String(this.tfPassword.getPassword()) :
+			byte[] passwordBytes = this.passwordProtected ?
+								VegaUtils.toBytes(this.tfPassword.getPassword()) :
 								null;
 								
 			boolean ok = false;
 			try
 			{
-				this.obj = EmailToolkit.parseEmail(this.taImportData.getText(), this.expectedClass, password);
+				this.obj = EmailToolkit.parseEmail(
+						this.taImportData.getText(), 
+						this.expectedClass, 
+						passwordBytes);
 				ok = (this.obj != null);
 			}
 			catch (Exception x)
@@ -153,7 +156,7 @@ class ClipboardImportJDialog<T> extends Dialog
 			else
 			{
 				this.obj = null;
-				if (password == null)
+				if (passwordBytes == null)
 					MessageBox.showError(
 							this,
 							VegaResources.ClipboardImportError(false,

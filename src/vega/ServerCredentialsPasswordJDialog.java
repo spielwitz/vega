@@ -142,24 +142,24 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 		}
 		else if (source == this.butOk)
 		{
-			String password = 
+			char[] password = 
 					this.tfPassword != null ?
-							this.tfPassword.getText() :
+							this.tfPassword.getPassword() :
 							null;
 			
-			String passwordNew1 = 
+			char[]  passwordNew1 = 
 					this.tfPasswordNew1 != null ?
-							this.tfPasswordNew1.getText() :
+							this.tfPasswordNew1.getPassword() :
 							null;
 			
-			String passwordNew2 = 
+			char[]  passwordNew2 = 
 					this.tfPasswordNew2 != null ?
-							this.tfPasswordNew2.getText() :
+							this.tfPasswordNew2.getPassword() :
 							null;
 			
 			if (password != null)
 			{
-				if (!this.serverCredentials.unlockCredentials(password))
+				if (!this.serverCredentials.unlockCredentials(VegaUtils.toBytes(password)))
 				{
 					MessageBox.showError(
 							this, 
@@ -171,8 +171,8 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 			
 			if (passwordNew1 != null && passwordNew2 != null)
 			{
-				if (passwordNew1.length() < ServerCredentials.PASSWORD_MIN_LENGTH ||
-					passwordNew2.length() < ServerCredentials.PASSWORD_MIN_LENGTH)
+				if (passwordNew1.length < ServerCredentials.PASSWORD_MIN_LENGTH ||
+					passwordNew2.length < ServerCredentials.PASSWORD_MIN_LENGTH)
 				{
 					MessageBox.showError(
 							this, 
@@ -181,16 +181,18 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 					return;
 				}
 				
-				if (!passwordNew1.equals(passwordNew2))
+				if (!this.tfPasswordNew1.arePasswordsEqual(this.tfPasswordNew2))
 				{
 					MessageBox.showError(
 							this, 
-							"Bitte geben Sie beidesmal dasselbe neue Passwort ein.", 
+							VegaResources.PasswordsNotEqual(false), 
 							"Ungültiges Passwort");
 					return;
 				}
 				
-				this.serverCredentials.changePassword(password, passwordNew1);
+				this.serverCredentials.changePassword(
+						VegaUtils.toBytes(password), 
+						VegaUtils.toBytes(passwordNew1));
 			}
 			
 			this.ok = true;

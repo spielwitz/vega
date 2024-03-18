@@ -961,14 +961,11 @@ class VegaServerAdminJDialog extends Dialog
 	{
 		Mode mode = this.panUsersDetailsInner.mode;
 		
-		String password1 = null; 
+		char[] password1 = null; 
 				
 		if (mode == Mode.NewUser || mode == Mode.RenewCredentials)
 		{	
-			password1 = new String(this.panUsersDetailsInner.tfPassword1.getPassword());
-			String password2 = new String(this.panUsersDetailsInner.tfPassword2.getPassword());
-			
-			if (!password1.equals(password2))
+			if (!this.panUsersDetailsInner.tfPassword1.arePasswordsEqual(this.panUsersDetailsInner.tfPassword2))
 			{
 				MessageBox.showError(
 						this,
@@ -977,7 +974,9 @@ class VegaServerAdminJDialog extends Dialog
 				return;
 			}
 			
-			if (password1.length() < 3)
+			password1 = this.panUsersDetailsInner.tfPassword1.getPassword();
+			
+			if (password1.length < 3)
 			{
 				MessageBox.showError(
 						this,
@@ -1078,7 +1077,7 @@ class VegaServerAdminJDialog extends Dialog
 									this.clientConfigAdmin.getUrl(), 
 									Integer.toString(this.clientConfigAdmin.getPort()),
 									response.getResponseInfo().getServerBuild()), 
-							password1,
+							VegaUtils.toBytes(password1),
 							activationData);
 				}
 				else if (result == 1)
@@ -1107,7 +1106,9 @@ class VegaServerAdminJDialog extends Dialog
 						File file = fc.getSelectedFile();
 						selectedDirectory = fc.getCurrentDirectory();
 					
-						String base64 = EmailToolkit.getEmailObjectPayload(password1, activationData);
+						String base64 = EmailToolkit.getEmailObjectPayload(
+								VegaUtils.toBytes(password1), 
+								activationData);
 						
 						try (BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath())))
 						{
@@ -1129,7 +1130,9 @@ class VegaServerAdminJDialog extends Dialog
 				else
 				{
 					String base64 = 
-							EmailToolkit.getEmailObjectPayload(password1, activationData);
+							EmailToolkit.getEmailObjectPayload(
+									VegaUtils.toBytes(password1), 
+									activationData);
 					
 					try
 					{
