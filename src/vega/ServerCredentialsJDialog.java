@@ -990,10 +990,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.butDelete.setToolTipText("User löschen");
 			panUsersListButtons.add(this.butDelete);
 			
-			this.butSubmit = new Button("Abschicken", this);
-			this.butSubmit.setToolTipText("Änderungen an den Server schicken");
-			panUsersListButtons.add(this.butSubmit, BorderLayout.SOUTH);
-			
 			panServerUsersList.add(panUsersListButtons, BorderLayout.SOUTH);
 			
 			panServerUsers.addToInnerPanel(panServerUsersList, BorderLayout.WEST);
@@ -1003,6 +999,10 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			this.panUserDetails = new PanelUserData(PanelUserDataMode.NoDataFromServer);
 			panUserDetailsOuter.add(this.panUserDetails, BorderLayout.NORTH);
+			
+			this.butSubmit = new Button("Änderungen an den Server schicken", this);
+			//this.butSubmit.setToolTipText("Änderungen an den Server schicken");
+			panUserDetailsOuter.add(this.butSubmit, BorderLayout.CENTER);
 			
 			panServerUsers.addToInnerPanel(panUserDetailsOuter, BorderLayout.CENTER);
 			// -------
@@ -1020,7 +1020,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
 		{
 			this.panUserDetails.setMode(PanelUserDataMode.ChangeUser);
-			this.setControlsEnabledUsers();
+			this.setControlsEnabled();
 		}
 
 		@Override
@@ -1033,7 +1033,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			else if (source == this.butAdd)
 			{
 				this.panUserDetails.setMode(PanelUserDataMode.NewUser);
-				this.setControlsEnabledUsers();
+				this.setControlsEnabled();
 			}
 			else if (source == this.butSubmit)
 			{
@@ -1148,14 +1148,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			if (!response.getResponseInfo().isSuccess())
 			{
-				Vega.showServerError(this, response.getResponseInfo());
+				Vega.showServerError(parent, response.getResponseInfo());
 				return;
 			}
 			
 			if (renew)
 			{
 				int result = MessageBox.showCustomButtons(
-						this, 
+						parent, 
 						VegaResources.SendActivationDataQuestion(false, reqMsgChangeUser.getUserId()), 
 						VegaResources.Users(false), 
 						new String[] {
@@ -1263,6 +1263,15 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 						VegaResources.UserUpdated(false, reqMsgChangeUser.getUserId()), 
 						VegaResources.Users(false));
 			}
+			
+			ListItem selectedItemBefore = this.listServerUsers.getSelectedListItem();
+			this.butLoadServerData.doClick();
+			
+			if (selectedItemBefore != null)
+			{
+				this.listServerUsers.setSelectedValue(selectedItemBefore.getDisplayString());
+				this.setControlsEnabled();
+			}
 		}
 		
 		private boolean submitCheckEmail(String userId)
@@ -1272,7 +1281,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			if (!Pattern.matches(EmailToolkit.EMAIL_REGEX_PATTERN, eMail))
 			{
 				MessageBox.showError(
-						this,
+						parent,
 						VegaResources.EmailAddressInvalid(
 								false, 
 								userId),
@@ -1313,7 +1322,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			if (!responseUsers.getResponseInfo().isSuccess())
 			{
-				Vega.showServerError(this, responseUsers.getResponseInfo());
+				Vega.showServerError(parent, responseUsers.getResponseInfo());
 				return;
 			}
 			
@@ -1323,7 +1332,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			if (!responseServerStatus.getResponseInfo().isSuccess())
 			{
-				Vega.showServerError(this, responseServerStatus.getResponseInfo());
+				Vega.showServerError(parent, responseServerStatus.getResponseInfo());
 				return;
 			}
 			
@@ -1352,11 +1361,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			{
 				this.clearData();
 				this.panUserDetails.setMode(PanelUserDataMode.NoUserSelected);
-				this.setControlsEnabledUsers();
+				this.setControlsEnabled();
 			}
 		}
 		
-		private void setControlsEnabledUsers()
+		private void setControlsEnabled()
 		{
 			PanelUserDataMode mode = this.panUserDetails.mode;
 			ListItem selectedUser = this.listServerUsers.getSelectedListItem();
@@ -1651,12 +1660,12 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				if (newValue == true)
 				{
 					this.setMode(PanelUserDataMode.RenewCredentials);
-					setControlsEnabledUsers();
+					setControlsEnabled();
 				}
 				else if (this.mode == PanelUserDataMode.RenewCredentials)
 				{
 					this.setMode(PanelUserDataMode.ChangeUser);
-					setControlsEnabledUsers();
+					setControlsEnabled();
 				}
 			}
 
@@ -1668,7 +1677,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			private void clearData()
 			{
 				this.setMode(PanelUserDataMode.NoDataFromServer);
-				setControlsEnabledUsers();
+				setControlsEnabled();
 			}
 		}
 
