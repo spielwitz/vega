@@ -37,8 +37,8 @@ import javax.swing.JSeparator;
 import common.Game;
 import common.VegaResources;
 import commonServer.ResponseMessageChangeUser;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.PayloadResponseMessageChangeUser;
@@ -72,8 +72,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	private Button butCancel;
 	private Button butOk;
 	
-	private UsersPanel panUsers;
 	private ActivateServerConnectionPanel panActivateConnection;
+	private UsersPanel panUsers;
 	
 	private ServerCredentials serverCredentials;
 	private ServerCredentials serverCredentialsBefore;
@@ -144,16 +144,16 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		if (!this.ok &&
 			 this.serverCredentials.hasChanges(this.serverCredentialsBefore))
 		{
-			DialogWindowResult result = DialogWindow.showYesNoCancel(
+			MessageBoxResult result = MessageBox.showYesNoCancel(
 					this, 
 					"Sie haben Änderungen vorgenommen. Möchten Sie diese übernehmen?", 
 					"Ungesicherte Änderungen");
 			
-			if (result == DialogWindowResult.YES)
+			if (result == MessageBoxResult.YES)
 			{
 				this.ok = true;
 			}
-			else if (result == DialogWindowResult.CANCEL)
+			else if (result == MessageBoxResult.CANCEL)
 			{
 				return false;
 			}
@@ -164,8 +164,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	
 	private class ActivateServerConnectionPanel extends Panel implements IComboBoxListener, ICheckBoxListener
 	{
-		private ComboBox comboCredentials;
 		private CheckBox cbActivate;
+		private ComboBox comboCredentials;
 		private ArrayList<ListItem> comboUserModelUser;
 		
 		private ActivateServerConnectionPanel()
@@ -190,8 +190,12 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		}
 
 		@Override
-		public void comboBoxItemSelected(ComboBox source, String selectedValue)
+		public void checkBoxValueChanged(CheckBox source, boolean newValue)
 		{
+			if (source == this.cbActivate)
+			{
+				serverCredentials.connectionActive = newValue;
+			}
 		}
 		
 		@Override
@@ -204,12 +208,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		}
 
 		@Override
-		public void checkBoxValueChanged(CheckBox source, boolean newValue)
+		public void comboBoxItemSelected(ComboBox source, String selectedValue)
 		{
-			if (source == this.cbActivate)
-			{
-				serverCredentials.connectionActive = newValue;
-			}
 		}
 	}
 	
@@ -305,8 +305,12 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 						butAdd.getBounds().x, 
 						butAdd.getBounds().y + butAdd.getBounds().height);
 			}
+			else if (source == this.butDelete)
+			{
+				this.deleteUser();
+			}
 		}
-
+		
 		@Override
 		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
 		{
@@ -324,7 +328,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.listUsers.setSelectedIndex(this.getListIndexByCredentialsKey(credentialsKey));
 			this.setCredentialsPanelValues();
 		}
-		
+
 		private void createListUsersModel()
 		{
 			ArrayList<UUID> credentialKeys = serverCredentials.getCredentialKeys();
@@ -376,6 +380,33 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 		}
 		
+		private void deleteUser()
+		{
+			ListItem listItem = this.listUsers.getSelectedListItem();
+			if (listItem == null) return;
+			
+			ClientConfiguration clientConfiguration = serverCredentials.getCredentials((UUID)listItem.getHandle());
+			
+			MessageBoxResult result = MessageBox.showYesNo(
+										parent, 
+										"Möchten Sie die Zugangsdaten des Users [" + ServerCredentials.getCredentialsDisplayName(clientConfiguration) + "] wirklich löschen?", 
+										"User löschen");
+			
+			if (result != MessageBoxResult.YES) return;
+			
+			serverCredentials.deleteCredentials((UUID)listItem.getHandle());
+			
+			this.createListUsersModel();
+			this.listUsers.refreshListItems(this.listUsersModel);
+			
+			if (this.listUsersModel.size() > 0)
+			{
+				this.listUsers.setSelectedIndex(0);
+			}
+			
+			this.setCredentialsPanelValues();
+		}
+		
 		private int getListIndexByCredentialsKey(UUID key)
 		{
 			if (key == null) return -1;
@@ -404,7 +435,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			dlg.setVisible(true);
 			
-			if (dlg.dlgResult == DialogWindowResult.OK)
+			if (dlg.dlgResult == MessageBoxResult.OK)
 			{
 				ResponseMessageChangeUser newUser = (ResponseMessageChangeUser)dlg.obj;
 				
@@ -466,7 +497,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				}
 				else
 				{
-					DialogWindow.showError(
+					MessageBox.showError(
 						parent,
 						VegaResources.FileContainsInvalidCredentials(false, file.getAbsolutePath().toString()),
 					    VegaResources.Error(false));
@@ -667,7 +698,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					
 					listUsers.setSelectedIndex(getListIndexByCredentialsKey((UUID)selectedListItem.getHandle()));
 					
-					DialogWindow.showInformation(
+					MessageBox.showInformation(
 							parent,
 							VegaResources.UserActivationSuccess(false),
 						    VegaResources.ActivateUser(false));
@@ -690,7 +721,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				
 				if (info.isSuccess())
 				{
-					DialogWindow.showInformation(
+					MessageBox.showInformation(
 							parent, 
 							VegaResources.ConnectionSuccessful(false), 
 							VegaResources.ConnectionTest(false));

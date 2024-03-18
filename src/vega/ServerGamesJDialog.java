@@ -42,8 +42,8 @@ import common.GameOptions;
 import common.PlanetDistribution;
 import common.PlanetInfo;
 import commonServer.ResponseMessageGamesAndUsers;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Response;
 import spielwitz.biDiServer.ResponseInfo;
 import uiBaseControls.Button;
@@ -418,12 +418,12 @@ class ServerGamesJDialog extends Dialog
 
 	private void deleteGame(String gameId)
 	{
-		DialogWindowResult dialogResult = DialogWindow.showYesNo(
+		MessageBoxResult dialogResult = MessageBox.showYesNo(
 				this,
 			    VegaResources.DeleteGameQuestion(false, gameId),
 			    VegaResources.DeleteGame(false));
 		
-		if (dialogResult != DialogWindowResult.YES)
+		if (dialogResult != MessageBoxResult.YES)
 			return;
 		
 		Vega.showWaitCursor(this);
@@ -432,7 +432,7 @@ class ServerGamesJDialog extends Dialog
 		
 		if (info.isSuccess())
 		{
-			DialogWindow.showInformation(
+			MessageBox.showInformation(
 					this, 
 					VegaResources.GameDeletedSuccessfully(false, gameId), 
 					VegaResources.DeleteGame(false));
@@ -509,12 +509,12 @@ class ServerGamesJDialog extends Dialog
 	
 	private void finalizeGame(String gameId)
 	{
-		DialogWindowResult dialogResult = DialogWindow.showYesNo(
+		MessageBoxResult dialogResult = MessageBox.showYesNo(
 				this,
 			    VegaResources.FinalizeGameQuestion(false, gameId),
 			    VegaResources.FinalizeGame(false));
 		
-		if (dialogResult != DialogWindowResult.YES)
+		if (dialogResult != MessageBoxResult.YES)
 			return;
 		
 		Vega.showWaitCursor(this);
@@ -523,7 +523,7 @@ class ServerGamesJDialog extends Dialog
 		
 		if (info.isSuccess())
 		{
-			DialogWindow.showInformation(
+			MessageBox.showInformation(
 					this, 
 					VegaResources.GameFinalizedSuccessfully(false, gameId), 
 					VegaResources.FinalizeGame(false));
@@ -783,7 +783,7 @@ class ServerGamesJDialog extends Dialog
 		
 		if (gameName.length() < Game.GAME_NAME_LENGTH_MIN)
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					this,
 					VegaResources.GameNameInvalid(
 							false, 
@@ -804,7 +804,7 @@ class ServerGamesJDialog extends Dialog
 			
 			if (playerName.equals(""))
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.AssignUsersToAllPlayers(false),
 					    VegaResources.Error(false));
@@ -812,7 +812,7 @@ class ServerGamesJDialog extends Dialog
 			}
 			else if (playerNames.contains(playerName))
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.DuplicatePlayers(false, playerName),
 						VegaResources.Error(false));
@@ -830,12 +830,12 @@ class ServerGamesJDialog extends Dialog
 			playerNames.add(playerName);
 		}
 		
-		DialogWindowResult dialogResult = DialogWindow.showOkCancel(
+		MessageBoxResult dialogResult = MessageBox.showOkCancel(
 				this,
 				VegaResources.PublishGameQuestion(false, game.getName()),
 				VegaResources.PublishGame(false));
 		
-		if (dialogResult != DialogWindowResult.OK)
+		if (dialogResult != MessageBoxResult.OK)
 			return;
 		
 		HashSet<GameOptions> options = this.game.getOptions();
@@ -876,7 +876,7 @@ class ServerGamesJDialog extends Dialog
 			
 			if (playersForEmail.size() > 0)
 			{
-				DialogWindow.showInformation(
+				MessageBox.showInformation(
 						this, 
 						VegaResources.GameCreatedSendMail(false, response.getPayload()), 
 						VegaResources.PublishGame(false));
@@ -905,7 +905,7 @@ class ServerGamesJDialog extends Dialog
 				}	
 			}
 			else
-				DialogWindow.showInformation(
+				MessageBox.showInformation(
 						this, 
 						VegaResources.GameCreated(false, response.getPayload()), 
 						VegaResources.PublishGame(false));

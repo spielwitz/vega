@@ -28,7 +28,7 @@ import java.net.URLEncoder;
 import common.EmailTransportBase;
 import common.Game;
 import common.VegaResources;
-import commonUi.DialogWindow;
+import commonUi.MessageBox;
 
 class EmailToolkit
 {
@@ -103,7 +103,7 @@ class EmailToolkit
 		}
 		catch (Exception x)
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					parent, 
 					VegaResources.EmailOpenError(false, x.getMessage()), 
 					VegaResources.Error(false));

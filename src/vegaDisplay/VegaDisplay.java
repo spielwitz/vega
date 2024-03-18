@@ -41,8 +41,8 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import common.PdfLauncher;
 import common.ScreenContent;
 import common.ScreenContentClient;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import commonUi.FontHelper;
 import commonUi.IVegaDisplayMethods;
 import commonUi.IHostComponentMethods;
@@ -282,12 +282,12 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	@Override
 	protected boolean confirmClose()
 	{
-		DialogWindowResult result = DialogWindow.showYesNo(
+		MessageBoxResult result = MessageBox.showYesNo(
 				this,
 				VegaResources.QuitVegaDisplayQuestion(false),
 				VegaResources.QuitVegaDisplay(false));
 
-		if (result == DialogWindowResult.YES)
+		if (result == MessageBoxResult.YES)
 		{
 			this.logoff();
 			return true;

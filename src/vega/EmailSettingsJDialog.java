@@ -29,7 +29,7 @@ import common.Colors;
 import common.Player;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBoxResult;
 import uiBaseControls.Button;
 import uiBaseControls.CheckBox;
 import uiBaseControls.Dialog;
@@ -45,7 +45,7 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 	private final static int COLUMNS_TEXT_FIELS = 40;
 	private final static String EMAIL_SELECT_BUTTON_TEXT = ".";
 	
-	public DialogWindowResult dlgResult = DialogWindowResult.CANCEL; // NO_UCD (unused code)
+	public MessageBoxResult dlgResult = MessageBoxResult.CANCEL; // NO_UCD (unused code)
 	String emailGameHost;
 	ArrayList<Player> players;
 	private Button butCancel;
@@ -189,7 +189,7 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 			
 			if (ok)
 			{
-				this.dlgResult = DialogWindowResult.OK;
+				this.dlgResult = MessageBoxResult.OK;
 				this.close();
 			}
 		}

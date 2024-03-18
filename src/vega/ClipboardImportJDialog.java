@@ -25,8 +25,8 @@ import java.awt.Insets;
 
 import common.Game;
 import common.VegaResources;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -39,7 +39,7 @@ import uiBaseControls.TextArea;
 class ClipboardImportJDialog<T> extends Dialog
 				implements IButtonListener
 {
-	DialogWindowResult dlgResult = DialogWindowResult.CANCEL;
+	MessageBoxResult dlgResult = MessageBoxResult.CANCEL;
 	Object obj;
 	private Button butCancel;
 	private Button butDelete;
@@ -147,20 +147,20 @@ class ClipboardImportJDialog<T> extends Dialog
 			
 			if (ok)
 			{
-				this.dlgResult = DialogWindowResult.OK;
+				this.dlgResult = MessageBoxResult.OK;
 				this.close();
 			}
 			else
 			{
 				this.obj = null;
 				if (password == null)
-					DialogWindow.showError(
+					MessageBox.showError(
 							this,
 							VegaResources.ClipboardImportError(false,
 									Game.BUILD),
 							VegaResources.LoadError(false));
 				else
-					DialogWindow.showError(
+					MessageBox.showError(
 							this,
 							VegaResources.ClipboardImportErrorPassword(false,
 									Game.BUILD),

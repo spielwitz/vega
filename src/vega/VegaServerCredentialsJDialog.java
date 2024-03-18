@@ -29,8 +29,8 @@ import common.Game;
 import common.VegaResources;
 import commonServer.ResponseMessageChangeUser;
 import commonServer.ServerUtils;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.PayloadResponseMessageChangeUser;
@@ -218,19 +218,19 @@ class VegaServerCredentialsJDialog extends Dialog implements IButtonListener, IC
 				 this.timeoutBefore != this.tfTimeout.getTextInt() ||
 				 this.authPortBefore != this.tfAuthPort.getTextInt()))
 			{
-				DialogWindowResult dialogResult = DialogWindow.showYesNoCancel(
+				MessageBoxResult dialogResult = MessageBox.showYesNoCancel(
 						this,
 						VegaResources.SaveServerCredentialsQuestion(false),
 					    VegaResources.VegaServerCredentials(false));
 
-				if (dialogResult == DialogWindowResult.YES)
+				if (dialogResult == MessageBoxResult.YES)
 				{
 					this.clientConfig.setUrl(this.tfAuthUrl.getText());
 					this.clientConfig.setPort(this.tfAuthPort.getTextInt());
 					this.clientConfig.setTimeout(this.tfTimeout.getTextInt());
 					this.clientConfig.writeToFile(this.serverUserCredentialsFile);
 				}
-				else if (dialogResult == DialogWindowResult.CANCEL)
+				else if (dialogResult == MessageBoxResult.CANCEL)
 				{
 					return;
 				}
@@ -270,7 +270,7 @@ class VegaServerCredentialsJDialog extends Dialog implements IButtonListener, IC
 				this.authPortBefore = this.clientConfig.getPort();
 			}
 			else
-				DialogWindow.showError(
+				MessageBox.showError(
 					this,
 					VegaResources.FileContainsInvalidCredentials(false, file.getAbsolutePath().toString()),
 				    VegaResources.Error(false));
@@ -290,7 +290,7 @@ class VegaServerCredentialsJDialog extends Dialog implements IButtonListener, IC
 			
 			if (info.isSuccess())
 			{
-				DialogWindow.showInformation(
+				MessageBox.showInformation(
 						this, 
 						VegaResources.ConnectionSuccessful(false), 
 						VegaResources.ConnectionTest(false));
@@ -308,13 +308,13 @@ class VegaServerCredentialsJDialog extends Dialog implements IButtonListener, IC
 			
 			dlg.setVisible(true);
 			
-			if (dlg.dlgResult == DialogWindowResult.OK)
+			if (dlg.dlgResult == MessageBoxResult.OK)
 			{
 				ResponseMessageChangeUser newUser = (ResponseMessageChangeUser)dlg.obj;
 				
 				if (newUser != null)
 				{
-					DialogWindowResult dialogResult = DialogWindow.showOkCancel(
+					MessageBoxResult dialogResult = MessageBox.showOkCancel(
 							this,
 							VegaResources.UserActicationQuestion(
 									false, 
@@ -323,7 +323,7 @@ class VegaServerCredentialsJDialog extends Dialog implements IButtonListener, IC
 									Integer.toString(newUser.serverPort)),
 						    VegaResources.ActivateUser(false));
 					
-					if (dialogResult != DialogWindowResult.OK)
+					if (dialogResult != MessageBoxResult.OK)
 						return;
 					
 					PayloadResponseMessageChangeUser userActivationData = 
@@ -366,7 +366,7 @@ class VegaServerCredentialsJDialog extends Dialog implements IButtonListener, IC
 						
 						if (success)
 						{
-							DialogWindow.showInformation(
+							MessageBox.showInformation(
 									this,
 									VegaResources.UserActivationSuccess(false),
 								    VegaResources.ActivateUser(false));

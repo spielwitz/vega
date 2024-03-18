@@ -133,15 +133,15 @@ public class LanguageSelectionJDialog extends Dialog implements IButtonListener
 			
 			VegaResources.setLocale(languageCodeNew);
 			
-			DialogWindowResult dialogResult =  
+			MessageBoxResult dialogResult =  
 					this.allowCancel ?
-							DialogWindow.showOkCancel(
+							MessageBox.showOkCancel(
 									this,
 									VegaResources.NewLanguageEffectiveAfterRestart(false),
 									VegaResources.VegaLanguage(false)) :
-							DialogWindowResult.OK;
+							MessageBoxResult.OK;
 			
-			if (dialogResult == DialogWindowResult.OK)
+			if (dialogResult == MessageBoxResult.OK)
 			{
 				
 				this.languageCode = languageCodeNew;

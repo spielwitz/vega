@@ -23,7 +23,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import common.VegaResources;
-import commonUi.DialogWindow;
+import commonUi.MessageBox;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -161,7 +161,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 			{
 				if (!this.serverCredentials.unlockCredentials(password))
 				{
-					DialogWindow.showError(
+					MessageBox.showError(
 							this, 
 							"Das eingegebene Passwort ist falsch", 
 							"Passwort falsch");
@@ -174,7 +174,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 				if (passwordNew1.length() < ServerCredentials.PASSWORD_MIN_LENGTH ||
 					passwordNew2.length() < ServerCredentials.PASSWORD_MIN_LENGTH)
 				{
-					DialogWindow.showError(
+					MessageBox.showError(
 							this, 
 							"Das neue Passwort muss mindestens " + ServerCredentials.PASSWORD_MIN_LENGTH + " Zeichen lang sein.", 
 							"Ungültiges Passwort");
@@ -183,7 +183,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 				
 				if (!passwordNew1.equals(passwordNew2))
 				{
-					DialogWindow.showError(
+					MessageBox.showError(
 							this, 
 							"Bitte geben Sie beidesmal dasselbe neue Passwort ein.", 
 							"Ungültiges Passwort");

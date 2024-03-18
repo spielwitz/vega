@@ -70,8 +70,8 @@ import common.CommonUtils;
 import commonServer.PayloadNotificationMessage;
 import commonServer.PayloadNotificationNewEvaluation;
 import commonServer.ResponseMessageGamesAndUsers;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import commonUi.FontHelper;
 import commonUi.IHostComponentMethods;
 import commonUi.IServerMethods;
@@ -139,7 +139,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	}
 	static void showServerError(Component parentComponent, ResponseInfo info)
 	{
-		DialogWindow.showError(
+		MessageBox.showError(
 				parentComponent,
 			    VegaResources.getString(info.getMessage()),
 			    VegaResources.ConnectionError(false));
@@ -323,7 +323,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			
 			dlg.setVisible(true);
 			
-			if (dlg.dlgResult == DialogWindowResult.OK)
+			if (dlg.dlgResult == MessageBoxResult.OK)
 			{
 				Game game = (Game)dlg.obj;
 				
@@ -1016,7 +1016,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			String errorText = game.toFile(file);
 			
 			if (errorText != null)
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 					    errorText,
 					    "");
@@ -1096,12 +1096,12 @@ public class Vega extends Frame // NO_UCD (use default)
 		{
 			this.config.setFirstTimeStart(false);
 			
-			DialogWindowResult result = DialogWindow.showYesNo(
+			MessageBoxResult result = MessageBox.showYesNo(
 					this, 
 					VegaResources.TutorialStart(false), 
 					VegaResources.TutorialStartTitle(false));
 			
-			if (result == DialogWindowResult.YES)
+			if (result == MessageBoxResult.YES)
 			{
 				this.loadTutorial();
 			}
@@ -1192,7 +1192,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.inputEnabled = false;
 		this.redrawScreen();
 		
-		DialogWindowResult result = DialogWindow.showYesNo(
+		MessageBoxResult result = MessageBox.showYesNo(
 				this,
 				VegaResources.DoYouWantToQuitVega(false),
 				VegaResources.QuitVega(false));
@@ -1200,13 +1200,13 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.inputEnabled = true;
 		this.redrawScreen();
 		
-		if (result == DialogWindowResult.YES &&
+		if (result == MessageBoxResult.YES &&
 			this.client != null)
 		{
 			this.disconnectClient();
 		}
 
-		return result == DialogWindowResult.YES; 
+		return result == MessageBoxResult.YES; 
 	}
 	
 	private void connectClient()
@@ -1532,7 +1532,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			
 			if (error == true)
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 					    errorText,
 					    VegaResources.LoadError(false));
@@ -1556,7 +1556,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			}
 		}
 		else
-			DialogWindow.showError(
+			MessageBox.showError(
 					this, 
 					VegaResources.FileNotExists(false), 
 					VegaResources.LoadError(false));
@@ -1698,7 +1698,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		
 		if (this.client == null)
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					this,
 				    VegaResources.ServerCredentialsNotEntered(false),
 				    VegaResources.Error(false));
@@ -1853,7 +1853,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 		else
 		{
-			DialogWindow.showInformation(
+			MessageBox.showInformation(
 					this, 
 					VegaResources.HighScoresNoEntries(false), 
 					VegaResources.HighScoreList(false));

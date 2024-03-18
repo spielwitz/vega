@@ -16,7 +16,7 @@
 
 package commonUi;
 
-public enum DialogWindowResult 
+public enum MessageBoxResult 
 {
 	OK,
 	CANCEL,

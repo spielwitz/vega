@@ -29,7 +29,7 @@ import java.rmi.registry.Registry;
 import common.Game;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.DialogWindow;
+import commonUi.MessageBox;
 import commonUi.IServerMethods;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
@@ -192,7 +192,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 						this.config.getMyName());
 				
 				if (errorMsg.length() > 0)
-					DialogWindow.showError(
+					MessageBox.showError(
 							this,
 							errorMsg,
 							VegaResources.Error(false));
@@ -202,7 +202,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 			catch (Exception e) {
 				this.setCursor(Cursor.getDefaultCursor());
 				
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.NoConnectionToServer(false, e.getMessage()),
 						VegaResources.Error(false));

@@ -45,8 +45,8 @@ import common.VegaResources;
 import commonServer.ClientServerConstants;
 import commonServer.ResponseMessageChangeUser;
 import commonServer.ServerUtils;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.LogLevel;
@@ -416,7 +416,7 @@ class VegaServerAdminJDialog extends Dialog
 				}
 			}
 			else
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.FileContainsInvalidCredentials(false, file.getAbsoluteFile().toString()),
 					    VegaResources.Error(false));
@@ -441,7 +441,7 @@ class VegaServerAdminJDialog extends Dialog
 			
 			if (info.isSuccess())
 			{
-				DialogWindow.showInformation(
+				MessageBox.showInformation(
 						this, 
 						VegaResources.ConnectionSuccessful(false), 
 						VegaResources.ConnectionTest(false));
@@ -455,19 +455,19 @@ class VegaServerAdminJDialog extends Dialog
 		}
 		else if (source == this.butShutdown)
 		{
-			DialogWindowResult dialogResult = DialogWindow.showOkCancel(
+			MessageBoxResult dialogResult = MessageBox.showOkCancel(
 					this,
 					VegaResources.ShutdownServerQuestion(false),
 					VegaResources.ShutdownServer(false));
 			
-			if (dialogResult == DialogWindowResult.OK)
+			if (dialogResult == MessageBoxResult.OK)
 			{
-				dialogResult = DialogWindow.showYesNo(
+				dialogResult = MessageBox.showYesNo(
 						this,
 					    VegaResources.AreYouSure(false),
 					    VegaResources.ShutdownServer(false));
 				
-				if (dialogResult == DialogWindowResult.YES)
+				if (dialogResult == MessageBoxResult.YES)
 				{
 					VegaClient client = new VegaClient(this.clientConfigAdmin, false, null);
 					
@@ -476,7 +476,7 @@ class VegaServerAdminJDialog extends Dialog
 					Vega.showDefaultCursor(this);
 					
 					if (info.isSuccess())
-						DialogWindow.showInformation(
+						MessageBox.showInformation(
 								this,
 							    VegaResources.ServerShutdownSuccessfully(false),
 							    VegaResources.ShutdownServer(false));
@@ -569,19 +569,19 @@ class VegaServerAdminJDialog extends Dialog
 				 this.timeoutBefore != this.tfTimeout.getTextInt() ||
 				 this.authPortBefore != this.tfAuthPort.getTextInt()))
 		{
-			DialogWindowResult dialogResult = DialogWindow.showYesNoCancel(
+			MessageBoxResult dialogResult = MessageBox.showYesNoCancel(
 					this,
 					VegaResources.SaveServerCredentialsQuestion(false),
 				    VegaResources.SaveServerCredentialsQuestion(false));
 
-			if (dialogResult == DialogWindowResult.YES)
+			if (dialogResult == MessageBoxResult.YES)
 			{
 				this.clientConfigAdmin.setUrl(this.tfAuthUrl.getText());
 				this.clientConfigAdmin.setPort(this.tfAuthPort.getTextInt());
 				this.clientConfigAdmin.setTimeout(this.tfTimeout.getTextInt());
 				this.clientConfigAdmin.writeToFile(this.serverAdminCredentialsFile);
 			}
-			else if (dialogResult == DialogWindowResult.CANCEL)
+			else if (dialogResult == MessageBoxResult.CANCEL)
 			{
 				return;
 			}
@@ -690,21 +690,21 @@ class VegaServerAdminJDialog extends Dialog
 				    writer.write(response.getPayload().getLogCsv());
 				    writer.close();
 				    
-				    DialogWindow.showInformation(
+				    MessageBox.showInformation(
 				    		this, 
 				    		VegaResources.SaveFileSuccess(false), 
 				    		VegaResources.SaveLogFile(false));
 				}
 				catch (Exception x)
 				{
-					DialogWindow.showError(
+					MessageBox.showError(
 							this, 
 							VegaResources.SaveLogFileError(false, x.getMessage()), 
 							VegaResources.SaveLogFile(false));
 				}
 			}
 			else
-				DialogWindow.showInformation(
+				MessageBox.showInformation(
 						this, 
 						VegaResources.ServerLogEmpty(false), 
 						VegaResources.DownloadLog(false));
@@ -717,12 +717,12 @@ class VegaServerAdminJDialog extends Dialog
 	{
 		String newLogLevel = (String) this.comboServerLogLevel.getSelectedItem();
 		
-		DialogWindowResult dialogResult = DialogWindow.showYesNo(
+		MessageBoxResult dialogResult = MessageBox.showYesNo(
 				this,
 				VegaResources.ChangeLogLevelQuestion(false, newLogLevel),
 			    VegaResources.ChangeLogLevel(false));
 		
-		if (dialogResult != DialogWindowResult.YES)
+		if (dialogResult != MessageBoxResult.YES)
 			return;
 		
 		VegaClient client = new VegaClient(this.clientConfigAdmin, false, null);
@@ -733,7 +733,7 @@ class VegaServerAdminJDialog extends Dialog
 		
 		if (info.isSuccess())
 		{
-			DialogWindow.showInformation(
+			MessageBox.showInformation(
 					this, 
 					VegaResources.LogLevelChanged(false), 
 					VegaResources.ChangeLogLevel(false));
@@ -917,20 +917,20 @@ class VegaServerAdminJDialog extends Dialog
 		if (userId == null)
 			return;
 		
-		DialogWindowResult dialogResult = DialogWindow.showOkCancel(
+		MessageBoxResult dialogResult = MessageBox.showOkCancel(
 				this,
 				VegaResources.DeleteUserQuestion(false, userId),
 			    VegaResources.Users(false));
 		
-		if (dialogResult != DialogWindowResult.OK)
+		if (dialogResult != MessageBoxResult.OK)
 			return;
 		
-		dialogResult = DialogWindow.showYesNo(
+		dialogResult = MessageBox.showYesNo(
 				this,
 				VegaResources.AreYouSure(false),
 			    VegaResources.Users(false));
 		
-		if (dialogResult != DialogWindowResult.YES)
+		if (dialogResult != MessageBoxResult.YES)
 			return;
 		
 		VegaClient client = new VegaClient(this.clientConfigAdmin, false, null);
@@ -943,7 +943,7 @@ class VegaServerAdminJDialog extends Dialog
 		{
 			this.butRefreshUserList.doClick();
 			
-			DialogWindow.showInformation(
+			MessageBox.showInformation(
 					this, 
 					VegaResources.UserDeleted(false, userId), 
 					VegaResources.Users(false));
@@ -970,7 +970,7 @@ class VegaServerAdminJDialog extends Dialog
 			
 			if (!password1.equals(password2))
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.PasswordsNotEqual(false),
 					    VegaResources.Users(false));
@@ -979,7 +979,7 @@ class VegaServerAdminJDialog extends Dialog
 			
 			if (password1.length() < 3)
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.ActivationPasswordTooShort(false),
 					    VegaResources.Users(false));
@@ -992,7 +992,7 @@ class VegaServerAdminJDialog extends Dialog
 		
 		if (!Pattern.matches(EmailToolkit.EMAIL_REGEX_PATTERN, eMail))
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					this,
 					VegaResources.EmailAddressInvalid(
 							false, 
@@ -1001,25 +1001,25 @@ class VegaServerAdminJDialog extends Dialog
 			return;
 		}
 		
-		DialogWindowResult dialogResult = DialogWindowResult.OK;
+		MessageBoxResult dialogResult = MessageBoxResult.OK;
 		
 		if (mode == Mode.NewUser)
 		{
-			dialogResult = DialogWindow.showOkCancel(
+			dialogResult = MessageBox.showOkCancel(
 					this,
 					VegaResources.CreateUserQuestion(false, userId),
 				    VegaResources.Users(false));
 		}
 		else if (mode == Mode.RenewCredentials)
 		{
-			dialogResult = DialogWindow.showOkCancel(
+			dialogResult = MessageBox.showOkCancel(
 					this,
 					VegaResources.RenewUserCredentialsQuestion(false, userId),
 				    VegaResources.Users(false));
 		}
 		else if (mode == Mode.ChangeUser)
 		{
-			dialogResult = DialogWindow.showOkCancel(
+			dialogResult = MessageBox.showOkCancel(
 					this,
 					VegaResources.UpdateUserQuestion(false, userId),
 				    VegaResources.Users(false));
@@ -1028,7 +1028,7 @@ class VegaServerAdminJDialog extends Dialog
 			return; 
 			
 		
-		if (dialogResult != DialogWindowResult.OK)
+		if (dialogResult != MessageBoxResult.OK)
 			return;
 		
 		Hashtable<String,String> customData = new Hashtable<String,String>();
@@ -1053,7 +1053,7 @@ class VegaServerAdminJDialog extends Dialog
 			
 			if (reqMsgChangeUser.isRenewCredentials())
 			{
-				int result = DialogWindow.showCustomButtons(
+				int result = MessageBox.showCustomButtons(
 						this, 
 						VegaResources.SendActivationDataQuestion(false, reqMsgChangeUser.getUserId()), 
 						VegaResources.Users(false), 
@@ -1113,13 +1113,13 @@ class VegaServerAdminJDialog extends Dialog
 						{
 							bw.write(base64);
 							
-							DialogWindow.showInformation(
+							MessageBox.showInformation(
 									this, 
 									VegaResources.SaveFileSuccess(false),
 									VegaResources.Success(false));
 						} catch (IOException e)
 						{
-							DialogWindow.showError(
+							MessageBox.showError(
 									this, 
 									VegaResources.ActionNotPossible(false, e.getMessage()),
 									VegaResources.Success(false));
@@ -1137,14 +1137,14 @@ class VegaServerAdminJDialog extends Dialog
 						Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 						clipboard.setContents(selection, selection);
 						
-						DialogWindow.showInformation(
+						MessageBox.showInformation(
 								this, 
 								VegaResources.CopiedToClipboard(false),
 								VegaResources.Success(false));
 					}
 					catch (Exception e)
 					{
-						DialogWindow.showError(
+						MessageBox.showError(
 								this, 
 								VegaResources.ActionNotPossible(false, e.getMessage()),
 								VegaResources.Success(false));
@@ -1153,7 +1153,7 @@ class VegaServerAdminJDialog extends Dialog
 			}
 			else
 			{
-				DialogWindow.showInformation(
+				MessageBox.showInformation(
 						this, 
 						VegaResources.UserUpdated(false, reqMsgChangeUser.getUserId()), 
 						VegaResources.Users(false));

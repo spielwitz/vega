@@ -35,7 +35,7 @@ import common.GameOptions;
 import common.PlanetDistribution;
 import common.Player;
 import common.VegaResources;
-import commonUi.DialogWindow;
+import commonUi.MessageBox;
 import spielwitz.biDiServer.User;
 import uiBaseControls.Button;
 import uiBaseControls.CheckBox;
@@ -59,7 +59,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 		
 		if (emailGameHost == null || !Pattern.matches(EmailToolkit.EMAIL_REGEX_PATTERN, emailGameHost))
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					c,
 					VegaResources.EmailAddressGameHostInvalid(false), 
 					VegaResources.Error(false));
@@ -71,7 +71,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 			if (player.isEmailPlayer() && !Pattern.matches(EmailToolkit.EMAIL_REGEX_PATTERN, player.getEmail()))
 			{
 				ok = false;
-				DialogWindow.showError(
+				MessageBox.showError(
 						c,
 						VegaResources.EmailAddressInvalid(false, player.getName()),
 						VegaResources.Error(false));
@@ -522,7 +522,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 			
 			if (this.tfPlayer[playerIndex].isEditable() && !isUserNameAllowed)
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.UserNameInvalid(
 								false, 

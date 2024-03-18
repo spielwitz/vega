@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
 import common.ScreenContent;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.DialogWindow;
+import commonUi.MessageBox;
 import commonUi.IVegaDisplayMethods;
 import commonUi.IServerMethods;
 
@@ -150,7 +150,7 @@ class VegaDisplayFunctions
 			
 			Frame parentFrame = (Frame)parent;
 			
-			DialogWindow.showError(
+			MessageBox.showError(
 					parentFrame, 
 					e.toString(),
 					VegaResources.Error(false));
@@ -180,7 +180,7 @@ class VegaDisplayFunctions
 			
 			Frame parentFrame = (Frame)parent;
 			
-			DialogWindow.showError(
+			MessageBox.showError(
 					parentFrame, 
 					e.toString(),
 					VegaResources.Error(false));
