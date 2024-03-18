@@ -46,6 +46,9 @@ import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.LogLevel;
 import spielwitz.biDiServer.PayloadResponseMessageChangeUser;
+import spielwitz.biDiServer.PayloadResponseMessageGetServerStatus;
+import spielwitz.biDiServer.PayloadResponseMessageGetUsers;
+import spielwitz.biDiServer.Response;
 import spielwitz.biDiServer.ResponseInfo;
 import spielwitz.biDiServer.Tuple;
 import spielwitz.biDiServer.User;
@@ -854,7 +857,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		private Button butSubmit;
 		
 		private PanelUserData panUserDetails;
-		private Hashtable<String, User> usersOnServer;
+		//private Hashtable<String, User> usersOnServer;
 		
 		private AdminPanel()
 		{
@@ -1009,6 +1012,10 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		@Override
 		public void buttonClicked(Button source)
 		{
+			if (source == this.butLoadServerData)
+			{
+				this.refresh();
+			}
 		}
 
 		@Override
@@ -1019,11 +1026,52 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		@Override
 		public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
 		{
+			serverCredentials.adminCredentialsSelected = (UUID)selectedListItem.getHandle();
 		}
 		
 		private void userListClearSelection()
 		{
 			this.listServerUsers.clearSelection();
+		}
+		
+		private void refresh()
+		{
+			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
+			
+			VegaClient client = new VegaClient(clientConfiguration, false, null);
+			
+			Vega.showWaitCursor(this);
+			Response<PayloadResponseMessageGetUsers> responseUsers = client.getUsers();
+			Response<PayloadResponseMessageGetServerStatus> responseServerStatus = client.getServerStatus();
+			Vega.showDefaultCursor(this);
+			
+			if (!responseUsers.getResponseInfo().isSuccess())
+			{
+				Vega.showServerError(this, responseUsers.getResponseInfo());
+				return;
+			}
+			
+			if (!responseServerStatus.getResponseInfo().isSuccess())
+			{
+				Vega.showServerError(this, responseServerStatus.getResponseInfo());
+				return;
+			}
+			
+			this.tfServerBuild.setText(responseServerStatus.getPayload().getBuild());
+			this.tfServerStartDate.setText(VegaUtils.formatDateTimeString(VegaUtils.convertMillisecondsToString(responseServerStatus.getPayload().getServerStartDate())));
+			this.tfServerLogSize.setText(responseServerStatus.getPayload().getLogSizeBytes() + " Bytes");
+			this.comboServerLogLevel.setSelectedItem(responseServerStatus.getPayload().getLogLevel().toString());
+			
+			this.listServerUsersModel.clear();
+			for (User user: responseUsers.getPayload().getUsers())
+			{
+				this.listServerUsersModel.add(
+						new ListItem(
+								user.getId(), 
+								user));
+			}
+			Collections.sort(this.listServerUsersModel, new ListItem());
+			this.listServerUsers.refreshListItems(this.listServerUsersModel);
 		}
 		
 		private void setControlsEnabledUsers()
@@ -1033,7 +1081,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			User userInfo = null;
 			
 			if (selectedUser != null)
-				userInfo = this.usersOnServer.get(selectedUser.getDisplayString());
+			{
+				userInfo = (User) selectedUser.getHandle();
+			}
 			
 			switch (mode)
 			{
@@ -1066,7 +1116,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.panUserDetails.cbUserActive.setEnabled(false);
 					this.panUserDetails.cbUserActive.setSelected(false);
 					
-					this.butAdd.setEnabled(true);
+					this.butAdd.setEnabled(true && serverCredentials.adminCredentialsSelected != null);
 					this.butDelete.setEnabled(false);
 					this.butSubmit.setEnabled(false);
 					
@@ -1099,7 +1149,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.panUserDetails.cbUserActive.setEnabled(false);
 					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
 					
-					this.butAdd.setEnabled(true);
+					this.butAdd.setEnabled(true && serverCredentials.adminCredentialsSelected != null);
 					this.butDelete.setEnabled(true);
 					this.butSubmit.setEnabled(true);
 					
@@ -1134,7 +1184,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.panUserDetails.cbUserActive.setEnabled(false);
 					this.panUserDetails.cbUserActive.setSelected(false);
 					
-					this.butAdd.setEnabled(false);
+					this.butAdd.setEnabled(false || serverCredentials.adminCredentialsSelected == null);
 					this.butDelete.setEnabled(false);
 					this.butSubmit.setEnabled(true);
 					
@@ -1167,7 +1217,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.panUserDetails.cbUserActive.setEnabled(false);
 					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
 					
-					this.butAdd.setEnabled(true);
+					this.butAdd.setEnabled(true && serverCredentials.adminCredentialsSelected != null);
 					this.butDelete.setEnabled(true);
 					this.butSubmit.setEnabled(true);
 					
