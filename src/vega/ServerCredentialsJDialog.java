@@ -73,6 +73,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	private Button butOk;
 	
 	private ActivateServerConnectionPanel panActivateConnection;
+	private AdminPanel panAdmin;
 	private UsersPanel panUsers;
 	
 	private ServerCredentials serverCredentials;
@@ -92,10 +93,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.tabpane = new TabbedPane();
 		
 		this.panActivateConnection = new ActivateServerConnectionPanel();
-		this.tabpane.addTab("Verbindung aktivieren", this.panActivateConnection);
+		this.panAdmin = new AdminPanel();
+		
+		this.tabpane.addTab("Serververbindung", this.panActivateConnection);
 		
 		this.panUsers = new UsersPanel(this);
 		this.tabpane.addTab("Users", this.panUsers);
+		
+		this.tabpane.addTab("Serververwaltung", this.panAdmin);
 				
 		this.addToInnerPanel(tabpane, BorderLayout.CENTER);
 		
@@ -165,8 +170,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	private class ActivateServerConnectionPanel extends Panel implements IComboBoxListener, ICheckBoxListener
 	{
 		private CheckBox cbActivate;
-		private ComboBox comboCredentials;
-		private ArrayList<ListItem> comboUserModelUser;
+		private ComboBox comboCredentialsUser;
+		private ArrayList<ListItem> comboCredentialsUserModel;
 		
 		private ActivateServerConnectionPanel()
 		{
@@ -182,9 +187,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			panCredentials.addToInnerPanel(new JSeparator());
 			
-			this.comboUserModelUser = new ArrayList<ListItem>();
-			this.comboCredentials = new ComboBox(this.comboUserModelUser, 40, null, this);
-			panCredentials.addToInnerPanel(this.comboCredentials);
+			this.comboCredentialsUserModel = new ArrayList<ListItem>();
+			this.comboCredentialsUser = new ComboBox(this.comboCredentialsUserModel, 40, null, this);
+			panCredentials.addToInnerPanel(this.comboCredentialsUser);
 			
 			this.add(panCredentials, BorderLayout.NORTH);
 		}
@@ -201,7 +206,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		@Override
 		public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
 		{
-			if (source == this.comboCredentials)
+			if (source == this.comboCredentialsUser)
 			{
 				serverCredentials.userCredentialsSelected = (UUID)selectedListItem.getHandle();
 			}
@@ -333,7 +338,8 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		{
 			ArrayList<UUID> credentialKeys = serverCredentials.getCredentialKeys();
 			this.listUsersModel = new ArrayList<ListItem>();
-			panActivateConnection.comboUserModelUser = new ArrayList<ListItem>();
+			panActivateConnection.comboCredentialsUserModel = new ArrayList<ListItem>();
+			panAdmin.comboCredentialsAdminModel = new ArrayList<ListItem>();
 			
 			for (UUID credentialKey: credentialKeys)
 			{
@@ -349,11 +355,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 				
 				if (clientConfiguration.getUserId().equals(User.ADMIN_USER_ID))
 				{
-					// ####
+					panAdmin.comboCredentialsAdminModel.add(
+							new ListItem(
+									ServerCredentials.getCredentialsDisplayName(clientConfiguration),
+									credentialKey));
 				}
 				else if (isUserActive)
 				{
-					panActivateConnection.comboUserModelUser.add(
+					panActivateConnection.comboCredentialsUserModel.add(
 							new ListItem(
 									ServerCredentials.getCredentialsDisplayName(clientConfiguration),
 									credentialKey));
@@ -362,20 +371,37 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			Collections.sort(this.listUsersModel, new ListItem());
 			
-			Collections.sort(panActivateConnection.comboUserModelUser, new ListItem());
-			panActivateConnection.comboCredentials.setItems(panActivateConnection.comboUserModelUser);
+			Collections.sort(panActivateConnection.comboCredentialsUserModel, new ListItem());
+			panActivateConnection.comboCredentialsUser.setItems(panActivateConnection.comboCredentialsUserModel);
 			
-			if (!panActivateConnection.comboCredentials.setSelectedListItemByHandle(serverCredentials.userCredentialsSelected))
+			if (!panActivateConnection.comboCredentialsUser.setSelectedListItemByHandle(serverCredentials.userCredentialsSelected))
 			{
-				if (panActivateConnection.comboUserModelUser.size() > 0)
+				if (panActivateConnection.comboCredentialsUserModel.size() > 0)
 				{
-					ListItem selectedListItem = panActivateConnection.comboUserModelUser.get(0);
-					panActivateConnection.comboCredentials.setSelectedListItemByHandle(selectedListItem.getHandle());
+					ListItem selectedListItem = panActivateConnection.comboCredentialsUserModel.get(0);
+					panActivateConnection.comboCredentialsUser.setSelectedListItemByHandle(selectedListItem.getHandle());
 					serverCredentials.userCredentialsSelected = (UUID)selectedListItem.getHandle();
 				}
 				else
 				{
 					serverCredentials.userCredentialsSelected = null;
+				}
+			}
+			
+			Collections.sort(panAdmin.comboCredentialsAdminModel, new ListItem());
+			panAdmin.comboCredentialsAdmin.setItems(panAdmin.comboCredentialsAdminModel);
+			
+			if (!panAdmin.comboCredentialsAdmin.setSelectedListItemByHandle(serverCredentials.adminCredentialsSelected))
+			{
+				if (panAdmin.comboCredentialsAdminModel.size() > 0)
+				{
+					ListItem selectedListItem = panAdmin.comboCredentialsAdminModel.get(0);
+					panAdmin.comboCredentialsAdmin.setSelectedListItemByHandle(selectedListItem.getHandle());
+					serverCredentials.adminCredentialsSelected = (UUID)selectedListItem.getHandle();
+				}
+				else
+				{
+					serverCredentials.adminCredentialsSelected = null;
 				}
 			}
 		}
@@ -787,5 +813,51 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 						null);
 			}
 		}
+	}
+
+	private class AdminPanel extends Panel implements IButtonListener, IComboBoxListener, IListListener
+	{
+		private ComboBox comboCredentialsAdmin;
+		private ArrayList<ListItem> comboCredentialsAdminModel;
+		
+		private AdminPanel()
+		{
+			super(new BorderLayout());
+			
+			PanelWithInsets panMain = new PanelWithInsets(new BorderLayout(10, 10));
+			
+			Panel panAdminCredentials = new Panel(new FlowLayout(FlowLayout.LEFT));
+			panAdminCredentials.add(new Label("Administrator-Zugangsdaten"));
+			panAdminCredentials.add(new JSeparator());
+			
+			this.comboCredentialsAdminModel = new ArrayList<ListItem>();
+			this.comboCredentialsAdmin = new ComboBox(this.comboCredentialsAdminModel, 40, null, this);
+			panAdminCredentials.add(this.comboCredentialsAdmin);
+			
+			panMain.addToInnerPanel(panAdminCredentials, BorderLayout.NORTH);
+			
+			this.add(panMain, BorderLayout.CENTER);
+		}
+
+		@Override
+		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
+		{
+		}
+
+		@Override
+		public void buttonClicked(Button source)
+		{
+		}
+
+		@Override
+		public void comboBoxItemSelected(ComboBox source, String selectedValue)
+		{
+		}
+
+		@Override
+		public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+		{
+		}
+		
 	}
 }
