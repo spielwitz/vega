@@ -64,6 +64,11 @@ class ServerCredentials implements Serializable
 		}
 	}
 	
+	static boolean isUserActive(ClientConfiguration clientConfiguration)
+	{
+		return getActivationCode(clientConfiguration) == null;
+	}
+	
 	static void removeActivationCode(ClientConfiguration clientConfiguration)
 	{
 		int pos = clientConfiguration.getUserId().indexOf(ACTIVATION_CODE_SEPARATOR);

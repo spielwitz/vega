@@ -234,11 +234,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.parent = parent;
 			this.popupMenu = new JPopupMenu();
 			
-			this.popupMenuItemUser = new JMenuItem ("Kopieren & Einfügen");
+			this.popupMenuItemUser = new JMenuItem ("Inaktiver User aus der Zwischenablage");
 		    this.popupMenuItemUser.addActionListener(this);
 		    popupMenu.add (this.popupMenuItemUser);
 		    
-		    this.popupMenuItemAdmin = new JMenuItem ("Admin-Zugangsdaten aus Datei importieren");
+		    this.popupMenuItemAdmin = new JMenuItem ("Aktiver User aus einer Datei");
 		    this.popupMenuItemAdmin.addActionListener(this);
 		    popupMenu.add (this.popupMenuItemAdmin);
 			
@@ -334,17 +334,20 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			for (UUID credentialKey: credentialKeys)
 			{
 				ClientConfiguration clientConfiguration = serverCredentials.getCredentials(credentialKey);
+				boolean isUserActive = ServerCredentials.isUserActive(clientConfiguration);
 				
 				this.listUsersModel.add(
 						new ListItem(
-								ServerCredentials.getCredentialsDisplayName(clientConfiguration),
+								isUserActive ?
+										ServerCredentials.getCredentialsDisplayName(clientConfiguration) :
+										"(inaktiv) "+ServerCredentials.getCredentialsDisplayName(clientConfiguration),
 								credentialKey));
 				
 				if (clientConfiguration.getUserId().equals(User.ADMIN_USER_ID))
 				{
 					// ####
 				}
-				else
+				else if (isUserActive)
 				{
 					panActivateConnection.comboUserModelUser.add(
 							new ListItem(
@@ -650,11 +653,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 									
 				if (tuple.getE2().isSuccess())
 				{
-					DialogWindow.showInformation(
-							parent,
-							VegaResources.UserActivationSuccess(false),
-						    VegaResources.ActivateUser(false));
-					
 					this.clientConfig = tuple.getE1();
 					this.setValues(this.clientConfig);
 					
@@ -663,6 +661,16 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					serverCredentials.setCredentials(
 							(UUID)selectedListItem.getHandle(), 
 							this.clientConfig);
+					
+					createListUsersModel();
+					listUsers.refreshListItems(listUsersModel);
+					
+					listUsers.setSelectedIndex(getListIndexByCredentialsKey((UUID)selectedListItem.getHandle()));
+					
+					DialogWindow.showInformation(
+							parent,
+							VegaResources.UserActivationSuccess(false),
+						    VegaResources.ActivateUser(false));
 				}
 				else
 				{
