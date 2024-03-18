@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.UUID;
 
 import javax.swing.JFileChooser;
@@ -35,7 +36,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
 import common.Game;
+import common.Player;
 import common.VegaResources;
+import commonServer.ClientServerConstants;
 import commonServer.ResponseMessageChangeUser;
 import commonUi.MessageBox;
 import commonUi.MessageBoxResult;
@@ -60,6 +63,7 @@ import uiBaseControls.List;
 import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 import uiBaseControls.PanelWithInsets;
+import uiBaseControls.PasswordField;
 import uiBaseControls.TabbedPane;
 import uiBaseControls.TextField;
 
@@ -96,7 +100,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.panActivateConnection = new ActivateServerConnectionPanel();
 		this.panAdmin = new AdminPanel();
 		
-		this.tabpane.addTab("Serververbindung", this.panActivateConnection);
+		this.tabpane.addTab("Server-Spiele aktivieren", this.panActivateConnection);
 		
 		this.panUsers = new UsersPanel(this);
 		this.tabpane.addTab("Zugangsdaten", this.panUsers);
@@ -112,6 +116,9 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		
 		this.butCancel = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butCancel);
+		
+		panButtons.add(new JSeparator());
+		panButtons.add(new JSeparator());
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 				
@@ -815,6 +822,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 		}
 	}
+	
+	private enum PanelUserDataMode 
+	{
+		ChangeUser,
+		NewUser,
+		NoUserSelected,
+		RenewCredentials
+	}
 
 	private class AdminPanel extends Panel implements IButtonListener, IComboBoxListener, IListListener
 	{
@@ -836,6 +851,10 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		private Button butServerLogLevelChange;
 		private Button butAdd;
 		private Button butDelete;
+		private Button butSubmit;
+		
+		private PanelUserData panUserDetails;
+		private Hashtable<String, User> usersOnServer;
 		
 		private AdminPanel()
 		{
@@ -936,12 +955,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			panServerData.add(panServerStatus, BorderLayout.NORTH);
 			
 			// -----------
-			PanelWithInsets panServerUsers = new PanelWithInsets(VegaResources.Users(false), new BorderLayout(10, 0));
+			PanelWithInsets panServerUsers = new PanelWithInsets(VegaResources.Users(false), new BorderLayout(30, 0));
+			
+			Panel panServerUsersList = new Panel(new BorderLayout(0, 5));
 			
 			this.listServerUsersModel = new ArrayList<ListItem>();
 			this.listServerUsers = new List(this, this.listServerUsersModel);
-			this.listServerUsers.setPreferredSize(new Dimension(150, 200));
-			panServerUsers.addToInnerPanel(this.listServerUsers, BorderLayout.CENTER);
+			this.listServerUsers.setPreferredSize(new Dimension(200, 200));
+			panServerUsersList.add(this.listServerUsers, BorderLayout.CENTER);
 			
 			Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
 			
@@ -954,13 +975,30 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.butDelete.setToolTipText("User löschen");
 			panUsersListButtons.add(this.butDelete);
 			
-			panServerUsers.addToInnerPanel(panUsersListButtons, BorderLayout.SOUTH);
+			this.butSubmit = new Button("Abschicken", this);
+			this.butSubmit.setToolTipText("Änderungen an den Server schicken");
+			panUsersListButtons.add(this.butSubmit, BorderLayout.SOUTH);
+			
+			panServerUsersList.add(panUsersListButtons, BorderLayout.SOUTH);
+			
+			panServerUsers.addToInnerPanel(panServerUsersList, BorderLayout.WEST);
+			
+			// -------
+			Panel panUserDetailsOuter = new Panel(new BorderLayout(0, 0));
+			
+			this.panUserDetails = new PanelUserData(PanelUserDataMode.NoUserSelected);
+			panUserDetailsOuter.add(this.panUserDetails, BorderLayout.NORTH);
+			
+			panServerUsers.addToInnerPanel(panUserDetailsOuter, BorderLayout.CENTER);
+			// -------
 			
 			panServerData.add(panServerUsers, BorderLayout.CENTER);
 			
 			panMain.addToInnerPanel(panServerData, BorderLayout.CENTER);
 			
 			this.add(panMain, BorderLayout.CENTER);
+			
+			this.setControlsEnabledUsers();
 		}
 
 		@Override
@@ -983,5 +1021,260 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		{
 		}
 		
+		private void userListClearSelection()
+		{
+			this.listServerUsers.clearSelection();
+		}
+		
+		private void setControlsEnabledUsers()
+		{
+			PanelUserDataMode mode = this.panUserDetails.mode;
+			ListItem selectedUser = this.listServerUsers.getSelectedListItem();
+			User userInfo = null;
+			
+			if (selectedUser != null)
+				userInfo = this.usersOnServer.get(selectedUser.getDisplayString());
+			
+			switch (mode)
+			{
+			case NoUserSelected:
+					this.userListClearSelection();
+				
+					this.panUserDetails.labUserId.setEnabled(false);
+					this.panUserDetails.tfUserId.setText("");
+					this.panUserDetails.tfUserId.setEditable(false);
+					
+					this.panUserDetails.labName.setEnabled(false);
+					this.panUserDetails.tfName.setText("");
+					this.panUserDetails.tfName.setEditable(false);
+					
+					this.panUserDetails.labEmail.setEnabled(false);
+					this.panUserDetails.tfEmail.setText("");
+					this.panUserDetails.tfEmail.setEditable(false);
+					
+					this.panUserDetails.labPassword1.setEnabled(false);
+					this.panUserDetails.tfPassword1.setText("");
+					this.panUserDetails.tfPassword1.setEditable(false);
+					
+					this.panUserDetails.labPassword2.setEnabled(false);
+					this.panUserDetails.tfPassword2.setText("");
+					this.panUserDetails.tfPassword2.setEditable(false);
+					
+					this.panUserDetails.cbCredentials.setEnabled(false);
+					this.panUserDetails.cbCredentials.setSelected(false);
+					
+					this.panUserDetails.cbUserActive.setEnabled(false);
+					this.panUserDetails.cbUserActive.setSelected(false);
+					
+					this.butAdd.setEnabled(true);
+					this.butDelete.setEnabled(false);
+					this.butSubmit.setEnabled(false);
+					
+					break;
+			
+			case ChangeUser:
+					this.panUserDetails.labUserId.setEnabled(true);
+					this.panUserDetails.tfUserId.setText(userInfo.getId());
+					this.panUserDetails.tfUserId.setEditable(false);
+					
+					this.panUserDetails.labName.setEnabled(true);
+					this.panUserDetails.tfName.setText(userInfo.getName());
+					this.panUserDetails.tfName.setEditable(true);
+					
+					this.panUserDetails.labEmail.setEnabled(true);
+					this.panUserDetails.tfEmail.setText(userInfo.getCustomData().get(ClientServerConstants.USER_EMAIL_KEY));
+					this.panUserDetails.tfEmail.setEditable(true);
+					
+					this.panUserDetails.labPassword1.setEnabled(false);
+					this.panUserDetails.tfPassword1.setText("");
+					this.panUserDetails.tfPassword1.setEditable(false);
+					
+					this.panUserDetails.labPassword2.setEnabled(false);
+					this.panUserDetails.tfPassword2.setText("");
+					this.panUserDetails.tfPassword2.setEditable(false);
+					
+					this.panUserDetails.cbCredentials.setEnabled(true);
+					this.panUserDetails.cbCredentials.setSelected(false);
+					
+					this.panUserDetails.cbUserActive.setEnabled(false);
+					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
+					
+					this.butAdd.setEnabled(true);
+					this.butDelete.setEnabled(true);
+					this.butSubmit.setEnabled(true);
+					
+					break;
+			
+			case NewUser:
+					this.userListClearSelection();
+					
+					this.panUserDetails.labUserId.setEnabled(true);
+					this.panUserDetails.tfUserId.setText("");
+					this.panUserDetails.tfUserId.setEditable(true);
+					
+					this.panUserDetails.labName.setEnabled(true);
+					this.panUserDetails.tfName.setText("");
+					this.panUserDetails.tfName.setEditable(true);
+					
+					this.panUserDetails.labEmail.setEnabled(true);
+					this.panUserDetails.tfEmail.setText("");
+					this.panUserDetails.tfEmail.setEditable(true);
+					
+					this.panUserDetails.labPassword1.setEnabled(true);
+					this.panUserDetails.tfPassword1.setText("");
+					this.panUserDetails.tfPassword1.setEditable(true);
+					
+					this.panUserDetails.labPassword2.setEnabled(true);
+					this.panUserDetails.tfPassword2.setText("");
+					this.panUserDetails.tfPassword2.setEditable(true);
+					
+					this.panUserDetails.cbCredentials.setEnabled(false);
+					this.panUserDetails.cbCredentials.setSelected(true);
+					
+					this.panUserDetails.cbUserActive.setEnabled(false);
+					this.panUserDetails.cbUserActive.setSelected(false);
+					
+					this.butAdd.setEnabled(false);
+					this.butDelete.setEnabled(false);
+					this.butSubmit.setEnabled(true);
+					
+					break;
+			
+			case RenewCredentials:
+					this.panUserDetails.labUserId.setEnabled(true);
+					this.panUserDetails.tfUserId.setText(userInfo.getId());
+					this.panUserDetails.tfUserId.setEditable(false);
+					
+					this.panUserDetails.labName.setEnabled(true);
+					this.panUserDetails.tfName.setText(userInfo.getName());
+					this.panUserDetails.tfName.setEditable(true);
+					
+					this.panUserDetails.labEmail.setEnabled(true);
+					this.panUserDetails.tfEmail.setText(userInfo.getCustomData().get(ClientServerConstants.USER_EMAIL_KEY));
+					this.panUserDetails.tfEmail.setEditable(true);
+					
+					this.panUserDetails.labPassword1.setEnabled(true);
+					this.panUserDetails.tfPassword1.setText("");
+					this.panUserDetails.tfPassword1.setEditable(true);
+					
+					this.panUserDetails.labPassword2.setEnabled(true);
+					this.panUserDetails.tfPassword2.setText("");
+					this.panUserDetails.tfPassword2.setEditable(true);
+					
+					this.panUserDetails.cbCredentials.setEnabled(true);
+					this.panUserDetails.cbCredentials.setSelected(true);
+					
+					this.panUserDetails.cbUserActive.setEnabled(false);
+					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
+					
+					this.butAdd.setEnabled(true);
+					this.butDelete.setEnabled(true);
+					this.butSubmit.setEnabled(true);
+					
+					break;
+			}		
+		}
+		
+		private class PanelUserData extends Panel implements ICheckBoxListener
+		{
+			private CheckBox cbCredentials;
+			private CheckBox cbUserActive;
+			private Label labEmail;
+			private Label labName;
+			private Label labPassword1;
+			private Label labPassword2;
+			private Label labUserId;
+			private PanelUserDataMode mode;
+			private TextField tfEmail;
+			private TextField tfName;
+			private PasswordField tfPassword1;
+			private PasswordField tfPassword2;
+			
+			private TextField tfUserId;
+			
+			public PanelUserData(PanelUserDataMode mode)
+			{
+				super(new GridBagLayout());
+				
+				this.mode = mode;
+				
+				GridBagConstraints c = new GridBagConstraints();
+				c.insets = new Insets(5, 5, 5, 5);
+				c.fill = GridBagConstraints.HORIZONTAL;
+				c.weightx = 0.5;
+				c.weighty = 0.5;
+				
+				c.gridx = 0; c.gridy = 0;
+				this.labUserId = new Label(VegaResources.UserId(false)); 
+				this.add(this.labUserId, c);
+				
+				c.gridx = 1; c.gridy = 0;
+				this.tfUserId = new TextField("", Player.PLAYER_NAME_REGEX_PATTERN, 30, Player.PLAYER_NAME_LENGTH_MAX, null);
+				this.add(this.tfUserId, c);
+				
+				c.gridx = 0; c.gridy = 1;
+				this.labName = new Label(VegaResources.Name(false));
+				this.add(this.labName, c);
+				
+				c.gridx = 1; c.gridy = 1;
+				this.tfName = new TextField(30);
+				this.add(this.tfName, c);
+				
+				c.gridx = 0; c.gridy = 2;
+				this.labEmail = new Label(VegaResources.EmailAddress(false));
+				this.add(this.labEmail, c);
+				
+				c.gridx = 1; c.gridy = 2;
+				this.tfEmail = new TextField(30);
+				this.add(this.tfEmail, c);
+				
+				c.gridx = 0; c.gridy = 3;
+				this.labPassword1 = new Label(VegaResources.ActivationPassword(false));
+				this.add(this.labPassword1, c);
+				
+				c.gridx = 1; c.gridy = 3;
+				this.tfPassword1 = new PasswordField("");
+				this.tfPassword1.setColumns(30);
+				this.add(this.tfPassword1, c);
+				
+				c.gridx = 0; c.gridy = 4;
+				this.labPassword2 = new Label(VegaResources.RepeatPassword(false));
+				this.add(this.labPassword2, c);
+				
+				c.gridx = 1; c.gridy = 4;
+				this.tfPassword2 = new PasswordField("");
+				this.tfPassword2.setColumns(30);
+				this.add(this.tfPassword2, c);
+				
+				c.gridx = 1; c.gridy = 5;
+				this.cbCredentials = new CheckBox(VegaResources.RenewCredentials(false), false, this);
+				this.add(this.cbCredentials, c);
+
+				c.gridx = 1; c.gridy = 6;
+				this.cbUserActive = new CheckBox(VegaResources.UserIsActive(false), false, null);
+				this.add(this.cbUserActive, c);
+			}
+			
+			@Override
+			public void checkBoxValueChanged(CheckBox source, boolean newValue)
+			{
+				if (newValue == true)
+				{
+					this.setMode(PanelUserDataMode.RenewCredentials);
+					setControlsEnabledUsers();
+				}
+				else if (this.mode == PanelUserDataMode.RenewCredentials)
+				{
+					this.setMode(PanelUserDataMode.ChangeUser);
+					setControlsEnabledUsers();
+				}
+			}
+
+			public void setMode(PanelUserDataMode mode)
+			{
+				this.mode = mode;
+			}
+		}
+
 	}
 }
