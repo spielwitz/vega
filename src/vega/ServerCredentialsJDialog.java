@@ -41,6 +41,7 @@ import commonUi.MessageBox;
 import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
+import spielwitz.biDiServer.LogLevel;
 import spielwitz.biDiServer.PayloadResponseMessageChangeUser;
 import spielwitz.biDiServer.ResponseInfo;
 import spielwitz.biDiServer.Tuple;
@@ -98,7 +99,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		this.tabpane.addTab("Serververbindung", this.panActivateConnection);
 		
 		this.panUsers = new UsersPanel(this);
-		this.tabpane.addTab("Users", this.panUsers);
+		this.tabpane.addTab("Zugangsdaten", this.panUsers);
 		
 		this.tabpane.addTab("Serververwaltung", this.panAdmin);
 				
@@ -251,7 +252,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			this.createListUsersModel();
 			this.listUsers = new List(this, this.listUsersModel);
-			this.listUsers.setPreferredSize(new Dimension(300, 300));
+			this.listUsers.setPreferredSize(new Dimension(300, 200));
 			panUsersList.addToInnerPanel(this.listUsers, BorderLayout.CENTER);
 			
 			Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
@@ -817,8 +818,24 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 
 	private class AdminPanel extends Panel implements IButtonListener, IComboBoxListener, IListListener
 	{
+		private ComboBox comboServerLogLevel;
 		private ComboBox comboCredentialsAdmin;
 		private ArrayList<ListItem> comboCredentialsAdminModel;
+		
+		private List listServerUsers;
+		private ArrayList<ListItem> listServerUsersModel;
+		
+		private TextField tfClientBuild;
+		private TextField tfServerBuild;
+		private TextField tfServerLogSize;
+		private TextField tfServerStartDate;
+		
+		private Button butLoadServerData;
+		private Button butShutdown;
+		private Button butServerLogDownload;
+		private Button butServerLogLevelChange;
+		private Button butAdd;
+		private Button butDelete;
 		
 		private AdminPanel()
 		{
@@ -833,8 +850,115 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.comboCredentialsAdminModel = new ArrayList<ListItem>();
 			this.comboCredentialsAdmin = new ComboBox(this.comboCredentialsAdminModel, 40, null, this);
 			panAdminCredentials.add(this.comboCredentialsAdmin);
+			panAdminCredentials.add(new JSeparator());
+			
+			this.butLoadServerData = new Button("Server-Daten laden", this);
+			panAdminCredentials.add(this.butLoadServerData);
 			
 			panMain.addToInnerPanel(panAdminCredentials, BorderLayout.NORTH);
+			
+			// -----------
+			Panel panServerData = new Panel(new BorderLayout(10, 10));
+			
+			PanelWithInsets panServerStatus = new PanelWithInsets(VegaResources.ServerStatus(false), new GridBagLayout());
+			
+			GridBagConstraints cPanServerStatus = new GridBagConstraints();
+			
+			cPanServerStatus.insets = new Insets(5, 5, 5, 5);
+			cPanServerStatus.fill = GridBagConstraints.HORIZONTAL;
+			cPanServerStatus.weightx = 0.5;
+			cPanServerStatus.weighty = 0.5;
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 0;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.ClientBuild(false)),cPanServerStatus);
+			
+			cPanServerStatus.gridx = 1;
+			this.tfClientBuild = new TextField(Game.BUILD, null, 30, -1, null);
+			this.tfClientBuild.setEditable(false);
+			panServerStatus.addToInnerPanel(this.tfClientBuild, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 1;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.ServerBuild(false)), cPanServerStatus);
+			
+			cPanServerStatus.gridx = 1;
+			this.tfServerBuild = new TextField("", null, 30, -1, null);
+			this.tfServerBuild.setEditable(false);
+			panServerStatus.addToInnerPanel(this.tfServerBuild, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 2;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.RunningSince(false)), cPanServerStatus);
+			
+			cPanServerStatus.gridx = 1;
+			this.tfServerStartDate = new TextField("", null, 30, -1, null);
+			this.tfServerStartDate.setEditable(false);
+			panServerStatus.addToInnerPanel(this.tfServerStartDate, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 2;
+			this.butShutdown = new Button(VegaResources.ShutdownServer(false), this);
+			panServerStatus.addToInnerPanel(this.butShutdown, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 3;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.LogSize(false)), cPanServerStatus);
+			
+			cPanServerStatus.gridx = 1;
+			this.tfServerLogSize = new TextField("", null, 30, -1, null);
+			this.tfServerLogSize.setEditable(false);
+			panServerStatus.addToInnerPanel(this.tfServerLogSize, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 2;
+			this.butServerLogDownload = new Button(VegaResources.DownloadLog(false), this);
+			panServerStatus.addToInnerPanel(this.butServerLogDownload, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 4;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.LogLevel(false)), cPanServerStatus);
+			
+			String[] logLevels = new String[LogLevel.values().length];
+			int counter = 0;
+			for (LogLevel logEventType: LogLevel.values())
+			{
+				logLevels[counter] = logEventType.toString();
+				counter++;
+			}
+			
+			cPanServerStatus.gridx = 1;
+			this.comboServerLogLevel = new ComboBox(logLevels, 10, null, null);
+			panServerStatus.addToInnerPanel(this.comboServerLogLevel, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 2;
+			this.butServerLogLevelChange = new Button(VegaResources.ChangeLogLevel(false), this);
+			panServerStatus.addToInnerPanel(this.butServerLogLevelChange, cPanServerStatus);
+			
+			panServerData.add(panServerStatus, BorderLayout.NORTH);
+			
+			// -----------
+			PanelWithInsets panServerUsers = new PanelWithInsets(VegaResources.Users(false), new BorderLayout(10, 0));
+			
+			this.listServerUsersModel = new ArrayList<ListItem>();
+			this.listServerUsers = new List(this, this.listServerUsersModel);
+			this.listServerUsers.setPreferredSize(new Dimension(150, 200));
+			panServerUsers.addToInnerPanel(this.listServerUsers, BorderLayout.CENTER);
+			
+			Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
+			
+			this.butAdd = new Button("+", this);
+			this.butAdd.setToolTipText("User hinzufügen");
+			
+			panUsersListButtons.add(this.butAdd);
+			
+			this.butDelete = new Button("-", this);
+			this.butDelete.setToolTipText("User löschen");
+			panUsersListButtons.add(this.butDelete);
+			
+			panServerUsers.addToInnerPanel(panUsersListButtons, BorderLayout.SOUTH);
+			
+			panServerData.add(panServerUsers, BorderLayout.CENTER);
+			
+			panMain.addToInnerPanel(panServerData, BorderLayout.CENTER);
 			
 			this.add(panMain, BorderLayout.CENTER);
 		}

@@ -24,16 +24,29 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 @SuppressWarnings("serial")
 public class PanelWithInsets extends JPanel
 {
 	private Panel panInner;
 	
+	public PanelWithInsets(String title, LayoutManager lm)
+	{
+		super(new BorderLayout());
+		
+		this.initialize(title, lm);
+	}
+	
 	public PanelWithInsets(LayoutManager lm)
 	{
 		super(new BorderLayout());
 		
+		this.initialize(null, lm);
+	}
+	
+	private void initialize(String title, LayoutManager lm)
+	{
 		Panel panBase = new Panel(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();
@@ -56,6 +69,12 @@ public class PanelWithInsets extends JPanel
 		panBase.add(panInner, c);
 		
 		this.add(panBase, BorderLayout.CENTER);
+		
+		if (title != null)
+		{
+			TitledBorder titled = new TitledBorder(title);
+			this.setBorder(titled);		
+		}
 	}
 	
 	public void addToInnerPanel(Component comp) // NO_UCD (unused code)
