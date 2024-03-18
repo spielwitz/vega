@@ -27,7 +27,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.UUID;
 
 import javax.swing.JFileChooser;
@@ -332,7 +331,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		{
 			this.setCredentialsPanelValues();
 		}
-
+		
 		private void addNew(ClientConfiguration clientConfiguration)
 		{
 			UUID credentialsKey = UUID.randomUUID();
@@ -828,6 +827,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	
 	private enum PanelUserDataMode 
 	{
+		NoDataFromServer,
 		ChangeUser,
 		NewUser,
 		NoUserSelected,
@@ -989,7 +989,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			// -------
 			Panel panUserDetailsOuter = new Panel(new BorderLayout(0, 0));
 			
-			this.panUserDetails = new PanelUserData(PanelUserDataMode.NoUserSelected);
+			this.panUserDetails = new PanelUserData(PanelUserDataMode.NoDataFromServer);
 			panUserDetailsOuter.add(this.panUserDetails, BorderLayout.NORTH);
 			
 			panServerUsers.addToInnerPanel(panUserDetailsOuter, BorderLayout.CENTER);
@@ -1001,12 +1001,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			this.add(panMain, BorderLayout.CENTER);
 			
-			this.setControlsEnabledUsers();
+			this.clearData();
 		}
 
 		@Override
 		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
 		{
+			this.panUserDetails.setMode(PanelUserDataMode.ChangeUser);
+			this.setControlsEnabledUsers();
 		}
 
 		@Override
@@ -1027,11 +1029,25 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
 		{
 			serverCredentials.adminCredentialsSelected = (UUID)selectedListItem.getHandle();
+			this.clearData();
 		}
 		
 		private void userListClearSelection()
 		{
 			this.listServerUsers.clearSelection();
+		}
+		
+		private void clearData()
+		{
+			this.tfServerBuild.setText("");
+			this.tfServerStartDate.setText("");
+			this.tfServerLogSize.setText("");
+			this.comboServerLogLevel.setSelectedItem("");
+			
+			this.listServerUsersModel = new ArrayList<ListItem>();
+			this.listServerUsers.refreshListItems(this.listServerUsersModel);
+			
+			this.panUserDetails.clearData();
 		}
 		
 		private void refresh()
@@ -1072,6 +1088,18 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 			Collections.sort(this.listServerUsersModel, new ListItem());
 			this.listServerUsers.refreshListItems(this.listServerUsersModel);
+			
+			if (this.listServerUsersModel.size() > 0)
+			{
+				this.listServerUsers.setSelectedIndex(0);
+				this.listItemSelected(this.listServerUsers, null, 0, 1);
+			}
+			else
+			{
+				this.clearData();
+				this.panUserDetails.setMode(PanelUserDataMode.NoUserSelected);
+				this.setControlsEnabledUsers();
+			}
 		}
 		
 		private void setControlsEnabledUsers()
@@ -1087,6 +1115,44 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			switch (mode)
 			{
+			case NoDataFromServer:
+				this.panUserDetails.labUserId.setEnabled(false);
+				this.panUserDetails.tfUserId.setText("");
+				this.panUserDetails.tfUserId.setEditable(false);
+				
+				this.panUserDetails.labName.setEnabled(false);
+				this.panUserDetails.tfName.setText("");
+				this.panUserDetails.tfName.setEditable(false);
+				
+				this.panUserDetails.labEmail.setEnabled(false);
+				this.panUserDetails.tfEmail.setText("");
+				this.panUserDetails.tfEmail.setEditable(false);
+				
+				this.panUserDetails.labPassword1.setEnabled(false);
+				this.panUserDetails.tfPassword1.setText("");
+				this.panUserDetails.tfPassword1.setEditable(false);
+				
+				this.panUserDetails.labPassword2.setEnabled(false);
+				this.panUserDetails.tfPassword2.setText("");
+				this.panUserDetails.tfPassword2.setEditable(false);
+				
+				this.panUserDetails.cbCredentials.setEnabled(false);
+				this.panUserDetails.cbCredentials.setSelected(false);
+				
+				this.panUserDetails.cbUserActive.setEnabled(false);
+				this.panUserDetails.cbUserActive.setSelected(false);
+				
+				this.butAdd.setEnabled(false);
+				this.butDelete.setEnabled(false);
+				this.butSubmit.setEnabled(false);
+				
+				this.butServerLogDownload.setEnabled(false);
+				this.butServerLogLevelChange.setEnabled(false);
+				this.butShutdown.setEnabled(false);
+				this.comboServerLogLevel.setEnabled(false);
+				
+				break;
+					
 			case NoUserSelected:
 					this.userListClearSelection();
 				
@@ -1116,9 +1182,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.panUserDetails.cbUserActive.setEnabled(false);
 					this.panUserDetails.cbUserActive.setSelected(false);
 					
-					this.butAdd.setEnabled(true && serverCredentials.adminCredentialsSelected != null);
+					this.butAdd.setEnabled(true);
 					this.butDelete.setEnabled(false);
 					this.butSubmit.setEnabled(false);
+					
+					this.butServerLogDownload.setEnabled(true);
+					this.butServerLogLevelChange.setEnabled(true);
+					this.butShutdown.setEnabled(true);
+					this.comboServerLogLevel.setEnabled(true);
 					
 					break;
 			
@@ -1149,9 +1220,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.panUserDetails.cbUserActive.setEnabled(false);
 					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
 					
-					this.butAdd.setEnabled(true && serverCredentials.adminCredentialsSelected != null);
+					this.butAdd.setEnabled(true);
 					this.butDelete.setEnabled(true);
 					this.butSubmit.setEnabled(true);
+					
+					this.butServerLogDownload.setEnabled(true);
+					this.butServerLogLevelChange.setEnabled(true);
+					this.butShutdown.setEnabled(true);
+					this.comboServerLogLevel.setEnabled(true);
 					
 					break;
 			
@@ -1188,6 +1264,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.butDelete.setEnabled(false);
 					this.butSubmit.setEnabled(true);
 					
+					this.butServerLogDownload.setEnabled(true);
+					this.butServerLogLevelChange.setEnabled(true);
+					this.butShutdown.setEnabled(true);
+					this.comboServerLogLevel.setEnabled(true);
+					
 					break;
 			
 			case RenewCredentials:
@@ -1220,6 +1301,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					this.butAdd.setEnabled(true && serverCredentials.adminCredentialsSelected != null);
 					this.butDelete.setEnabled(true);
 					this.butSubmit.setEnabled(true);
+					
+					this.butServerLogDownload.setEnabled(true);
+					this.butServerLogLevelChange.setEnabled(true);
+					this.butShutdown.setEnabled(true);
+					this.comboServerLogLevel.setEnabled(true);
 					
 					break;
 			}		
@@ -1323,6 +1409,12 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			public void setMode(PanelUserDataMode mode)
 			{
 				this.mode = mode;
+			}
+			
+			private void clearData()
+			{
+				this.setMode(PanelUserDataMode.NoDataFromServer);
+				setControlsEnabledUsers();
 			}
 		}
 
