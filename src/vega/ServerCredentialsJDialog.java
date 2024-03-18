@@ -55,6 +55,7 @@ import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.LogLevel;
 import spielwitz.biDiServer.PayloadRequestMessageChangeUser;
 import spielwitz.biDiServer.PayloadResponseMessageChangeUser;
+import spielwitz.biDiServer.PayloadResponseMessageGetLog;
 import spielwitz.biDiServer.PayloadResponseMessageGetServerStatus;
 import spielwitz.biDiServer.PayloadResponseMessageGetUsers;
 import spielwitz.biDiServer.Response;
@@ -239,6 +240,1039 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 		}
 	}
 	
+	private class AdminPanel extends Panel implements IButtonListener, IComboBoxListener, IListListener
+	{
+		private Button butAdd;
+		private Button butDelete;
+		private Button butLoadServerData;
+		
+		private Button butServerLogDownload;
+		private Button butServerLogLevelChange;
+		
+		private Button butShutdown;
+		private Button butSubmit;
+		private ComboBox comboCredentialsAdmin;
+		private ArrayList<ListItem> comboCredentialsAdminModel;
+		
+		private ComboBox comboServerLogLevel;
+		private List listServerUsers;
+		private ArrayList<ListItem> listServerUsersModel;
+		private PanelUserData panUserDetails;
+		private Dialog parent;
+		private TextField tfClientBuild;
+		private TextField tfServerBuild;
+		
+		private TextField tfServerLogSize;
+		private TextField tfServerStartDate;
+		
+		private AdminPanel(Dialog parent)
+		{
+			super(new BorderLayout());
+			
+			this.parent = parent;
+			PanelWithInsets panMain = new PanelWithInsets(new BorderLayout(10, 10));
+			
+			Panel panAdminCredentials = new Panel(new FlowLayout(FlowLayout.LEFT));
+			panAdminCredentials.add(new Label("Administrator-Zugangsdaten"));
+			panAdminCredentials.add(new JSeparator());
+			
+			this.comboCredentialsAdminModel = new ArrayList<ListItem>();
+			this.comboCredentialsAdmin = new ComboBox(this.comboCredentialsAdminModel, 40, null, this);
+			panAdminCredentials.add(this.comboCredentialsAdmin);
+			panAdminCredentials.add(new JSeparator());
+			
+			this.butLoadServerData = new Button("Server-Daten laden", this);
+			panAdminCredentials.add(this.butLoadServerData);
+			
+			panMain.addToInnerPanel(panAdminCredentials, BorderLayout.NORTH);
+			
+			// -----------
+			Panel panServerData = new Panel(new BorderLayout(10, 10));
+			
+			PanelWithInsets panServerStatus = new PanelWithInsets(VegaResources.ServerStatus(false), new GridBagLayout());
+			
+			GridBagConstraints cPanServerStatus = new GridBagConstraints();
+			
+			cPanServerStatus.insets = new Insets(5, 5, 5, 5);
+			cPanServerStatus.fill = GridBagConstraints.HORIZONTAL;
+			cPanServerStatus.weightx = 0.5;
+			cPanServerStatus.weighty = 0.5;
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 0;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.ClientBuild(false)),cPanServerStatus);
+			
+			cPanServerStatus.gridx = 1;
+			this.tfClientBuild = new TextField(Game.BUILD, null, 30, -1, null);
+			this.tfClientBuild.setEditable(false);
+			panServerStatus.addToInnerPanel(this.tfClientBuild, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 1;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.ServerBuild(false)), cPanServerStatus);
+			
+			cPanServerStatus.gridx = 1;
+			this.tfServerBuild = new TextField("", null, 30, -1, null);
+			this.tfServerBuild.setEditable(false);
+			panServerStatus.addToInnerPanel(this.tfServerBuild, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 2;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.RunningSince(false)), cPanServerStatus);
+			
+			cPanServerStatus.gridx = 1;
+			this.tfServerStartDate = new TextField("", null, 30, -1, null);
+			this.tfServerStartDate.setEditable(false);
+			panServerStatus.addToInnerPanel(this.tfServerStartDate, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 2;
+			this.butShutdown = new Button(VegaResources.ShutdownServer(false), this);
+			panServerStatus.addToInnerPanel(this.butShutdown, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 3;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.LogSize(false)), cPanServerStatus);
+			
+			cPanServerStatus.gridx = 1;
+			this.tfServerLogSize = new TextField("", null, 30, -1, null);
+			this.tfServerLogSize.setEditable(false);
+			panServerStatus.addToInnerPanel(this.tfServerLogSize, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 2;
+			this.butServerLogDownload = new Button(VegaResources.DownloadLog(false), this);
+			panServerStatus.addToInnerPanel(this.butServerLogDownload, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 0;
+			cPanServerStatus.gridy = 4;
+			panServerStatus.addToInnerPanel(new Label(VegaResources.LogLevel(false)), cPanServerStatus);
+			
+			String[] logLevels = new String[LogLevel.values().length];
+			int counter = 0;
+			for (LogLevel logEventType: LogLevel.values())
+			{
+				logLevels[counter] = logEventType.toString();
+				counter++;
+			}
+			
+			cPanServerStatus.gridx = 1;
+			this.comboServerLogLevel = new ComboBox(logLevels, 10, null, null);
+			panServerStatus.addToInnerPanel(this.comboServerLogLevel, cPanServerStatus);
+			
+			cPanServerStatus.gridx = 2;
+			this.butServerLogLevelChange = new Button(VegaResources.ChangeLogLevel(false), this);
+			panServerStatus.addToInnerPanel(this.butServerLogLevelChange, cPanServerStatus);
+			
+			panServerData.add(panServerStatus, BorderLayout.NORTH);
+			
+			// -----------
+			PanelWithInsets panServerUsers = new PanelWithInsets(VegaResources.Users(false), new BorderLayout(30, 0));
+			
+			Panel panServerUsersList = new Panel(new BorderLayout(0, 5));
+			
+			this.listServerUsersModel = new ArrayList<ListItem>();
+			this.listServerUsers = new List(this, this.listServerUsersModel);
+			this.listServerUsers.setPreferredSize(new Dimension(200, 200));
+			panServerUsersList.add(this.listServerUsers, BorderLayout.CENTER);
+			
+			Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
+			
+			this.butAdd = new Button("+", this);
+			this.butAdd.setToolTipText("User hinzufügen");
+			
+			panUsersListButtons.add(this.butAdd);
+			
+			this.butDelete = new Button("-", this);
+			this.butDelete.setToolTipText("User löschen");
+			panUsersListButtons.add(this.butDelete);
+			
+			panServerUsersList.add(panUsersListButtons, BorderLayout.SOUTH);
+			
+			panServerUsers.addToInnerPanel(panServerUsersList, BorderLayout.WEST);
+			
+			// -------
+			Panel panUserDetailsOuter = new Panel(new BorderLayout(0, 0));
+			
+			this.panUserDetails = new PanelUserData(PanelUserDataMode.NoDataFromServer);
+			panUserDetailsOuter.add(this.panUserDetails, BorderLayout.NORTH);
+			
+			this.butSubmit = new Button("Änderungen an den Server schicken", this);
+			//this.butSubmit.setToolTipText("Änderungen an den Server schicken");
+			panUserDetailsOuter.add(this.butSubmit, BorderLayout.CENTER);
+			
+			panServerUsers.addToInnerPanel(panUserDetailsOuter, BorderLayout.CENTER);
+			// -------
+			
+			panServerData.add(panServerUsers, BorderLayout.CENTER);
+			
+			panMain.addToInnerPanel(panServerData, BorderLayout.CENTER);
+			
+			this.add(panMain, BorderLayout.CENTER);
+			
+			this.clearData();
+		}
+
+		@Override
+		public void buttonClicked(Button source)
+		{
+			if (source == this.butLoadServerData)
+			{
+				this.refresh();
+			}
+			else if (source == this.butAdd)
+			{
+				this.panUserDetails.setMode(PanelUserDataMode.NewUser);
+				this.setControlsEnabled();
+			}
+			else if (source == this.butDelete)
+			{
+				this.deleteUser();
+			}
+			else if (source == this.butSubmit)
+			{
+				String userId =  this.panUserDetails.tfUserId.getText().trim();
+				
+				if (this.panUserDetails.mode == PanelUserDataMode.NewUser)
+				{
+					this.submitNewUser(userId);
+				}
+				else if (this.panUserDetails.mode == PanelUserDataMode.ChangeUser)
+				{
+					this.submitChangeUser(userId);
+				}
+				else if (this.panUserDetails.mode == PanelUserDataMode.RenewCredentials)
+				{
+					this.submitRenewCredentials(userId);
+				}
+			}
+			else if (source == this.butShutdown)
+			{
+				this.shutdownServer();
+			}
+			else if (source == this.butServerLogDownload)
+			{
+				this.downloadLog();
+			}
+			else if (source == this.butServerLogLevelChange)
+			{
+				this.changeLogLevel();
+			}
+		}
+		
+		@Override
+		public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+		{
+			serverCredentials.adminCredentialsSelected = (UUID)selectedListItem.getHandle();
+			this.clearData();
+		}
+		
+		@Override
+		public void comboBoxItemSelected(ComboBox source, String selectedValue)
+		{
+		}
+		
+		@Override
+		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
+		{
+			this.panUserDetails.setMode(PanelUserDataMode.ChangeUser);
+			this.setControlsEnabled();
+		}
+		
+		private void changeLogLevel()
+		{
+			String newLogLevel = (String) this.comboServerLogLevel.getSelectedItem();
+			
+			MessageBoxResult dialogResult = MessageBox.showYesNo(
+					this,
+					VegaResources.ChangeLogLevelQuestion(false, newLogLevel),
+				    VegaResources.ChangeLogLevel(false));
+			
+			if (dialogResult != MessageBoxResult.YES)
+				return;
+			
+			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
+			VegaClient client = new VegaClient(clientConfiguration, false, null);
+			
+			Vega.showWaitCursor(this);
+			ResponseInfo info = client.setLogLevel(LogLevel.valueOf(newLogLevel));
+			Vega.showDefaultCursor(this);
+			
+			if (info.isSuccess())
+			{
+				MessageBox.showInformation(
+						this, 
+						VegaResources.LogLevelChanged(false), 
+						VegaResources.ChangeLogLevel(false));
+			}
+			else
+				Vega.showServerError(this, info);
+
+		}
+
+		private void clearData()
+		{
+			this.tfServerBuild.setText("");
+			this.tfServerStartDate.setText("");
+			this.tfServerLogSize.setText("");
+			this.comboServerLogLevel.setSelectedItem("");
+			
+			this.listServerUsersModel = new ArrayList<ListItem>();
+			this.listServerUsers.refreshListItems(this.listServerUsersModel);
+			
+			this.panUserDetails.clearData();
+		}
+
+		private void deleteUser()
+		{
+			ListItem selectedListItem = this.listServerUsers.getSelectedListItem();
+			
+			if (selectedListItem == null)
+				return;
+			
+			String userId = ((User)selectedListItem.getHandle()).getId();
+			
+			MessageBoxResult dialogResult = MessageBox.showOkCancel(
+					this,
+					VegaResources.DeleteUserQuestion(false, userId),
+				    VegaResources.Users(false));
+			
+			if (dialogResult != MessageBoxResult.OK)
+				return;
+			
+			dialogResult = MessageBox.showYesNo(
+					this,
+					VegaResources.AreYouSure(false),
+				    VegaResources.Users(false));
+			
+			if (dialogResult != MessageBoxResult.YES)
+				return;
+			
+			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
+			VegaClient client = new VegaClient(clientConfiguration, false, null);
+			
+			Vega.showWaitCursor(this);
+			ResponseInfo info = client.deleteUser(userId);
+			Vega.showDefaultCursor(this);
+			
+			if (info.isSuccess())
+			{
+				this.butLoadServerData.doClick();
+				MessageBox.showInformation(
+						this, 
+						VegaResources.UserDeleted(false, userId), 
+						VegaResources.Users(false));
+			}
+			else
+				Vega.showServerError(this, info);
+		}
+
+		private void downloadLog()
+		{
+			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
+			VegaClient client = new VegaClient(clientConfiguration, false, null);
+			
+			Vega.showWaitCursor(this);
+			Response<PayloadResponseMessageGetLog> response = client.getServerLog();
+			Vega.showDefaultCursor(this);
+			
+			if (response.getResponseInfo().isSuccess())
+			{
+				if (response.getPayload().getFileName() != null && 
+					response.getPayload().getLogCsv() != null && 
+					response.getPayload().getLogCsv().length() > 0)
+				{	
+					File file = new File(response.getPayload().getFileName());
+					
+					JFileChooser fc = new JFileChooser();
+					
+					fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					fc.setDialogTitle(VegaResources.SaveLogFile(false));
+					fc.setSelectedFile(file);
+					
+					int returnVal = fc.showSaveDialog(this);
+					
+					if(returnVal != JFileChooser.APPROVE_OPTION)
+					{
+						return;
+					}
+					
+					file = fc.getSelectedFile();
+					
+					try
+					{
+						BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
+					    writer.write(response.getPayload().getLogCsv());
+					    writer.close();
+					    
+					    MessageBox.showInformation(
+					    		this, 
+					    		VegaResources.SaveFileSuccess(false), 
+					    		VegaResources.SaveLogFile(false));
+					}
+					catch (Exception x)
+					{
+						MessageBox.showError(
+								this, 
+								VegaResources.SaveLogFileError(false, x.getMessage()), 
+								VegaResources.SaveLogFile(false));
+					}
+				}
+				else
+					MessageBox.showInformation(
+							this, 
+							VegaResources.ServerLogEmpty(false), 
+							VegaResources.DownloadLog(false));
+			}
+			else
+				Vega.showServerError(this, response.getResponseInfo());
+		}
+		
+		private void refresh()
+		{
+			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
+			
+			VegaClient client = new VegaClient(clientConfiguration, false, null);
+			
+			Vega.showWaitCursor(this);
+			Response<PayloadResponseMessageGetUsers> responseUsers = client.getUsers();
+			Vega.showDefaultCursor(this);
+			
+			if (!responseUsers.getResponseInfo().isSuccess())
+			{
+				Vega.showServerError(parent, responseUsers.getResponseInfo());
+				return;
+			}
+			
+			Vega.showWaitCursor(this);
+			Response<PayloadResponseMessageGetServerStatus> responseServerStatus = client.getServerStatus();
+			Vega.showDefaultCursor(this);
+			
+			if (!responseServerStatus.getResponseInfo().isSuccess())
+			{
+				Vega.showServerError(parent, responseServerStatus.getResponseInfo());
+				return;
+			}
+			
+			this.tfServerBuild.setText(responseServerStatus.getPayload().getBuild());
+			this.tfServerStartDate.setText(VegaUtils.formatDateTimeString(VegaUtils.convertMillisecondsToString(responseServerStatus.getPayload().getServerStartDate())));
+			this.tfServerLogSize.setText(responseServerStatus.getPayload().getLogSizeBytes() + " Bytes");
+			this.comboServerLogLevel.setSelectedItem(responseServerStatus.getPayload().getLogLevel().toString());
+			
+			this.listServerUsersModel.clear();
+			for (User user: responseUsers.getPayload().getUsers())
+			{
+				this.listServerUsersModel.add(
+						new ListItem(
+								user.getId(), 
+								user));
+			}
+			Collections.sort(this.listServerUsersModel, new ListItem());
+			this.listServerUsers.refreshListItems(this.listServerUsersModel);
+			
+			if (this.listServerUsersModel.size() > 0)
+			{
+				this.listServerUsers.setSelectedIndex(0);
+				this.listItemSelected(this.listServerUsers, null, 0, 1);
+			}
+			else
+			{
+				this.clearData();
+				this.panUserDetails.setMode(PanelUserDataMode.NoUserSelected);
+				this.setControlsEnabled();
+			}
+		}
+		
+		private void setControlsEnabled()
+		{
+			PanelUserDataMode mode = this.panUserDetails.mode;
+			ListItem selectedUser = this.listServerUsers.getSelectedListItem();
+			User userInfo = null;
+			
+			if (selectedUser != null)
+			{
+				userInfo = (User) selectedUser.getHandle();
+			}
+			
+			switch (mode)
+			{
+			case NoDataFromServer:
+				this.panUserDetails.labUserId.setEnabled(false);
+				this.panUserDetails.tfUserId.setText("");
+				this.panUserDetails.tfUserId.setEditable(false);
+				
+				this.panUserDetails.labName.setEnabled(false);
+				this.panUserDetails.tfName.setText("");
+				this.panUserDetails.tfName.setEditable(false);
+				
+				this.panUserDetails.labEmail.setEnabled(false);
+				this.panUserDetails.tfEmail.setText("");
+				this.panUserDetails.tfEmail.setEditable(false);
+				
+				this.panUserDetails.labPassword1.setEnabled(false);
+				this.panUserDetails.tfPassword1.setText("");
+				this.panUserDetails.tfPassword1.setEditable(false);
+				
+				this.panUserDetails.labPassword2.setEnabled(false);
+				this.panUserDetails.tfPassword2.setText("");
+				this.panUserDetails.tfPassword2.setEditable(false);
+				
+				this.panUserDetails.cbCredentials.setEnabled(false);
+				this.panUserDetails.cbCredentials.setSelected(false);
+				
+				this.panUserDetails.cbUserActive.setEnabled(false);
+				this.panUserDetails.cbUserActive.setSelected(false);
+				
+				this.butAdd.setEnabled(false);
+				this.butDelete.setEnabled(false);
+				this.butSubmit.setEnabled(false);
+				
+				this.butServerLogDownload.setEnabled(false);
+				this.butServerLogLevelChange.setEnabled(false);
+				this.butShutdown.setEnabled(false);
+				this.comboServerLogLevel.setEnabled(false);
+				
+				break;
+					
+			case NoUserSelected:
+					this.userListClearSelection();
+				
+					this.panUserDetails.labUserId.setEnabled(false);
+					this.panUserDetails.tfUserId.setText("");
+					this.panUserDetails.tfUserId.setEditable(false);
+					
+					this.panUserDetails.labName.setEnabled(false);
+					this.panUserDetails.tfName.setText("");
+					this.panUserDetails.tfName.setEditable(false);
+					
+					this.panUserDetails.labEmail.setEnabled(false);
+					this.panUserDetails.tfEmail.setText("");
+					this.panUserDetails.tfEmail.setEditable(false);
+					
+					this.panUserDetails.labPassword1.setEnabled(false);
+					this.panUserDetails.tfPassword1.setText("");
+					this.panUserDetails.tfPassword1.setEditable(false);
+					
+					this.panUserDetails.labPassword2.setEnabled(false);
+					this.panUserDetails.tfPassword2.setText("");
+					this.panUserDetails.tfPassword2.setEditable(false);
+					
+					this.panUserDetails.cbCredentials.setEnabled(false);
+					this.panUserDetails.cbCredentials.setSelected(false);
+					
+					this.panUserDetails.cbUserActive.setEnabled(false);
+					this.panUserDetails.cbUserActive.setSelected(false);
+					
+					this.butAdd.setEnabled(true);
+					this.butDelete.setEnabled(false);
+					this.butSubmit.setEnabled(false);
+					
+					this.butServerLogDownload.setEnabled(true);
+					this.butServerLogLevelChange.setEnabled(true);
+					this.butShutdown.setEnabled(true);
+					this.comboServerLogLevel.setEnabled(true);
+					
+					break;
+			
+			case ChangeUser:
+					this.panUserDetails.labUserId.setEnabled(true);
+					this.panUserDetails.tfUserId.setText(userInfo.getId());
+					this.panUserDetails.tfUserId.setEditable(false);
+					
+					this.panUserDetails.labName.setEnabled(true);
+					this.panUserDetails.tfName.setText(userInfo.getName());
+					this.panUserDetails.tfName.setEditable(true);
+					
+					this.panUserDetails.labEmail.setEnabled(true);
+					this.panUserDetails.tfEmail.setText(userInfo.getCustomData().get(ClientServerConstants.USER_EMAIL_KEY));
+					this.panUserDetails.tfEmail.setEditable(true);
+					
+					this.panUserDetails.labPassword1.setEnabled(false);
+					this.panUserDetails.tfPassword1.setText("");
+					this.panUserDetails.tfPassword1.setEditable(false);
+					
+					this.panUserDetails.labPassword2.setEnabled(false);
+					this.panUserDetails.tfPassword2.setText("");
+					this.panUserDetails.tfPassword2.setEditable(false);
+					
+					this.panUserDetails.cbCredentials.setEnabled(true);
+					this.panUserDetails.cbCredentials.setSelected(false);
+					
+					this.panUserDetails.cbUserActive.setEnabled(false);
+					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
+					
+					this.butAdd.setEnabled(true);
+					this.butDelete.setEnabled(true);
+					this.butSubmit.setEnabled(true);
+					
+					this.butServerLogDownload.setEnabled(true);
+					this.butServerLogLevelChange.setEnabled(true);
+					this.butShutdown.setEnabled(true);
+					this.comboServerLogLevel.setEnabled(true);
+					
+					break;
+			
+			case NewUser:
+					this.userListClearSelection();
+					
+					this.panUserDetails.labUserId.setEnabled(true);
+					this.panUserDetails.tfUserId.setText("");
+					this.panUserDetails.tfUserId.setEditable(true);
+					
+					this.panUserDetails.labName.setEnabled(true);
+					this.panUserDetails.tfName.setText("");
+					this.panUserDetails.tfName.setEditable(true);
+					
+					this.panUserDetails.labEmail.setEnabled(true);
+					this.panUserDetails.tfEmail.setText("");
+					this.panUserDetails.tfEmail.setEditable(true);
+					
+					this.panUserDetails.labPassword1.setEnabled(true);
+					this.panUserDetails.tfPassword1.setText("");
+					this.panUserDetails.tfPassword1.setEditable(true);
+					
+					this.panUserDetails.labPassword2.setEnabled(true);
+					this.panUserDetails.tfPassword2.setText("");
+					this.panUserDetails.tfPassword2.setEditable(true);
+					
+					this.panUserDetails.cbCredentials.setEnabled(false);
+					this.panUserDetails.cbCredentials.setSelected(true);
+					
+					this.panUserDetails.cbUserActive.setEnabled(false);
+					this.panUserDetails.cbUserActive.setSelected(false);
+					
+					this.butAdd.setEnabled(false || serverCredentials.adminCredentialsSelected == null);
+					this.butDelete.setEnabled(false);
+					this.butSubmit.setEnabled(true);
+					
+					this.butServerLogDownload.setEnabled(true);
+					this.butServerLogLevelChange.setEnabled(true);
+					this.butShutdown.setEnabled(true);
+					this.comboServerLogLevel.setEnabled(true);
+					
+					break;
+			
+			case RenewCredentials:
+					this.panUserDetails.labUserId.setEnabled(true);
+					this.panUserDetails.tfUserId.setText(userInfo.getId());
+					this.panUserDetails.tfUserId.setEditable(false);
+					
+					this.panUserDetails.labName.setEnabled(true);
+					this.panUserDetails.tfName.setText(userInfo.getName());
+					this.panUserDetails.tfName.setEditable(true);
+					
+					this.panUserDetails.labEmail.setEnabled(true);
+					this.panUserDetails.tfEmail.setText(userInfo.getCustomData().get(ClientServerConstants.USER_EMAIL_KEY));
+					this.panUserDetails.tfEmail.setEditable(true);
+					
+					this.panUserDetails.labPassword1.setEnabled(true);
+					this.panUserDetails.tfPassword1.setText("");
+					this.panUserDetails.tfPassword1.setEditable(true);
+					
+					this.panUserDetails.labPassword2.setEnabled(true);
+					this.panUserDetails.tfPassword2.setText("");
+					this.panUserDetails.tfPassword2.setEditable(true);
+					
+					this.panUserDetails.cbCredentials.setEnabled(true);
+					this.panUserDetails.cbCredentials.setSelected(true);
+					
+					this.panUserDetails.cbUserActive.setEnabled(false);
+					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
+					
+					this.butAdd.setEnabled(true && serverCredentials.adminCredentialsSelected != null);
+					this.butDelete.setEnabled(true);
+					this.butSubmit.setEnabled(true);
+					
+					this.butServerLogDownload.setEnabled(true);
+					this.butServerLogLevelChange.setEnabled(true);
+					this.butShutdown.setEnabled(true);
+					this.comboServerLogLevel.setEnabled(true);
+					
+					break;
+			}		
+		}
+		
+		private void shutdownServer()
+		{
+			MessageBoxResult dialogResult = MessageBox.showOkCancel(
+					this,
+					VegaResources.ShutdownServerQuestion(false),
+					VegaResources.ShutdownServer(false));
+			
+			if (dialogResult == MessageBoxResult.OK)
+			{
+				dialogResult = MessageBox.showYesNo(
+						this,
+					    VegaResources.AreYouSure(false),
+					    VegaResources.ShutdownServer(false));
+				
+				if (dialogResult == MessageBoxResult.YES)
+				{
+					ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
+					VegaClient client = new VegaClient(clientConfiguration, false, null);
+					
+					Vega.showWaitCursor(this);
+					ResponseInfo info = client.shutdownServer();
+					Vega.showDefaultCursor(this);
+					
+					if (info.isSuccess())
+						MessageBox.showInformation(
+								this,
+							    VegaResources.ServerShutdownSuccessfully(false),
+							    VegaResources.ShutdownServer(false));
+					else
+						Vega.showServerError(this, info);
+				}
+			}
+		}
+		
+		private void submitChangeUser(String userId)
+		{
+			if (!this.submitCheckEmail(userId)) return;
+			
+			if(MessageBox.showOkCancel(
+					this,
+					VegaResources.UpdateUserQuestion(false, userId),
+				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
+			
+			this.submitExecute(false, false);
+		}
+		
+		private boolean submitCheckEmail(String userId)
+		{
+			String eMail = this.panUserDetails.tfEmail.getText().trim();
+			
+			if (!Pattern.matches(EmailToolkit.EMAIL_REGEX_PATTERN, eMail))
+			{
+				MessageBox.showError(
+						parent,
+						VegaResources.EmailAddressInvalid(
+								false, 
+								userId),
+						VegaResources.Error(false));
+				return false;
+			}
+			
+			return true;
+		}
+		
+		private boolean submitCheckPasswords()
+		{
+			if (!this.panUserDetails.tfPassword1.arePasswordsEqual(this.panUserDetails.tfPassword2))
+			{
+				MessageBox.showError(
+						this,
+						VegaResources.PasswordsNotEqual(false),
+					    VegaResources.Users(false));
+				return false;
+			}
+			
+			if (this.panUserDetails.tfPassword1.getPassword().length < 3)
+			{
+				MessageBox.showError(
+						this,
+						VegaResources.ActivationPasswordTooShort(false),
+					    VegaResources.Users(false));
+				return false;
+			}
+			
+			return true;
+		}
+		
+		private void submitExecute(boolean create, boolean renew)
+		{
+			Hashtable<String,String> customData = new Hashtable<String,String>();
+			customData.put(ClientServerConstants.USER_EMAIL_KEY, this.panUserDetails.tfEmail.getText().trim());
+			
+			PayloadRequestMessageChangeUser reqMsgChangeUser = new PayloadRequestMessageChangeUser(
+					this.panUserDetails.tfUserId.getText().trim(), 
+					customData,
+					this.panUserDetails.tfName.getText().trim(), 
+					create,
+					renew);
+			
+			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
+			VegaClient client = new VegaClient(clientConfiguration, false, null);
+			
+			Vega.showWaitCursor(this);
+			Response<PayloadResponseMessageChangeUser> response = client.changeUser(reqMsgChangeUser);
+			Vega.showDefaultCursor(this);
+			
+			if (!response.getResponseInfo().isSuccess())
+			{
+				Vega.showServerError(parent, response.getResponseInfo());
+				return;
+			}
+			
+			if (renew)
+			{
+				int result = MessageBox.showCustomButtons(
+						parent, 
+						VegaResources.SendActivationDataQuestion(false, reqMsgChangeUser.getUserId()), 
+						VegaResources.Users(false), 
+						new String[] {
+								VegaResources.Email(false),
+								VegaResources.TextFile(false),
+								VegaResources.CopyToClipboard(false)
+						});
+				
+				ResponseMessageChangeUser activationData = ResponseMessageChangeUser.GetInstance(response.getPayload());
+				
+				if (result == 0)
+				{
+					EmailToolkit.launchEmailClient(
+							parent,
+							customData.get(ClientServerConstants.USER_EMAIL_KEY), 
+							VegaResources.EmailSubjectNewUser(false, reqMsgChangeUser.getUserId()), 
+							VegaResources.NewUserEmailBody(
+									false, 
+									reqMsgChangeUser.getName(), 
+									reqMsgChangeUser.getUserId(), 
+									clientConfiguration.getUrl(), 
+									Integer.toString(clientConfiguration.getPort()),
+									response.getResponseInfo().getServerBuild()), 
+							VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()),
+							activationData);
+				}
+				else if (result == 1)
+				{
+					JFileChooser fc = new JFileChooser();
+					
+					fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					fc.setDialogTitle(VegaResources.AuthenticationFile(false));
+					fc.setCurrentDirectory(
+							selectedDirectoryActivationFile != null ?
+									selectedDirectoryActivationFile :
+									new File(ServerUtils.getHomeFolder()));
+					
+					String filename = ServerUtils.getCredentialFileName(
+															reqMsgChangeUser.getUserId(),
+															clientConfiguration.getUrl(),
+															clientConfiguration.getPort())
+									+ "_activation.txt";
+					
+					fc.setSelectedFile(new File(filename));
+					
+					int returnVal = fc.showSaveDialog(this);
+					
+					if (returnVal == JFileChooser.APPROVE_OPTION)
+					{
+						File file = fc.getSelectedFile();
+						selectedDirectoryActivationFile = fc.getCurrentDirectory();
+					
+						String base64 = EmailToolkit.getEmailObjectPayload(
+								VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()), 
+								activationData);
+						
+						try (BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath())))
+						{
+							bw.write(base64);
+							
+							MessageBox.showInformation(
+									parent, 
+									VegaResources.SaveFileSuccess(false),
+									VegaResources.Success(false));
+						} catch (IOException e)
+						{
+							MessageBox.showError(
+									parent, 
+									VegaResources.ActionNotPossible(false, e.getMessage()),
+									VegaResources.Success(false));
+						}
+					}
+				}
+				else
+				{
+					String base64 = 
+							EmailToolkit.getEmailObjectPayload(
+									VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()), 
+									activationData);
+					
+					try
+					{
+						StringSelection selection = new StringSelection(base64);
+						Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						clipboard.setContents(selection, selection);
+						
+						MessageBox.showInformation(
+								parent, 
+								VegaResources.CopiedToClipboard(false),
+								VegaResources.Success(false));
+					}
+					catch (Exception e)
+					{
+						MessageBox.showError(
+								parent, 
+								VegaResources.ActionNotPossible(false, e.getMessage()),
+								VegaResources.Success(false));
+					}
+				}
+			}
+			else
+			{
+				MessageBox.showInformation(
+						parent, 
+						VegaResources.UserUpdated(false, reqMsgChangeUser.getUserId()), 
+						VegaResources.Users(false));
+			}
+			
+			ListItem selectedItemBefore = this.listServerUsers.getSelectedListItem();
+			this.butLoadServerData.doClick();
+			
+			if (selectedItemBefore != null)
+			{
+				this.listServerUsers.setSelectedValue(selectedItemBefore.getDisplayString());
+				this.setControlsEnabled();
+			}
+		}
+		
+		private void submitNewUser(String userId)
+		{
+			if (!this.submitCheckPasswords()) return;
+			if (!this.submitCheckEmail(userId)) return;
+			
+			if (MessageBox.showOkCancel(
+					this,
+					VegaResources.CreateUserQuestion(false, userId),
+				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
+			
+			this.submitExecute(true, true);
+		}
+		
+		private void submitRenewCredentials(String userId)
+		{
+			if (!this.submitCheckPasswords()) return;
+			if (!this.submitCheckEmail(userId)) return;
+			
+			if (MessageBox.showOkCancel(
+					this,
+					VegaResources.RenewUserCredentialsQuestion(false, userId),
+				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
+			
+			this.submitExecute(false, true);
+		}
+		
+		private void userListClearSelection()
+		{
+			this.listServerUsers.clearSelection();
+		}
+		
+		private class PanelUserData extends Panel implements ICheckBoxListener
+		{
+			private CheckBox cbCredentials;
+			private CheckBox cbUserActive;
+			private Label labEmail;
+			private Label labName;
+			private Label labPassword1;
+			private Label labPassword2;
+			private Label labUserId;
+			private PanelUserDataMode mode;
+			private TextField tfEmail;
+			private TextField tfName;
+			private PasswordField tfPassword1;
+			private PasswordField tfPassword2;
+			
+			private TextField tfUserId;
+			
+			public PanelUserData(PanelUserDataMode mode)
+			{
+				super(new GridBagLayout());
+				
+				this.mode = mode;
+				
+				GridBagConstraints c = new GridBagConstraints();
+				c.insets = new Insets(5, 5, 5, 5);
+				c.fill = GridBagConstraints.HORIZONTAL;
+				c.weightx = 0.5;
+				c.weighty = 0.5;
+				
+				c.gridx = 0; c.gridy = 0;
+				this.labUserId = new Label(VegaResources.UserId(false)); 
+				this.add(this.labUserId, c);
+				
+				c.gridx = 1; c.gridy = 0;
+				this.tfUserId = new TextField("", Player.PLAYER_NAME_REGEX_PATTERN, 30, Player.PLAYER_NAME_LENGTH_MAX, null);
+				this.add(this.tfUserId, c);
+				
+				c.gridx = 0; c.gridy = 1;
+				this.labName = new Label(VegaResources.Name(false));
+				this.add(this.labName, c);
+				
+				c.gridx = 1; c.gridy = 1;
+				this.tfName = new TextField(30);
+				this.add(this.tfName, c);
+				
+				c.gridx = 0; c.gridy = 2;
+				this.labEmail = new Label(VegaResources.EmailAddress(false));
+				this.add(this.labEmail, c);
+				
+				c.gridx = 1; c.gridy = 2;
+				this.tfEmail = new TextField(30);
+				this.add(this.tfEmail, c);
+				
+				c.gridx = 0; c.gridy = 3;
+				this.labPassword1 = new Label(VegaResources.ActivationPassword(false));
+				this.add(this.labPassword1, c);
+				
+				c.gridx = 1; c.gridy = 3;
+				this.tfPassword1 = new PasswordField("");
+				this.tfPassword1.setColumns(30);
+				this.add(this.tfPassword1, c);
+				
+				c.gridx = 0; c.gridy = 4;
+				this.labPassword2 = new Label(VegaResources.RepeatPassword(false));
+				this.add(this.labPassword2, c);
+				
+				c.gridx = 1; c.gridy = 4;
+				this.tfPassword2 = new PasswordField("");
+				this.tfPassword2.setColumns(30);
+				this.add(this.tfPassword2, c);
+				
+				c.gridx = 1; c.gridy = 5;
+				this.cbCredentials = new CheckBox(VegaResources.RenewCredentials(false), false, this);
+				this.add(this.cbCredentials, c);
+
+				c.gridx = 1; c.gridy = 6;
+				this.cbUserActive = new CheckBox(VegaResources.UserIsActive(false), false, null);
+				this.add(this.cbUserActive, c);
+			}
+			
+			@Override
+			public void checkBoxValueChanged(CheckBox source, boolean newValue)
+			{
+				if (newValue == true)
+				{
+					this.setMode(PanelUserDataMode.RenewCredentials);
+					setControlsEnabled();
+				}
+				else if (this.mode == PanelUserDataMode.RenewCredentials)
+				{
+					this.setMode(PanelUserDataMode.ChangeUser);
+					setControlsEnabled();
+				}
+			}
+
+			public void setMode(PanelUserDataMode mode)
+			{
+				this.mode = mode;
+			}
+			
+			private void clearData()
+			{
+				this.setMode(PanelUserDataMode.NoDataFromServer);
+				setControlsEnabled();
+			}
+		}
+
+	}
+	
+	private enum PanelUserDataMode 
+	{
+		ChangeUser,
+		NewUser,
+		NoDataFromServer,
+		NoUserSelected,
+		RenewCredentials
+	}
+
 	private class UsersPanel extends Panel implements IButtonListener, IListListener, ActionListener
 	{
 		private Button butAdd;
@@ -402,10 +1436,14 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					ListItem selectedListItem = panActivateConnection.comboCredentialsUserModel.get(0);
 					panActivateConnection.comboCredentialsUser.setSelectedListItemByHandle(selectedListItem.getHandle());
 					serverCredentials.userCredentialsSelected = (UUID)selectedListItem.getHandle();
+					panActivateConnection.cbActivate.setEnabled(true);
 				}
 				else
 				{
+					panActivateConnection.cbActivate.setSelected(false);
+					panActivateConnection.cbActivate.setEnabled(false);
 					serverCredentials.userCredentialsSelected = null;
+					serverCredentials.connectionActive = false;
 				}
 			}
 			
@@ -419,10 +1457,12 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 					ListItem selectedListItem = panAdmin.comboCredentialsAdminModel.get(0);
 					panAdmin.comboCredentialsAdmin.setSelectedListItemByHandle(selectedListItem.getHandle());
 					serverCredentials.adminCredentialsSelected = (UUID)selectedListItem.getHandle();
+					panAdmin.butLoadServerData.setEnabled(true);
 				}
 				else
 				{
 					serverCredentials.adminCredentialsSelected = null;
+					panAdmin.butLoadServerData.setEnabled(false);
 				}
 			}
 		}
@@ -452,6 +1492,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 			
 			this.setCredentialsPanelValues();
+			panAdmin.clearData();
 		}
 		
 		private int getListIndexByCredentialsKey(UUID key)
@@ -834,852 +1875,5 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 						null);
 			}
 		}
-	}
-	
-	private enum PanelUserDataMode 
-	{
-		NoDataFromServer,
-		ChangeUser,
-		NewUser,
-		NoUserSelected,
-		RenewCredentials
-	}
-
-	private class AdminPanel extends Panel implements IButtonListener, IComboBoxListener, IListListener
-	{
-		private ComboBox comboServerLogLevel;
-		private ComboBox comboCredentialsAdmin;
-		private ArrayList<ListItem> comboCredentialsAdminModel;
-		
-		private List listServerUsers;
-		private ArrayList<ListItem> listServerUsersModel;
-		
-		private TextField tfClientBuild;
-		private TextField tfServerBuild;
-		private TextField tfServerLogSize;
-		private TextField tfServerStartDate;
-		
-		private Button butLoadServerData;
-		private Button butShutdown;
-		private Button butServerLogDownload;
-		private Button butServerLogLevelChange;
-		private Button butAdd;
-		private Button butDelete;
-		private Button butSubmit;
-		
-		private PanelUserData panUserDetails;
-		private Dialog parent;
-		
-		private AdminPanel(Dialog parent)
-		{
-			super(new BorderLayout());
-			
-			this.parent = parent;
-			PanelWithInsets panMain = new PanelWithInsets(new BorderLayout(10, 10));
-			
-			Panel panAdminCredentials = new Panel(new FlowLayout(FlowLayout.LEFT));
-			panAdminCredentials.add(new Label("Administrator-Zugangsdaten"));
-			panAdminCredentials.add(new JSeparator());
-			
-			this.comboCredentialsAdminModel = new ArrayList<ListItem>();
-			this.comboCredentialsAdmin = new ComboBox(this.comboCredentialsAdminModel, 40, null, this);
-			panAdminCredentials.add(this.comboCredentialsAdmin);
-			panAdminCredentials.add(new JSeparator());
-			
-			this.butLoadServerData = new Button("Server-Daten laden", this);
-			panAdminCredentials.add(this.butLoadServerData);
-			
-			panMain.addToInnerPanel(panAdminCredentials, BorderLayout.NORTH);
-			
-			// -----------
-			Panel panServerData = new Panel(new BorderLayout(10, 10));
-			
-			PanelWithInsets panServerStatus = new PanelWithInsets(VegaResources.ServerStatus(false), new GridBagLayout());
-			
-			GridBagConstraints cPanServerStatus = new GridBagConstraints();
-			
-			cPanServerStatus.insets = new Insets(5, 5, 5, 5);
-			cPanServerStatus.fill = GridBagConstraints.HORIZONTAL;
-			cPanServerStatus.weightx = 0.5;
-			cPanServerStatus.weighty = 0.5;
-			
-			cPanServerStatus.gridx = 0;
-			cPanServerStatus.gridy = 0;
-			panServerStatus.addToInnerPanel(new Label(VegaResources.ClientBuild(false)),cPanServerStatus);
-			
-			cPanServerStatus.gridx = 1;
-			this.tfClientBuild = new TextField(Game.BUILD, null, 30, -1, null);
-			this.tfClientBuild.setEditable(false);
-			panServerStatus.addToInnerPanel(this.tfClientBuild, cPanServerStatus);
-			
-			cPanServerStatus.gridx = 0;
-			cPanServerStatus.gridy = 1;
-			panServerStatus.addToInnerPanel(new Label(VegaResources.ServerBuild(false)), cPanServerStatus);
-			
-			cPanServerStatus.gridx = 1;
-			this.tfServerBuild = new TextField("", null, 30, -1, null);
-			this.tfServerBuild.setEditable(false);
-			panServerStatus.addToInnerPanel(this.tfServerBuild, cPanServerStatus);
-			
-			cPanServerStatus.gridx = 0;
-			cPanServerStatus.gridy = 2;
-			panServerStatus.addToInnerPanel(new Label(VegaResources.RunningSince(false)), cPanServerStatus);
-			
-			cPanServerStatus.gridx = 1;
-			this.tfServerStartDate = new TextField("", null, 30, -1, null);
-			this.tfServerStartDate.setEditable(false);
-			panServerStatus.addToInnerPanel(this.tfServerStartDate, cPanServerStatus);
-			
-			cPanServerStatus.gridx = 2;
-			this.butShutdown = new Button(VegaResources.ShutdownServer(false), this);
-			panServerStatus.addToInnerPanel(this.butShutdown, cPanServerStatus);
-			
-			cPanServerStatus.gridx = 0;
-			cPanServerStatus.gridy = 3;
-			panServerStatus.addToInnerPanel(new Label(VegaResources.LogSize(false)), cPanServerStatus);
-			
-			cPanServerStatus.gridx = 1;
-			this.tfServerLogSize = new TextField("", null, 30, -1, null);
-			this.tfServerLogSize.setEditable(false);
-			panServerStatus.addToInnerPanel(this.tfServerLogSize, cPanServerStatus);
-			
-			cPanServerStatus.gridx = 2;
-			this.butServerLogDownload = new Button(VegaResources.DownloadLog(false), this);
-			panServerStatus.addToInnerPanel(this.butServerLogDownload, cPanServerStatus);
-			
-			cPanServerStatus.gridx = 0;
-			cPanServerStatus.gridy = 4;
-			panServerStatus.addToInnerPanel(new Label(VegaResources.LogLevel(false)), cPanServerStatus);
-			
-			String[] logLevels = new String[LogLevel.values().length];
-			int counter = 0;
-			for (LogLevel logEventType: LogLevel.values())
-			{
-				logLevels[counter] = logEventType.toString();
-				counter++;
-			}
-			
-			cPanServerStatus.gridx = 1;
-			this.comboServerLogLevel = new ComboBox(logLevels, 10, null, null);
-			panServerStatus.addToInnerPanel(this.comboServerLogLevel, cPanServerStatus);
-			
-			cPanServerStatus.gridx = 2;
-			this.butServerLogLevelChange = new Button(VegaResources.ChangeLogLevel(false), this);
-			panServerStatus.addToInnerPanel(this.butServerLogLevelChange, cPanServerStatus);
-			
-			panServerData.add(panServerStatus, BorderLayout.NORTH);
-			
-			// -----------
-			PanelWithInsets panServerUsers = new PanelWithInsets(VegaResources.Users(false), new BorderLayout(30, 0));
-			
-			Panel panServerUsersList = new Panel(new BorderLayout(0, 5));
-			
-			this.listServerUsersModel = new ArrayList<ListItem>();
-			this.listServerUsers = new List(this, this.listServerUsersModel);
-			this.listServerUsers.setPreferredSize(new Dimension(200, 200));
-			panServerUsersList.add(this.listServerUsers, BorderLayout.CENTER);
-			
-			Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
-			
-			this.butAdd = new Button("+", this);
-			this.butAdd.setToolTipText("User hinzufügen");
-			
-			panUsersListButtons.add(this.butAdd);
-			
-			this.butDelete = new Button("-", this);
-			this.butDelete.setToolTipText("User löschen");
-			panUsersListButtons.add(this.butDelete);
-			
-			panServerUsersList.add(panUsersListButtons, BorderLayout.SOUTH);
-			
-			panServerUsers.addToInnerPanel(panServerUsersList, BorderLayout.WEST);
-			
-			// -------
-			Panel panUserDetailsOuter = new Panel(new BorderLayout(0, 0));
-			
-			this.panUserDetails = new PanelUserData(PanelUserDataMode.NoDataFromServer);
-			panUserDetailsOuter.add(this.panUserDetails, BorderLayout.NORTH);
-			
-			this.butSubmit = new Button("Änderungen an den Server schicken", this);
-			//this.butSubmit.setToolTipText("Änderungen an den Server schicken");
-			panUserDetailsOuter.add(this.butSubmit, BorderLayout.CENTER);
-			
-			panServerUsers.addToInnerPanel(panUserDetailsOuter, BorderLayout.CENTER);
-			// -------
-			
-			panServerData.add(panServerUsers, BorderLayout.CENTER);
-			
-			panMain.addToInnerPanel(panServerData, BorderLayout.CENTER);
-			
-			this.add(panMain, BorderLayout.CENTER);
-			
-			this.clearData();
-		}
-
-		@Override
-		public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount)
-		{
-			this.panUserDetails.setMode(PanelUserDataMode.ChangeUser);
-			this.setControlsEnabled();
-		}
-
-		@Override
-		public void buttonClicked(Button source)
-		{
-			if (source == this.butLoadServerData)
-			{
-				this.refresh();
-			}
-			else if (source == this.butAdd)
-			{
-				this.panUserDetails.setMode(PanelUserDataMode.NewUser);
-				this.setControlsEnabled();
-			}
-			else if (source == this.butSubmit)
-			{
-				String userId =  this.panUserDetails.tfUserId.getText().trim();
-				
-				if (this.panUserDetails.mode == PanelUserDataMode.NewUser)
-				{
-					this.submitNewUser(userId);
-				}
-				else if (this.panUserDetails.mode == PanelUserDataMode.ChangeUser)
-				{
-					this.submitChangeUser(userId);
-				}
-				else if (this.panUserDetails.mode == PanelUserDataMode.RenewCredentials)
-				{
-					this.submitRenewCredentials(userId);
-				}
-			}
-		}
-
-		@Override
-		public void comboBoxItemSelected(ComboBox source, String selectedValue)
-		{
-		}
-
-		@Override
-		public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
-		{
-			serverCredentials.adminCredentialsSelected = (UUID)selectedListItem.getHandle();
-			this.clearData();
-		}
-		
-		private void submitNewUser(String userId)
-		{
-			if (!this.submitCheckPasswords()) return;
-			if (!this.submitCheckEmail(userId)) return;
-			
-			if (MessageBox.showOkCancel(
-					this,
-					VegaResources.CreateUserQuestion(false, userId),
-				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
-			
-			this.submitExecute(true, true);
-		}
-		
-		private void submitChangeUser(String userId)
-		{
-			if (!this.submitCheckEmail(userId)) return;
-			
-			if(MessageBox.showOkCancel(
-					this,
-					VegaResources.UpdateUserQuestion(false, userId),
-				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
-			
-			this.submitExecute(false, false);
-		}
-		
-		private void submitRenewCredentials(String userId)
-		{
-			if (!this.submitCheckPasswords()) return;
-			if (!this.submitCheckEmail(userId)) return;
-			
-			if (MessageBox.showOkCancel(
-					this,
-					VegaResources.RenewUserCredentialsQuestion(false, userId),
-				    VegaResources.Users(false)) != MessageBoxResult.OK) return;
-			
-			this.submitExecute(false, true);
-		}
-		
-		private boolean submitCheckPasswords()
-		{
-			if (!this.panUserDetails.tfPassword1.arePasswordsEqual(this.panUserDetails.tfPassword2))
-			{
-				MessageBox.showError(
-						this,
-						VegaResources.PasswordsNotEqual(false),
-					    VegaResources.Users(false));
-				return false;
-			}
-			
-			if (this.panUserDetails.tfPassword1.getPassword().length < 3)
-			{
-				MessageBox.showError(
-						this,
-						VegaResources.ActivationPasswordTooShort(false),
-					    VegaResources.Users(false));
-				return false;
-			}
-			
-			return true;
-		}
-		
-		private void submitExecute(boolean create, boolean renew)
-		{
-			Hashtable<String,String> customData = new Hashtable<String,String>();
-			customData.put(ClientServerConstants.USER_EMAIL_KEY, this.panUserDetails.tfEmail.getText().trim());
-			
-			PayloadRequestMessageChangeUser reqMsgChangeUser = new PayloadRequestMessageChangeUser(
-					this.panUserDetails.tfUserId.getText().trim(), 
-					customData,
-					this.panUserDetails.tfName.getText().trim(), 
-					create,
-					renew);
-			
-			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
-			VegaClient client = new VegaClient(clientConfiguration, false, null);
-			
-			Vega.showWaitCursor(this);
-			Response<PayloadResponseMessageChangeUser> response = client.changeUser(reqMsgChangeUser);
-			Vega.showDefaultCursor(this);
-			
-			if (!response.getResponseInfo().isSuccess())
-			{
-				Vega.showServerError(parent, response.getResponseInfo());
-				return;
-			}
-			
-			if (renew)
-			{
-				int result = MessageBox.showCustomButtons(
-						parent, 
-						VegaResources.SendActivationDataQuestion(false, reqMsgChangeUser.getUserId()), 
-						VegaResources.Users(false), 
-						new String[] {
-								VegaResources.Email(false),
-								VegaResources.TextFile(false),
-								VegaResources.CopyToClipboard(false)
-						});
-				
-				ResponseMessageChangeUser activationData = ResponseMessageChangeUser.GetInstance(response.getPayload());
-				
-				if (result == 0)
-				{
-					EmailToolkit.launchEmailClient(
-							parent,
-							customData.get(ClientServerConstants.USER_EMAIL_KEY), 
-							VegaResources.EmailSubjectNewUser(false, reqMsgChangeUser.getUserId()), 
-							VegaResources.NewUserEmailBody(
-									false, 
-									reqMsgChangeUser.getName(), 
-									reqMsgChangeUser.getUserId(), 
-									clientConfiguration.getUrl(), 
-									Integer.toString(clientConfiguration.getPort()),
-									response.getResponseInfo().getServerBuild()), 
-							VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()),
-							activationData);
-				}
-				else if (result == 1)
-				{
-					JFileChooser fc = new JFileChooser();
-					
-					fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					fc.setDialogTitle(VegaResources.AuthenticationFile(false));
-					fc.setCurrentDirectory(
-							selectedDirectoryActivationFile != null ?
-									selectedDirectoryActivationFile :
-									new File(ServerUtils.getHomeFolder()));
-					
-					String filename = ServerUtils.getCredentialFileName(
-															reqMsgChangeUser.getUserId(),
-															clientConfiguration.getUrl(),
-															clientConfiguration.getPort())
-									+ "_activation.txt";
-					
-					fc.setSelectedFile(new File(filename));
-					
-					int returnVal = fc.showSaveDialog(this);
-					
-					if (returnVal == JFileChooser.APPROVE_OPTION)
-					{
-						File file = fc.getSelectedFile();
-						selectedDirectoryActivationFile = fc.getCurrentDirectory();
-					
-						String base64 = EmailToolkit.getEmailObjectPayload(
-								VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()), 
-								activationData);
-						
-						try (BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath())))
-						{
-							bw.write(base64);
-							
-							MessageBox.showInformation(
-									parent, 
-									VegaResources.SaveFileSuccess(false),
-									VegaResources.Success(false));
-						} catch (IOException e)
-						{
-							MessageBox.showError(
-									parent, 
-									VegaResources.ActionNotPossible(false, e.getMessage()),
-									VegaResources.Success(false));
-						}
-					}
-				}
-				else
-				{
-					String base64 = 
-							EmailToolkit.getEmailObjectPayload(
-									VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()), 
-									activationData);
-					
-					try
-					{
-						StringSelection selection = new StringSelection(base64);
-						Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-						clipboard.setContents(selection, selection);
-						
-						MessageBox.showInformation(
-								parent, 
-								VegaResources.CopiedToClipboard(false),
-								VegaResources.Success(false));
-					}
-					catch (Exception e)
-					{
-						MessageBox.showError(
-								parent, 
-								VegaResources.ActionNotPossible(false, e.getMessage()),
-								VegaResources.Success(false));
-					}
-				}
-			}
-			else
-			{
-				MessageBox.showInformation(
-						parent, 
-						VegaResources.UserUpdated(false, reqMsgChangeUser.getUserId()), 
-						VegaResources.Users(false));
-			}
-			
-			ListItem selectedItemBefore = this.listServerUsers.getSelectedListItem();
-			this.butLoadServerData.doClick();
-			
-			if (selectedItemBefore != null)
-			{
-				this.listServerUsers.setSelectedValue(selectedItemBefore.getDisplayString());
-				this.setControlsEnabled();
-			}
-		}
-		
-		private boolean submitCheckEmail(String userId)
-		{
-			String eMail = this.panUserDetails.tfEmail.getText().trim();
-			
-			if (!Pattern.matches(EmailToolkit.EMAIL_REGEX_PATTERN, eMail))
-			{
-				MessageBox.showError(
-						parent,
-						VegaResources.EmailAddressInvalid(
-								false, 
-								userId),
-						VegaResources.Error(false));
-				return false;
-			}
-			
-			return true;
-		}
-		
-		private void userListClearSelection()
-		{
-			this.listServerUsers.clearSelection();
-		}
-		
-		private void clearData()
-		{
-			this.tfServerBuild.setText("");
-			this.tfServerStartDate.setText("");
-			this.tfServerLogSize.setText("");
-			this.comboServerLogLevel.setSelectedItem("");
-			
-			this.listServerUsersModel = new ArrayList<ListItem>();
-			this.listServerUsers.refreshListItems(this.listServerUsersModel);
-			
-			this.panUserDetails.clearData();
-		}
-		
-		private void refresh()
-		{
-			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
-			
-			VegaClient client = new VegaClient(clientConfiguration, false, null);
-			
-			Vega.showWaitCursor(this);
-			Response<PayloadResponseMessageGetUsers> responseUsers = client.getUsers();
-			Vega.showDefaultCursor(this);
-			
-			if (!responseUsers.getResponseInfo().isSuccess())
-			{
-				Vega.showServerError(parent, responseUsers.getResponseInfo());
-				return;
-			}
-			
-			Vega.showWaitCursor(this);
-			Response<PayloadResponseMessageGetServerStatus> responseServerStatus = client.getServerStatus();
-			Vega.showDefaultCursor(this);
-			
-			if (!responseServerStatus.getResponseInfo().isSuccess())
-			{
-				Vega.showServerError(parent, responseServerStatus.getResponseInfo());
-				return;
-			}
-			
-			this.tfServerBuild.setText(responseServerStatus.getPayload().getBuild());
-			this.tfServerStartDate.setText(VegaUtils.formatDateTimeString(VegaUtils.convertMillisecondsToString(responseServerStatus.getPayload().getServerStartDate())));
-			this.tfServerLogSize.setText(responseServerStatus.getPayload().getLogSizeBytes() + " Bytes");
-			this.comboServerLogLevel.setSelectedItem(responseServerStatus.getPayload().getLogLevel().toString());
-			
-			this.listServerUsersModel.clear();
-			for (User user: responseUsers.getPayload().getUsers())
-			{
-				this.listServerUsersModel.add(
-						new ListItem(
-								user.getId(), 
-								user));
-			}
-			Collections.sort(this.listServerUsersModel, new ListItem());
-			this.listServerUsers.refreshListItems(this.listServerUsersModel);
-			
-			if (this.listServerUsersModel.size() > 0)
-			{
-				this.listServerUsers.setSelectedIndex(0);
-				this.listItemSelected(this.listServerUsers, null, 0, 1);
-			}
-			else
-			{
-				this.clearData();
-				this.panUserDetails.setMode(PanelUserDataMode.NoUserSelected);
-				this.setControlsEnabled();
-			}
-		}
-		
-		private void setControlsEnabled()
-		{
-			PanelUserDataMode mode = this.panUserDetails.mode;
-			ListItem selectedUser = this.listServerUsers.getSelectedListItem();
-			User userInfo = null;
-			
-			if (selectedUser != null)
-			{
-				userInfo = (User) selectedUser.getHandle();
-			}
-			
-			switch (mode)
-			{
-			case NoDataFromServer:
-				this.panUserDetails.labUserId.setEnabled(false);
-				this.panUserDetails.tfUserId.setText("");
-				this.panUserDetails.tfUserId.setEditable(false);
-				
-				this.panUserDetails.labName.setEnabled(false);
-				this.panUserDetails.tfName.setText("");
-				this.panUserDetails.tfName.setEditable(false);
-				
-				this.panUserDetails.labEmail.setEnabled(false);
-				this.panUserDetails.tfEmail.setText("");
-				this.panUserDetails.tfEmail.setEditable(false);
-				
-				this.panUserDetails.labPassword1.setEnabled(false);
-				this.panUserDetails.tfPassword1.setText("");
-				this.panUserDetails.tfPassword1.setEditable(false);
-				
-				this.panUserDetails.labPassword2.setEnabled(false);
-				this.panUserDetails.tfPassword2.setText("");
-				this.panUserDetails.tfPassword2.setEditable(false);
-				
-				this.panUserDetails.cbCredentials.setEnabled(false);
-				this.panUserDetails.cbCredentials.setSelected(false);
-				
-				this.panUserDetails.cbUserActive.setEnabled(false);
-				this.panUserDetails.cbUserActive.setSelected(false);
-				
-				this.butAdd.setEnabled(false);
-				this.butDelete.setEnabled(false);
-				this.butSubmit.setEnabled(false);
-				
-				this.butServerLogDownload.setEnabled(false);
-				this.butServerLogLevelChange.setEnabled(false);
-				this.butShutdown.setEnabled(false);
-				this.comboServerLogLevel.setEnabled(false);
-				
-				break;
-					
-			case NoUserSelected:
-					this.userListClearSelection();
-				
-					this.panUserDetails.labUserId.setEnabled(false);
-					this.panUserDetails.tfUserId.setText("");
-					this.panUserDetails.tfUserId.setEditable(false);
-					
-					this.panUserDetails.labName.setEnabled(false);
-					this.panUserDetails.tfName.setText("");
-					this.panUserDetails.tfName.setEditable(false);
-					
-					this.panUserDetails.labEmail.setEnabled(false);
-					this.panUserDetails.tfEmail.setText("");
-					this.panUserDetails.tfEmail.setEditable(false);
-					
-					this.panUserDetails.labPassword1.setEnabled(false);
-					this.panUserDetails.tfPassword1.setText("");
-					this.panUserDetails.tfPassword1.setEditable(false);
-					
-					this.panUserDetails.labPassword2.setEnabled(false);
-					this.panUserDetails.tfPassword2.setText("");
-					this.panUserDetails.tfPassword2.setEditable(false);
-					
-					this.panUserDetails.cbCredentials.setEnabled(false);
-					this.panUserDetails.cbCredentials.setSelected(false);
-					
-					this.panUserDetails.cbUserActive.setEnabled(false);
-					this.panUserDetails.cbUserActive.setSelected(false);
-					
-					this.butAdd.setEnabled(true);
-					this.butDelete.setEnabled(false);
-					this.butSubmit.setEnabled(false);
-					
-					this.butServerLogDownload.setEnabled(true);
-					this.butServerLogLevelChange.setEnabled(true);
-					this.butShutdown.setEnabled(true);
-					this.comboServerLogLevel.setEnabled(true);
-					
-					break;
-			
-			case ChangeUser:
-					this.panUserDetails.labUserId.setEnabled(true);
-					this.panUserDetails.tfUserId.setText(userInfo.getId());
-					this.panUserDetails.tfUserId.setEditable(false);
-					
-					this.panUserDetails.labName.setEnabled(true);
-					this.panUserDetails.tfName.setText(userInfo.getName());
-					this.panUserDetails.tfName.setEditable(true);
-					
-					this.panUserDetails.labEmail.setEnabled(true);
-					this.panUserDetails.tfEmail.setText(userInfo.getCustomData().get(ClientServerConstants.USER_EMAIL_KEY));
-					this.panUserDetails.tfEmail.setEditable(true);
-					
-					this.panUserDetails.labPassword1.setEnabled(false);
-					this.panUserDetails.tfPassword1.setText("");
-					this.panUserDetails.tfPassword1.setEditable(false);
-					
-					this.panUserDetails.labPassword2.setEnabled(false);
-					this.panUserDetails.tfPassword2.setText("");
-					this.panUserDetails.tfPassword2.setEditable(false);
-					
-					this.panUserDetails.cbCredentials.setEnabled(true);
-					this.panUserDetails.cbCredentials.setSelected(false);
-					
-					this.panUserDetails.cbUserActive.setEnabled(false);
-					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
-					
-					this.butAdd.setEnabled(true);
-					this.butDelete.setEnabled(true);
-					this.butSubmit.setEnabled(true);
-					
-					this.butServerLogDownload.setEnabled(true);
-					this.butServerLogLevelChange.setEnabled(true);
-					this.butShutdown.setEnabled(true);
-					this.comboServerLogLevel.setEnabled(true);
-					
-					break;
-			
-			case NewUser:
-					this.userListClearSelection();
-					
-					this.panUserDetails.labUserId.setEnabled(true);
-					this.panUserDetails.tfUserId.setText("");
-					this.panUserDetails.tfUserId.setEditable(true);
-					
-					this.panUserDetails.labName.setEnabled(true);
-					this.panUserDetails.tfName.setText("");
-					this.panUserDetails.tfName.setEditable(true);
-					
-					this.panUserDetails.labEmail.setEnabled(true);
-					this.panUserDetails.tfEmail.setText("");
-					this.panUserDetails.tfEmail.setEditable(true);
-					
-					this.panUserDetails.labPassword1.setEnabled(true);
-					this.panUserDetails.tfPassword1.setText("");
-					this.panUserDetails.tfPassword1.setEditable(true);
-					
-					this.panUserDetails.labPassword2.setEnabled(true);
-					this.panUserDetails.tfPassword2.setText("");
-					this.panUserDetails.tfPassword2.setEditable(true);
-					
-					this.panUserDetails.cbCredentials.setEnabled(false);
-					this.panUserDetails.cbCredentials.setSelected(true);
-					
-					this.panUserDetails.cbUserActive.setEnabled(false);
-					this.panUserDetails.cbUserActive.setSelected(false);
-					
-					this.butAdd.setEnabled(false || serverCredentials.adminCredentialsSelected == null);
-					this.butDelete.setEnabled(false);
-					this.butSubmit.setEnabled(true);
-					
-					this.butServerLogDownload.setEnabled(true);
-					this.butServerLogLevelChange.setEnabled(true);
-					this.butShutdown.setEnabled(true);
-					this.comboServerLogLevel.setEnabled(true);
-					
-					break;
-			
-			case RenewCredentials:
-					this.panUserDetails.labUserId.setEnabled(true);
-					this.panUserDetails.tfUserId.setText(userInfo.getId());
-					this.panUserDetails.tfUserId.setEditable(false);
-					
-					this.panUserDetails.labName.setEnabled(true);
-					this.panUserDetails.tfName.setText(userInfo.getName());
-					this.panUserDetails.tfName.setEditable(true);
-					
-					this.panUserDetails.labEmail.setEnabled(true);
-					this.panUserDetails.tfEmail.setText(userInfo.getCustomData().get(ClientServerConstants.USER_EMAIL_KEY));
-					this.panUserDetails.tfEmail.setEditable(true);
-					
-					this.panUserDetails.labPassword1.setEnabled(true);
-					this.panUserDetails.tfPassword1.setText("");
-					this.panUserDetails.tfPassword1.setEditable(true);
-					
-					this.panUserDetails.labPassword2.setEnabled(true);
-					this.panUserDetails.tfPassword2.setText("");
-					this.panUserDetails.tfPassword2.setEditable(true);
-					
-					this.panUserDetails.cbCredentials.setEnabled(true);
-					this.panUserDetails.cbCredentials.setSelected(true);
-					
-					this.panUserDetails.cbUserActive.setEnabled(false);
-					this.panUserDetails.cbUserActive.setSelected(userInfo.isActive());
-					
-					this.butAdd.setEnabled(true && serverCredentials.adminCredentialsSelected != null);
-					this.butDelete.setEnabled(true);
-					this.butSubmit.setEnabled(true);
-					
-					this.butServerLogDownload.setEnabled(true);
-					this.butServerLogLevelChange.setEnabled(true);
-					this.butShutdown.setEnabled(true);
-					this.comboServerLogLevel.setEnabled(true);
-					
-					break;
-			}		
-		}
-		
-		private class PanelUserData extends Panel implements ICheckBoxListener
-		{
-			private CheckBox cbCredentials;
-			private CheckBox cbUserActive;
-			private Label labEmail;
-			private Label labName;
-			private Label labPassword1;
-			private Label labPassword2;
-			private Label labUserId;
-			private PanelUserDataMode mode;
-			private TextField tfEmail;
-			private TextField tfName;
-			private PasswordField tfPassword1;
-			private PasswordField tfPassword2;
-			
-			private TextField tfUserId;
-			
-			public PanelUserData(PanelUserDataMode mode)
-			{
-				super(new GridBagLayout());
-				
-				this.mode = mode;
-				
-				GridBagConstraints c = new GridBagConstraints();
-				c.insets = new Insets(5, 5, 5, 5);
-				c.fill = GridBagConstraints.HORIZONTAL;
-				c.weightx = 0.5;
-				c.weighty = 0.5;
-				
-				c.gridx = 0; c.gridy = 0;
-				this.labUserId = new Label(VegaResources.UserId(false)); 
-				this.add(this.labUserId, c);
-				
-				c.gridx = 1; c.gridy = 0;
-				this.tfUserId = new TextField("", Player.PLAYER_NAME_REGEX_PATTERN, 30, Player.PLAYER_NAME_LENGTH_MAX, null);
-				this.add(this.tfUserId, c);
-				
-				c.gridx = 0; c.gridy = 1;
-				this.labName = new Label(VegaResources.Name(false));
-				this.add(this.labName, c);
-				
-				c.gridx = 1; c.gridy = 1;
-				this.tfName = new TextField(30);
-				this.add(this.tfName, c);
-				
-				c.gridx = 0; c.gridy = 2;
-				this.labEmail = new Label(VegaResources.EmailAddress(false));
-				this.add(this.labEmail, c);
-				
-				c.gridx = 1; c.gridy = 2;
-				this.tfEmail = new TextField(30);
-				this.add(this.tfEmail, c);
-				
-				c.gridx = 0; c.gridy = 3;
-				this.labPassword1 = new Label(VegaResources.ActivationPassword(false));
-				this.add(this.labPassword1, c);
-				
-				c.gridx = 1; c.gridy = 3;
-				this.tfPassword1 = new PasswordField("");
-				this.tfPassword1.setColumns(30);
-				this.add(this.tfPassword1, c);
-				
-				c.gridx = 0; c.gridy = 4;
-				this.labPassword2 = new Label(VegaResources.RepeatPassword(false));
-				this.add(this.labPassword2, c);
-				
-				c.gridx = 1; c.gridy = 4;
-				this.tfPassword2 = new PasswordField("");
-				this.tfPassword2.setColumns(30);
-				this.add(this.tfPassword2, c);
-				
-				c.gridx = 1; c.gridy = 5;
-				this.cbCredentials = new CheckBox(VegaResources.RenewCredentials(false), false, this);
-				this.add(this.cbCredentials, c);
-
-				c.gridx = 1; c.gridy = 6;
-				this.cbUserActive = new CheckBox(VegaResources.UserIsActive(false), false, null);
-				this.add(this.cbUserActive, c);
-			}
-			
-			@Override
-			public void checkBoxValueChanged(CheckBox source, boolean newValue)
-			{
-				if (newValue == true)
-				{
-					this.setMode(PanelUserDataMode.RenewCredentials);
-					setControlsEnabled();
-				}
-				else if (this.mode == PanelUserDataMode.RenewCredentials)
-				{
-					this.setMode(PanelUserDataMode.ChangeUser);
-					setControlsEnabled();
-				}
-			}
-
-			public void setMode(PanelUserDataMode mode)
-			{
-				this.mode = mode;
-			}
-			
-			private void clearData()
-			{
-				this.setMode(PanelUserDataMode.NoDataFromServer);
-				setControlsEnabled();
-			}
-		}
-
 	}
 }
