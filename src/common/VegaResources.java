@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: EG
+		// Last used symbolic key: ER
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -557,6 +557,17 @@ public class VegaResources
 		symbolDict.put("EE","AddCredentials_EE");
 		symbolDict.put("EF","DeleteCredentials_EF");
 		symbolDict.put("EG","DeleteCredentialsAYS_EG");
+		symbolDict.put("EH","ServerCredentialsLocked_EH");
+		symbolDict.put("EI","UnlockServerCredentials_EI");
+		symbolDict.put("EJ","ChangeServerCredentialsPasswort_EJ");
+		symbolDict.put("EK","SetServerCredentialsPasswort_EK");
+		symbolDict.put("EL","OldPassword_EL");
+		symbolDict.put("EM","NewPassword_EM");
+		symbolDict.put("EN","NewPasswordRepeat_EN");
+		symbolDict.put("EO","PasswordWrong_EO");
+		symbolDict.put("EP","PasswordWrong2_EP");
+		symbolDict.put("EQ","PasswordInvalid_EQ");
+		symbolDict.put("ER","PasswordLength_ER");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -3421,10 +3432,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Connected with VEGA server {0}:{1} as user {2} [BA]
+	   * Connected with VEGA server with credentials {0} [BA]
 	   */
-	public static String ConnectedWithVegaServer(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£BA§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("ConnectedWithVegaServer_BA"), arg0, arg1, arg2);
+	public static String ConnectedWithVegaServer(boolean symbol, String arg0) {
+		return symbol ? "£BA§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedWithVegaServer_BA"), arg0);
 	}
 
 	/**
@@ -3463,10 +3474,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Connection to the server could not be established.\nError message:\n\n{0} [BG]
+	   * No connection to the VEGA server. [BG]
 	   */
-	public static String ConnectionToServerNotEstablished(boolean symbol, String arg0) {
-		return symbol ? "£BG§"+arg0+"£":MessageFormat.format(messages.getString("ConnectionToServerNotEstablished_BG"), arg0);
+	public static String ConnectionToServerNotEstablished(boolean symbol) {
+		return symbol ? "£BG£":messages.getString("ConnectionToServerNotEstablished_BG");
 	}
 
 	/**
@@ -4223,5 +4234,82 @@ public class VegaResources
 	   */
 	public static String DeleteCredentialsAYS(boolean symbol, String arg0) {
 		return symbol ? "£EG§"+arg0+"£":MessageFormat.format(messages.getString("DeleteCredentialsAYS_EG"), arg0);
+	}
+
+	/**
+	   * Server credentials are locked. [EH]
+	   */
+	public static String ServerCredentialsLocked(boolean symbol) {
+		return symbol ? "£EH£":messages.getString("ServerCredentialsLocked_EH");
+	}
+
+	/**
+	   * Unlock server credentials [EI]
+	   */
+	public static String UnlockServerCredentials(boolean symbol) {
+		return symbol ? "£EI£":messages.getString("UnlockServerCredentials_EI");
+	}
+
+	/**
+	   * Change password for server credentials [EJ]
+	   */
+	public static String ChangeServerCredentialsPasswort(boolean symbol) {
+		return symbol ? "£EJ£":messages.getString("ChangeServerCredentialsPasswort_EJ");
+	}
+
+	/**
+	   * Set new password for server credentials [EK]
+	   */
+	public static String SetServerCredentialsPasswort(boolean symbol) {
+		return symbol ? "£EK£":messages.getString("SetServerCredentialsPasswort_EK");
+	}
+
+	/**
+	   * Old password [EL]
+	   */
+	public static String OldPassword(boolean symbol) {
+		return symbol ? "£EL£":messages.getString("OldPassword_EL");
+	}
+
+	/**
+	   * New password [EM]
+	   */
+	public static String NewPassword(boolean symbol) {
+		return symbol ? "£EM£":messages.getString("NewPassword_EM");
+	}
+
+	/**
+	   * New password (repeat) [EN]
+	   */
+	public static String NewPasswordRepeat(boolean symbol) {
+		return symbol ? "£EN£":messages.getString("NewPasswordRepeat_EN");
+	}
+
+	/**
+	   * The password is wrong. [EO]
+	   */
+	public static String PasswordWrong(boolean symbol) {
+		return symbol ? "£EO£":messages.getString("PasswordWrong_EO");
+	}
+
+	/**
+	   * Wrong password [EP]
+	   */
+	public static String PasswordWrong2(boolean symbol) {
+		return symbol ? "£EP£":messages.getString("PasswordWrong2_EP");
+	}
+
+	/**
+	   * Invalid password [EQ]
+	   */
+	public static String PasswordInvalid(boolean symbol) {
+		return symbol ? "£EQ£":messages.getString("PasswordInvalid_EQ");
+	}
+
+	/**
+	   * The new password must have at least {0} characters. [ER]
+	   */
+	public static String PasswordLength(boolean symbol, String arg0) {
+		return symbol ? "£ER§"+arg0+"£":MessageFormat.format(messages.getString("PasswordLength_ER"), arg0);
 	}
 }

@@ -69,16 +69,6 @@ class ServerCredentials implements Serializable
 		return getActivationCode(clientConfiguration) == null;
 	}
 	
-	static void removeActivationCode(ClientConfiguration clientConfiguration)
-	{
-		int pos = clientConfiguration.getUserId().indexOf(ACTIVATION_CODE_SEPARATOR);
-		
-		if (pos >= 0)
-		{
-			clientConfiguration.setUserId(clientConfiguration.getUserId().substring(0, pos));
-		}
-	}
-	
 	static void setActivationCode(ClientConfiguration clientConfiguration, String activationCode)
 	{
 		clientConfiguration.setUserId(clientConfiguration.getUserId() + ACTIVATION_CODE_SEPARATOR + activationCode);
@@ -114,11 +104,6 @@ class ServerCredentials implements Serializable
 		{
 			return false;
 		}
-	}
-	
-	boolean credentialsExist(UUID key)
-	{
-		return this.decryptCredentials().containsKey(key);
 	}
 	
 	void deleteCredentials(UUID key)

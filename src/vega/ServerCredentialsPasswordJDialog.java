@@ -50,10 +50,10 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 		super(
 			parent,
 			mode == ServerCredentialsPasswordJDialogMode.ENTER_PASSWORD_FIRST_TIME ?
-					"Passwort für Server-Zugangsdaten vergeben" :
+					VegaResources.SetServerCredentialsPasswort(false) :
 						mode == ServerCredentialsPasswordJDialogMode.CHANGE_PASSWORD ?
-								"Passwort für Server-Zugangsdaten ändern" :
-								"Server-Zugangsdaten entsperren",
+								VegaResources.ChangeServerCredentialsPasswort(false) :
+								VegaResources.UnlockServerCredentials(false),
 			new BorderLayout());
 		
 		this.serverCredentials = serverCredentials.getClone();
@@ -74,8 +74,8 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 			c.gridx = 0; c.gridy = lineCount; c.gridwidth = 1;
 			panPasswords.add(new Label(
 					mode == ServerCredentialsPasswordJDialogMode.CHANGE_PASSWORD ?
-							"Altes Passwort" :
-								"Passwort"), c);
+								VegaResources.NewPassword(false) :
+								VegaResources.Password(false)), c);
 
 			c.gridx = 1; c.gridy = lineCount; c.gridwidth = 2;
 			this.tfPassword = new PasswordField("");
@@ -88,7 +88,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 		if (mode != ServerCredentialsPasswordJDialogMode.UNLOCK_CREDENTIALS)
 		{
 			c.gridx = 0; c.gridy = lineCount; c.gridwidth = 1;
-			panPasswords.add(new Label("Neues Passwort"), c);
+			panPasswords.add(new Label(VegaResources.NewPassword(false)), c);
 
 			c.gridx = 1; c.gridy = lineCount; c.gridwidth = 2;
 			this.tfPasswordNew1 = new PasswordField("");
@@ -98,7 +98,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 			lineCount++;
 			
 			c.gridx = 0; c.gridy = lineCount; c.gridwidth = 1;
-			panPasswords.add(new Label("Neues Passwort (Wiederholung)"), c);
+			panPasswords.add(new Label(VegaResources.NewPasswordRepeat(false)), c);
 
 			c.gridx = 1; c.gridy = lineCount; c.gridwidth = 2;
 			this.tfPasswordNew2 = new PasswordField("");
@@ -163,8 +163,8 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 				{
 					MessageBox.showError(
 							this, 
-							"Das eingegebene Passwort ist falsch", 
-							"Passwort falsch");
+							VegaResources.PasswordWrong(false), 
+							VegaResources.PasswordWrong2(false));
 					return;
 				}
 			}
@@ -176,8 +176,8 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 				{
 					MessageBox.showError(
 							this, 
-							"Das neue Passwort muss mindestens " + ServerCredentials.PASSWORD_MIN_LENGTH + " Zeichen lang sein.", 
-							"Ungültiges Passwort");
+							VegaResources.PasswordLength(false, Integer.toString(ServerCredentials.PASSWORD_MIN_LENGTH)),
+							VegaResources.PasswordInvalid(false));
 					return;
 				}
 				
@@ -186,7 +186,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 					MessageBox.showError(
 							this, 
 							VegaResources.PasswordsNotEqual(false), 
-							"Ungültiges Passwort");
+							VegaResources.PasswordInvalid(false));
 					return;
 				}
 				

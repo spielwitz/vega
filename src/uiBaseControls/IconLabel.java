@@ -25,24 +25,21 @@ import javax.swing.JLabel;
 @SuppressWarnings("serial")
 public class IconLabel extends JLabel implements MouseListener
 {
-	private ImageIcon icon1;
-	private ImageIcon icon2;
+	private ImageIcon[] icons;
 	
 	private IIconLabelListener callback;
 	
 	public IconLabel(ImageIcon icon, IIconLabelListener callback)
 	{
-		this(icon, null, callback);
+		this(new ImageIcon[] {icon}, callback);
 	}
 	
-	public IconLabel(ImageIcon icon1, ImageIcon icon2, IIconLabelListener callback)
+	public IconLabel(ImageIcon[] icons, IIconLabelListener callback)
 	{
 		super();
 		
-		this.setIcon(icon1);
-		
-		this.icon1 = icon1;
-		this.icon2 = icon2;
+		this.icons = icons;
+		this.setIcon(this.icons[0]);
 		
 		this.callback = callback;
 		
@@ -74,14 +71,8 @@ public class IconLabel extends JLabel implements MouseListener
 		this.callback.iconLabelClicked(this);
 	}
 
-	public void setIcon2(boolean setIcon2)
+	public void setIconIndex(int index)
 	{
-		if (this.icon2 != null)
-		{
-			this.setIcon(
-					setIcon2 ?
-							this.icon2 :
-							this.icon1);
-		}
+			this.setIcon(this.icons[index]);
 	}
 }

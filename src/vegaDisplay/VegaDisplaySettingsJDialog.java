@@ -240,7 +240,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 			}
 			catch (Exception e)
 			{
-				text = VegaResources.ConnectionToServerNotEstablished(false, this.config.getServerIpAddress());
+				text = VegaResources.ConnectionToServerNotEstablished(false);
 			}
 
 			if (text.length() == 0)

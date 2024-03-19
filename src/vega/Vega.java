@@ -194,13 +194,12 @@ public class Vega extends Frame // NO_UCD (use default)
 	private IconLabel labGames;
 	private IconLabel labMessages;
 	private IconLabel labMenu;
+
+	private ImageIcon iconCredentialsLocked;
 	private ImageIcon iconConnected;
-	
 	private ImageIcon iconDisconnected;
 	private ImageIcon iconGames;
-	
 	private ImageIcon iconGamesNew;
-	
 	private ImageIcon iconMessages;
 	private ImageIcon iconMessagesNew;
 	
@@ -239,6 +238,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.paintPanel = new PanelScreenContent(this);
 		this.add(this.paintPanel, BorderLayout.CENTER);
 		
+		this.iconCredentialsLocked = new ImageIcon (ClassLoader.getSystemResource("credentialsLocked.png"));
 		this.iconConnected = new ImageIcon (ClassLoader.getSystemResource("connected.png"));
 		this.iconDisconnected = new ImageIcon (ClassLoader.getSystemResource("disconnected.png"));
 		this.iconGames = new ImageIcon (ClassLoader.getSystemResource("games.png"));
@@ -255,24 +255,28 @@ public class Vega extends Frame // NO_UCD (use default)
 		Toolbar toolbar = new Toolbar(this.labMenu);
 		
 		this.labMessages = new IconLabel(
-				this.iconMessages, 
-				this.iconMessagesNew,
+				new ImageIcon[] {
+						this.iconMessages, 
+						this.iconMessagesNew},
 				this);
 		this.labMessages.setVisible(false);
 		
 		toolbar.addIconLabel(this.labMessages, 0);
 		
 		this.labGames = new IconLabel(
-				this.iconGames,
-				this.iconGamesNew,
+				new ImageIcon[] {
+						this.iconGames,
+						this.iconGamesNew},
 				this);
 		this.labGames.setVisible(false);
 		
 		toolbar.addIconLabel(this.labGames, 1);
 		
 		this.labConnectionStatus = new IconLabel(
-				this.iconConnected,
-				this.iconDisconnected,
+				new ImageIcon[] {
+						this.iconCredentialsLocked,
+						this.iconConnected,
+						this.iconDisconnected},
 				this);
 		this.labConnectionStatus.setVisible(this.config.isServerCommunicationEnabled());
 		
@@ -670,7 +674,15 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 		else if (source == this.labConnectionStatus)
 		{
-			this.openServerSettingsDialog();
+			ServerCredentials serverCredentials = this.config.getServerCredentials();
+			if (serverCredentials.areCredentialsLocked())
+			{
+				this.unlockServerCredentials();
+			}
+			else
+			{
+				this.openServerSettingsDialog();
+			}
 		}
 	}
 	
@@ -1194,7 +1206,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	
 	private void connectClient()
 	{
-		ClientConfiguration clientConfiguration = ClientConfiguration.readFromFile(this.config.getServerUserCredentialsFile());
+		ClientConfiguration clientConfiguration = this.config.getClientConfiguration();
 		
 		if (clientConfiguration == null)
 		{
@@ -1605,69 +1617,63 @@ public class Vega extends Frame // NO_UCD (use default)
 
 	private void openServerSettingsDialog()
 	{
-//		ServerCredentials serverCredentials = this.config.getServerCredentials();
-//		
-//		ServerCredentialsPasswordJDialog dlg = 
-//				new ServerCredentialsPasswordJDialog(
-//						this, 
-//						serverCredentials,
-//						ServerCredentialsPasswordJDialogMode.CHANGE_PASSWORD);
-//		dlg.setVisible(true);
-//		
-//		if (dlg.ok)
-//		{
-//			this.config.setServerCredentials(dlg.getServerCredentials());
-//		}
+		this.inputEnabled = false;
+		this.redrawScreen();
 
-		// ---------------
-		ServerCredentials serverCredentials = this.config.getServerCredentials();
-		serverCredentials.unlockCredentials("1234".getBytes());
-		
-		ServerSettingsJDialog dlg = new ServerSettingsJDialog(this, serverCredentials);
+		ServerSettingsJDialog dlg = new ServerSettingsJDialog(this, this.config.getServerCredentials());
 		dlg.setVisible(true);
 		
 		if (dlg.ok)
 		{
 			this.config.setServerCredentials(dlg.getServerCredentials());
+			this.connectDisconnectClient();
 		}
 		
-		// ---------------
-		
-//		this.inputEnabled = false;
-//		this.redrawScreen();
-//		
-//		VegaServerCredentialsJDialog dlg = new VegaServerCredentialsJDialog(
-//				this, 
-//				this.config.isServerCommunicationEnabled(),
-//				this.config.getServerUserCredentialsFile());
-//		dlg.setVisible(true);
-//		
-//		if (dlg.ok)
-//		{
-//			this.config.setServerUserCredentialsFile(dlg.serverUserCredentialsFile);
-//			this.config.setServerCommunicationEnabled(dlg.serverCommunicationEnabled);
-//			
-//			if (this.config.isServerCommunicationEnabled())
-//			{
-//				if (this.client != null)
-//				{
-//					this.disconnectClient();
-//				}
-//				
-//				this.connectClient();
-//				this.updateConnectionAndMessageStatus();
-//			}
-//			else
-//			{
-//				this.disconnectClient();
-//			}
-//			
-//			this.setMenuEnabled();
-//		}
-//		
-//		this.inputEnabled = true;
-//		this.redrawScreen();
+		this.inputEnabled = true;
+		this.redrawScreen();
+	}
+	
+	private void connectDisconnectClient()
+	{		
+		if (this.config.isServerCommunicationEnabled())
+		{
+			if (this.client != null)
+			{
+				this.disconnectClient();
+			}
+			
+			this.connectClient();
+		}
+		else
+		{
+			this.disconnectClient();
+		}
 
+		this.updateConnectionAndMessageStatus();
+		this.setMenuEnabled();
+	}
+	
+	private void unlockServerCredentials()
+	{
+		this.inputEnabled = false;
+		this.redrawScreen();
+		
+		ServerCredentialsPasswordJDialog dlg = 
+				new ServerCredentialsPasswordJDialog(
+						this, 
+						this.config.getServerCredentials(),
+						ServerCredentialsPasswordJDialogMode.UNLOCK_CREDENTIALS);
+			
+		dlg.setVisible(true);
+		
+		if (dlg.ok)
+		{
+			this.config.setServerCredentials(dlg.getServerCredentials());
+			this.connectDisconnectClient();
+		}
+
+		this.inputEnabled = true;
+		this.redrawScreen();
 	}
 
 	private void openServerGamesDialog()
@@ -1847,38 +1853,37 @@ public class Vega extends Frame // NO_UCD (use default)
 	private void updateConnectionAndMessageStatus()
 	{
 		this.labConnectionStatus.setVisible(this.config.isServerCommunicationEnabled());
-		this.labConnectionStatus.setIcon2(!(this.client != null && this.client.isConnected()));
 		
-		if (this.client != null && this.client.isConnected())
+		if (this.config.isServerCommunicationEnabled())
 		{
-			this.labConnectionStatus.setToolTipText(
-					VegaResources.ConnectedWithVegaServer(
-							false, 
-							this.client.getConfig().getUrl(), 
-							Integer.toString(this.client.getConfig().getPort()),
-							this.client.getConfig().getUserId()));
-		}
-		else
-		{
-			if (this.config.getServerAdminCredentialFile() == null)			
+			if (this.config.getServerCredentials().areCredentialsLocked())
+			{
+				this.labConnectionStatus.setIconIndex(0);
+				
 				this.labConnectionStatus.setToolTipText(
-					VegaResources.ServerCredentialsNotEntered(false));
+						VegaResources.ServerCredentialsLocked(false));
+				
+			}
+			else if (this.client != null && this.client.isConnected())
+			{
+				this.labConnectionStatus.setIconIndex(1);
+				
+				this.labConnectionStatus.setToolTipText(
+						VegaResources.ConnectedWithVegaServer(
+								false, 
+								ServerCredentials.getCredentialsDisplayName(this.client.getConfig())));
+			}
 			else
 			{
-				ClientConfiguration clientConfiguration = ClientConfiguration.readFromFile(this.config.getServerAdminCredentialFile());
+				this.labConnectionStatus.setIconIndex(2);
 				
-				if (clientConfiguration != null)
-				{
-					this.labConnectionStatus.setToolTipText(
-						VegaResources.ConnectionToServerNotEstablished(
-								false,
-								clientConfiguration.getUrl()));
-				}
+				this.labConnectionStatus.setToolTipText(
+						VegaResources.ConnectionToServerNotEstablished(false));
 			}
 		}
-
+				
 		this.labGames.setVisible(this.config.isServerCommunicationEnabled() && this.client != null && this.client.isConnected());
-		this.labGames.setIcon2(this.playersWaitingForInput);
+		this.labGames.setIconIndex(this.playersWaitingForInput ? 1 : 0);
 		this.labGames.setToolTipText(
 				this.playersWaitingForInput ?
 						VegaResources.PlayersWaitingForInput(false) :
@@ -1887,7 +1892,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.labMessages.setVisible(this.config.isServerCommunicationEnabled() && this.client != null && this.client.isConnected() && this.messages != null);
 		if (this.messages != null)
 		{
-			this.labMessages.setIcon2(this.messages.getUnreadMessages().size() > 0);
+			this.labMessages.setIconIndex(this.messages.getUnreadMessages().size() > 0 ? 1 : 0);
 			this.labMessages.setToolTipText(
 					this.messages.getUnreadMessages().size() > 0 ?
 							VegaResources.MessagesUnread(false) :
