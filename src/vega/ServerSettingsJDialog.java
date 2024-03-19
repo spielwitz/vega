@@ -81,7 +81,7 @@ import uiBaseControls.TabbedPane;
 import uiBaseControls.TextField;
 
 @SuppressWarnings("serial")
-class ServerCredentialsJDialog extends Dialog implements IButtonListener
+class ServerSettingsJDialog extends Dialog implements IButtonListener
 {
 	private static String lastSelectedDirectory;
 	static private File selectedDirectoryActivationFile;
@@ -100,11 +100,11 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 	
 	private TabbedPane tabpane;
 	
-	ServerCredentialsJDialog(
+	ServerSettingsJDialog(
 			Vega parent,
 			ServerCredentials credentials)
 	{
-		super(parent, "Server-Zugangsdaten", new BorderLayout());
+		super(parent, VegaResources.ServerSettings(false), new BorderLayout());
 		
 		this.serverCredentialsBefore = credentials;
 		this.serverCredentials = credentials.getClone();
@@ -273,7 +273,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			PanelWithInsets panMain = new PanelWithInsets(new BorderLayout(10, 10));
 			
 			Panel panAdminCredentials = new Panel(new FlowLayout(FlowLayout.LEFT));
-			panAdminCredentials.add(new Label("Administrator-Zugangsdaten"));
+			panAdminCredentials.add(new Label(VegaResources.AdminCredentials(false)));
 			panAdminCredentials.add(new JSeparator());
 			
 			this.comboCredentialsAdminModel = new ArrayList<ListItem>();
@@ -377,12 +377,12 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
 			
 			this.butAdd = new Button("+", this);
-			this.butAdd.setToolTipText("User hinzufügen");
+			this.butAdd.setToolTipText(VegaResources.CreateNewUser(false));
 			
 			panUsersListButtons.add(this.butAdd);
 			
 			this.butDelete = new Button("-", this);
-			this.butDelete.setToolTipText("User löschen");
+			this.butDelete.setToolTipText(VegaResources.DeleteUser(false));
 			panUsersListButtons.add(this.butDelete);
 			
 			panServerUsersList.add(panUsersListButtons, BorderLayout.SOUTH);
@@ -395,8 +395,7 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			this.panUserDetails = new PanelUserData(PanelUserDataMode.NoDataFromServer);
 			panUserDetailsOuter.add(this.panUserDetails, BorderLayout.NORTH);
 			
-			this.butSubmit = new Button("Änderungen an den Server schicken", this);
-			//this.butSubmit.setToolTipText("Änderungen an den Server schicken");
+			this.butSubmit = new Button(VegaResources.SubmitChangesToServer(false), this);
 			panUserDetailsOuter.add(this.butSubmit, BorderLayout.CENTER);
 			
 			panServerUsers.addToInnerPanel(panUserDetailsOuter, BorderLayout.CENTER);

@@ -173,10 +173,8 @@ public class Vega extends Frame // NO_UCD (use default)
     private JMenuItem menuSave;
     private JMenuItem menuServerHighscores;
     
-    private JMenuItem menuServerAdmin;
     private JMenuItem menuServerGames;
-    
-    private JMenuItem menuServerCredentials;
+    private JMenuItem menuServerSettings;
     
     private JMenuItem menuLanguage;
     
@@ -461,24 +459,9 @@ public class Vega extends Frame // NO_UCD (use default)
 			this.inputEnabled = true;
 			this.redrawScreen();
 		}
-		else if (JMenuItem == this.menuServerAdmin)
+		else if (JMenuItem == this.menuServerSettings)
 		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			VegaServerAdminJDialog dlg = new VegaServerAdminJDialog(
-					this, 
-					this.config.getServerAdminCredentialFile());
-			dlg.setVisible(true);
-			
-			this.config.setServerAdminCredentialFile(dlg.serverAdminCredentialsFile);
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuServerCredentials)
-		{
-			this.openServerCredentialsDialog();
+			this.openServerSettingsDialog();
 		}
 		else if (JMenuItem == this.menuServerGames)
 		{
@@ -687,7 +670,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 		else if (source == this.labConnectionStatus)
 		{
-			this.openServerCredentialsDialog();
+			this.openServerSettingsDialog();
 		}
 	}
 	
@@ -1349,13 +1332,9 @@ public class Vega extends Frame // NO_UCD (use default)
 	    this.menuLanguage.addActionListener(this);
 	    menuSettings.add(this.menuLanguage);
 	    
-	    this.menuServerCredentials = new JMenuItem(VegaResources.VegaServerCredentials(false));
-	    this.menuServerCredentials.addActionListener(this);
-	    menuSettings.add(this.menuServerCredentials);
-	    
-	    this.menuServerAdmin = new JMenuItem(VegaResources.AdministrateVegaServer(false));
-	    this.menuServerAdmin.addActionListener(this);
-	    menuSettings.add(this.menuServerAdmin);
+	    this.menuServerSettings = new JMenuItem(VegaResources.ServerSettings(false));
+	    this.menuServerSettings.addActionListener(this);
+	    menuSettings.add(this.menuServerSettings);
 	    
 	    this.menuServer = new JMenuItem(VegaResources.Terminalserver(false));
 	    this.menuServer.addActionListener(this);
@@ -1624,7 +1603,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	    }
 	}
 
-	private void openServerCredentialsDialog()
+	private void openServerSettingsDialog()
 	{
 //		ServerCredentials serverCredentials = this.config.getServerCredentials();
 //		
@@ -1644,7 +1623,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		ServerCredentials serverCredentials = this.config.getServerCredentials();
 		serverCredentials.unlockCredentials("1234".getBytes());
 		
-		ServerCredentialsJDialog dlg = new ServerCredentialsJDialog(this, serverCredentials);
+		ServerSettingsJDialog dlg = new ServerSettingsJDialog(this, serverCredentials);
 		dlg.setVisible(true);
 		
 		if (dlg.ok)

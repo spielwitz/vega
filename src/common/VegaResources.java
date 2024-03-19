@@ -139,7 +139,6 @@ public class VegaResources
 		symbolDict.put("2R","NoAllianceOnPlanet_2R");
 		symbolDict.put("2S","NoAlliance_2S");
 		symbolDict.put("2T","NoConnectionToServer_2T");
-		symbolDict.put("2U","NoFileSelected_2U");
 		symbolDict.put("2V","NoPlanetsWithAlliances_2V");
 		symbolDict.put("2W","NoSpaceships_2W");
 		symbolDict.put("2X","No_2X");
@@ -205,7 +204,6 @@ public class VegaResources
 		symbolDict.put("4M","RefreshStatus_4M");
 		symbolDict.put("4N","Refresh_4N");
 		symbolDict.put("4O","ReleaseFormatted_4O");
-		symbolDict.put("4P","ReloadUserList_4P");
 		symbolDict.put("4Q","RenewCredentials_4Q");
 		symbolDict.put("4R","RenewUserCredentialsQuestion_4R");
 		symbolDict.put("4S","RepeatPassword_4S");
@@ -218,7 +216,6 @@ public class VegaResources
 		symbolDict.put("4Z","SaveLocalGameAs_4Z");
 		symbolDict.put("50","SaveLogFileError_50");
 		symbolDict.put("51","SaveLogFile_51");
-		symbolDict.put("52","SaveServerCredentialsQuestion_52");
 		symbolDict.put("53","SecurityCodeInvalid_53");
 		symbolDict.put("54","SecurityCode_54");
 		symbolDict.put("55","Select_55");
@@ -229,7 +226,6 @@ public class VegaResources
 		symbolDict.put("5A","SendEmailToPlayers_5A");
 		symbolDict.put("5B","SendGameToAllPlayers_5B");
 		symbolDict.put("5C","ServerBuild_5C");
-		symbolDict.put("5D","ServerConnection_5D");
 		symbolDict.put("5E","ServerCredentialsNotEntered_5E");
 		symbolDict.put("5F","ServerIp_5F");
 		symbolDict.put("5G","ServerLogEmpty_5G");
@@ -332,7 +328,6 @@ public class VegaResources
 		symbolDict.put("85","VegaDisplay_85");
 		symbolDict.put("86","VegaDisplaysPassive_86");
 		symbolDict.put("87","VegaLanguage_87");
-		symbolDict.put("88","VegaServerCredentials_88");
 		symbolDict.put("89","VegaServerSetupWelcome_89");
 		symbolDict.put("8A","VegaServer_8A");
 		symbolDict.put("8B","Vega_8B");
@@ -378,7 +373,7 @@ public class VegaResources
 		symbolDict.put("9F","AddToHighScoreListQuestion_9F");
 		symbolDict.put("9G","AddressSeparator_9G");
 		symbolDict.put("9H","AdminCredentials_9H");
-		symbolDict.put("9I","AdministrateVegaServer_9I");
+		symbolDict.put("9I","ServerSettings_9I");
 		symbolDict.put("9J","AgreeWithGameBoardQuestion_9J");
 		symbolDict.put("9K","AllBattleships_9K");
 		symbolDict.put("9L","AllEmailPlayerMovesImported_9L");
@@ -514,7 +509,6 @@ public class VegaResources
 		symbolDict.put("D7","FileFilterDescription_D7");
 		symbolDict.put("D8","FileNotExists_D8");
 		symbolDict.put("D9","FileNotValid_D9");
-		symbolDict.put("DA","File_DA");
 		symbolDict.put("DB","FinalizeGameQuestion_DB");
 		symbolDict.put("DC","FinalizeGameQuestion_DC");
 		symbolDict.put("DD","FinalizeGame_DD");
@@ -1293,13 +1287,6 @@ public class VegaResources
 	}
 
 	/**
-	   * (No file selected) [2U]
-	   */
-	public static String NoFileSelected(boolean symbol) {
-		return symbol ? "£2U£":messages.getString("NoFileSelected_2U");
-	}
-
-	/**
 	   * There are no planets with alliances. [2V]
 	   */
 	public static String NoPlanetsWithAlliances(boolean symbol) {
@@ -1755,13 +1742,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Reload user list [4P]
-	   */
-	public static String ReloadUserList(boolean symbol) {
-		return symbol ? "£4P£":messages.getString("ReloadUserList_4P");
-	}
-
-	/**
 	   * Renew credentials [4Q]
 	   */
 	public static String RenewCredentials(boolean symbol) {
@@ -1846,13 +1826,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Do you want to save the changed server credentials? [52]
-	   */
-	public static String SaveServerCredentialsQuestion(boolean symbol) {
-		return symbol ? "£52£":messages.getString("SaveServerCredentialsQuestion_52");
-	}
-
-	/**
 	   * Invalid security code. [53]
 	   */
 	public static String SecurityCodeInvalid(boolean symbol) {
@@ -1920,13 +1893,6 @@ public class VegaResources
 	   */
 	public static String ServerBuild(boolean symbol) {
 		return symbol ? "£5C£":messages.getString("ServerBuild_5C");
-	}
-
-	/**
-	   * Server connection [5D]
-	   */
-	public static String ServerConnection(boolean symbol) {
-		return symbol ? "£5D£":messages.getString("ServerConnection_5D");
 	}
 
 	/**
@@ -2644,13 +2610,6 @@ public class VegaResources
 	}
 
 	/**
-	   * VEGA server credentials [88]
-	   */
-	public static String VegaServerCredentials(boolean symbol) {
-		return symbol ? "£88£":messages.getString("VegaServerCredentials_88");
-	}
-
-	/**
 	   * Welcome to the setup of the VEGA server! [89]
 	   */
 	public static String VegaServerSetupWelcome(boolean symbol) {
@@ -2966,10 +2925,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Administrate the VEGA server [9I]
+	   * VEGA server settings [9I]
 	   */
-	public static String AdministrateVegaServer(boolean symbol) {
-		return symbol ? "£9I£":messages.getString("AdministrateVegaServer_9I");
+	public static String ServerSettings(boolean symbol) {
+		return symbol ? "£9I£":messages.getString("ServerSettings_9I");
 	}
 
 	/**
@@ -3915,13 +3874,6 @@ public class VegaResources
 	   */
 	public static String FileNotValid(boolean symbol) {
 		return symbol ? "£D9£":messages.getString("FileNotValid_D9");
-	}
-
-	/**
-	   * File [DA]
-	   */
-	public static String File(boolean symbol) {
-		return symbol ? "£DA£":messages.getString("File_DA");
 	}
 
 	/**
