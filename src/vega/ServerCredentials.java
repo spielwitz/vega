@@ -87,7 +87,9 @@ class ServerCredentials implements Serializable
 	
 	boolean areCredentialsLocked()
 	{
-		return this.password == null;
+		return 
+				this.credentialsEncrypted != null &&
+				this.password == null;
 	}
 	
 	boolean changePassword(byte[] oldPassword, byte[] newPassword)
@@ -104,6 +106,11 @@ class ServerCredentials implements Serializable
 		{
 			return false;
 		}
+	}
+	
+	boolean containsCredentials()
+	{
+		return this.credentialsEncrypted != null;
 	}
 	
 	void deleteCredentials(UUID key)

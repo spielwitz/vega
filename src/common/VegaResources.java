@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: ER
+		// Last used symbolic key: ES
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -568,6 +568,7 @@ public class VegaResources
 		symbolDict.put("EP","PasswordWrong2_EP");
 		symbolDict.put("EQ","PasswordInvalid_EQ");
 		symbolDict.put("ER","PasswordLength_ER");
+		symbolDict.put("ES","ChangePassword_ES");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -3432,7 +3433,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Connected with VEGA server with credentials {0} [BA]
+	   * Connected as {0} [BA]
 	   */
 	public static String ConnectedWithVegaServer(boolean symbol, String arg0) {
 		return symbol ? "£BA§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedWithVegaServer_BA"), arg0);
@@ -4311,5 +4312,12 @@ public class VegaResources
 	   */
 	public static String PasswordLength(boolean symbol, String arg0) {
 		return symbol ? "£ER§"+arg0+"£":MessageFormat.format(messages.getString("PasswordLength_ER"), arg0);
+	}
+
+	/**
+	   * Change password [ES]
+	   */
+	public static String ChangePassword(boolean symbol) {
+		return symbol ? "£ES£":messages.getString("ChangePassword_ES");
 	}
 }

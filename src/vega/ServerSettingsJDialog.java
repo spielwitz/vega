@@ -90,6 +90,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 	
 	private Button butCancel;
 	private Button butOk;
+	private Button butPasswordChange;
 	
 	private ActivateServerConnectionPanel panActivateConnection;
 	private AdminPanel panAdmin;
@@ -125,11 +126,14 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 
-		this.butOk = new Button(VegaResources.OK(false), this);
-		panButtons.add(this.butOk);
+		this.butPasswordChange = new Button(VegaResources.ChangePassword(false), this);
+		panButtons.add(this.butPasswordChange);
 		
 		this.butCancel = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butCancel);
+		
+		this.butOk = new Button(VegaResources.OK(false), this);
+		panButtons.add(this.butOk);
 		
 		panButtons.add(new JSeparator());
 		panButtons.add(new JSeparator());
@@ -152,13 +156,17 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			this.ok = true;
 			super.close();
 		}
+		else if (source == this.butPasswordChange)
+		{
+			this.changePassword();
+		}
 	}
 	
 	ServerCredentials getServerCredentials()
 	{
 		return serverCredentials;
 	}
-
+	
 	protected boolean confirmClose()
 	{
 		if (!this.ok &&
@@ -180,6 +188,25 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		}
 		
 		return true;
+	}
+
+	private void changePassword()
+	{
+		ServerCredentialsPasswordJDialog dlg = 
+				new ServerCredentialsPasswordJDialog(
+						this, 
+						this.serverCredentials,
+						this.serverCredentials.containsCredentials() ?
+								ServerCredentialsPasswordJDialogMode.CHANGE_PASSWORD :
+								ServerCredentialsPasswordJDialogMode.ENTER_PASSWORD_FIRST_TIME
+								);
+			
+		dlg.setVisible(true);
+		
+		if (dlg.ok)
+		{
+			this.serverCredentials = dlg.getServerCredentials();
+		}
 	}
 	
 	private class ActivateServerConnectionPanel extends Panel implements IComboBoxListener, ICheckBoxListener

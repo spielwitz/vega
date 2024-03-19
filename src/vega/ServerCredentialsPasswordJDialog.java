@@ -17,6 +17,7 @@
 package vega;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -45,7 +46,10 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 	
 	boolean ok;
 	
-	ServerCredentialsPasswordJDialog(Vega parent, ServerCredentials serverCredentials, ServerCredentialsPasswordJDialogMode mode)
+	ServerCredentialsPasswordJDialog(
+			Component parent, 
+			ServerCredentials serverCredentials, 
+			ServerCredentialsPasswordJDialogMode mode)
 	{
 		super(
 			parent,
@@ -74,7 +78,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 			c.gridx = 0; c.gridy = lineCount; c.gridwidth = 1;
 			panPasswords.add(new Label(
 					mode == ServerCredentialsPasswordJDialogMode.CHANGE_PASSWORD ?
-								VegaResources.NewPassword(false) :
+								VegaResources.OldPassword(false) :
 								VegaResources.Password(false)), c);
 
 			c.gridx = 1; c.gridy = lineCount; c.gridwidth = 2;
@@ -110,11 +114,11 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 		
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 
-		this.butOk = new Button(VegaResources.OK(false), this);
-		panButtons.add(this.butOk);
-		
 		this.butCancel = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butCancel);
+		
+		this.butOk = new Button(VegaResources.OK(false), this);
+		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 		
