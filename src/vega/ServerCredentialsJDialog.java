@@ -1483,6 +1483,12 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			
 			serverCredentials.deleteCredentials((UUID)listItem.getHandle());
 			
+			if (serverCredentials.adminCredentialsSelected != null &&
+					(UUID)listItem.getHandle() == serverCredentials.adminCredentialsSelected)
+			{
+				panAdmin.clearData();
+			}
+
 			this.createListUsersModel();
 			this.listUsers.refreshListItems(this.listUsersModel);
 			
@@ -1492,7 +1498,6 @@ class ServerCredentialsJDialog extends Dialog implements IButtonListener
 			}
 			
 			this.setCredentialsPanelValues();
-			panAdmin.clearData();
 		}
 		
 		private int getListIndexByCredentialsKey(UUID key)
