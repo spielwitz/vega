@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: E9
+		// Last used symbolic key: EG
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -139,6 +139,7 @@ public class VegaResources
 		symbolDict.put("2R","NoAllianceOnPlanet_2R");
 		symbolDict.put("2S","NoAlliance_2S");
 		symbolDict.put("2T","NoConnectionToServer_2T");
+		symbolDict.put("2U","Credentials_2U");
 		symbolDict.put("2V","NoPlanetsWithAlliances_2V");
 		symbolDict.put("2W","NoSpaceships_2W");
 		symbolDict.put("2X","No_2X");
@@ -204,6 +205,7 @@ public class VegaResources
 		symbolDict.put("4M","RefreshStatus_4M");
 		symbolDict.put("4N","Refresh_4N");
 		symbolDict.put("4O","ReleaseFormatted_4O");
+		symbolDict.put("4P","ServerAdministration_4P");
 		symbolDict.put("4Q","RenewCredentials_4Q");
 		symbolDict.put("4R","RenewUserCredentialsQuestion_4R");
 		symbolDict.put("4S","RepeatPassword_4S");
@@ -216,6 +218,7 @@ public class VegaResources
 		symbolDict.put("4Z","SaveLocalGameAs_4Z");
 		symbolDict.put("50","SaveLogFileError_50");
 		symbolDict.put("51","SaveLogFile_51");
+		symbolDict.put("52","UnsavedChanges_52");
 		symbolDict.put("53","SecurityCodeInvalid_53");
 		symbolDict.put("54","SecurityCode_54");
 		symbolDict.put("55","Select_55");
@@ -226,6 +229,7 @@ public class VegaResources
 		symbolDict.put("5A","SendEmailToPlayers_5A");
 		symbolDict.put("5B","SendGameToAllPlayers_5B");
 		symbolDict.put("5C","ServerBuild_5C");
+		symbolDict.put("5D","UnsavedChangesSave_5D");
 		symbolDict.put("5E","ServerCredentialsNotEntered_5E");
 		symbolDict.put("5F","ServerIp_5F");
 		symbolDict.put("5G","ServerLogEmpty_5G");
@@ -328,6 +332,7 @@ public class VegaResources
 		symbolDict.put("85","VegaDisplay_85");
 		symbolDict.put("86","VegaDisplaysPassive_86");
 		symbolDict.put("87","VegaLanguage_87");
+		symbolDict.put("88","ConnectAsPlayerWithCredentials_88");
 		symbolDict.put("89","VegaServerSetupWelcome_89");
 		symbolDict.put("8A","VegaServer_8A");
 		symbolDict.put("8B","Vega_8B");
@@ -509,6 +514,7 @@ public class VegaResources
 		symbolDict.put("D7","FileFilterDescription_D7");
 		symbolDict.put("D8","FileNotExists_D8");
 		symbolDict.put("D9","FileNotValid_D9");
+		symbolDict.put("DA","ActivateServerGames_DA");
 		symbolDict.put("DB","FinalizeGameQuestion_DB");
 		symbolDict.put("DC","FinalizeGameQuestion_DC");
 		symbolDict.put("DD","FinalizeGame_DD");
@@ -544,6 +550,13 @@ public class VegaResources
 		symbolDict.put("E7","CountShort_E7");
 		symbolDict.put("E8","ActiveSpies_E8");
 		symbolDict.put("E9","PlanetConqueredNeutral_E9");
+		symbolDict.put("EA","LoadServerData_EA");
+		symbolDict.put("EB","Bytes_EB");
+		symbolDict.put("EC","InactiveUserFromClipboard_EC");
+		symbolDict.put("ED","ActiveUserFromFile_ED");
+		symbolDict.put("EE","AddCredentials_EE");
+		symbolDict.put("EF","DeleteCredentials_EF");
+		symbolDict.put("EG","DeleteCredentialsAYS_EG");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -1287,6 +1300,13 @@ public class VegaResources
 	}
 
 	/**
+	   * Credentials [2U]
+	   */
+	public static String Credentials(boolean symbol) {
+		return symbol ? "£2U£":messages.getString("Credentials_2U");
+	}
+
+	/**
 	   * There are no planets with alliances. [2V]
 	   */
 	public static String NoPlanetsWithAlliances(boolean symbol) {
@@ -1742,6 +1762,13 @@ public class VegaResources
 	}
 
 	/**
+	   * Server administration [4P]
+	   */
+	public static String ServerAdministration(boolean symbol) {
+		return symbol ? "£4P£":messages.getString("ServerAdministration_4P");
+	}
+
+	/**
 	   * Renew credentials [4Q]
 	   */
 	public static String RenewCredentials(boolean symbol) {
@@ -1826,6 +1853,13 @@ public class VegaResources
 	}
 
 	/**
+	   * Unsaved changes [52]
+	   */
+	public static String UnsavedChanges(boolean symbol) {
+		return symbol ? "£52£":messages.getString("UnsavedChanges_52");
+	}
+
+	/**
 	   * Invalid security code. [53]
 	   */
 	public static String SecurityCodeInvalid(boolean symbol) {
@@ -1893,6 +1927,13 @@ public class VegaResources
 	   */
 	public static String ServerBuild(boolean symbol) {
 		return symbol ? "£5C£":messages.getString("ServerBuild_5C");
+	}
+
+	/**
+	   * Do you want to take over the unsaved changes? [5D]
+	   */
+	public static String UnsavedChangesSave(boolean symbol) {
+		return symbol ? "£5D£":messages.getString("UnsavedChangesSave_5D");
 	}
 
 	/**
@@ -2607,6 +2648,13 @@ public class VegaResources
 	   */
 	public static String VegaLanguage(boolean symbol) {
 		return symbol ? "£87£":messages.getString("VegaLanguage_87");
+	}
+
+	/**
+	   * Connect as player with credentials [88]
+	   */
+	public static String ConnectAsPlayerWithCredentials(boolean symbol) {
+		return symbol ? "£88£":messages.getString("ConnectAsPlayerWithCredentials_88");
 	}
 
 	/**
@@ -3877,6 +3925,13 @@ public class VegaResources
 	}
 
 	/**
+	   * Activate server games [DA]
+	   */
+	public static String ActivateServerGames(boolean symbol) {
+		return symbol ? "£DA£":messages.getString("ActivateServerGames_DA");
+	}
+
+	/**
 	   * Do you really want to finalize the game? [DB]
 	   */
 	public static String FinalizeGameQuestion(boolean symbol) {
@@ -4119,5 +4174,54 @@ public class VegaResources
 	   */
 	public static String PlanetConqueredNeutral(boolean symbol) {
 		return symbol ? "£E9£":messages.getString("PlanetConqueredNeutral_E9");
+	}
+
+	/**
+	   * Load server data [EA]
+	   */
+	public static String LoadServerData(boolean symbol) {
+		return symbol ? "£EA£":messages.getString("LoadServerData_EA");
+	}
+
+	/**
+	   * {0} bytes [EB]
+	   */
+	public static String Bytes(boolean symbol, String arg0) {
+		return symbol ? "£EB§"+arg0+"£":MessageFormat.format(messages.getString("Bytes_EB"), arg0);
+	}
+
+	/**
+	   * Inactive user from the clipboard [EC]
+	   */
+	public static String InactiveUserFromClipboard(boolean symbol) {
+		return symbol ? "£EC£":messages.getString("InactiveUserFromClipboard_EC");
+	}
+
+	/**
+	   * Active user from a file [ED]
+	   */
+	public static String ActiveUserFromFile(boolean symbol) {
+		return symbol ? "£ED£":messages.getString("ActiveUserFromFile_ED");
+	}
+
+	/**
+	   * Add credentials [EE]
+	   */
+	public static String AddCredentials(boolean symbol) {
+		return symbol ? "£EE£":messages.getString("AddCredentials_EE");
+	}
+
+	/**
+	   * Delete credentials [EF]
+	   */
+	public static String DeleteCredentials(boolean symbol) {
+		return symbol ? "£EF£":messages.getString("DeleteCredentials_EF");
+	}
+
+	/**
+	   * Do you really want to delete the credentials of user [{0}]? [EG]
+	   */
+	public static String DeleteCredentialsAYS(boolean symbol, String arg0) {
+		return symbol ? "£EG§"+arg0+"£":MessageFormat.format(messages.getString("DeleteCredentialsAYS_EG"), arg0);
 	}
 }

@@ -114,12 +114,12 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		this.panActivateConnection = new ActivateServerConnectionPanel();
 		this.panAdmin = new AdminPanel(this);
 		
-		this.tabpane.addTab("Server-Spiele aktivieren", this.panActivateConnection);
+		this.tabpane.addTab(VegaResources.ActivateServerGames(false), this.panActivateConnection);
 		
 		this.panUsers = new UsersPanel(this);
-		this.tabpane.addTab("Zugangsdaten", this.panUsers);
+		this.tabpane.addTab(VegaResources.Credentials(false), this.panUsers);
 		
-		this.tabpane.addTab("Serververwaltung", this.panAdmin);
+		this.tabpane.addTab(VegaResources.ServerAdministration(false), this.panAdmin);
 				
 		this.addToInnerPanel(tabpane, BorderLayout.CENTER);
 		
@@ -135,13 +135,6 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		panButtons.add(new JSeparator());
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
-				
-//		if (this.clientConfigAdmin == null)
-//		{
-//			tabpane.setSelectedComponent(panAuthOuter);
-//			tabpane.setEnabledAt(0, false);
-//			tabpane.setEnabledAt(1, false);
-//		}
 		
 		this.pack();
 		this.setLocationRelativeTo(parent);	
@@ -173,8 +166,8 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		{
 			MessageBoxResult result = MessageBox.showYesNoCancel(
 					this, 
-					"Sie haben Änderungen vorgenommen. Möchten Sie diese übernehmen?", 
-					"Ungesicherte Änderungen");
+					VegaResources.UnsavedChangesSave(false), 
+					VegaResources.UnsavedChanges(false));
 			
 			if (result == MessageBoxResult.YES)
 			{
@@ -202,7 +195,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			PanelWithInsets panCredentials = new PanelWithInsets(new FlowLayout(FlowLayout.LEFT));
 			
 			this.cbActivate = new CheckBox(
-					"Verbinden als Spieler mit Zugangsdaten", 
+					VegaResources.ConnectAsPlayerWithCredentials(false), 
 					serverCredentials.connectionActive, 
 					this);
 			panCredentials.addToInnerPanel(this.cbActivate);
@@ -281,7 +274,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			panAdminCredentials.add(this.comboCredentialsAdmin);
 			panAdminCredentials.add(new JSeparator());
 			
-			this.butLoadServerData = new Button("Server-Daten laden", this);
+			this.butLoadServerData = new Button(VegaResources.LoadServerData(false), this);
 			panAdminCredentials.add(this.butLoadServerData);
 			
 			panMain.addToInnerPanel(panAdminCredentials, BorderLayout.NORTH);
@@ -653,7 +646,10 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			
 			this.tfServerBuild.setText(responseServerStatus.getPayload().getBuild());
 			this.tfServerStartDate.setText(VegaUtils.formatDateTimeString(VegaUtils.convertMillisecondsToString(responseServerStatus.getPayload().getServerStartDate())));
-			this.tfServerLogSize.setText(responseServerStatus.getPayload().getLogSizeBytes() + " Bytes");
+			this.tfServerLogSize.setText(
+					VegaResources.Bytes(
+							false,
+							Long.toString(responseServerStatus.getPayload().getLogSizeBytes())));
 			this.comboServerLogLevel.setSelectedItem(responseServerStatus.getPayload().getLogLevel().toString());
 			
 			this.listServerUsersModel.clear();
@@ -1293,11 +1289,11 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			this.parent = parent;
 			this.popupMenu = new JPopupMenu();
 			
-			this.popupMenuItemUser = new JMenuItem ("Inaktiver User aus der Zwischenablage");
+			this.popupMenuItemUser = new JMenuItem (VegaResources.InactiveUserFromClipboard(false));
 		    this.popupMenuItemUser.addActionListener(this);
 		    popupMenu.add (this.popupMenuItemUser);
 		    
-		    this.popupMenuItemAdmin = new JMenuItem ("Aktiver User aus einer Datei");
+		    this.popupMenuItemAdmin = new JMenuItem (VegaResources.ActiveUserFromFile(false));
 		    this.popupMenuItemAdmin.addActionListener(this);
 		    popupMenu.add (this.popupMenuItemAdmin);
 			
@@ -1311,12 +1307,12 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
 			
 			this.butAdd = new Button("+", this);
-			this.butAdd.setToolTipText("User hinzufügen");
+			this.butAdd.setToolTipText(VegaResources.AddCredentials(false));
 			
 			panUsersListButtons.add(this.butAdd);
 			
 			this.butDelete = new Button("-", this);
-			this.butDelete.setToolTipText("User löschen");
+			this.butDelete.setToolTipText(VegaResources.DeleteCredentials(false));
 			panUsersListButtons.add(this.butDelete);
 			
 			panUsersList.addToInnerPanel(panUsersListButtons, BorderLayout.SOUTH);
@@ -1475,8 +1471,10 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			
 			MessageBoxResult result = MessageBox.showYesNo(
 										parent, 
-										"Möchten Sie die Zugangsdaten des Users [" + ServerCredentials.getCredentialsDisplayName(clientConfiguration) + "] wirklich löschen?", 
-										"User löschen");
+										VegaResources.DeleteCredentialsAYS(
+												false, 
+												ServerCredentials.getCredentialsDisplayName(clientConfiguration)),
+										VegaResources.DeleteCredentials(false));
 			
 			if (result != MessageBoxResult.YES) return;
 			
@@ -1554,7 +1552,6 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		{
 			JFileChooser fc = new JFileChooser();
 			
-			//fc.setFileSelectionMode(JFileChooser);
 			fc.setDialogTitle(VegaResources.AuthenticationFile(false));
 			fc.setMultiSelectionEnabled(true);
 			
