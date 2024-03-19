@@ -203,7 +203,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			
 		dlg.setVisible(true);
 		
-		if (dlg.ok)
+		if (dlg.result == MessageBoxResult.OK)
 		{
 			this.serverCredentials = dlg.getServerCredentials();
 		}

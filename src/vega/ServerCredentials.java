@@ -18,6 +18,7 @@ package vega;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -108,6 +109,15 @@ class ServerCredentials implements Serializable
 		}
 	}
 	
+	void clear()
+	{
+		this.password = null;
+		this.adminCredentialsSelected = null;
+		this.userCredentialsSelected = null;
+		this.connectionActive = false;
+		this.credentialsEncrypted = null;
+	}
+	
 	boolean containsCredentials()
 	{
 		return this.credentialsEncrypted != null;
@@ -144,6 +154,19 @@ class ServerCredentials implements Serializable
 	{
 		Hashtable<UUID,ClientConfiguration> thisDict = this.decryptCredentials();
 		Hashtable<UUID,ClientConfiguration> otherDict = other.decryptCredentials();
+
+		if (this.connectionActive != other.connectionActive) return true;
+		if (!Arrays.equals(this.password, other.password)) return true;
+		
+		if (this.userCredentialsSelected == null && other.userCredentialsSelected != null) return true;
+		if (this.userCredentialsSelected != null && other.userCredentialsSelected == null) return true;
+		if (this.userCredentialsSelected != null && other.userCredentialsSelected != null &&
+			!this.userCredentialsSelected.equals(other.userCredentialsSelected)) return true;
+		
+		if (this.adminCredentialsSelected == null && other.adminCredentialsSelected != null) return true;
+		if (this.adminCredentialsSelected != null && other.adminCredentialsSelected == null) return true;
+		if (this.adminCredentialsSelected != null && other.adminCredentialsSelected != null &&
+			!this.adminCredentialsSelected.equals(other.adminCredentialsSelected)) return true;
 		
 		if (thisDict.size() != otherDict.size()) return true;
 		
@@ -151,17 +174,6 @@ class ServerCredentials implements Serializable
 		{
 			if (!otherDict.containsKey(credentialsKey)) return true;
 			if (!thisDict.get(credentialsKey).equals(otherDict.get(credentialsKey))) return true;
-			if (this.connectionActive != other.connectionActive) return true;
-			
-			if (this.userCredentialsSelected == null && other.userCredentialsSelected != null) return true;
-			if (this.userCredentialsSelected != null && other.userCredentialsSelected == null) return true;
-			if (this.userCredentialsSelected != null && other.userCredentialsSelected != null &&
-				!this.userCredentialsSelected.equals(other.userCredentialsSelected)) return true;
-			
-			if (this.adminCredentialsSelected == null && other.adminCredentialsSelected != null) return true;
-			if (this.adminCredentialsSelected != null && other.adminCredentialsSelected == null) return true;
-			if (this.adminCredentialsSelected != null && other.adminCredentialsSelected != null &&
-				!this.adminCredentialsSelected.equals(other.adminCredentialsSelected)) return true;
 		}
 		
 		return false;

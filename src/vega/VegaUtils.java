@@ -172,8 +172,6 @@ class VegaUtils
 		CharBuffer charBuffer = CharBuffer.wrap(chars);
 		ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
 		byte[] bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
-		Arrays.fill(charBuffer.array(), (char)0);
-		Arrays.fill(byteBuffer.array(), (byte)0);
 		return bytes;
 	}
 

@@ -25,6 +25,7 @@ import java.awt.Insets;
 
 import common.VegaResources;
 import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -37,6 +38,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 {
 	private ServerCredentials serverCredentials;
 	
+	private Button butDeleteCredentials;
 	private Button butCancel;
 	private Button butOk;
 
@@ -44,7 +46,7 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 	private PasswordField tfPasswordNew1;
 	private PasswordField tfPasswordNew2;
 	
-	boolean ok;
+	MessageBoxResult result = MessageBoxResult.CANCEL;
 	
 	ServerCredentialsPasswordJDialog(
 			Component parent, 
@@ -114,6 +116,12 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 		
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 
+		if (mode == ServerCredentialsPasswordJDialogMode.UNLOCK_CREDENTIALS)
+		{
+			this.butDeleteCredentials = new Button(VegaResources.ClearServerCredentials(false), this);
+			panButtons.add(this.butDeleteCredentials);
+		}
+		
 		this.butCancel = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butCancel);
 		
@@ -199,7 +207,26 @@ class ServerCredentialsPasswordJDialog extends Dialog implements IButtonListener
 						VegaUtils.toBytes(passwordNew1));
 			}
 			
-			this.ok = true;
+			this.result = MessageBoxResult.OK;
+			this.close();
+		}
+		else if (source == this.butDeleteCredentials)
+		{
+			MessageBoxResult result = MessageBox.showOkCancel(
+					this, 
+					VegaResources.ClearServerCredentialsAys(false),
+					VegaResources.ClearServerCredentials(false));
+			
+			if (result == MessageBoxResult.OK)
+			{
+				this.serverCredentials.clear();
+				this.result = MessageBoxResult.NO;
+			}
+			else
+			{
+				this.result = MessageBoxResult.CANCEL;
+			}
+			
 			this.close();
 		}
 	}

@@ -1690,11 +1690,11 @@ public class Vega extends Frame // NO_UCD (use default)
 				
 			dlg.setVisible(true);
 			
-			if (dlg.ok)
+			if (dlg.result != MessageBoxResult.CANCEL)
 			{
 				this.config.setServerCredentials(dlg.getServerCredentials());
 			}
-			else
+			if (dlg.result != MessageBoxResult.OK)
 			{
 				this.inputEnabled = true;
 				this.redrawScreen();
@@ -1870,7 +1870,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			
 		dlg.setVisible(true);
 		
-		if (dlg.ok)
+		if (dlg.result != MessageBoxResult.CANCEL)
 		{
 			this.config.setServerCredentials(dlg.getServerCredentials());
 			this.connectDisconnectClient();
@@ -1879,7 +1879,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.inputEnabled = true;
 		this.redrawScreen();
 
-		return dlg.ok;
+		return dlg.result == MessageBoxResult.OK;
 	}
 
 	private void updateConnectionAndMessageStatus()

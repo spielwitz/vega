@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: ES
+		// Last used symbolic key: EU
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -569,6 +569,8 @@ public class VegaResources
 		symbolDict.put("EQ","PasswordInvalid_EQ");
 		symbolDict.put("ER","PasswordLength_ER");
 		symbolDict.put("ES","ChangePassword_ES");
+		symbolDict.put("ET","ClearServerCredentials_ET");
+		symbolDict.put("EU","ClearServerCredentialsAys_EU");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4319,5 +4321,19 @@ public class VegaResources
 	   */
 	public static String ChangePassword(boolean symbol) {
 		return symbol ? "£ES£":messages.getString("ChangePassword_ES");
+	}
+
+	/**
+	   * Delete credentials [ET]
+	   */
+	public static String ClearServerCredentials(boolean symbol) {
+		return symbol ? "£ET£":messages.getString("ClearServerCredentials_ET");
+	}
+
+	/**
+	   * Attention! All server credentials will be deleted! [EU]
+	   */
+	public static String ClearServerCredentialsAys(boolean symbol) {
+		return symbol ? "£EU£":messages.getString("ClearServerCredentialsAys_EU");
 	}
 }
