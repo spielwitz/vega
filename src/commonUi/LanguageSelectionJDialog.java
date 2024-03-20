@@ -32,14 +32,32 @@ import uiBaseControls.Panel;
 @SuppressWarnings("serial")
 public class LanguageSelectionJDialog extends Dialog implements IButtonListener
 {
-	private Button butOk;
-	private Button butCancel;
-	private ComboBox comboLanguages;
-	
-	public boolean ok = false;
+	private static String getKeyFromValue(Hashtable<String,String> ht, String value)
+	{
+		String retval = null;
+		
+		for (String key: ht.keySet())
+		{
+			String value2 = ht.get(key);
+			
+			if (value.equals(value2))
+			{
+				retval = key;
+				break;
+			}
+		}
+		
+		return retval;
+	}
 	public String languageCode;
-
+	public boolean ok = false;
+	
 	private boolean allowCancel;
+	private Button butCancel;
+
+	private Button butOk;
+	private ComboBox comboLanguages;
+
 	private Hashtable<String, String> languages;
 
 	public LanguageSelectionJDialog(
@@ -85,6 +103,7 @@ public class LanguageSelectionJDialog extends Dialog implements IButtonListener
 		}
 		
 		this.butOk = new Button(VegaResources.OK(false), this);
+		this.setDefaultButton(this.butOk);
 		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
@@ -92,7 +111,7 @@ public class LanguageSelectionJDialog extends Dialog implements IButtonListener
 		this.pack();
 		this.setLocationRelativeTo(parent);	
 	}
-
+	
 	@Override
 	public void buttonClicked(Button source)
 	{
@@ -115,15 +134,15 @@ public class LanguageSelectionJDialog extends Dialog implements IButtonListener
 			
 			VegaResources.setLocale(languageCodeNew);
 			
-			DialogWindowResult dialogResult =  
+			MessageBoxResult dialogResult =  
 					this.allowCancel ?
-							DialogWindow.showOkCancel(
+							MessageBox.showOkCancel(
 									this,
 									VegaResources.NewLanguageEffectiveAfterRestart(false),
 									VegaResources.VegaLanguage(false)) :
-							DialogWindowResult.OK;
+							MessageBoxResult.OK;
 			
-			if (dialogResult == DialogWindowResult.OK)
+			if (dialogResult == MessageBoxResult.OK)
 			{
 				
 				this.languageCode = languageCodeNew;
@@ -135,22 +154,9 @@ public class LanguageSelectionJDialog extends Dialog implements IButtonListener
 		}
 	}
 	
-	private static String getKeyFromValue(Hashtable<String,String> ht, String value)
+	@Override
+	protected boolean confirmClose()
 	{
-		String retval = null;
-		
-		for (String key: ht.keySet())
-		{
-			String value2 = ht.get(key);
-			
-			if (value.equals(value2))
-			{
-				retval = key;
-				break;
-			}
-		}
-		
-		return retval;
+		return true;
 	}
-	
 }

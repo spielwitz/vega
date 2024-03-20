@@ -55,7 +55,7 @@ public class MessageWithLink extends JEditorPane {
 						java.awt.Desktop.getDesktop().browse(new URI(e.getURL().toString()));
 					} catch (Exception x) 
                 	{
-						DialogWindow.showError(
+						MessageBox.showError(
 								parent, 
 								VegaResources.OpenBrowserError(false, x.getMessage()), 
 								VegaResources.Error(false));

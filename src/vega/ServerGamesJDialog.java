@@ -42,8 +42,8 @@ import common.GameOptions;
 import common.PlanetDistribution;
 import common.PlanetInfo;
 import commonServer.ResponseMessageGamesAndUsers;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Response;
 import spielwitz.biDiServer.ResponseInfo;
 import uiBaseControls.Button;
@@ -56,6 +56,7 @@ import uiBaseControls.IListListener;
 import uiBaseControls.IRadioButtonListener;
 import uiBaseControls.Label;
 import uiBaseControls.List;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 import uiBaseControls.RadioButton;
 import uiBaseControls.TextField;
@@ -69,37 +70,37 @@ class ServerGamesJDialog extends Dialog
 								IColorChooserCallback
 {
 	private final static String ENDLESS_GAME_STRING = VegaResources.Infinite(false);
-	private Vega							parent;
-	private VegaClient						client;
-	private ResponseMessageGamesAndUsers 	gamesAndUsers;
-	private Hashtable<String, GameInfo>		gameInfoByName;
-	private Game							game;
-	private GameInfo						gameInfo;
-	private String[]						userNames;
-	
-	private Hashtable<RadioButton, ArrayList<String>> gamesByCategory;
-	private RadioButton 	rbGamesWaitingForMe;
-	private RadioButton 	rbGamesWaitingForOthers;
-	private RadioButton 	rbGamesFinalized;
-	private List			listGames;
-	private Button			butGameLoad;
+	Game gameLoaded;
+	private BoardDisplay 	board;
 	private Button 			butGameDelete;
 	private Button 			butGameFinalize;
+	private Button			butGameLoad;
 	private Button			butGameNew;
 	private Button			butGameNewBoard;
+	
 	private Button			butGameSubmit;
-	private BoardDisplay 	board;
-	private PanelPlayer[]	pansPlayer;
-	private TextField 		tfGameName;
-	private ComboBox 		comboYearLast;
-	private ComboBox 		comboPlayers;
+	private VegaClient						client;
 	private ComboBox 		comboPlanets;
-	private Label			labYear;
-	private Label			labUpdateLast;
-	
+	private ComboBox 		comboPlayers;
+	private ComboBox 		comboYearLast;
+	private Game							game;
+	private GameInfo						gameInfo;
+	private Hashtable<String, GameInfo>		gameInfoByName;
+	private ResponseMessageGamesAndUsers 	gamesAndUsers;
+	private Hashtable<RadioButton, ArrayList<String>> gamesByCategory;
 	private Label			labDateStart;
+	private Label			labUpdateLast;
+	private Label			labYear;
+	private List			listGames;
+	private PanelPlayer[]	pansPlayer;
+	private Vega							parent;
+	private RadioButton 	rbGamesFinalized;
+	private RadioButton 	rbGamesWaitingForMe;
+	private RadioButton 	rbGamesWaitingForOthers;
 	
-	Game gameLoaded;
+	private TextField 		tfGameName;
+	
+	private String[]						userNames;
 	
 	ServerGamesJDialog(
 			Vega parent,
@@ -370,7 +371,11 @@ class ServerGamesJDialog extends Dialog
 		{
 			this.newGame(false);
 		}
-		
+	}
+	
+	@Override
+	public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+	{
 	}
 	
 	@Override
@@ -405,14 +410,20 @@ class ServerGamesJDialog extends Dialog
 		}
 	}
 	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+
 	private void deleteGame(String gameId)
 	{
-		DialogWindowResult dialogResult = DialogWindow.showYesNo(
+		MessageBoxResult dialogResult = MessageBox.showYesNo(
 				this,
 			    VegaResources.DeleteGameQuestion(false, gameId),
 			    VegaResources.DeleteGame(false));
 		
-		if (dialogResult != DialogWindowResult.YES)
+		if (dialogResult != MessageBoxResult.YES)
 			return;
 		
 		Vega.showWaitCursor(this);
@@ -421,7 +432,7 @@ class ServerGamesJDialog extends Dialog
 		
 		if (info.isSuccess())
 		{
-			DialogWindow.showInformation(
+			MessageBox.showInformation(
 					this, 
 					VegaResources.GameDeletedSuccessfully(false, gameId), 
 					VegaResources.DeleteGame(false));
@@ -433,7 +444,7 @@ class ServerGamesJDialog extends Dialog
 			Vega.showServerError(this, info);
 		}
 	}
-
+	
 	private void enableControlsForNewGame()
 	{
 		this.tfGameName.setEditable(true);
@@ -498,12 +509,12 @@ class ServerGamesJDialog extends Dialog
 	
 	private void finalizeGame(String gameId)
 	{
-		DialogWindowResult dialogResult = DialogWindow.showYesNo(
+		MessageBoxResult dialogResult = MessageBox.showYesNo(
 				this,
 			    VegaResources.FinalizeGameQuestion(false, gameId),
 			    VegaResources.FinalizeGame(false));
 		
-		if (dialogResult != DialogWindowResult.YES)
+		if (dialogResult != MessageBoxResult.YES)
 			return;
 		
 		Vega.showWaitCursor(this);
@@ -512,7 +523,7 @@ class ServerGamesJDialog extends Dialog
 		
 		if (info.isSuccess())
 		{
-			DialogWindow.showInformation(
+			MessageBox.showInformation(
 					this, 
 					VegaResources.GameFinalizedSuccessfully(false, gameId), 
 					VegaResources.FinalizeGame(false));
@@ -574,6 +585,8 @@ class ServerGamesJDialog extends Dialog
 		
 		return rbCurrentGame;
 	}
+
+	// ========================
 	
 	private String[] getPlanetComboBoxValues(int playersCount)
 	{
@@ -585,8 +598,6 @@ class ServerGamesJDialog extends Dialog
 
 		return planets;
 	}
-
-	// ========================
 	
 	private void newGame(boolean playersCountChanged)
 	{
@@ -641,6 +652,9 @@ class ServerGamesJDialog extends Dialog
 		this.board.refresh(this.gameInfo.planetInfo, false);
 	}
 	
+	
+	// ============
+	
 	private void selectGame(String gameId)
 	{
 		Vega.showWaitCursor(this);
@@ -657,10 +671,7 @@ class ServerGamesJDialog extends Dialog
 			Vega.showServerError(this, response.getResponseInfo());
 		}
 	}
-	
-	
-	// ============
-	
+
 	private void showGameData(String gameName)
 	{
 		this.gameInfo = gameName != null ?
@@ -764,7 +775,7 @@ class ServerGamesJDialog extends Dialog
 						null,
 				true);
 	}
-
+	
 	private void submitGame()
 	{
 		String gameName = this.tfGameName.getText().trim();
@@ -772,7 +783,7 @@ class ServerGamesJDialog extends Dialog
 		
 		if (gameName.length() < Game.GAME_NAME_LENGTH_MIN)
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					this,
 					VegaResources.GameNameInvalid(
 							false, 
@@ -793,7 +804,7 @@ class ServerGamesJDialog extends Dialog
 			
 			if (playerName.equals(""))
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.AssignUsersToAllPlayers(false),
 					    VegaResources.Error(false));
@@ -801,7 +812,7 @@ class ServerGamesJDialog extends Dialog
 			}
 			else if (playerNames.contains(playerName))
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.DuplicatePlayers(false, playerName),
 						VegaResources.Error(false));
@@ -819,12 +830,12 @@ class ServerGamesJDialog extends Dialog
 			playerNames.add(playerName);
 		}
 		
-		DialogWindowResult dialogResult = DialogWindow.showOkCancel(
+		MessageBoxResult dialogResult = MessageBox.showOkCancel(
 				this,
 				VegaResources.PublishGameQuestion(false, game.getName()),
 				VegaResources.PublishGame(false));
 		
-		if (dialogResult != DialogWindowResult.OK)
+		if (dialogResult != MessageBoxResult.OK)
 			return;
 		
 		HashSet<GameOptions> options = this.game.getOptions();
@@ -865,7 +876,7 @@ class ServerGamesJDialog extends Dialog
 			
 			if (playersForEmail.size() > 0)
 			{
-				DialogWindow.showInformation(
+				MessageBox.showInformation(
 						this, 
 						VegaResources.GameCreatedSendMail(false, response.getPayload()), 
 						VegaResources.PublishGame(false));
@@ -894,7 +905,7 @@ class ServerGamesJDialog extends Dialog
 				}	
 			}
 			else
-				DialogWindow.showInformation(
+				MessageBox.showInformation(
 						this, 
 						VegaResources.GameCreated(false, response.getPayload()), 
 						VegaResources.PublishGame(false));
@@ -974,8 +985,8 @@ class ServerGamesJDialog extends Dialog
 	private class PanelPlayer extends JPanel
 	{
 		public PlayerColorButton 	canvasPlayerColor;
-		public ComboBox				comboPlayer;
 		public CheckBox 			cbEnterMovesFinished;
+		public ComboBox				comboPlayer;
 		
 		private int					playerIndex;
 		

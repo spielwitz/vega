@@ -30,43 +30,26 @@ import javax.swing.event.ListSelectionListener;
 @SuppressWarnings("serial")
 public class List extends JScrollPane implements MouseListener, ListSelectionListener
 {
-	private DefaultListModel<String> lm;
-	private JList<String> list;
 	private IListListener callback;
 	private boolean eventsEnabled;
+	private JList<String> list;
+	private ArrayList<ListItem> listItems;
+	private DefaultListModel<String> lm;
 	
 	public List(
 			ArrayList<String> data,
 			IListListener callback)
 	{
 		super();
-		
-		this.callback = callback;
-		
-		this.lm = new DefaultListModel<String>();
-		
-		for (String value: data)
-		{
-			this.lm.addElement(value);
-		}
-		
-		this.list = new JList<String>(this.lm);
-		
-		this.list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		this.list.setLayoutOrientation(JList.VERTICAL);
-		this.list.setVisibleRowCount(-1);
-		
-		if (this.callback != null)
-		{
-			this.list.addMouseListener(this);
-			this.list.addListSelectionListener(this);
-			this.eventsEnabled = true;
-		}
-		
-		this.setViewportView(this.list);
-		
-		this.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED;
-		this.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER;
+		initialize(callback, this.getListItems(data));
+	}
+	
+	public List(
+			IListListener callback,
+			ArrayList<ListItem> listItems)
+	{
+		super();
+		initialize(callback, listItems);
 	}
 	
 	public void clearSelection()
@@ -79,6 +62,20 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 	public int[] getSelectedIndices()
 	{
 		return this.list.getSelectedIndices();
+	}
+	
+	public ListItem getSelectedListItem()
+	{
+		int index = this.list.getSelectedIndex();
+		
+		if (index >= 0)
+		{
+			return this.listItems.get(index);
+		}
+		else
+		{
+			return null;
+		}
 	}
 	
 	public String getSelectedValue()
@@ -128,17 +125,24 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 	public void mouseReleased(MouseEvent e)
 	{
 	}
-
-	public void refreshListModel(ArrayList<String> values)
+	
+	public void refreshListItems(ArrayList<ListItem> listItems)
 	{
 		this.eventsEnabled = false;
+		
+		this.listItems = listItems;
 		this.lm.removeAllElements();
 		
-		for (String value: values)
+		for (ListItem listItem: listItems)
 		{
-			this.lm.addElement(value);
+			this.lm.addElement(listItem.getDisplayString());
 		}
 		this.eventsEnabled = true;
+	}
+	
+	public void refreshListModel(ArrayList<String> data)
+	{
+		this.refreshListItems(this.getListItems(data));
 	}
 
 	public void setSelectedIndex(int index)
@@ -147,7 +151,7 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 		this.list.setSelectedIndex(index);
 		this.eventsEnabled = true;
 	}
-
+	
 	public void setSelectedIndices(int[] indices)
 	{
 		this.eventsEnabled = false;
@@ -180,5 +184,51 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 				this.list.getSelectedValue(), 
 				this.list.getSelectedIndex(), 
 				1);
+	}
+
+	private ArrayList<ListItem> getListItems(ArrayList<String> data)
+	{
+		ArrayList<ListItem> listItems = new ArrayList<ListItem>();
+		
+		for (String value: data)
+		{
+			listItems.add(new ListItem(value, null));
+		}
+		
+		return listItems;
+	}
+
+	private void initialize(
+			IListListener callback,
+			ArrayList<ListItem> listItems)
+	{
+		this.callback = callback;
+		
+		this.lm = new DefaultListModel<String>();
+		this.listItems = listItems;
+		
+		for (ListItem listItem: listItems)
+		{
+			this.lm.addElement(listItem.getDisplayString());
+		}
+		
+		this.list = new JList<String>(this.lm);
+		
+		this.list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		this.list.setLayoutOrientation(JList.VERTICAL);
+		this.list.setVisibleRowCount(-1);
+		
+		if (this.callback != null)
+		{
+			this.list.addMouseListener(this);
+			this.list.addListSelectionListener(this);
+			this.eventsEnabled = true;
+		}
+		
+		this.setViewportView(this.list);
+		
+		this.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED;
+		this.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER;
+	
 	}
 }

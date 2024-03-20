@@ -26,9 +26,18 @@ public class PasswordField extends JPasswordField
 		super(text);
 	}
 	
-	@Override
-	public String getText()
+	public boolean arePasswordsEqual(PasswordField other)
 	{
-		return new String(this.getPassword());
+		if (this.getPassword().length != other.getPassword().length) return false;
+		
+		for (int i = 0; i < this.getPassword().length; i++)
+		{
+			if (this.getPassword()[i] != other.getPassword()[i])
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

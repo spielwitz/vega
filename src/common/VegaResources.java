@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: E9
+		// Last used symbolic key: EV
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -139,7 +139,7 @@ public class VegaResources
 		symbolDict.put("2R","NoAllianceOnPlanet_2R");
 		symbolDict.put("2S","NoAlliance_2S");
 		symbolDict.put("2T","NoConnectionToServer_2T");
-		symbolDict.put("2U","NoFileSelected_2U");
+		symbolDict.put("2U","Credentials_2U");
 		symbolDict.put("2V","NoPlanetsWithAlliances_2V");
 		symbolDict.put("2W","NoSpaceships_2W");
 		symbolDict.put("2X","No_2X");
@@ -205,7 +205,7 @@ public class VegaResources
 		symbolDict.put("4M","RefreshStatus_4M");
 		symbolDict.put("4N","Refresh_4N");
 		symbolDict.put("4O","ReleaseFormatted_4O");
-		symbolDict.put("4P","ReloadUserList_4P");
+		symbolDict.put("4P","ServerAdministration_4P");
 		symbolDict.put("4Q","RenewCredentials_4Q");
 		symbolDict.put("4R","RenewUserCredentialsQuestion_4R");
 		symbolDict.put("4S","RepeatPassword_4S");
@@ -218,7 +218,7 @@ public class VegaResources
 		symbolDict.put("4Z","SaveLocalGameAs_4Z");
 		symbolDict.put("50","SaveLogFileError_50");
 		symbolDict.put("51","SaveLogFile_51");
-		symbolDict.put("52","SaveServerCredentialsQuestion_52");
+		symbolDict.put("52","UnsavedChanges_52");
 		symbolDict.put("53","SecurityCodeInvalid_53");
 		symbolDict.put("54","SecurityCode_54");
 		symbolDict.put("55","Select_55");
@@ -229,7 +229,7 @@ public class VegaResources
 		symbolDict.put("5A","SendEmailToPlayers_5A");
 		symbolDict.put("5B","SendGameToAllPlayers_5B");
 		symbolDict.put("5C","ServerBuild_5C");
-		symbolDict.put("5D","ServerConnection_5D");
+		symbolDict.put("5D","UnsavedChangesSave_5D");
 		symbolDict.put("5E","ServerCredentialsNotEntered_5E");
 		symbolDict.put("5F","ServerIp_5F");
 		symbolDict.put("5G","ServerLogEmpty_5G");
@@ -332,7 +332,7 @@ public class VegaResources
 		symbolDict.put("85","VegaDisplay_85");
 		symbolDict.put("86","VegaDisplaysPassive_86");
 		symbolDict.put("87","VegaLanguage_87");
-		symbolDict.put("88","VegaServerCredentials_88");
+		symbolDict.put("88","ConnectAsPlayerWithCredentials_88");
 		symbolDict.put("89","VegaServerSetupWelcome_89");
 		symbolDict.put("8A","VegaServer_8A");
 		symbolDict.put("8B","Vega_8B");
@@ -378,7 +378,7 @@ public class VegaResources
 		symbolDict.put("9F","AddToHighScoreListQuestion_9F");
 		symbolDict.put("9G","AddressSeparator_9G");
 		symbolDict.put("9H","AdminCredentials_9H");
-		symbolDict.put("9I","AdministrateVegaServer_9I");
+		symbolDict.put("9I","ServerSettings_9I");
 		symbolDict.put("9J","AgreeWithGameBoardQuestion_9J");
 		symbolDict.put("9K","AllBattleships_9K");
 		symbolDict.put("9L","AllEmailPlayerMovesImported_9L");
@@ -514,7 +514,7 @@ public class VegaResources
 		symbolDict.put("D7","FileFilterDescription_D7");
 		symbolDict.put("D8","FileNotExists_D8");
 		symbolDict.put("D9","FileNotValid_D9");
-		symbolDict.put("DA","File_DA");
+		symbolDict.put("DA","ActivateServerGames_DA");
 		symbolDict.put("DB","FinalizeGameQuestion_DB");
 		symbolDict.put("DC","FinalizeGameQuestion_DC");
 		symbolDict.put("DD","FinalizeGame_DD");
@@ -550,6 +550,28 @@ public class VegaResources
 		symbolDict.put("E7","CountShort_E7");
 		symbolDict.put("E8","ActiveSpies_E8");
 		symbolDict.put("E9","PlanetConqueredNeutral_E9");
+		symbolDict.put("EA","LoadServerData_EA");
+		symbolDict.put("EB","Bytes_EB");
+		symbolDict.put("EC","InactiveUserFromClipboard_EC");
+		symbolDict.put("ED","ActiveUserFromFile_ED");
+		symbolDict.put("EE","AddCredentials_EE");
+		symbolDict.put("EF","DeleteCredentials_EF");
+		symbolDict.put("EG","DeleteCredentialsAYS_EG");
+		symbolDict.put("EH","ServerCredentialsLocked_EH");
+		symbolDict.put("EI","UnlockServerCredentials_EI");
+		symbolDict.put("EJ","ChangeServerCredentialsPasswort_EJ");
+		symbolDict.put("EK","SetServerCredentialsPasswort_EK");
+		symbolDict.put("EL","OldPassword_EL");
+		symbolDict.put("EM","NewPassword_EM");
+		symbolDict.put("EN","NewPasswordRepeat_EN");
+		symbolDict.put("EO","PasswordWrong_EO");
+		symbolDict.put("EP","PasswordWrong2_EP");
+		symbolDict.put("EQ","PasswordInvalid_EQ");
+		symbolDict.put("ER","PasswordLength_ER");
+		symbolDict.put("ES","ChangePassword_ES");
+		symbolDict.put("ET","ClearServerCredentials_ET");
+		symbolDict.put("EU","ClearServerCredentialsAys_EU");
+		symbolDict.put("EV","ServerAdminCredentialsCreated_EV");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -1244,7 +1266,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Hi {0},\n\nwelcome to VEGA! Your new user [{1}] on server {2}:{3} (build {4}) has been created and only needs to be activated.\n\nPlease proceed as follows:\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select "Settings > VEGA server credentials (administrator)" in the menu list.\n\n3. Check the option "Server connection -> Activate"\n\n4. Press the button "Activate user", and insert the contents of the clipboard into the text field.\n\n5. Enter the password that you got from your server administrator.\n\n6. Press the button "OK". Choose a storage location for the file containing the user credentials.\n\nYour user is now active, and your user credentials are stored in VEGA.\n\nEnjoy VEGA!\nYour server administrator [2N]
+	   * Hi {0},\n\nwelcome to VEGA! Your new user [{1}] on server {2}:{3} (build {4}) has been created and only needs to be activated.\n\nPlease proceed as follows:\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select "Settings > VEGA server settings -> Credentials -> + -> Inactive user from the clipboard".\n\n3. insert the contents of the clipboard into the text field and enter the password that you agreed on with your server administrator. Prss "OK".\n\n4. Activate the user with the button "Activate".\n\n5. Navigate to the tab "Activate server games". Select your user and check the box "Connect as player with credentials".\n\n6. Close the dialog by pressing "OK".\n\nYour user is now active.\n\nEnjoy VEGA!\nYour server administrator [2N]
 	   */
 	public static String NewUserEmailBody(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4) {
 		return symbol ? "£2N§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":MessageFormat.format(messages.getString("NewUserEmailBody_2N"), arg0, arg1, arg2, arg3, arg4);
@@ -1293,10 +1315,10 @@ public class VegaResources
 	}
 
 	/**
-	   * (No file selected) [2U]
+	   * Credentials [2U]
 	   */
-	public static String NoFileSelected(boolean symbol) {
-		return symbol ? "£2U£":messages.getString("NoFileSelected_2U");
+	public static String Credentials(boolean symbol) {
+		return symbol ? "£2U£":messages.getString("Credentials_2U");
 	}
 
 	/**
@@ -1755,10 +1777,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Reload user list [4P]
+	   * Server administration [4P]
 	   */
-	public static String ReloadUserList(boolean symbol) {
-		return symbol ? "£4P£":messages.getString("ReloadUserList_4P");
+	public static String ServerAdministration(boolean symbol) {
+		return symbol ? "£4P£":messages.getString("ServerAdministration_4P");
 	}
 
 	/**
@@ -1846,10 +1868,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Do you want to save the changed server credentials? [52]
+	   * Unsaved changes [52]
 	   */
-	public static String SaveServerCredentialsQuestion(boolean symbol) {
-		return symbol ? "£52£":messages.getString("SaveServerCredentialsQuestion_52");
+	public static String UnsavedChanges(boolean symbol) {
+		return symbol ? "£52£":messages.getString("UnsavedChanges_52");
 	}
 
 	/**
@@ -1923,10 +1945,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Server connection [5D]
+	   * Do you want to take over the unsaved changes? [5D]
 	   */
-	public static String ServerConnection(boolean symbol) {
-		return symbol ? "£5D£":messages.getString("ServerConnection_5D");
+	public static String UnsavedChangesSave(boolean symbol) {
+		return symbol ? "£5D£":messages.getString("UnsavedChangesSave_5D");
 	}
 
 	/**
@@ -2644,10 +2666,10 @@ public class VegaResources
 	}
 
 	/**
-	   * VEGA server credentials [88]
+	   * Connect as player with credentials [88]
 	   */
-	public static String VegaServerCredentials(boolean symbol) {
-		return symbol ? "£88£":messages.getString("VegaServerCredentials_88");
+	public static String ConnectAsPlayerWithCredentials(boolean symbol) {
+		return symbol ? "£88£":messages.getString("ConnectAsPlayerWithCredentials_88");
 	}
 
 	/**
@@ -2658,7 +2680,7 @@ public class VegaResources
 	}
 
 	/**
-	   * VEGA server {0} [8A]
+	   * [VEGA] server user {0} [8A]
 	   */
 	public static String VegaServer(boolean symbol, String arg0) {
 		return symbol ? "£8A§"+arg0+"£":MessageFormat.format(messages.getString("VegaServer_8A"), arg0);
@@ -2966,10 +2988,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Administrate the VEGA server [9I]
+	   * VEGA server settings [9I]
 	   */
-	public static String AdministrateVegaServer(boolean symbol) {
-		return symbol ? "£9I£":messages.getString("AdministrateVegaServer_9I");
+	public static String ServerSettings(boolean symbol) {
+		return symbol ? "£9I£":messages.getString("ServerSettings_9I");
 	}
 
 	/**
@@ -3414,10 +3436,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Connected with VEGA server {0}:{1} as user {2} [BA]
+	   * Connected as {0} [BA]
 	   */
-	public static String ConnectedWithVegaServer(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£BA§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("ConnectedWithVegaServer_BA"), arg0, arg1, arg2);
+	public static String ConnectedWithVegaServer(boolean symbol, String arg0) {
+		return symbol ? "£BA§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedWithVegaServer_BA"), arg0);
 	}
 
 	/**
@@ -3456,10 +3478,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Connection to the server could not be established.\nError message:\n\n{0} [BG]
+	   * No connection to the VEGA server. [BG]
 	   */
-	public static String ConnectionToServerNotEstablished(boolean symbol, String arg0) {
-		return symbol ? "£BG§"+arg0+"£":MessageFormat.format(messages.getString("ConnectionToServerNotEstablished_BG"), arg0);
+	public static String ConnectionToServerNotEstablished(boolean symbol) {
+		return symbol ? "£BG£":messages.getString("ConnectionToServerNotEstablished_BG");
 	}
 
 	/**
@@ -3918,10 +3940,10 @@ public class VegaResources
 	}
 
 	/**
-	   * File [DA]
+	   * Activate server games [DA]
 	   */
-	public static String File(boolean symbol) {
-		return symbol ? "£DA£":messages.getString("File_DA");
+	public static String ActivateServerGames(boolean symbol) {
+		return symbol ? "£DA£":messages.getString("ActivateServerGames_DA");
 	}
 
 	/**
@@ -4167,5 +4189,159 @@ public class VegaResources
 	   */
 	public static String PlanetConqueredNeutral(boolean symbol) {
 		return symbol ? "£E9£":messages.getString("PlanetConqueredNeutral_E9");
+	}
+
+	/**
+	   * Load server data [EA]
+	   */
+	public static String LoadServerData(boolean symbol) {
+		return symbol ? "£EA£":messages.getString("LoadServerData_EA");
+	}
+
+	/**
+	   * {0} bytes [EB]
+	   */
+	public static String Bytes(boolean symbol, String arg0) {
+		return symbol ? "£EB§"+arg0+"£":MessageFormat.format(messages.getString("Bytes_EB"), arg0);
+	}
+
+	/**
+	   * Inactive user from the clipboard [EC]
+	   */
+	public static String InactiveUserFromClipboard(boolean symbol) {
+		return symbol ? "£EC£":messages.getString("InactiveUserFromClipboard_EC");
+	}
+
+	/**
+	   * Active user from a file [ED]
+	   */
+	public static String ActiveUserFromFile(boolean symbol) {
+		return symbol ? "£ED£":messages.getString("ActiveUserFromFile_ED");
+	}
+
+	/**
+	   * Add credentials [EE]
+	   */
+	public static String AddCredentials(boolean symbol) {
+		return symbol ? "£EE£":messages.getString("AddCredentials_EE");
+	}
+
+	/**
+	   * Delete credentials [EF]
+	   */
+	public static String DeleteCredentials(boolean symbol) {
+		return symbol ? "£EF£":messages.getString("DeleteCredentials_EF");
+	}
+
+	/**
+	   * Do you really want to delete the credentials of user [{0}]? [EG]
+	   */
+	public static String DeleteCredentialsAYS(boolean symbol, String arg0) {
+		return symbol ? "£EG§"+arg0+"£":MessageFormat.format(messages.getString("DeleteCredentialsAYS_EG"), arg0);
+	}
+
+	/**
+	   * Server credentials are locked. [EH]
+	   */
+	public static String ServerCredentialsLocked(boolean symbol) {
+		return symbol ? "£EH£":messages.getString("ServerCredentialsLocked_EH");
+	}
+
+	/**
+	   * Unlock server credentials [EI]
+	   */
+	public static String UnlockServerCredentials(boolean symbol) {
+		return symbol ? "£EI£":messages.getString("UnlockServerCredentials_EI");
+	}
+
+	/**
+	   * Change password for server credentials [EJ]
+	   */
+	public static String ChangeServerCredentialsPasswort(boolean symbol) {
+		return symbol ? "£EJ£":messages.getString("ChangeServerCredentialsPasswort_EJ");
+	}
+
+	/**
+	   * Set new password for server credentials [EK]
+	   */
+	public static String SetServerCredentialsPasswort(boolean symbol) {
+		return symbol ? "£EK£":messages.getString("SetServerCredentialsPasswort_EK");
+	}
+
+	/**
+	   * Old password [EL]
+	   */
+	public static String OldPassword(boolean symbol) {
+		return symbol ? "£EL£":messages.getString("OldPassword_EL");
+	}
+
+	/**
+	   * New password [EM]
+	   */
+	public static String NewPassword(boolean symbol) {
+		return symbol ? "£EM£":messages.getString("NewPassword_EM");
+	}
+
+	/**
+	   * New password (repeat) [EN]
+	   */
+	public static String NewPasswordRepeat(boolean symbol) {
+		return symbol ? "£EN£":messages.getString("NewPasswordRepeat_EN");
+	}
+
+	/**
+	   * The password is wrong. [EO]
+	   */
+	public static String PasswordWrong(boolean symbol) {
+		return symbol ? "£EO£":messages.getString("PasswordWrong_EO");
+	}
+
+	/**
+	   * Wrong password [EP]
+	   */
+	public static String PasswordWrong2(boolean symbol) {
+		return symbol ? "£EP£":messages.getString("PasswordWrong2_EP");
+	}
+
+	/**
+	   * Invalid password [EQ]
+	   */
+	public static String PasswordInvalid(boolean symbol) {
+		return symbol ? "£EQ£":messages.getString("PasswordInvalid_EQ");
+	}
+
+	/**
+	   * The new password must have at least {0} characters. [ER]
+	   */
+	public static String PasswordLength(boolean symbol, String arg0) {
+		return symbol ? "£ER§"+arg0+"£":MessageFormat.format(messages.getString("PasswordLength_ER"), arg0);
+	}
+
+	/**
+	   * Change password [ES]
+	   */
+	public static String ChangePassword(boolean symbol) {
+		return symbol ? "£ES£":messages.getString("ChangePassword_ES");
+	}
+
+	/**
+	   * Delete credentials [ET]
+	   */
+	public static String ClearServerCredentials(boolean symbol) {
+		return symbol ? "£ET£":messages.getString("ClearServerCredentials_ET");
+	}
+
+	/**
+	   * Attention! All server credentials will be deleted! [EU]
+	   */
+	public static String ClearServerCredentialsAys(boolean symbol) {
+		return symbol ? "£EU£":messages.getString("ClearServerCredentialsAys_EU");
+	}
+
+	/**
+	   * The admin credentials for the server were saved in the file\n\n{0}\n\nStart VEGA and import the credentials under Settings > VEGA server settings >\nCredentials > + > Active user from a file. After that, you should delete\nthe credentials file for security reasons. [EV]
+	   */
+	public static String ServerAdminCredentialsCreated(boolean symbol, String arg0) {
+		return symbol ? "£EV§"+arg0+"£":MessageFormat.format(messages.getString("ServerAdminCredentialsCreated_EV"), arg0);
 	}
 }

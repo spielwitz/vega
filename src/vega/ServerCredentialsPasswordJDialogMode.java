@@ -14,10 +14,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package uiBaseControls;
+package vega;
 
-public interface ITextFieldListener
+enum ServerCredentialsPasswordJDialogMode
 {
-	void textFieldFocusLost(TextField source);
-	void textChanged(TextField source);
+	UNLOCK_CREDENTIALS,
+	ENTER_PASSWORD_FIRST_TIME,
+	CHANGE_PASSWORD
 }

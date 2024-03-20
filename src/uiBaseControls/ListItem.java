@@ -14,12 +14,37 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package commonUi;
+package uiBaseControls;
 
-public enum DialogWindowResult 
+import java.util.Comparator;
+
+public class ListItem implements Comparator<ListItem> 
 {
-	OK,
-	CANCEL,
-	YES,
-	NO
+	private String displayString;
+	private Object handle;
+	
+	public ListItem() {}
+	
+	public ListItem(String displayString, Object handle)
+	{
+		this.displayString = displayString;
+		this.handle = handle;
+	}
+
+	public String getDisplayString()
+	{
+		return displayString;
+	}
+
+	public Object getHandle()
+	{
+		return handle;
+	}
+
+	@Override
+	public int compare(ListItem o1, ListItem o2)
+	{
+		// TODO Auto-generated method stub
+		return o1.getDisplayString().compareTo(o2.getDisplayString());
+	}
 }

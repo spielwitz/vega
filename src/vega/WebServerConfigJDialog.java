@@ -47,30 +47,31 @@ import uiBaseControls.ICheckBoxListener;
 import uiBaseControls.IComboBoxListener;
 import uiBaseControls.ITextFieldListener;
 import uiBaseControls.Label;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 import uiBaseControls.TextField;
 import vega.qrCode.*;
 
 @SuppressWarnings("serial") class WebServerConfigJDialog extends Dialog implements IButtonListener, ICheckBoxListener, IComboBoxListener, ITextFieldListener
 {
+	String ipAddress;
+	int port;
+	
 	private Button butClose;
+	
 	private Button butGetIp;
-	
-	private QrCodePanel	panQrCode;
-	
 	private CheckBox cbServerEnabled;
-	private TextField tfIpAddress;
-	private TextField tfPort;
+	private ComboBox comboViews;
 	
 	private HyperlinkLabel labUrl;
 	
+	private QrCodePanel	panQrCode;
+	
+	private TextField tfIpAddress;
+	private TextField tfPort;
 	private ArrayList<String[]> urls;
 	
-	String ipAddress;
-	int port;
 	private Vega vega;
-	
-	private ComboBox comboViews;
 	
 	WebServerConfigJDialog(Vega vega, String myIpAddress, int port)
 	{
@@ -164,6 +165,7 @@ import vega.qrCode.*;
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		
 		panButtons.add(this.butClose);
+		this.setDefaultButton(this.butClose);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 		// --------------
@@ -209,7 +211,17 @@ import vega.qrCode.*;
 	{
 		this.setControlsEnabled();
 	}
-
+	
+	@Override
+	public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+	{
+	}
+	
+	@Override
+	public void textChanged(TextField source)
+	{
+	}
+	
 	@Override
 	public void textFieldFocusLost(TextField source)
 	{
@@ -222,7 +234,7 @@ import vega.qrCode.*;
 			this.port = Integer.parseInt(this.tfPort.getText());
 		}
 	}
-
+	
 	protected void close()
 	{
 		if (this.vega.getWebserver() != null)
@@ -232,6 +244,12 @@ import vega.qrCode.*;
 		}
 		
 		super.close();
+	}
+
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 	
 	private void collectUrls()
