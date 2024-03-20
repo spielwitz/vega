@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: EU
+		// Last used symbolic key: EV
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -571,6 +571,7 @@ public class VegaResources
 		symbolDict.put("ES","ChangePassword_ES");
 		symbolDict.put("ET","ClearServerCredentials_ET");
 		symbolDict.put("EU","ClearServerCredentialsAys_EU");
+		symbolDict.put("EV","ServerAdminCredentialsCreated_EV");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4335,5 +4336,12 @@ public class VegaResources
 	   */
 	public static String ClearServerCredentialsAys(boolean symbol) {
 		return symbol ? "£EU£":messages.getString("ClearServerCredentialsAys_EU");
+	}
+
+	/**
+	   * The admin credentials for the server were saved in the file\n\n{0}\n\nStart VEGA and import the credentials under Settings > VEGA server settings >\nCredentials > + > Active user from a file. After that, you should delete\nthe credentials file for security reasons. [EV]
+	   */
+	public static String ServerAdminCredentialsCreated(boolean symbol, String arg0) {
+		return symbol ? "£EV§"+arg0+"£":MessageFormat.format(messages.getString("ServerAdminCredentialsCreated_EV"), arg0);
 	}
 }

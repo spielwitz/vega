@@ -46,6 +46,7 @@ import commonServer.RequestMessageGetGamesWaitingForInput;
 import commonServer.PayloadRequestMessageGetHighscores;
 import commonServer.ResponseMessageGamesAndUsers;
 import commonServer.ServerUtils;
+import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.DataSet;
 import spielwitz.biDiServer.DataSetInfo;
 import spielwitz.biDiServer.LogLevel;
@@ -188,6 +189,17 @@ public class VegaServer extends Server
 					locale);
 			
 			serverConfig.writeToFile(fileServerCredentials.getAbsolutePath());
+			
+			String adminCredentialsFile = 
+					Paths.get(
+							fileServerCredentials.getParent(), 
+							ClientConfiguration.getFileName(User.ADMIN_USER_ID, serverUrl, port)).toString();
+			
+			System.out.println("=============================================================================");
+			System.out.println(VegaResources.ServerAdminCredentialsCreated(
+					false, 
+					adminCredentialsFile));
+			System.out.println("=============================================================================");
 			
 			return serverConfig;
 		}
