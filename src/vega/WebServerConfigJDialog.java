@@ -165,6 +165,7 @@ import vega.qrCode.*;
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		
 		panButtons.add(this.butClose);
+		this.setDefaultButton(this.butClose);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 		// --------------

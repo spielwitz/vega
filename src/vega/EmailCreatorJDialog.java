@@ -161,6 +161,7 @@ class EmailCreatorJDialog extends Dialog
 		
 		this.butLaunchEmailClient = new Button(VegaResources.CreateEmail(false), this);
 		this.butLaunchEmailClient.setEnabled(false);
+		this.setDefaultButton(this.butLaunchEmailClient);
 		panButtons.add(this.butLaunchEmailClient);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);

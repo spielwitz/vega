@@ -151,6 +151,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener, IChe
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		
 		this.butClose = new Button(VegaResources.Close(false), this);
+		this.setDefaultButton(this.butClose);
 		panButtons.add(this.butClose);
 		
 		panBase.add(panButtons, BorderLayout.SOUTH);

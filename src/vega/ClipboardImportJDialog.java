@@ -107,11 +107,11 @@ class ClipboardImportJDialog<T> extends Dialog
 		this.butDelete = new Button(VegaResources.Delete(false), this);
 		panButtons.add(this.butDelete);
 		
-		this.butOk = new Button(VegaResources.OK(false), this);
-		panButtons.add(this.butOk);
-		
 		this.butCancel = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butCancel);
+		
+		this.butOk = new Button(VegaResources.OK(false), this);
+		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 				

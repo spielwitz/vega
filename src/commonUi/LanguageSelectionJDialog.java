@@ -103,6 +103,7 @@ public class LanguageSelectionJDialog extends Dialog implements IButtonListener
 		}
 		
 		this.butOk = new Button(VegaResources.OK(false), this);
+		this.setDefaultButton(this.butOk);
 		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);

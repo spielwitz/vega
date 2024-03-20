@@ -216,6 +216,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 		panButtons.add(this.butCancel);
 		
 		this.butOk = new Button(VegaResources.OK(false), this);
+		this.setDefaultButton(this.butOk);
 		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);

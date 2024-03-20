@@ -141,6 +141,7 @@ class HighscoreJDialog extends Dialog implements IButtonListener
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		
 		this.butOk = new Button(VegaResources.OK(false), this);
+		this.setDefaultButton(this.butOk);
 		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);

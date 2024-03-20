@@ -66,11 +66,12 @@ class EmailAddressesJDialog extends Dialog
 		this.butDelete = new Button(VegaResources.Delete(false), this);
 		panButtons.add(this.butDelete);
 
-		this.butSelect = new Button(VegaResources.Select(false), this);
-		panButtons.add(this.butSelect);
-		
 		this.butCancel = new Button(VegaResources.Close(false), this);
 		panButtons.add(this.butCancel);
+		
+		this.butSelect = new Button(VegaResources.Select(false), this);
+		this.setDefaultButton(this.butSelect);
+		panButtons.add(this.butSelect);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 		

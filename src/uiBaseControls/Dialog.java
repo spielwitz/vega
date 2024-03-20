@@ -28,6 +28,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.KeyStroke;
@@ -88,10 +89,15 @@ public abstract class Dialog extends JDialog implements ActionListener, WindowLi
 		}
 	}
 	
+	public void setDefaultButton(JButton button)
+	{
+		this.getRootPane().setDefaultButton(button);
+	}
+	
 	@Override
 	public void windowActivated(WindowEvent e) {
 	}
-	
+
 	@Override
 	public void windowClosed(WindowEvent e) {
 	}
@@ -113,7 +119,7 @@ public abstract class Dialog extends JDialog implements ActionListener, WindowLi
 	@Override
 	public void windowIconified(WindowEvent e) {
 	}
-
+	
 	@Override
 	public void windowOpened(WindowEvent e) {
 	}

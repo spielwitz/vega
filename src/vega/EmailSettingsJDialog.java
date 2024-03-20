@@ -148,11 +148,12 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 		
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		
-		this.butOk = new Button(VegaResources.OK(false), this);
-		panButtons.add(this.butOk);
-		
 		this.butCancel = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butCancel);
+		
+		this.butOk = new Button(VegaResources.OK(false), this);
+		this.setDefaultButton(this.butOk);
+		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 		
