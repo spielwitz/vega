@@ -697,7 +697,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			}
 			else
 			{
-				this.clearData();
+				this.panUserDetails.clearData();
 				this.panUserDetails.setMode(PanelUserDataMode.NoUserSelected);
 				this.setControlsEnabled();
 			}

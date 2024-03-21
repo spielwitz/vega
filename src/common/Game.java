@@ -47,7 +47,7 @@ public class Game extends EmailTransportBase implements Serializable
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0007";
+	public static final String 		BUILD_COMPATIBLE = "0006";
 
 	// Game board dimensions 
 	public static final int 		BOARD_MAX_X = 20;
