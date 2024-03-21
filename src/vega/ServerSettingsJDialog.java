@@ -1792,11 +1792,13 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 								this.clientConfig.getPort(),
 								this.clientConfig.getAdminEmail(), 
 								this.clientConfig.getServerPublicKey());
-								
+							
+				Vega.showWaitCursor(parent);
 				Tuple<ClientConfiguration, ResponseInfo> tuple = VegaClient.activateUser(
 						userActivationData,
 						VegaResources.getLocale(),
 						Game.BUILD);
+				Vega.showDefaultCursor(parent);
 									
 				if (tuple.getE2().isSuccess())
 				{
