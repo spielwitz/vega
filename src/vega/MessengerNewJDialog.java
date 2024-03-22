@@ -57,10 +57,14 @@ import uiBaseControls.TextArea;
 class MessengerNewJDialog extends Dialog implements IListListener, IButtonListener
 {
 	private static final Color selectionBackground = (Color) UIManager.get("List.selectionBackground");
-	private Button butAdd;
 	
+	private Button butAdd;
 	private Button butDelete;
+	
+	private MessagePanel panMessage;
+	
 	private IMessengerCallback callback;
+	
 	private List listRecipients;
 	private ArrayList<ListItem> listRecipientsModel;
 	
@@ -68,7 +72,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	
 	MessengerNewJDialog(Messages messages, IMessengerCallback callback)
 	{
-		super((Component)callback, VegaResources.Messenger(false), new BorderLayout(10, 10));
+		super((Component)callback, VegaResources.Messenger(false), new BorderLayout(0, 10));
 		
 		this.callback = callback;
 		this.messagePanelsByRecipientStrings = new Hashtable<String, MessagePanel>();
@@ -110,6 +114,9 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		
 		this.addToInnerPanel(panUsersList, BorderLayout.WEST);
 		
+		this.panMessage = new MessagePanel();
+		this.addToInnerPanel(this.panMessage, BorderLayout.CENTER);
+		
 		this.pack();
 		this.setResizable(true);
 		this.setLocationRelativeTo((Component)callback);
@@ -150,67 +157,56 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		return true;
 	}
 	
-	private class MessagePanel extends Panel implements IButtonListener, DocumentListener
+	private class MessagePanel extends PanelWithInsets implements IButtonListener, DocumentListener
 	{
 		private static final int MAX_CHARACTERS_COUNT = 1000;
-		private Button butSend;
-		private Button butTo;
-		private Label labCharactersLeft;
-		private ArrayList<String> recipients;
-		
-		private String recipientsString;
-		private int tabIndex;
-		private TextArea taComposeMessage;
 		
 		private TextArea taMessages;
+		private TextArea taRecipients;
+		private TextArea taComposeMessage;
 		
-		public MessagePanel(String recipientsString, ArrayList<Message> messages, int tabIndex)
+		private Label labCharactersLeft;
+		
+		private String recipientsString;
+		
+		private Button butTo;
+		private Button butSend;
+		
+		private MessagePanel()
 		{
-			super(new GridBagLayout());
+			super(new BorderLayout(0, 10));
 			
-			this.recipientsString = recipientsString;
-			this.tabIndex = tabIndex;
+			this.recipientsString = ""; // #######
 			
-			GridBagConstraints cPanOuter = new GridBagConstraints();
-			cPanOuter.insets = new Insets(10, 0, 0, 0);
-			cPanOuter.fill = GridBagConstraints.HORIZONTAL;
-			
-			Panel panInner = new Panel(new BorderLayout(10,10));
-			
-			Panel panRecipients = new Panel(new BorderLayout(10, 10));
+			Panel panRecipients = new Panel(new BorderLayout(10, 0));
 			
 			this.butTo = new Button(VegaResources.MessengerRecipients(false)+":", this);
-			
 			panRecipients.add(this.butTo, BorderLayout.WEST);
 			
-			this.recipients = Messages.getRecipientsFromRecipientsString(
-					recipientsString, callback.getClientUserIdForMessenger());
-			
-			StringBuilder sb = new StringBuilder();
-			for (String recipient: recipients)
-			{
-				if (sb.length() > 0)
-					sb.append(", ");
-				sb.append(recipient);
-			}
-
-			TextArea taRecipients = new TextArea(sb.toString());
-			taRecipients.setRowsAndColumns(2, 50);
+			this.taRecipients = new TextArea("Take a walk on the wildside");
+			taRecipients.setRowsAndColumns(2, 40);
 			taRecipients.setEditable(false);
-			taRecipients.setBorder(null);
+			//taRecipients.setBorder(null);
 			panRecipients.add(taRecipients, BorderLayout.CENTER);
 			
-			panInner.add(panRecipients, BorderLayout.NORTH);
+			this.addToInnerPanel(panRecipients, BorderLayout.NORTH);
 			
 			this.taMessages = new TextArea("");
 			this.taMessages.setRowsAndColumns(20, 50);
 			this.taMessages.setEditable(false);
-			panInner.add(taMessages, BorderLayout.CENTER);
 			
-			Panel panCompose = new Panel(new BorderLayout(10, 10));
+			this.addToInnerPanel(this.taMessages, BorderLayout.CENTER);
+			
+			Panel panCompose = new Panel(new BorderLayout(10, 5));
+			
+			this.labCharactersLeft = new Label(
+					recipientsString != null ?
+							VegaResources.MessengerCharactersLeft(false, Integer.toString(MAX_CHARACTERS_COUNT)) :
+							"");
+			panCompose.add(this.labCharactersLeft, BorderLayout.NORTH);
 			
 			this.taComposeMessage = new TextArea("");
-			this.taComposeMessage.setRowsAndColumns(3, 40);
+			this.taComposeMessage.setRowsAndColumns(3, 30);
 			
 			if (recipientsString != null)
 				this.taComposeMessage.getDocument().addDocumentListener(this);
@@ -223,130 +219,35 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			this.butSend.setEnabled(recipientsString != null);
 			panCompose.add(this.butSend, BorderLayout.EAST);
 			
-			this.labCharactersLeft = new Label(
-					recipientsString != null ?
-							VegaResources.MessengerCharactersLeft(false, Integer.toString(MAX_CHARACTERS_COUNT)) :
-							"");
+			this.addToInnerPanel(panCompose, BorderLayout.SOUTH);
+		}
 
-			panCompose.add(this.labCharactersLeft, BorderLayout.NORTH);
-			
-			panInner.add(panCompose, BorderLayout.SOUTH);
-			
-			this.add(panInner, cPanOuter);
-			
-			if (messages != null)
-			{
-				for (Message message: messages)
-				{
-					this.addMessageToTextArea(message);
-				}
-			}
-		}
-		
-		public void addMessageToTextArea(Message message)
-		{
-			if (this.taMessages.getText().length() > 0)
-			{
-				this.taMessages.appendText("\n\n");
-			}
-			
-			this.taMessages.appendText("--- " + message.getSender());
-			
-			this.taMessages.appendText(" " + VegaUtils.formatDateTimeString(
-							VegaUtils.convertMillisecondsToString(message.getDateCreated())));
-			
-			this.taMessages.appendText(" ---\n" + message.getText());
-			
-			this.taMessages.scrollDown();
-		}
-		
 		@Override
 		public void buttonClicked(Button source)
 		{
-			if (source == this.butSend)
-			{
-				String text = this.taComposeMessage.getText();
-				
-				if (text.endsWith("\n"))
-				{
-					text = text.substring(0, text.length() - 1);
-				}
-				
-				if (text.length() > 0)
-				{
-					Message message = new Message(
-							callback.getClientUserIdForMessenger(),
-							System.currentTimeMillis(),
-							text);
-					
-					this.addMessageToTextArea(message);
-					callback.pushNotificationFromMessenger(recipients, message);
-				}
-				
-				taComposeMessage.setText("");
-			}
-			else if (source == this.butTo)
-			{
-				//addNewButtonClicked(this.recipients);
-			}
-		}
-		
-		@Override
-		public void changedUpdate(DocumentEvent e)
-		{
-			this.onComposeMessageChanged();
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
 		public void insertUpdate(DocumentEvent e)
 		{
-			this.onComposeMessageChanged();
+			// TODO Auto-generated method stub
+			
 		}
 
-		public boolean isVisiblePanel()
-		{
-			return true;
-			//return tabPane.getSelectedIndex() == this.tabIndex;
-		}
-		
 		@Override
 		public void removeUpdate(DocumentEvent e)
 		{
-			this.onComposeMessageChanged();
+			// TODO Auto-generated method stub
+			
 		}
 
-		public void setNewMessageIndicator(boolean newMessages)
+		@Override
+		public void changedUpdate(DocumentEvent e)
 		{
-//			TabLabelComponent tabLabel = (TabLabelComponent)tabPane.getTabComponentAt(this.tabIndex);
-//			
-//			tabLabel.setNewMessageIndicatorVisible(newMessages);
-//			
-//			callback.setMessagesByRecipientsRead(this.recipientsString, !newMessages);
-		}
-		
-		private void onComposeMessageChanged()
-		{
-			String text = this.taComposeMessage.getText(); 
+			// TODO Auto-generated method stub
 			
-			int charactersLeft = MAX_CHARACTERS_COUNT - text.length();
-			
-			if (charactersLeft < 0)
-			{
-				text = text.substring(0, MAX_CHARACTERS_COUNT);
-				
-				this.taComposeMessage.setText(text.substring(0, MAX_CHARACTERS_COUNT));
-				charactersLeft = 0;
-			}
-			
-			this.labCharactersLeft.setText(VegaResources.MessengerCharactersLeft(false, Integer.toString(charactersLeft)));
-			
-			if (text.length()> 0)
-			{
-				if (text.charAt(text.length() - 1) == '\n')
-				{
-					this.butSend.doClick();
-				}
-			}
 		}
 	}
 
@@ -513,7 +414,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			g.setColor(Color.red);
 			Dimension dim = this.getSize();
 			
-			int diameter = Math.min(dim.width, dim.height) - 5;
+			int diameter = 6;
 			
 			g.fillOval(
 					(dim.width - diameter) / 2,
