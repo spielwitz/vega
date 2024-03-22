@@ -33,6 +33,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -62,6 +63,8 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	private List listRecipients;
 	private ArrayList<ListItem> listRecipientsModel;
 	
+	private static final Color selectionBackground = (Color) UIManager.get("List.selectionBackground");
+	
 	MessengerNewJDialog(Messages messages, IMessengerCallback callback)
 	{
 		super((Component)callback, VegaResources.Messenger(false), new BorderLayout(10, 10));
@@ -78,6 +81,10 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		this.listRecipientsModel = new ArrayList<ListItem>();
 		this.listRecipientsModel.add(new ListItem("1234567890\nZeile2", null));
 		this.listRecipientsModel.add(new ListItem("Einzeiler", null));
+		this.listRecipientsModel.add(new ListItem("Einzeiler", null));
+		this.listRecipientsModel.add(new ListItem("Einzeiler", null));
+		this.listRecipientsModel.add(new ListItem("1234567890\nZeile2", null));
+		this.listRecipientsModel.add(new ListItem("1234567890\nZeile2", null));
 		
 		int widthList = CommonUtils.round(1.2 * 
 				this.getFontMetrics(this.getFont()).stringWidth(new String(new char[Player.PLAYER_NAME_LENGTH_MAX]).replace("\0", "H")));
@@ -141,12 +148,23 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			ListItem listItem = listRecipientsModel.get(index);
 			String[] lines = listItem.getDisplayString().split("\n");
 			
-			JPanel panel = new JPanel(new GridLayout(lines.length, 1));
-			if (isSelected) panel.setBackground(Color.red);
+			PanelWithInsets panel = new PanelWithInsets(new GridLayout(lines.length, 1));
+			
+			if (isSelected) 
+			{
+				panel.setBackgroundColor(selectionBackground);
+			}
+			else
+			{
+				panel.setBackgroundColor(
+						index % 2 == 0 ?
+								new Color(30, 30, 30) :
+								new Color(50, 50, 50));
+			}
 			
 			for (int i = 0; i < lines.length; i++)
 			{
-				panel.add(new JLabel(lines[i]));
+				panel.addToInnerPanel(new JLabel(lines[i]));
 			}
 			
 			return panel;
