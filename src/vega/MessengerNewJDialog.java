@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -55,15 +56,15 @@ import uiBaseControls.TextArea;
 @SuppressWarnings("serial")
 class MessengerNewJDialog extends Dialog implements IListListener, IButtonListener
 {
-	private IMessengerCallback callback;
-	private Hashtable<String, MessagePanel> messagePanelsByRecipientStrings;
-	
+	private static final Color selectionBackground = (Color) UIManager.get("List.selectionBackground");
 	private Button butAdd;
+	
 	private Button butDelete;
+	private IMessengerCallback callback;
 	private List listRecipients;
 	private ArrayList<ListItem> listRecipientsModel;
 	
-	private static final Color selectionBackground = (Color) UIManager.get("List.selectionBackground");
+	private Hashtable<String, MessagePanel> messagePanelsByRecipientStrings;
 	
 	MessengerNewJDialog(Messages messages, IMessengerCallback callback)
 	{
@@ -79,7 +80,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		
 		//this.createListUsersModel();
 		this.listRecipientsModel = new ArrayList<ListItem>();
-		this.listRecipientsModel.add(new ListItem("1234567890\nZeile2", null));
+		this.listRecipientsModel.add(new ListItem("1234567890\nZeile2\nZeile3", null));
 		this.listRecipientsModel.add(new ListItem("Einzeiler", null));
 		this.listRecipientsModel.add(new ListItem("Einzeiler", null));
 		this.listRecipientsModel.add(new ListItem("Einzeiler", null));
@@ -115,11 +116,17 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	}
 
 	@Override
-	protected boolean confirmClose()
-	{
-		return true;
+	public void buttonClicked(Button source) {
+		// TODO Auto-generated method stub
+		
 	}
 	
+	@Override
+	public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void onNewMessageReceived(Tuple<String,Message> t)
 	{
 //		MessagePanel messagePanel = null;
@@ -136,39 +143,11 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 //
 //		messagePanel.setNewMessageIndicator(!messagePanel.isVisiblePanel());
 	}
-
-	private class RecipientsListCellRenderer extends JPanel implements ListCellRenderer<String>
+	
+	@Override
+	protected boolean confirmClose()
 	{
-		@Override
-		public Component getListCellRendererComponent(JList<? extends String> list, String value, int index,
-				boolean isSelected, boolean cellHasFocus)
-		{
-			if (index < 0) return null;
-			
-			ListItem listItem = listRecipientsModel.get(index);
-			String[] lines = listItem.getDisplayString().split("\n");
-			
-			PanelWithInsets panel = new PanelWithInsets(new GridLayout(lines.length, 1));
-			
-			if (isSelected) 
-			{
-				panel.setBackgroundColor(selectionBackground);
-			}
-			else
-			{
-				panel.setBackgroundColor(
-						index % 2 == 0 ?
-								new Color(30, 30, 30) :
-								new Color(50, 50, 50));
-			}
-			
-			for (int i = 0; i < lines.length; i++)
-			{
-				panel.addToInnerPanel(new JLabel(lines[i]));
-			}
-			
-			return panel;
-		}
+		return true;
 	}
 	
 	private class MessagePanel extends Panel implements IButtonListener, DocumentListener
@@ -370,7 +349,64 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			}
 		}
 	}
-	
+
+	private class RecipientsListCellRenderer extends JPanel implements ListCellRenderer<String>
+	{
+		@Override
+		public Component getListCellRendererComponent(JList<? extends String> list, String value, int index,
+				boolean isSelected, boolean cellHasFocus)
+		{
+			if (index < 0) return null;
+			
+			boolean unread = index == 0;
+			
+			ListItem listItem = listRecipientsModel.get(index);
+			String[] lines = listItem.getDisplayString().split("\n");
+			
+			Color backgroundColor =
+					isSelected ?
+							selectionBackground :
+								index % 2 == 0 ?
+										new Color(30, 30, 30) :
+										new Color(50, 50, 50);
+			
+			PanelWithInsets panel = null;
+			
+			if (unread)
+			{
+				panel = new PanelWithInsets(new BorderLayout(5, 0));
+				panel.setBackground(backgroundColor);
+				
+				Panel panIndicator = new Panel(new BorderLayout());
+				panIndicator.add(new NewMessageIndicatorPanel(), BorderLayout.CENTER);
+				panIndicator.setBackground(backgroundColor);
+				panel.addToInnerPanel(panIndicator, BorderLayout.WEST);
+				
+				Panel panLines = new Panel(new GridLayout(lines.length, 1));
+				panLines.setBackground(backgroundColor);
+				for (int line = 0; line < lines.length; line++)
+				{
+					panLines.add(new JLabel(lines[line]));
+				}
+				
+				panel.addToInnerPanel(panLines, BorderLayout.CENTER);
+			}
+			else
+			{
+				panel = new PanelWithInsets(new GridLayout(lines.length, 1));
+				
+				for (int line = 0; line < lines.length; line++)
+				{
+					panel.addToInnerPanel(new JLabel(lines[line]));
+				}
+			}
+			
+			panel.setBackgroundColor(backgroundColor);
+			
+			return panel;
+		}
+	}
+
 	private class RecipientsSelector extends Dialog implements IButtonListener, IListListener
 	{
 		boolean ok = false;
@@ -461,17 +497,29 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		{
 			return true;
 		}
-	}
-
-	@Override
-	public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount) {
-		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void buttonClicked(Button source) {
-		// TODO Auto-generated method stub
+	
+	private class NewMessageIndicatorPanel extends JPanel
+	{
+		NewMessageIndicatorPanel()
+		{
+			this.setPreferredSize(new Dimension(10, 10));
+		}
 		
+		@Override
+		public void paint(Graphics g)
+		{
+			g.setColor(Color.red);
+			Dimension dim = this.getSize();
+			
+			int diameter = Math.min(dim.width, dim.height) - 5;
+			
+			g.fillOval(
+					(dim.width - diameter) / 2,
+					(dim.height - diameter) / 2,
+					diameter,
+					diameter);
+		}
 	}
 }
