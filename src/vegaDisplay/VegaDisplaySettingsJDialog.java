@@ -260,7 +260,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 	
 	private void updateSettings()
 	{
-		this.config.setClientCode(this.tfClientCode.getText());
+		this.config.setClientCode(new String(this.tfClientCode.getPassword()));
 		this.config.setMyName(this.tfMyName.getText());
 		this.config.setMyIpAddress(this.tfMyIpAddress.getText());
 		this.config.setServerIpAddress(this.tfServerIpAddress.getText());
