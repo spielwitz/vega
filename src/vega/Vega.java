@@ -217,6 +217,8 @@ public class Vega extends Frame // NO_UCD (use default)
 		super("", new BorderLayout());
 		
 		this.config = VegaConfiguration.get();
+		// ####
+		this.config.getServerCredentials().unlockCredentials("1234".getBytes());
 		
 		if (this.config.isFirstTimeStart())
 		{

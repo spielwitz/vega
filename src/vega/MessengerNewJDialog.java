@@ -17,15 +17,21 @@
 package vega;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -70,12 +76,15 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		
 		//this.createListUsersModel();
 		this.listRecipientsModel = new ArrayList<ListItem>();
-		this.listRecipientsModel.add(new ListItem("1234567890", null));
+		this.listRecipientsModel.add(new ListItem("1234567890\nZeile2", null));
+		this.listRecipientsModel.add(new ListItem("Einzeiler", null));
 		
 		int widthList = CommonUtils.round(1.2 * 
 				this.getFontMetrics(this.getFont()).stringWidth(new String(new char[Player.PLAYER_NAME_LENGTH_MAX]).replace("\0", "H")));
 		this.listRecipients = new List(this, this.listRecipientsModel);
 		this.listRecipients.setPreferredSize(new Dimension(widthList, 200));
+		this.listRecipients.setCellRenderer(new RecipientsListCellRenderer());
+		
 		panUsersList.addToInnerPanel(this.listRecipients, BorderLayout.CENTER);
 		
 		Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
@@ -121,6 +130,28 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 //		messagePanel.setNewMessageIndicator(!messagePanel.isVisiblePanel());
 	}
 
+	private class RecipientsListCellRenderer extends JPanel implements ListCellRenderer<String>
+	{
+		@Override
+		public Component getListCellRendererComponent(JList<? extends String> list, String value, int index,
+				boolean isSelected, boolean cellHasFocus)
+		{
+			if (index < 0) return null;
+			
+			ListItem listItem = listRecipientsModel.get(index);
+			String[] lines = listItem.getDisplayString().split("\n");
+			
+			JPanel panel = new JPanel(new GridLayout(lines.length, 1));
+			if (isSelected) panel.setBackground(Color.red);
+			
+			for (int i = 0; i < lines.length; i++)
+			{
+				panel.add(new JLabel(lines[i]));
+			}
+			
+			return panel;
+		}
+	}
 	
 	private class MessagePanel extends Panel implements IButtonListener, DocumentListener
 	{

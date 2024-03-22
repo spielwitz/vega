@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -76,6 +77,11 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 		{
 			return null;
 		}
+	}
+	
+	public void setCellRenderer(ListCellRenderer<? super String> renderer)
+	{
+		this.list.setCellRenderer(renderer);
 	}
 	
 	public String getSelectedValue()
