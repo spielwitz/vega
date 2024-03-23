@@ -44,7 +44,6 @@ public class ListItem implements Comparator<ListItem>
 	@Override
 	public int compare(ListItem o1, ListItem o2)
 	{
-		// TODO Auto-generated method stub
 		return o1.getDisplayString().compareTo(o2.getDisplayString());
 	}
 }
