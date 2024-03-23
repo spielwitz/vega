@@ -83,9 +83,6 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 10));
 				
 		this.listRecipientsModel = new ArrayList<ListItem>();
-		int widthList = CommonUtils.round(1.2 * 
-				this.getFontMetrics(this.getFont()).stringWidth(new String(new char[Player.PLAYER_NAME_LENGTH_MAX]).replace("\0", "H")));
-		this.listRecipients = new List(this, this.listRecipientsModel);
 		
 		for (String recipientString: messages.getMessagesByRecipients().keySet())
 		{
@@ -93,8 +90,9 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		}
 		
 		this.sortListItems();
-		this.listRecipients.refreshListItems(this.listRecipientsModel);
-		
+		int widthList = CommonUtils.round(1.2 * 
+				this.getFontMetrics(this.getFont()).stringWidth(new String(new char[Player.PLAYER_NAME_LENGTH_MAX]).replace("\0", "H")));
+		this.listRecipients = new List(this, this.listRecipientsModel);		
 		this.listRecipients.setPreferredSize(new Dimension(widthList, 200));
 		this.listRecipients.setCellRenderer(new RecipientsListCellRenderer());
 		
@@ -121,6 +119,17 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		this.pack();
 		this.setResizable(true);
 		this.setLocationRelativeTo((Component)callback);
+		
+		if (this.listRecipientsModel.size() > 0)
+		{
+			this.listRecipients.setSelectedIndex(0);
+		}
+		
+		this.listItemSelected(
+				null, 
+				null, 
+				this.listRecipientsModel.size() > 0 ? 0 : -1, 
+				0);
 	}
 	
 	private void addNewListItem(String recipientsString, ArrayList<Message> messages)
@@ -221,8 +230,18 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	@Override
 	public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount) 
 	{
-		// TODO Auto-generated method stub
+		MessagePanelContent content = null;
 		
+		if (selectedIndex >= 0)
+		{
+			content = (MessagePanelContent)this.listRecipientsModel.get(selectedIndex).getHandle();
+		
+			this.callback.setMessagesByRecipientsRead(content.recipientsString, true);
+			content.hasUnreadMessages = false;
+			this.listRecipients.repaint();
+		}
+		
+		this.panMessage.setContent(content);
 	}
 
 	public void onNewMessageReceived(Tuple<String,Message> t)
@@ -343,11 +362,10 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 				
 				StringBuilder sb = new StringBuilder();
 				sb.append("To/From: ");
-				for (String recipient: recipients)
+				for (int i = 0; i < recipients.size(); i++)
 				{
-					if (sb.length() > 0)
-						sb.append(", ");
-					sb.append(recipient);
+					if (i > 0) sb.append(", ");
+					sb.append(recipients.get(i));
 				}
 				
 				this.taRecipients.setText(sb.toString());
@@ -399,10 +417,9 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		{
 			if (index < 0) return null;
 			
-			boolean unread = index == 0;
-			
 			ListItem listItem = listRecipientsModel.get(index);
 			String[] lines = listItem.getDisplayString().split("\n");
+			MessagePanelContent content = (MessagePanelContent) listItem.getHandle();
 			
 			Color backgroundColor =
 					isSelected ?
@@ -413,7 +430,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			
 			PanelWithInsets panel = null;
 			
-			if (unread)
+			if (content.hasUnreadMessages)
 			{
 				panel = new PanelWithInsets(new BorderLayout(5, 0));
 				panel.setBackground(backgroundColor);
