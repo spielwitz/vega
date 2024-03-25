@@ -22,15 +22,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.UUID;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -63,13 +57,11 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	
 	private Button butAdd;
 	private Button butDelete;
-	
+	private IMessengerCallback callback;
+	private List listRecipients;
 	private MessagePanel panMessage;
 	
-	private IMessengerCallback callback;
-	
-	private List listRecipients;
-	private ArrayList<ListItem> listRecipientsModel;
+	private Object listLockObject = new Object();
 	
 	MessengerNewJDialog(Messages messages, IMessengerCallback callback)
 	{
@@ -81,18 +73,17 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		this.setAlwaysOnTop(true);
 		
 		PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 10));
-				
-		this.listRecipientsModel = new ArrayList<ListItem>();
 		
+		ArrayList<ListItem> listItems = new ArrayList<ListItem>(); 
 		for (String recipientString: messages.getMessagesByRecipients().keySet())
 		{
-			this.addNewListItem(recipientString, messages.getMessagesByRecipients().get(recipientString));
+			listItems.add(this.getNewListItem(recipientString, messages.getMessagesByRecipients().get(recipientString)));
 		}
 		
-		this.sortListItems();
 		int widthList = CommonUtils.round(1.2 * 
 				this.getFontMetrics(this.getFont()).stringWidth(new String(new char[Player.PLAYER_NAME_LENGTH_MAX]).replace("\0", "H")));
-		this.listRecipients = new List(this, this.listRecipientsModel);		
+		this.listRecipients = new List(this, listItems);
+		this.listRecipients.refreshListItems(this.sortListItems());
 		this.listRecipients.setPreferredSize(new Dimension(widthList, 200));
 		this.listRecipients.setCellRenderer(new RecipientsListCellRenderer());
 		
@@ -120,7 +111,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		this.setResizable(true);
 		this.setLocationRelativeTo((Component)callback);
 		
-		if (this.listRecipientsModel.size() > 0)
+		if (this.listRecipients.getListItems().size() > 0)
 		{
 			this.listRecipients.setSelectedIndex(0);
 		}
@@ -128,13 +119,79 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		this.listItemSelected(
 				null, 
 				null, 
-				this.listRecipientsModel.size() > 0 ? 0 : -1, 
+				this.listRecipients.getListItems().size() > 0 ? 0 : -1, 
 				0);
 	}
 	
-	private void addNewListItem(String recipientsString, ArrayList<Message> messages)
+	@Override
+	public void buttonClicked(Button source) 
 	{
-		synchronized(this.listRecipientsModel)
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount) 
+	{
+		MessagePanelContent content = null;
+		
+		if (selectedIndex >= 0)
+		{
+			content = (MessagePanelContent)this.listRecipients.getListItems().get(selectedIndex).getHandle();
+		
+			this.callback.setMessagesByRecipientsRead(content.recipientsString, true);
+			content.hasUnreadMessages = false;
+			this.listRecipients.repaint();
+		}
+		
+		this.panMessage.setContent(content);
+	}
+	
+	public void onNewMessageReceived(Tuple<String,Message> t)
+	{
+		ListItem selectedListItem = this.listRecipients.getSelectedListItem();
+		String selectedRecipientsString = selectedListItem != null ?
+				((MessagePanelContent)selectedListItem.getHandle()).recipientsString :
+				null;
+		
+		String recipientsString = t.getE1();
+		int index = this.getListIndexByRecipientsString(recipientsString);
+		
+		if (index < 0)
+		{
+			ArrayList<Message> messages = new ArrayList<Message>();
+			messages.add(t.getE2());
+			this.listRecipients.getListItems().add(this.getNewListItem(recipientsString, messages));
+			
+			index = 0;
+		}
+		else
+		{
+			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(index).getHandle();
+			content.addMessage(t.getE2());
+		}
+		
+		this.listRecipients.refreshListItems(this.sortListItems());
+		
+		if (selectedRecipientsString != null && selectedRecipientsString.equals(t.getE1()))
+		{
+			index = this.getListIndexByRecipientsString(recipientsString);
+			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(index).getHandle();
+			content.hasUnreadMessages = false;
+			this.panMessage.setContent((MessagePanelContent)this.listRecipients.getListItems().get(index).getHandle());
+			this.listRecipients.setSelectedIndex(this.getListIndexByRecipientsString(recipientsString));
+		}
+	}
+
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+	
+	private ListItem getNewListItem(String recipientsString, ArrayList<Message> messages)
+	{
+		synchronized(this.listLockObject)
 		{
 			this.callback.addRecipientsString(recipientsString);
 			
@@ -174,41 +231,19 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 							sb.toString(),
 							content);
 			
-			this.listRecipientsModel.add(newListItem);
+			return newListItem;
 		}
 	}
-	
-	private void sortListItems()
-	{
-		String[] dateTimeStrings = new String[this.listRecipientsModel.size()];
-		
-		for (int i = 0; i < this.listRecipientsModel.size(); i++)
-		{
-			MessagePanelContent content = (MessagePanelContent) this.listRecipientsModel.get(i).getHandle();
-			dateTimeStrings[i] = Long.toString(content.createDateTime);
-		}
-		
-		int[] seq = CommonUtils.sortList(dateTimeStrings, true);
-		
-		ArrayList<ListItem> listNew = new ArrayList<ListItem>(this.listRecipientsModel.size());
-		
-		for (int i = 0; i < this.listRecipientsModel.size(); i++)
-		{
-			listNew.add(this.listRecipientsModel.get(seq[i]));
-		}
-		
-		this.listRecipientsModel = listNew;
-	}
-	
+
 	private int getListIndexByRecipientsString(String recipientsString)
 	{
 		if (recipientsString == null) return -1;
 		
 		int index = -1;
 		
-		for (int i = 0; i < this.listRecipientsModel.size(); i++)
+		for (int i = 0; i < this.listRecipients.getListItems().size(); i++)
 		{
-			MessagePanelContent content = (MessagePanelContent) this.listRecipientsModel.get(i).getHandle();
+			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(i).getHandle();
 			
 			if (content.recipientsString.equals(recipientsString))
 			{
@@ -219,97 +254,40 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		
 		return index;
 	}
-
-	@Override
-	public void buttonClicked(Button source) 
-	{
-		// TODO Auto-generated method stub
-		
-	}
 	
-	@Override
-	public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount) 
+	private ArrayList<ListItem> sortListItems()
 	{
-		MessagePanelContent content = null;
+		String[] dateTimeStrings = new String[this.listRecipients.getListItems().size()];
 		
-		if (selectedIndex >= 0)
+		for (int i = 0; i < this.listRecipients.getListItems().size(); i++)
 		{
-			content = (MessagePanelContent)this.listRecipientsModel.get(selectedIndex).getHandle();
-		
-			this.callback.setMessagesByRecipientsRead(content.recipientsString, true);
-			content.hasUnreadMessages = false;
-			this.listRecipients.repaint();
+			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(i).getHandle();
+			dateTimeStrings[i] = Long.toString(content.createDateTime);
 		}
 		
-		this.panMessage.setContent(content);
-	}
-
-	public void onNewMessageReceived(Tuple<String,Message> t)
-	{
-//		String recipientsString = t.getE1();
-//		int index = this.getListIndexByRecipientsString(recipientsString);
-//		
-//		if (index < 0)
-//		{
-//			this.addListItem(recipientsString);
-//			index = 0;
-//		}
+		int[] seq = CommonUtils.sortList(dateTimeStrings, true);
 		
+		ArrayList<ListItem> listNew = new ArrayList<ListItem>(this.listRecipients.getListItems().size());
 		
+		for (int i = 0; i < this.listRecipients.getListItems().size(); i++)
+		{
+			listNew.add(this.listRecipients.getListItems().get(seq[i]));
+		}
 		
-//		MessagePanel messagePanel = null;
-//		
-//		if (!this.messagePanelsByRecipientStrings.containsKey(t.getE1()))
-//		{
-//			messagePanel = this.addMessagePanel(t.getE1());
-//		}
-//		else
-//		{
-//			messagePanel = this.messagePanelsByRecipientStrings.get(t.getE1());			
-//			messagePanel.addMessageToTextArea(t.getE2());
-//		}
-//
-//		messagePanel.setNewMessageIndicator(!messagePanel.isVisiblePanel());
-	}
-	
-//	private void appendMessage(int index, Message message)
-//	{
-//		ListItem listItem = this.listRecipientsModel.get(index);
-//		
-//		MessagePanelContent content = (MessagePanelContent)listItem.getHandle();
-//		
-//		StringBuilder sb = new StringBuilder(content.messages);
-//		
-//		if (sb.length() > 0)
-//		{
-//			sb.append("\n\n");
-//		}
-//		
-//		sb.append("--- " + message.getSender());
-//		
-//		sb.append(" " + VegaUtils.formatDateTimeString(
-//						VegaUtils.convertMillisecondsToString(message.getDateCreated())));
-//		
-//		sb.append(" ---\n" + message.getText());
-//	}
-	
-	@Override
-	protected boolean confirmClose()
-	{
-		return true;
+		return listNew;
 	}
 	
 	private class MessagePanel extends PanelWithInsets implements IButtonListener, DocumentListener
 	{
 		private static final int MAX_CHARACTERS_COUNT = 1000;
 		
-		private TextArea taMessages;
-		private TextArea taRecipients;
+		private Button butSend;
+		private Label labCharactersLeft;
 		private TextArea taComposeMessage;
 		
-		private Label labCharactersLeft;
+		private TextArea taMessages;
 		
-		private Button butSend;
+		private TextArea taRecipients;
 		
 		private MessagePanel()
 		{
@@ -333,7 +311,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			
 			Panel panCompose = new Panel(new BorderLayout(10, 5));
 			
-			this.labCharactersLeft = new Label(VegaResources.MessengerCharactersLeft(false, Integer.toString(MAX_CHARACTERS_COUNT)));
+			this.labCharactersLeft = new Label("");
 			panCompose.add(this.labCharactersLeft, BorderLayout.NORTH);
 			
 			this.taComposeMessage = new TextArea("");
@@ -350,6 +328,93 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			this.setContent(null);
 		}
 		
+		@Override
+		public void buttonClicked(Button source)
+		{
+			String text = this.taComposeMessage.getText();
+			
+			if (text.endsWith("\n"))
+			{
+				text = text.substring(0, text.length() - 1);
+			}
+			
+			if (text.length() > 0)
+			{
+				Message message = new Message(
+						callback.getClientUserIdForMessenger(),
+						System.currentTimeMillis(),
+						text);
+				
+				MessagePanelContent content = (MessagePanelContent) listRecipients.getSelectedListItem().getHandle();
+				content.addMessage(message);
+				content.composeMessage = "";
+				this.setContent(content);
+				
+				callback.pushNotificationFromMessenger(
+						Messages.getRecipientsFromRecipientsString(
+								content.recipientsString,
+								callback.getClientUserIdForMessenger()), 
+						message);
+			}
+		}
+		
+		@Override
+		public void changedUpdate(DocumentEvent e)
+		{
+			this.onComposeMessageChanged();
+		}
+		
+		@Override
+		public void insertUpdate(DocumentEvent e)
+		{
+			this.onComposeMessageChanged();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e)
+		{
+			this.onComposeMessageChanged();
+		}
+
+		private void checkCharactersLeft()
+		{
+			String text = this.taComposeMessage.getText();
+			int charactersLeft = MAX_CHARACTERS_COUNT - text.length();
+			
+			if (charactersLeft < 0)
+			{
+				text = text.substring(0, MAX_CHARACTERS_COUNT);
+				
+				this.taComposeMessage.setText(text.substring(0, MAX_CHARACTERS_COUNT));
+				charactersLeft = 0;
+			}
+			
+			this.labCharactersLeft.setText(VegaResources.MessengerCharactersLeft(false, Integer.toString(charactersLeft)));
+		}
+
+		private void onComposeMessageChanged()
+		{
+			this.checkCharactersLeft();
+			
+			String text = this.taComposeMessage.getText();
+			
+			if (text.length()> 0)
+			{
+				if (text.charAt(text.length() - 1) == '\n')
+				{
+					this.butSend.doClick();
+					return;
+				}
+			}
+			
+			synchronized(listLockObject)
+			{
+				ListItem listItem = listRecipients.getSelectedListItem();
+				MessagePanelContent content = (MessagePanelContent)listItem.getHandle();
+				content.composeMessage = text;
+			}
+		}
+
 		private void setContent(MessagePanelContent content)
 		{
 			this.taComposeMessage.setEditable(content != null);
@@ -371,6 +436,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 				this.taRecipients.setText(sb.toString());
 				this.taMessages.setText(content.messages);
 				this.taComposeMessage.setText(content.composeMessage);
+				this.taMessages.scrollDown();
 			}
 			else
 			{
@@ -378,37 +444,84 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 				this.taMessages.setText("");
 				this.taComposeMessage.setText("");
 			}
-		}
-
-		@Override
-		public void buttonClicked(Button source)
-		{
-			// TODO Auto-generated method stub
 			
-		}
-
-		@Override
-		public void insertUpdate(DocumentEvent e)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void removeUpdate(DocumentEvent e)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void changedUpdate(DocumentEvent e)
-		{
-			// TODO Auto-generated method stub
-			
+			this.checkCharactersLeft();
 		}
 	}
 
+	private class MessagePanelContent implements Comparator<MessagePanelContent> 
+	{
+		private String composeMessage;
+		private long createDateTime;
+		private boolean hasUnreadMessages;
+		private String messages;
+		private String recipientsString;
+		
+		private MessagePanelContent() {}
+		
+		private MessagePanelContent(String recipientString)
+		{
+			super();
+			this.recipientsString = recipientString;
+			this.messages = "";
+			this.composeMessage = "";
+			this.hasUnreadMessages = false;
+			this.createDateTime = 0;
+		}
+
+		@Override
+		public int compare(MessagePanelContent o1, MessagePanelContent o2)
+		{
+			if (o1.createDateTime > o2.createDateTime) return -1;
+			else if (o1.createDateTime < o2.createDateTime) return 1;
+			else return 0;
+		}
+		
+		private void addMessage(Message message)
+		{
+			StringBuilder sb = new StringBuilder(this.messages);
+			
+			if (sb.length() > 0)
+			{
+				sb.append("\n\n");
+			}
+			
+			sb.append("--- " + message.getSender());
+			
+			sb.append(" " + VegaUtils.formatDateTimeString(
+							VegaUtils.convertMillisecondsToString(message.getDateCreated())));
+			
+			sb.append(" ---\n" + message.getText());
+			
+			this.messages = sb.toString();
+			this.createDateTime = message.getDateCreated();
+			//this.hasUnreadMessages = hasUnreadMessages;
+		}
+	}
+
+	private class NewMessageIndicatorPanel extends JPanel
+	{
+		NewMessageIndicatorPanel()
+		{
+			this.setPreferredSize(new Dimension(10, 10));
+		}
+		
+		@Override
+		public void paint(Graphics g)
+		{
+			g.setColor(Color.red);
+			Dimension dim = this.getSize();
+			
+			int diameter = 6;
+			
+			g.fillOval(
+					(dim.width - diameter) / 2,
+					(dim.height - diameter) / 2,
+					diameter,
+					diameter);
+		}
+	}
+	
 	private class RecipientsListCellRenderer extends JPanel implements ListCellRenderer<String>
 	{
 		@Override
@@ -417,7 +530,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		{
 			if (index < 0) return null;
 			
-			ListItem listItem = listRecipientsModel.get(index);
+			ListItem listItem = listRecipients.getListItems().get(index);
 			String[] lines = listItem.getDisplayString().split("\n");
 			MessagePanelContent content = (MessagePanelContent) listItem.getHandle();
 			
@@ -464,7 +577,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			return panel;
 		}
 	}
-
+	
 	private class RecipientsSelector extends Dialog implements IButtonListener, IListListener
 	{
 		boolean ok = false;
@@ -556,78 +669,5 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			return true;
 		}
 		
-	}
-	
-	private class NewMessageIndicatorPanel extends JPanel
-	{
-		NewMessageIndicatorPanel()
-		{
-			this.setPreferredSize(new Dimension(10, 10));
-		}
-		
-		@Override
-		public void paint(Graphics g)
-		{
-			g.setColor(Color.red);
-			Dimension dim = this.getSize();
-			
-			int diameter = 6;
-			
-			g.fillOval(
-					(dim.width - diameter) / 2,
-					(dim.height - diameter) / 2,
-					diameter,
-					diameter);
-		}
-	}
-	
-	private class MessagePanelContent implements Comparator<MessagePanelContent> 
-	{
-		private String recipientsString;
-		private String messages;
-		private String composeMessage;
-		private boolean hasUnreadMessages;
-		private long createDateTime;
-		
-		private MessagePanelContent() {}
-		
-		private MessagePanelContent(String recipientString)
-		{
-			super();
-			this.recipientsString = recipientString;
-			this.messages = "";
-			this.composeMessage = "";
-			this.hasUnreadMessages = false;
-			this.createDateTime = 0;
-		}
-
-		@Override
-		public int compare(MessagePanelContent o1, MessagePanelContent o2)
-		{
-			if (o1.createDateTime > o2.createDateTime) return -1;
-			else if (o1.createDateTime < o2.createDateTime) return 1;
-			else return 0;
-		}
-		
-		private void addMessage(Message message)
-		{
-			StringBuilder sb = new StringBuilder(this.messages);
-			
-			if (sb.length() > 0)
-			{
-				sb.append("\n\n");
-			}
-			
-			sb.append("--- " + message.getSender());
-			
-			sb.append(" " + VegaUtils.formatDateTimeString(
-							VegaUtils.convertMillisecondsToString(message.getDateCreated())));
-			
-			sb.append(" ---\n" + message.getText());
-			
-			this.messages = sb.toString();
-			this.createDateTime = message.getDateCreated();
-			this.hasUnreadMessages = hasUnreadMessages;
-		}
 	}
 }

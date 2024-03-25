@@ -60,6 +60,16 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 		this.eventsEnabled = true;
 	}
 	
+	public ArrayList<ListItem> getListItems()
+	{
+		return this.listItems;
+	}
+	
+	public int getSelectedIndex()
+	{
+		return this.list.getSelectedIndex();
+	}
+	
 	public int[] getSelectedIndices()
 	{
 		return this.list.getSelectedIndices();
@@ -77,11 +87,6 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 		{
 			return null;
 		}
-	}
-	
-	public void setCellRenderer(ListCellRenderer<? super String> renderer)
-	{
-		this.list.setCellRenderer(renderer);
 	}
 	
 	public String getSelectedValue()
@@ -149,6 +154,11 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 	public void refreshListModel(ArrayList<String> data)
 	{
 		this.refreshListItems(this.getListItems(data));
+	}
+	
+	public void setCellRenderer(ListCellRenderer<? super String> renderer)
+	{
+		this.list.setCellRenderer(renderer);
 	}
 
 	public void setSelectedIndex(int index)
