@@ -48,7 +48,7 @@ public abstract class Dialog extends JDialog implements ActionListener, WindowLi
 		
 		this.setModal(true);
 		
-		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(this);
 
 		Panel panBase = new Panel(new GridBagLayout());

@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: EV
+		// Last used symbolic key: EX
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -572,6 +572,8 @@ public class VegaResources
 		symbolDict.put("ET","ClearServerCredentials_ET");
 		symbolDict.put("EU","ClearServerCredentialsAys_EU");
 		symbolDict.put("EV","ServerAdminCredentialsCreated_EV");
+		symbolDict.put("EW","UnsentMessages_EW");
+		symbolDict.put("EX","UnsentMessages2_EX");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4343,5 +4345,19 @@ public class VegaResources
 	   */
 	public static String ServerAdminCredentialsCreated(boolean symbol, String arg0) {
 		return symbol ? "£EV§"+arg0+"£":MessageFormat.format(messages.getString("ServerAdminCredentialsCreated_EV"), arg0);
+	}
+
+	/**
+	   * Unsent messages [EW]
+	   */
+	public static String UnsentMessages(boolean symbol) {
+		return symbol ? "£EW£":messages.getString("UnsentMessages_EW");
+	}
+
+	/**
+	   * There are unsent messages. Do you really want to close the messenger? [EX]
+	   */
+	public static String UnsentMessages2(boolean symbol) {
+		return symbol ? "£EX£":messages.getString("UnsentMessages2_EX");
 	}
 }

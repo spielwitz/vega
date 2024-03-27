@@ -38,6 +38,8 @@ import javax.swing.event.DocumentListener;
 import common.CommonUtils;
 import common.Player;
 import common.VegaResources;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Tuple;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
@@ -186,7 +188,28 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	@Override
 	protected boolean confirmClose()
 	{
-		return true;
+		boolean hasUnsentMessages = false;
+		
+		for (ListItem listItem: this.listRecipients.getListItems())
+		{
+			MessagePanelContent content = (MessagePanelContent) listItem.getHandle();
+			
+			if (content.composeMessage.trim().length() > 0)
+			{
+				hasUnsentMessages = true;
+				break;
+			}
+		}
+		
+		if (!hasUnsentMessages) return true;
+		
+		MessageBoxResult result = MessageBox.showYesNo(
+				this, 
+				VegaResources.UnsentMessages2(false), 
+				VegaResources.UnsentMessages(false));
+		
+		System.out.println(result);
+		return result == MessageBoxResult.YES;
 	}
 	
 	private ListItem getNewListItem(String recipientsString, ArrayList<Message> messages)
