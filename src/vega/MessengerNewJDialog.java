@@ -75,7 +75,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		this.setModal(false);
 		this.setAlwaysOnTop(true);
 		
-		PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 10));
+		PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 5));
 		
 		ArrayList<ListItem> listItems = new ArrayList<ListItem>(); 
 		for (String recipientString: messages.getMessagesByRecipients().keySet())
@@ -168,10 +168,20 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	{
 		synchronized(this.listLockObject)
 		{
-			int index = this.getListIndexByRecipientsString(recipientsString);
-			boolean isListItemSelected = (index >= 0 && index == this.listRecipients.getSelectedIndex());
+			String recipientsStringSelected = null;
+			
+			if (this.listRecipients.getSelectedIndex() >= 0)
+			{
+				MessagePanelContent contentSelected = (MessagePanelContent) this.listRecipients.getSelectedListItem().getHandle();
+				recipientsStringSelected = contentSelected.recipientsString;
+			}
+			else
+			{
+				recipientsStringSelected = recipientsString;
+			}
 			
 			ListItem listItem = null;
+			int index = this.getListIndexByRecipientsString(recipientsString);
 			
 			if (index < 0)
 			{
@@ -192,7 +202,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			{
 				content.addMessage(message);
 				
-				if (isListItemSelected)
+				if (recipientsStringSelected == null || recipientsStringSelected.equals(recipientsString))
 				{
 					content.hasUnreadMessages = false;
 				}
@@ -200,12 +210,9 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			
 			this.listRecipients.sort();
 			
-			if (isListItemSelected)
-			{
-				index = this.getListIndexByRecipientsString(recipientsString);
-				this.listRecipients.setSelectedIndex(index);
-				this.listItemSelected(this.listRecipients, null, index, 1);
-			}
+			index = this.getListIndexByRecipientsString(recipientsStringSelected);
+			this.listRecipients.setSelectedIndex(index);
+			this.listItemSelected(this.listRecipients, null, index, 1);
 		}
 	}
 	
@@ -252,41 +259,75 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 
 	private void addNewConversation()
 	{
-		ArrayList<String> userIds = new ArrayList<String>();
-		
-		for (User user: this.callback.getUsersForMessenger())
+		synchronized(this.listLockObject)
 		{
-			if (!user.getId().equals(this.callback.getClientUserIdForMessenger()))
+			ArrayList<String> userIds = new ArrayList<String>();
+			
+			for (User user: this.callback.getUsersForMessenger())
 			{
-				userIds.add(user.getId());
+				if (!user.getId().equals(this.callback.getClientUserIdForMessenger()))
+				{
+					userIds.add(user.getId());
+				}
 			}
-		}
-		
-		RecipientsSelector dlg = new RecipientsSelector(this, userIds);
+			
+			RecipientsSelector dlg = new RecipientsSelector(this, userIds);
+					
+			dlg.setVisible(true);
+			
+			if (dlg.ok && dlg.recipients.size() > 0)
+			{
+				String recipientsString = Messages.getRecipientsStringFromRecipients(dlg.recipients, this.callback.getClientUserIdForMessenger());
 				
-		dlg.setVisible(true);
-		
-		if (dlg.ok && dlg.recipients.size() > 0)
-		{
-			String recipientsString = Messages.getRecipientsStringFromRecipients(dlg.recipients, this.callback.getClientUserIdForMessenger());
-			
-			int index = this.getListIndexByRecipientsString(recipientsString);
-			
-			if (index < 0)
-			{
-				this.listRecipients.getListItems().add(0, this.getNewListItem(recipientsString, new ArrayList<Message>()));
-				this.listRecipients.refresh();
-				index = 0;
+				int index = this.getListIndexByRecipientsString(recipientsString);
+				
+				if (index < 0)
+				{
+					this.listRecipients.getListItems().add(0, this.getNewListItem(recipientsString, new ArrayList<Message>()));
+					this.listRecipients.refresh();
+					index = 0;
+				}
+				
+				this.listRecipients.setSelectedIndex(index);
+				this.listItemSelected(this.listRecipients, null, index, 1);
 			}
-			
-			this.listRecipients.setSelectedIndex(index);
-			this.listItemSelected(this.listRecipients, null, index, 1);
 		}
 	}
 	
 	private void deleteConversation()
 	{
-		
+		synchronized(this.listLockObject)
+		{
+			int index = this.listRecipients.getSelectedIndex();
+			if (index < 0) return;
+			
+			ListItem listItem = this.listRecipients.getListItems().get(index);
+			MessagePanelContent content = (MessagePanelContent) listItem.getHandle();
+			
+			this.callback.removeRecipientsString(content.recipientsString);
+			
+			this.listRecipients.getListItems().remove(index);
+			this.listRecipients.refresh();
+			
+			if (this.listRecipients.getListItems().size() > 0)
+			{
+				this.listRecipients.setSelectedIndex(0);
+				
+				this.listItemSelected(
+						null, 
+						null, 
+						0, 
+						0);
+			}
+			else
+			{
+				this.listItemSelected(
+						null, 
+						null, 
+						-1, 
+						0);
+			}
+		}
 	}
 
 	private int getListIndexByRecipientsString(String recipientsString)
