@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: EX
+		// Last used symbolic key: EZ
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -574,6 +574,8 @@ public class VegaResources
 		symbolDict.put("EV","ServerAdminCredentialsCreated_EV");
 		symbolDict.put("EW","UnsentMessages_EW");
 		symbolDict.put("EX","UnsentMessages2_EX");
+		symbolDict.put("EY","ConversationNew_EY");
+		symbolDict.put("EZ","ConversationDelete_EZ");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4359,5 +4361,19 @@ public class VegaResources
 	   */
 	public static String UnsentMessages2(boolean symbol) {
 		return symbol ? "£EX£":messages.getString("UnsentMessages2_EX");
+	}
+
+	/**
+	   * New conversation [EY]
+	   */
+	public static String ConversationNew(boolean symbol) {
+		return symbol ? "£EY£":messages.getString("ConversationNew_EY");
+	}
+
+	/**
+	   * Delete conversation [EZ]
+	   */
+	public static String ConversationDelete(boolean symbol) {
+		return symbol ? "£EZ£":messages.getString("ConversationDelete_EZ");
 	}
 }

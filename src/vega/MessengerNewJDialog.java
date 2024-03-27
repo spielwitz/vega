@@ -41,6 +41,7 @@ import common.VegaResources;
 import commonUi.MessageBox;
 import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Tuple;
+import spielwitz.biDiServer.User;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -94,12 +95,12 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		Panel panUsersListButtons = new Panel(new FlowLayout(FlowLayout.LEFT));
 		
 		this.butAdd = new Button("+", this);
-		this.butAdd.setToolTipText(VegaResources.AddCredentials(false));
+		this.butAdd.setToolTipText(VegaResources.ConversationNew(false));
 		
 		panUsersListButtons.add(this.butAdd);
 		
 		this.butDelete = new Button("-", this);
-		this.butDelete.setToolTipText(VegaResources.DeleteCredentials(false));
+		this.butDelete.setToolTipText(VegaResources.ConversationDelete(false));
 		panUsersListButtons.add(this.butDelete);
 		
 		panUsersList.addToInnerPanel(panUsersListButtons, BorderLayout.SOUTH);
@@ -128,9 +129,55 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	@Override
 	public void buttonClicked(Button source) 
 	{
-		// TODO Auto-generated method stub
+		if (source == this.butAdd)
+		{
+			this.addNewConversation();
+		}
+		else if (source == this.butDelete)
+		{
+			this.deleteConversation();
+		}
+	}
+	
+	private void addNewConversation()
+	{
+		ArrayList<String> userIds = new ArrayList<String>();
+		
+		for (User user: this.callback.getUsersForMessenger())
+		{
+			if (!user.getId().equals(this.callback.getClientUserIdForMessenger()))
+			{
+				userIds.add(user.getId());
+			}
+		}
+		
+		RecipientsSelector dlg = new RecipientsSelector(this, userIds);
+				
+		dlg.setVisible(true);
+		
+		if (dlg.ok && dlg.recipients.size() > 0)
+		{
+			String recipientsString = Messages.getRecipientsStringFromRecipients(dlg.recipients, this.callback.getClientUserIdForMessenger());
+			
+			int index = this.getListIndexByRecipientsString(recipientsString);
+			
+			if (index < 0)
+			{
+				this.listRecipients.getListItems().add(0, this.getNewListItem(recipientsString, new ArrayList<Message>()));
+				this.listRecipients.refresh();
+				index = 0;
+			}
+			
+			this.listRecipients.setSelectedIndex(index);
+			this.listItemSelected(this.listRecipients, null, index, 1);
+		}
+	}
+	
+	private void deleteConversation()
+	{
 		
 	}
+	
 	
 	@Override
 	public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount) 
@@ -611,7 +658,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		private List listRecipients;
 		private ArrayList<String> userIds; 
 		
-		public RecipientsSelector(Component parent, ArrayList<String> selectedUserIds, ArrayList<String> allUserIds)
+		public RecipientsSelector(Component parent, ArrayList<String> allUserIds)
 		{
 			super(parent, VegaResources.MessengerRecipients(false), new BorderLayout(10, 10));
 			
@@ -620,27 +667,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			this.listRecipients = new List(allUserIds, this);
 			this.listRecipients.setSelectionMethod(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			this.listRecipients.setPreferredSize(new Dimension(150, 200));
-			
-			ArrayList<Integer> selectedIndices = new ArrayList<Integer>();
-			
-			for (int i = 0; i < allUserIds.size(); i++)
-			{
-				if (selectedUserIds.contains(allUserIds.get(i)))
-				{
-					selectedIndices.add(i);
-				}
-			}
-			
-			if (selectedIndices.size() > 0)
-			{
-				int[] selectedIndicesArray = new int[selectedIndices.size()];
-				
-				for (int i = 0; i < selectedIndicesArray.length; i++)
-					selectedIndicesArray[i] = selectedIndices.get(i);
-				
-				this.listRecipients.setSelectedIndices(selectedIndicesArray);
-			}
-			
+						
 			this.addToInnerPanel(this.listRecipients, BorderLayout.CENTER);
 			
 			Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));

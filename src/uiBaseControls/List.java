@@ -137,6 +137,19 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 	{
 	}
 	
+	public void refresh()
+	{
+		this.eventsEnabled = false;
+		
+		this.lm.removeAllElements();
+		
+		for (ListItem listItem: this.listItems)
+		{
+			this.lm.addElement(listItem.getDisplayString());
+		}
+		this.eventsEnabled = true;
+	}
+	
 	public void refreshListItems(ArrayList<ListItem> listItems)
 	{
 		this.eventsEnabled = false;
