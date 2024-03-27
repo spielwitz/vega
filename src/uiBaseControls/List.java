@@ -199,6 +199,26 @@ public class List extends JScrollPane implements MouseListener, ListSelectionLis
 	{
 		this.list.setSelectionMode(selectionMode);
 	}
+	
+	public void sort()
+	{
+		if (this.callback != null)
+		{
+			int[] seq = this.callback.sortListItems(this.listItems);
+			
+			if (seq == null) return;
+			
+			ArrayList<ListItem> listItemsNew = new ArrayList<ListItem>(this.listItems.size());
+			
+			for (int i = 0; i < seq.length; i++)
+			{
+				listItemsNew.add(this.listItems.get(seq[i]));
+			}
+			
+			this.listItems = listItemsNew;
+			this.refresh();
+		}
+	}
 
 	@Override
 	public void valueChanged(ListSelectionEvent e)

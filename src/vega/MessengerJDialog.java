@@ -51,6 +51,7 @@ import uiBaseControls.IListListener;
 import uiBaseControls.IconLabel;
 import uiBaseControls.Label;
 import uiBaseControls.List;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 import uiBaseControls.TabbedPane;
 import uiBaseControls.TextArea;
@@ -541,6 +542,12 @@ class MessengerJDialog extends Dialog implements ChangeListener
 				this.ok = true;
 				this.close();
 			}
+		}
+		
+		@Override
+		public int[] sortListItems(ArrayList<ListItem> listItems)
+		{
+			return null;
 		}
 		
 		@Override

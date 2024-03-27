@@ -61,10 +61,10 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	private Button butAdd;
 	private Button butDelete;
 	private IMessengerCallback callback;
-	private List listRecipients;
-	private MessagePanel panMessage;
-	
 	private Object listLockObject = new Object();
+	private List listRecipients;
+	
+	private MessagePanel panMessage;
 	
 	MessengerNewJDialog(Messages messages, IMessengerCallback callback)
 	{
@@ -86,7 +86,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		int widthList = CommonUtils.round(1.2 * 
 				this.getFontMetrics(this.getFont()).stringWidth(new String(new char[Player.PLAYER_NAME_LENGTH_MAX]).replace("\0", "H")));
 		this.listRecipients = new List(this, listItems);
-		this.listRecipients.refreshListItems(this.sortListItems());
+		this.listRecipients.sort();
 		this.listRecipients.setPreferredSize(new Dimension(widthList, 200));
 		this.listRecipients.setCellRenderer(new RecipientsListCellRenderer());
 		
@@ -139,46 +139,6 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		}
 	}
 	
-	private void addNewConversation()
-	{
-		ArrayList<String> userIds = new ArrayList<String>();
-		
-		for (User user: this.callback.getUsersForMessenger())
-		{
-			if (!user.getId().equals(this.callback.getClientUserIdForMessenger()))
-			{
-				userIds.add(user.getId());
-			}
-		}
-		
-		RecipientsSelector dlg = new RecipientsSelector(this, userIds);
-				
-		dlg.setVisible(true);
-		
-		if (dlg.ok && dlg.recipients.size() > 0)
-		{
-			String recipientsString = Messages.getRecipientsStringFromRecipients(dlg.recipients, this.callback.getClientUserIdForMessenger());
-			
-			int index = this.getListIndexByRecipientsString(recipientsString);
-			
-			if (index < 0)
-			{
-				this.listRecipients.getListItems().add(0, this.getNewListItem(recipientsString, new ArrayList<Message>()));
-				this.listRecipients.refresh();
-				index = 0;
-			}
-			
-			this.listRecipients.setSelectedIndex(index);
-			this.listItemSelected(this.listRecipients, null, index, 1);
-		}
-	}
-	
-	private void deleteConversation()
-	{
-		
-	}
-	
-	
 	@Override
 	public void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount) 
 	{
@@ -220,7 +180,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			content.addMessage(t.getE2());
 		}
 		
-		this.listRecipients.refreshListItems(this.sortListItems());
+		this.listRecipients.sort();
 		
 		if (selectedRecipientsString != null && selectedRecipientsString.equals(t.getE1()))
 		{
@@ -230,6 +190,20 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			this.panMessage.setContent((MessagePanelContent)this.listRecipients.getListItems().get(index).getHandle());
 			this.listRecipients.setSelectedIndex(this.getListIndexByRecipientsString(recipientsString));
 		}
+	}
+	
+	@Override
+	public int[] sortListItems(ArrayList<ListItem> listItems)
+	{
+		String[] dateTimeStrings = new String[listItems.size()];
+		
+		for (int i = 0; i < this.listRecipients.getListItems().size(); i++)
+		{
+			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(i).getHandle();
+			dateTimeStrings[i] = Long.toString(content.createDateTime);
+		}
+		
+		return CommonUtils.sortList(dateTimeStrings, true);
 	}
 
 	@Override
@@ -257,6 +231,65 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		
 		System.out.println(result);
 		return result == MessageBoxResult.YES;
+	}
+
+	private void addNewConversation()
+	{
+		ArrayList<String> userIds = new ArrayList<String>();
+		
+		for (User user: this.callback.getUsersForMessenger())
+		{
+			if (!user.getId().equals(this.callback.getClientUserIdForMessenger()))
+			{
+				userIds.add(user.getId());
+			}
+		}
+		
+		RecipientsSelector dlg = new RecipientsSelector(this, userIds);
+				
+		dlg.setVisible(true);
+		
+		if (dlg.ok && dlg.recipients.size() > 0)
+		{
+			String recipientsString = Messages.getRecipientsStringFromRecipients(dlg.recipients, this.callback.getClientUserIdForMessenger());
+			
+			int index = this.getListIndexByRecipientsString(recipientsString);
+			
+			if (index < 0)
+			{
+				this.listRecipients.getListItems().add(0, this.getNewListItem(recipientsString, new ArrayList<Message>()));
+				this.listRecipients.refresh();
+				index = 0;
+			}
+			
+			this.listRecipients.setSelectedIndex(index);
+			this.listItemSelected(this.listRecipients, null, index, 1);
+		}
+	}
+	
+	private void deleteConversation()
+	{
+		
+	}
+
+	private int getListIndexByRecipientsString(String recipientsString)
+	{
+		if (recipientsString == null) return -1;
+		
+		int index = -1;
+		
+		for (int i = 0; i < this.listRecipients.getListItems().size(); i++)
+		{
+			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(i).getHandle();
+			
+			if (content.recipientsString.equals(recipientsString))
+			{
+				index = i;
+				break;
+			}
+		}
+		
+		return index;
 	}
 	
 	private ListItem getNewListItem(String recipientsString, ArrayList<Message> messages)
@@ -303,48 +336,6 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			
 			return newListItem;
 		}
-	}
-
-	private int getListIndexByRecipientsString(String recipientsString)
-	{
-		if (recipientsString == null) return -1;
-		
-		int index = -1;
-		
-		for (int i = 0; i < this.listRecipients.getListItems().size(); i++)
-		{
-			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(i).getHandle();
-			
-			if (content.recipientsString.equals(recipientsString))
-			{
-				index = i;
-				break;
-			}
-		}
-		
-		return index;
-	}
-	
-	private ArrayList<ListItem> sortListItems()
-	{
-		String[] dateTimeStrings = new String[this.listRecipients.getListItems().size()];
-		
-		for (int i = 0; i < this.listRecipients.getListItems().size(); i++)
-		{
-			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(i).getHandle();
-			dateTimeStrings[i] = Long.toString(content.createDateTime);
-		}
-		
-		int[] seq = CommonUtils.sortList(dateTimeStrings, true);
-		
-		ArrayList<ListItem> listNew = new ArrayList<ListItem>(this.listRecipients.getListItems().size());
-		
-		for (int i = 0; i < this.listRecipients.getListItems().size(); i++)
-		{
-			listNew.add(this.listRecipients.getListItems().get(seq[i]));
-		}
-		
-		return listNew;
 	}
 	
 	private class MessagePanel extends PanelWithInsets implements IButtonListener, DocumentListener
@@ -568,7 +559,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			//this.hasUnreadMessages = hasUnreadMessages;
 		}
 	}
-
+	
 	private class NewMessageIndicatorPanel extends JPanel
 	{
 		NewMessageIndicatorPanel()
@@ -647,7 +638,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			return panel;
 		}
 	}
-	
+
 	private class RecipientsSelector extends Dialog implements IButtonListener, IListListener
 	{
 		boolean ok = false;
@@ -711,6 +702,12 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 				this.ok = true;
 				this.close();
 			}
+		}
+		
+		@Override
+		public int[] sortListItems(ArrayList<ListItem> listItems)
+		{
+			return null;
 		}
 		
 		@Override
