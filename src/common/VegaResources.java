@@ -202,7 +202,6 @@ public class VegaResources
 		symbolDict.put("4J","Random_4J");
 		symbolDict.put("4K","ReadConfiguration_4K");
 		symbolDict.put("4L","RecentlyUsedEmailAddresses_4L");
-		symbolDict.put("4M","RefreshStatus_4M");
 		symbolDict.put("4N","Refresh_4N");
 		symbolDict.put("4O","ReleaseFormatted_4O");
 		symbolDict.put("4P","ServerAdministration_4P");
@@ -317,7 +316,6 @@ public class VegaResources
 		symbolDict.put("7Q","Undo_7Q");
 		symbolDict.put("7R","Unknown_7R");
 		symbolDict.put("7S","UpdateUserQuestion_7S");
-		symbolDict.put("7T","UserActicationQuestion_7T");
 		symbolDict.put("7U","UserActivationSuccess_7U");
 		symbolDict.put("7V","UserDeleted_7V");
 		symbolDict.put("7W","UserId_7W");
@@ -1760,13 +1758,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Refresh status [4M]
-	   */
-	public static String RefreshStatus(boolean symbol) {
-		return symbol ? "£4M£":messages.getString("RefreshStatus_4M");
-	}
-
-	/**
 	   * Refresh [4N]
 	   */
 	public static String Refresh(boolean symbol) {
@@ -2562,13 +2553,6 @@ public class VegaResources
 	   */
 	public static String UpdateUserQuestion(boolean symbol, String arg0) {
 		return symbol ? "£7S§"+arg0+"£":MessageFormat.format(messages.getString("UpdateUserQuestion_7S"), arg0);
-	}
-
-	/**
-	   * Do you want to acticate your user [{0}] on server\n{1}:{2}?\nSelect the storage location for the authentication file in the following dialog. [7T]
-	   */
-	public static String UserActicationQuestion(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£7T§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("UserActicationQuestion_7T"), arg0, arg1, arg2);
 	}
 
 	/**

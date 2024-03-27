@@ -197,7 +197,7 @@ public class Vega extends Frame // NO_UCD (use default)
 
 	private JMenuItem menuWebserver;
 	private Messages messages;
-	private MessengerNewJDialog messenger;
+	private MessengerJDialog messenger;
 	private OutputWindow outputWindow;
 	private PanelScreenContent paintPanel;
 	private boolean playersWaitingForInput;
@@ -669,7 +669,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			{
 				synchronized(this.messages)
 				{
-					this.messenger = new MessengerNewJDialog(this.messages, this);
+					this.messenger = new MessengerJDialog(this.messages, this);
 					this.messenger.setVisible(true);
 				}
 			}
