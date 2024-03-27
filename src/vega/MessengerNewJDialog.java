@@ -80,7 +80,10 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 		ArrayList<ListItem> listItems = new ArrayList<ListItem>(); 
 		for (String recipientString: messages.getMessagesByRecipients().keySet())
 		{
-			listItems.add(this.getNewListItem(recipientString, messages.getMessagesByRecipients().get(recipientString)));
+			listItems.add(
+					this.getNewListItem(
+							recipientString, 
+							messages.getMessagesByRecipients().get(recipientString)));
 		}
 		
 		int widthList = CommonUtils.round(1.2 * 
@@ -158,37 +161,51 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 	
 	public void onNewMessageReceived(Tuple<String,Message> t)
 	{
-		ListItem selectedListItem = this.listRecipients.getSelectedListItem();
-		String selectedRecipientsString = selectedListItem != null ?
-				((MessagePanelContent)selectedListItem.getHandle()).recipientsString :
-				null;
-		
-		String recipientsString = t.getE1();
-		int index = this.getListIndexByRecipientsString(recipientsString);
-		
-		if (index < 0)
+		this.addMessage(t.getE1(), t.getE2());
+	}
+	
+	private void addMessage(String recipientsString, Message message)
+	{
+		synchronized(this.listLockObject)
 		{
-			ArrayList<Message> messages = new ArrayList<Message>();
-			messages.add(t.getE2());
-			this.listRecipients.getListItems().add(this.getNewListItem(recipientsString, messages));
+			int index = this.getListIndexByRecipientsString(recipientsString);
+			boolean isListItemSelected = (index >= 0 && index == this.listRecipients.getSelectedIndex());
 			
-			index = 0;
-		}
-		else
-		{
-			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(index).getHandle();
-			content.addMessage(t.getE2());
-		}
-		
-		this.listRecipients.sort();
-		
-		if (selectedRecipientsString != null && selectedRecipientsString.equals(t.getE1()))
-		{
-			index = this.getListIndexByRecipientsString(recipientsString);
-			MessagePanelContent content = (MessagePanelContent)this.listRecipients.getListItems().get(index).getHandle();
-			content.hasUnreadMessages = false;
-			this.panMessage.setContent((MessagePanelContent)this.listRecipients.getListItems().get(index).getHandle());
-			this.listRecipients.setSelectedIndex(this.getListIndexByRecipientsString(recipientsString));
+			ListItem listItem = null;
+			
+			if (index < 0)
+			{
+				listItem = this.getNewListItem(
+						recipientsString, 
+						new ArrayList<Message>());
+				
+				this.listRecipients.getListItems().add(listItem);
+			}
+			else
+			{
+				listItem = this.listRecipients.getListItems().get(index);
+			}
+			
+			MessagePanelContent content = (MessagePanelContent)listItem.getHandle();
+
+			if (message != null)
+			{
+				content.addMessage(message);
+				
+				if (isListItemSelected)
+				{
+					content.hasUnreadMessages = false;
+				}
+			}
+			
+			this.listRecipients.sort();
+			
+			if (isListItemSelected)
+			{
+				index = this.getListIndexByRecipientsString(recipientsString);
+				this.listRecipients.setSelectedIndex(index);
+				this.listItemSelected(this.listRecipients, null, index, 1);
+			}
 		}
 	}
 	
@@ -407,8 +424,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 						text);
 				
 				MessagePanelContent content = (MessagePanelContent) listRecipients.getSelectedListItem().getHandle();
-				content.addMessage(message);
-				content.composeMessage = "";
+				addMessage(content.recipientsString, message);
 				this.setContent(content);
 				
 				callback.pushNotificationFromMessenger(
@@ -527,7 +543,7 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			this.messages = "";
 			this.composeMessage = "";
 			this.hasUnreadMessages = false;
-			this.createDateTime = 0;
+			this.createDateTime = System.currentTimeMillis();
 		}
 
 		@Override
@@ -555,8 +571,9 @@ class MessengerNewJDialog extends Dialog implements IListListener, IButtonListen
 			sb.append(" ---\n" + message.getText());
 			
 			this.messages = sb.toString();
+			this.composeMessage = "";
 			this.createDateTime = message.getDateCreated();
-			//this.hasUnreadMessages = hasUnreadMessages;
+			this.hasUnreadMessages = true;
 		}
 	}
 	
