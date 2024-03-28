@@ -1459,8 +1459,10 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			}
 			
 			Collections.sort(this.listUsersModel, new ListItem());
+			ListItem.renameDuplicateDisplayStrings(this.listUsersModel);
 			
 			Collections.sort(panActivateConnection.comboCredentialsUserModel, new ListItem());
+			ListItem.renameDuplicateDisplayStrings(panActivateConnection.comboCredentialsUserModel);
 			panActivateConnection.comboCredentialsUser.setItems(panActivateConnection.comboCredentialsUserModel);
 			
 			if (!panActivateConnection.comboCredentialsUser.setSelectedListItemByHandle(serverCredentials.userCredentialsSelected))
@@ -1482,6 +1484,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			}
 			
 			Collections.sort(panAdmin.comboCredentialsAdminModel, new ListItem());
+			ListItem.renameDuplicateDisplayStrings(panAdmin.comboCredentialsAdminModel);
 			panAdmin.comboCredentialsAdmin.setItems(panAdmin.comboCredentialsAdminModel);
 			
 			if (!panAdmin.comboCredentialsAdmin.setSelectedListItemByHandle(serverCredentials.adminCredentialsSelected))

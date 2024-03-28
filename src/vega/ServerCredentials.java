@@ -153,6 +153,27 @@ class ServerCredentials implements Serializable
 		return userData.config;
 	}
 	
+	Messages getMessages()
+	{
+		if (this.password == null) return null;
+		if (this.userCredentialsSelected == null) return null;
+		
+		Hashtable<UUID,UserData> dict = this.decryptCredentials();
+		UserData userData = dict.get(this.userCredentialsSelected);
+		if (userData == null) return null;
+		
+		String userId = userData.config.getUserId();
+		
+		if (userData.messages == null)
+		{
+			return new Messages(this.userCredentialsSelected, userId);
+		}
+		else
+		{
+			return userData.messages;
+		}
+	}
+	
 	boolean hasChanges(ServerCredentials other)
 	{
 		Hashtable<UUID,UserData> thisDict = this.decryptCredentials();
@@ -200,6 +221,20 @@ class ServerCredentials implements Serializable
 		this.encryptCredentials(dict); 
 	}
 	
+	void setMessages(Messages messages)
+	{
+		if (this.password == null) return;
+		
+		Hashtable<UUID,UserData> dict = this.decryptCredentials();
+		UserData userData = dict.get(messages.getCredentialsKey());
+		if (userData == null) return;
+		
+		userData.messages = messages;
+		
+		dict.put(messages.getCredentialsKey(), userData);
+		this.encryptCredentials(dict); 
+	}
+	
 	boolean unlockCredentials(byte[] passwordBytes)
 	{
 		boolean passwordIsValid = true;
@@ -216,41 +251,6 @@ class ServerCredentials implements Serializable
 		}
 		
 		return passwordIsValid;
-	}
-	
-	Messages getMessages()
-	{
-		if (this.password == null) return null;
-		if (this.userCredentialsSelected == null) return null;
-		
-		Hashtable<UUID,UserData> dict = this.decryptCredentials();
-		UserData userData = dict.get(this.userCredentialsSelected);
-		if (userData == null) return null;
-		
-		String userId = userData.config.getUserId();
-		
-		if (userData.messages == null)
-		{
-			return new Messages(this.userCredentialsSelected, userId);
-		}
-		else
-		{
-			return userData.messages;
-		}
-	}
-	
-	void setMessages(Messages messages)
-	{
-		if (this.password == null) return;
-		
-		Hashtable<UUID,UserData> dict = this.decryptCredentials();
-		UserData userData = dict.get(messages.getCredentialsKey());
-		if (userData == null) return;
-		
-		userData.messages = messages;
-		
-		dict.put(messages.getCredentialsKey(), userData);
-		this.encryptCredentials(dict); 
 	}
 	
 	private Hashtable<UUID,UserData> decryptCredentials()

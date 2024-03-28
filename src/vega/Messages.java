@@ -74,11 +74,11 @@ class Messages
 	}
 	
 	private UUID credentialsKey;
-	private String userId;
-	
 	private Hashtable<String, ArrayList<Message>> messagesByRecipients;
 	
 	private HashSet<String> unreadMessages;
+	
+	private String userId;
 
 	Messages(UUID credentialsKey, String userId)
 	{
@@ -120,26 +120,26 @@ class Messages
 				messageList);
 	}
 	
-	Hashtable<String, ArrayList<Message>> getMessagesByRecipients() {
-		return messagesByRecipients;
-	}
-	
-	void removeRecipientsString(String recipientsString)
-	{
-		this.messagesByRecipients.remove(recipientsString);
-	}
-
-	protected HashSet<String> getUnreadMessages()
-	{
-		return unreadMessages;
-	}
-
 	UUID getCredentialsKey() {
 		return credentialsKey;
 	}
 	
+	Hashtable<String, ArrayList<Message>> getMessagesByRecipients() {
+		return messagesByRecipients;
+	}
+
 	String getUserId()
 	{
 		return this.userId;
+	}
+
+	void removeRecipientsString(String recipientsString)
+	{
+		this.messagesByRecipients.remove(recipientsString);
+	}
+	
+	protected HashSet<String> getUnreadMessages()
+	{
+		return unreadMessages;
 	}
 }

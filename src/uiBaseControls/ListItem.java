@@ -16,10 +16,42 @@
 
 package uiBaseControls;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ListItem implements Comparator<ListItem> 
 {
+	public static void renameDuplicateDisplayStrings(ArrayList<ListItem> items)
+	{
+		ArrayList<Integer> renamedIndices = new ArrayList<Integer>();
+		
+		for (int i = 0; i < items.size() - 1; i++)
+		{
+			if (renamedIndices.contains(i)) continue;
+			
+			ListItem item = items.get(i);
+			int counter = 2;
+			
+			for (int j = i+1; j < items.size(); j++)
+			{
+				if (renamedIndices.contains(j)) continue;
+				ListItem item2 = items.get(j);
+				
+				if (item.displayString.equals(item2.displayString))
+				{
+					item2.displayString = item2.displayString + " (" + counter + ")";
+					renamedIndices.add(j);
+					counter++;
+				}
+			}
+			
+			if (counter > 2)
+			{
+				item.displayString = item.displayString + " (1)";
+			}
+		}
+	}
+	
 	private String displayString;
 	private Object handle;
 	
@@ -31,6 +63,12 @@ public class ListItem implements Comparator<ListItem>
 		this.handle = handle;
 	}
 
+	@Override
+	public int compare(ListItem o1, ListItem o2)
+	{
+		return o1.getDisplayString().compareTo(o2.getDisplayString());
+	}
+
 	public String getDisplayString()
 	{
 		return displayString;
@@ -39,11 +77,5 @@ public class ListItem implements Comparator<ListItem>
 	public Object getHandle()
 	{
 		return handle;
-	}
-
-	@Override
-	public int compare(ListItem o1, ListItem o2)
-	{
-		return o1.getDisplayString().compareTo(o2.getDisplayString());
 	}
 }
