@@ -4320,7 +4320,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Attention! All server credentials will be deleted! [EU]
+	   * Attention! All server credentials and messages will be deleted! [EU]
 	   */
 	public static String ClearServerCredentialsAys(boolean symbol) {
 		return symbol ? "£EU£":messages.getString("ClearServerCredentialsAys_EU");
