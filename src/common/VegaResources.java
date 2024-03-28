@@ -1268,7 +1268,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Hi {0},\n\nwelcome to VEGA! Your new user [{1}] on server {2}:{3} (build {4}) has been created and only needs to be activated.\n\nPlease proceed as follows:\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select "Settings > VEGA server settings -> Credentials -> + -> Inactive user from the clipboard".\n\n3. insert the contents of the clipboard into the text field and enter the password that you agreed on with your server administrator. Prss "OK".\n\n4. Activate the user with the button "Activate".\n\n5. Navigate to the tab "Activate server games". Select your user and check the box "Connect as player with credentials".\n\n6. Close the dialog by pressing "OK".\n\nYour user is now active.\n\nEnjoy VEGA!\nYour server administrator [2N]
+	   * Hi {0},\n\nwelcome to VEGA! Your new user [{1}] on server {2}:{3} (build {4}) has been created and only needs to be activated.\n\nPlease proceed as follows:\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select "Settings > VEGA server settings -> Credentials -> + -> Inactive user from the clipboard".\n\n3. insert the contents of the clipboard into the text field and enter the password that you agreed on with your server administrator. Prss "OK".\n\n4. Activate the user with the button "Activate".\n\n5. Navigate to the tab "Activate server games". Select your user and check the box "Connect as player with the credentials".\n\n6. Close the dialog by pressing "OK".\n\nYour user is now active.\n\nEnjoy VEGA!\nYour server administrator [2N]
 	   */
 	public static String NewUserEmailBody(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4) {
 		return symbol ? "£2N§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":MessageFormat.format(messages.getString("NewUserEmailBody_2N"), arg0, arg1, arg2, arg3, arg4);
@@ -2654,7 +2654,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Connect as player with credentials [88]
+	   * Connect as player with the credentials [88]
 	   */
 	public static String ConnectAsPlayerWithCredentials(boolean symbol) {
 		return symbol ? "£88£":messages.getString("ConnectAsPlayerWithCredentials_88");

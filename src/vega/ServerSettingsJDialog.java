@@ -1330,7 +1330,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		    this.popupMenuItemAdmin.addActionListener(this);
 		    popupMenu.add (this.popupMenuItemAdmin);
 			
-			PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 10));
+			PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 5));
 			
 			this.createListUsersModel();
 			this.listUsers = new List(this, this.listUsersModel);
