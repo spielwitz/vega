@@ -262,6 +262,23 @@ class VegaConfiguration
 		this.writeToFile();
 	}
 	
+	Messages getMessages()
+	{
+		if (this.serverCredentials == null) return null;
+		if (this.serverCredentials.areCredentialsLocked()) return null;
+		
+		return this.serverCredentials.getMessages();
+	}
+	
+	void setMessages(Messages messages)
+	{
+		if (this.serverCredentials == null) return;
+		if (this.serverCredentials.areCredentialsLocked()) return;
+		
+		this.serverCredentials.setMessages(messages);
+		this.writeToFile();
+	}
+	
 	private boolean writeToFile()
 	{
 		boolean success = true;

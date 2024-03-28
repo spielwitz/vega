@@ -16,25 +16,17 @@
 
 package vega;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
-
-import com.google.gson.Gson;
+import java.util.UUID;
 
 import spielwitz.biDiServer.Tuple;
 
 class Messages
 {
 	private static final String RECIPIENTS_SEPARATOR = ">";
-	private static final String MESSAGES_FOLDER = "Messages";
 	
 	static ArrayList<String> getRecipientsFromRecipientsString(String recipientsString, String ownUserId)
 	{
@@ -55,6 +47,7 @@ class Messages
 		
 		return retval;
 	}
+	
 	static String getRecipientsStringFromRecipients(ArrayList<String> recipients, String ownUserId)
 	{
 		ArrayList<String> recipientsCopy = new ArrayList<String>();
@@ -80,14 +73,16 @@ class Messages
 		return sb.toString();
 	}
 	
+	private UUID credentialsKey;
 	private String userId;
 	
 	private Hashtable<String, ArrayList<Message>> messagesByRecipients;
 	
 	private HashSet<String> unreadMessages;
 
-	Messages(String userId)
+	Messages(UUID credentialsKey, String userId)
 	{
+		this.credentialsKey = credentialsKey;
 		this.userId = userId;
 		this.messagesByRecipients = new Hashtable<String, ArrayList<Message>>();
 		this.unreadMessages = new HashSet<String>();
@@ -138,39 +133,13 @@ class Messages
 	{
 		return unreadMessages;
 	}
-	
-	void writeToFile(String userId)
-	{
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(getFile(userId).getAbsolutePath())))
-		{
-			String json = new Gson().toJson(this);
-			bw.write(json);			
-		} catch (IOException e)
-		{
-		}
+
+	UUID getCredentialsKey() {
+		return credentialsKey;
 	}
 	
-	static Messages readFromFile(String userId)
+	String getUserId()
 	{
-		try (BufferedReader br = new BufferedReader(new FileReader(getFile(userId))))
-		{
-			String json = br.readLine();
-			return new Gson().fromJson(json, Messages.class);
-		} catch (Exception e)
-		{
-			return new Messages(userId); 
-		}
-	}
-	
-	private static File getFile(String userId)
-	{
-		File dir = new File(MESSAGES_FOLDER);
-		
-		if (!dir.exists())
-		{
-			dir.mkdirs();
-		}
-		
-		return new File(MESSAGES_FOLDER, "Messages_" + userId);
+		return this.userId;
 	}
 }
