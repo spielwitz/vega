@@ -97,7 +97,7 @@ class ServerCredentials implements Serializable
 	{
 		if (this.unlockCredentials(oldPassword))
 		{
-			Hashtable<UUID, ClientConfiguration> dict = this.decryptCredentials();
+			Hashtable<UUID, UserData> dict = this.decryptCredentials();
 			this.password = newPassword;
 			this.encryptCredentials(dict);
 			
@@ -125,7 +125,7 @@ class ServerCredentials implements Serializable
 	
 	void deleteCredentials(UUID key)
 	{
-		Hashtable<UUID,ClientConfiguration> dict = this.decryptCredentials();
+		Hashtable<UUID,UserData> dict = this.decryptCredentials();
 		dict.remove(key);
 		this.encryptCredentials(dict);
 	}
@@ -147,13 +147,37 @@ class ServerCredentials implements Serializable
 	
 	ClientConfiguration getCredentials(UUID key)
 	{
-		return this.decryptCredentials().get(key);
+		UserData userData = this.decryptCredentials().get(key);
+		if (userData == null) return null;
+		
+		return userData.config;
+	}
+	
+	Messages getMessages()
+	{
+		if (this.password == null) return null;
+		if (this.userCredentialsSelected == null) return null;
+		
+		Hashtable<UUID,UserData> dict = this.decryptCredentials();
+		UserData userData = dict.get(this.userCredentialsSelected);
+		if (userData == null) return null;
+		
+		String userId = userData.config.getUserId();
+		
+		if (userData.messages == null)
+		{
+			return new Messages(this.userCredentialsSelected, userId);
+		}
+		else
+		{
+			return userData.messages;
+		}
 	}
 	
 	boolean hasChanges(ServerCredentials other)
 	{
-		Hashtable<UUID,ClientConfiguration> thisDict = this.decryptCredentials();
-		Hashtable<UUID,ClientConfiguration> otherDict = other.decryptCredentials();
+		Hashtable<UUID,UserData> thisDict = this.decryptCredentials();
+		Hashtable<UUID,UserData> otherDict = other.decryptCredentials();
 
 		if (this.connectionActive != other.connectionActive) return true;
 		if (!Arrays.equals(this.password, other.password)) return true;
@@ -173,7 +197,7 @@ class ServerCredentials implements Serializable
 		for (UUID credentialsKey: thisDict.keySet())
 		{
 			if (!otherDict.containsKey(credentialsKey)) return true;
-			if (!thisDict.get(credentialsKey).equals(otherDict.get(credentialsKey))) return true;
+			if (!thisDict.get(credentialsKey).config.equals(otherDict.get(credentialsKey).config)) return true;
 		}
 		
 		return false;
@@ -183,8 +207,31 @@ class ServerCredentials implements Serializable
 	{
 		if (this.password == null) return;
 		
-		Hashtable<UUID,ClientConfiguration> dict = this.decryptCredentials();
-		dict.put(key, credentials);
+		Hashtable<UUID,UserData> dict = this.decryptCredentials();
+		UserData userData = dict.get(key);
+		
+		if (userData == null)
+		{
+			userData = new UserData();
+		}
+		
+		userData.config = credentials;
+		
+		dict.put(key, userData);
+		this.encryptCredentials(dict); 
+	}
+	
+	void setMessages(Messages messages)
+	{
+		if (this.password == null) return;
+		
+		Hashtable<UUID,UserData> dict = this.decryptCredentials();
+		UserData userData = dict.get(messages.getCredentialsKey());
+		if (userData == null) return;
+		
+		userData.messages = messages;
+		
+		dict.put(messages.getCredentialsKey(), userData);
 		this.encryptCredentials(dict); 
 	}
 	
@@ -206,7 +253,7 @@ class ServerCredentials implements Serializable
 		return passwordIsValid;
 	}
 	
-	private Hashtable<UUID,ClientConfiguration> decryptCredentials()
+	private Hashtable<UUID,UserData> decryptCredentials()
 	{
 		if (this.credentialsEncrypted != null)
 		{
@@ -215,11 +262,11 @@ class ServerCredentials implements Serializable
 		}
 		else
 		{
-			return new Hashtable<UUID,ClientConfiguration>();
+			return new Hashtable<UUID,UserData>();
 		}
 	}
 	
-	private void encryptCredentials(Hashtable<UUID,ClientConfiguration> dict)
+	private void encryptCredentials(Hashtable<UUID,UserData> dict)
 	{
 		if (dict.size() > 0)
 		{
@@ -233,8 +280,14 @@ class ServerCredentials implements Serializable
 		}
 	}
 	
-	class ServerCredentialsDict
+	private class ServerCredentialsDict
 	{
-		Hashtable<UUID,ClientConfiguration> dict;
+		Hashtable<UUID,UserData> dict;
+	}
+	
+	private class UserData
+	{
+		ClientConfiguration config;
+		Messages messages;
 	}
 }

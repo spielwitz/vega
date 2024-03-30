@@ -16,7 +16,10 @@
 
 package uiBaseControls;
 
+import java.util.ArrayList;
+
 public interface IListListener
 {
 	void listItemSelected(List source, String selectedValue, int selectedIndex, int clickCount);
+	int[] sortListItems(ArrayList<ListItem> listItems);
 }

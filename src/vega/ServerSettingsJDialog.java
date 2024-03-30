@@ -496,6 +496,12 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			this.setControlsEnabled();
 		}
 		
+		@Override
+		public int[] sortListItems(ArrayList<ListItem> listItems)
+		{
+			return null;
+		}
+
 		private void changeLogLevel()
 		{
 			String newLogLevel = (String) this.comboServerLogLevel.getSelectedItem();
@@ -583,7 +589,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			else
 				Vega.showServerError(this, info);
 		}
-
+		
 		private void downloadLog()
 		{
 			ClientConfiguration clientConfiguration = serverCredentials.getCredentials(serverCredentials.adminCredentialsSelected);
@@ -1176,7 +1182,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		{
 			this.listServerUsers.clearSelection();
 		}
-		
+
 		private class PanelUserData extends Panel implements ICheckBoxListener
 		{
 			private CheckBox cbCredentials;
@@ -1324,7 +1330,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		    this.popupMenuItemAdmin.addActionListener(this);
 		    popupMenu.add (this.popupMenuItemAdmin);
 			
-			PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 10));
+			PanelWithInsets panUsersList = new PanelWithInsets(new BorderLayout(10, 5));
 			
 			this.createListUsersModel();
 			this.listUsers = new List(this, this.listUsersModel);
@@ -1399,6 +1405,12 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			this.setCredentialsPanelValues();
 		}
 		
+		@Override
+		public int[] sortListItems(ArrayList<ListItem> listItems)
+		{
+			return null;
+		}
+
 		private void addNew(ClientConfiguration clientConfiguration)
 		{
 			UUID credentialsKey = UUID.randomUUID();
@@ -1410,7 +1422,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			this.listUsers.setSelectedIndex(this.getListIndexByCredentialsKey(credentialsKey));
 			this.setCredentialsPanelValues();
 		}
-
+		
 		private void createListUsersModel()
 		{
 			ArrayList<UUID> credentialKeys = serverCredentials.getCredentialKeys();
@@ -1447,8 +1459,10 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			}
 			
 			Collections.sort(this.listUsersModel, new ListItem());
+			ListItem.renameDuplicateDisplayStrings(this.listUsersModel);
 			
 			Collections.sort(panActivateConnection.comboCredentialsUserModel, new ListItem());
+			ListItem.renameDuplicateDisplayStrings(panActivateConnection.comboCredentialsUserModel);
 			panActivateConnection.comboCredentialsUser.setItems(panActivateConnection.comboCredentialsUserModel);
 			
 			if (!panActivateConnection.comboCredentialsUser.setSelectedListItemByHandle(serverCredentials.userCredentialsSelected))
@@ -1470,6 +1484,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 			}
 			
 			Collections.sort(panAdmin.comboCredentialsAdminModel, new ListItem());
+			ListItem.renameDuplicateDisplayStrings(panAdmin.comboCredentialsAdminModel);
 			panAdmin.comboCredentialsAdmin.setItems(panAdmin.comboCredentialsAdminModel);
 			
 			if (!panAdmin.comboCredentialsAdmin.setSelectedListItemByHandle(serverCredentials.adminCredentialsSelected))
@@ -1642,7 +1657,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 				this.panCredentials.setValues(clientConfiguration);
 			}
 		}
-		
+
 		private class CredentialsPanel extends Panel implements IButtonListener, ITextFieldListener
 		{
 			private Button butActivate;

@@ -30,6 +30,7 @@ import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
 import uiBaseControls.IListListener;
 import uiBaseControls.List;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 
 @SuppressWarnings("serial") 
@@ -112,6 +113,12 @@ class EmailAddressesJDialog extends Dialog
 	}
 	
 	@Override
+	public int[] sortListItems(ArrayList<ListItem> listItems)
+	{
+		return null;
+	}
+
+	@Override
 	protected boolean confirmClose()
 	{
 		return true;
@@ -125,7 +132,7 @@ class EmailAddressesJDialog extends Dialog
 		this.setVisible(false);
 		this.dispose();
 	}
-
+	
 	private void refreshListModel()
 	{
 		Object[] objectList = this.emailAddresses.toArray();
@@ -141,7 +148,7 @@ class EmailAddressesJDialog extends Dialog
 		
 		this.setControlsEnabled();
 	}
-	
+
 	private void setControlsEnabled()
 	{
 		this.butDelete.setEnabled(!this.list.isSelectionEmpty());
