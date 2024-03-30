@@ -599,7 +599,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public String getClientUserIdForMessenger()
 	{
-		return this.client.getUserId();
+		return this.messages.getUserId();
 	}
 	
 	@Override
@@ -1216,7 +1216,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		
 		this.client = new VegaClient(clientConfiguration, true, this);
 		this.client.start();
-		this.messages = Messages.readFromFile(this.client.getUserId());
+		this.messages = this.config.getMessages();
 	}
 
 	private void connectDisconnectClient()
@@ -1387,7 +1387,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		if (this.client != null)
 		{
-			this.messages.writeToFile(this.client.getUserId());
+			this.config.setMessages(messages);
 			this.client.disconnect();
 		}
 		

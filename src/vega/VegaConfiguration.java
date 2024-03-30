@@ -142,6 +142,21 @@ class VegaConfiguration
 		this.firstTimeStart = true;
 	}
 	
+	ClientConfiguration getClientConfiguration()
+	{
+		if (this.serverCredentials != null &&
+			!this.serverCredentials.areCredentialsLocked() &&
+			this.serverCredentials.connectionActive &&
+			this.serverCredentials.userCredentialsSelected != null)
+		{
+			return this.serverCredentials.getCredentials(this.serverCredentials.userCredentialsSelected);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	String getDirectoryNameLast()
 	{
 		return directoryNameLast;
@@ -160,6 +175,14 @@ class VegaConfiguration
 	String getEmailSeparator()
 	{
 		return emailSeparator;
+	}
+
+	Messages getMessages()
+	{
+		if (this.serverCredentials == null) return null;
+		if (this.serverCredentials.areCredentialsLocked()) return null;
+		
+		return this.serverCredentials.getMessages();
 	}
 
 	String getMyIpAddress()
@@ -216,32 +239,26 @@ class VegaConfiguration
 		this.emailSeparator = emailSeparator;
 		this.writeToFile();
 	}
-
+	
 	void setFirstTimeStart(boolean firstTimeStart)
 	{
 		this.firstTimeStart = firstTimeStart;
 		this.writeToFile();
 	}
-
+	
 	void setLocale(String locale)
 	{
 		this.locale = locale;
 		this.writeToFile();
 	}
 	
-	ClientConfiguration getClientConfiguration()
+	void setMessages(Messages messages)
 	{
-		if (this.serverCredentials != null &&
-			!this.serverCredentials.areCredentialsLocked() &&
-			this.serverCredentials.connectionActive &&
-			this.serverCredentials.userCredentialsSelected != null)
-		{
-			return this.serverCredentials.getCredentials(this.serverCredentials.userCredentialsSelected);
-		}
-		else
-		{
-			return null;
-		}
+		if (this.serverCredentials == null) return;
+		if (this.serverCredentials.areCredentialsLocked()) return;
+		
+		this.serverCredentials.setMessages(messages);
+		this.writeToFile();
 	}
 	
 	void setMyIpAddress(String myIpAddress)

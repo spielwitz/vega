@@ -361,6 +361,11 @@ class ServerGamesJDialog extends Dialog
 	}
 
 	@Override
+	public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
+	{
+	}
+	
+	@Override
 	public void comboBoxItemSelected(ComboBox source, String selectedValue)
 	{
 		if (source == this.comboPlayers)
@@ -371,11 +376,6 @@ class ServerGamesJDialog extends Dialog
 		{
 			this.newGame(false);
 		}
-	}
-	
-	@Override
-	public void comboBoxItemSelected(ComboBox source, ListItem selectedListItem)
-	{
 	}
 	
 	@Override
@@ -411,11 +411,17 @@ class ServerGamesJDialog extends Dialog
 	}
 	
 	@Override
+	public int[] sortListItems(ArrayList<ListItem> listItems)
+	{
+		return null;
+	}
+
+	@Override
 	protected boolean confirmClose()
 	{
 		return true;
 	}
-
+	
 	private void deleteGame(String gameId)
 	{
 		MessageBoxResult dialogResult = MessageBox.showYesNo(
@@ -535,6 +541,8 @@ class ServerGamesJDialog extends Dialog
 			Vega.showServerError(this, info);
 		}
 	}
+
+	// ========================
 	
 	private RadioButton getGamesByCategory(String currentGameId)
 	{
@@ -585,8 +593,6 @@ class ServerGamesJDialog extends Dialog
 		
 		return rbCurrentGame;
 	}
-
-	// ========================
 	
 	private String[] getPlanetComboBoxValues(int playersCount)
 	{
@@ -598,6 +604,9 @@ class ServerGamesJDialog extends Dialog
 
 		return planets;
 	}
+	
+	
+	// ============
 	
 	private void newGame(boolean playersCountChanged)
 	{
@@ -651,10 +660,7 @@ class ServerGamesJDialog extends Dialog
 		
 		this.board.refresh(this.gameInfo.planetInfo, false);
 	}
-	
-	
-	// ============
-	
+
 	private void selectGame(String gameId)
 	{
 		Vega.showWaitCursor(this);
@@ -671,7 +677,7 @@ class ServerGamesJDialog extends Dialog
 			Vega.showServerError(this, response.getResponseInfo());
 		}
 	}
-
+	
 	private void showGameData(String gameName)
 	{
 		this.gameInfo = gameName != null ?
@@ -775,7 +781,7 @@ class ServerGamesJDialog extends Dialog
 						null,
 				true);
 	}
-	
+
 	private void submitGame()
 	{
 		String gameName = this.tfGameName.getText().trim();
@@ -917,7 +923,7 @@ class ServerGamesJDialog extends Dialog
 			Vega.showServerError(this, response.getResponseInfo());
 		}
 	}
-
+	
 	private class BoardDisplay extends JPanel
 	{
 		private static final int PIXEL_PER_SECTOR = 13;
@@ -981,7 +987,7 @@ class ServerGamesJDialog extends Dialog
 			this.repaint();
 		}
 	}
-	
+
 	private class PanelPlayer extends JPanel
 	{
 		public PlayerColorButton 	canvasPlayerColor;

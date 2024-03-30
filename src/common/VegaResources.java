@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: EV
+		// Last used symbolic key: EZ
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -202,7 +202,6 @@ public class VegaResources
 		symbolDict.put("4J","Random_4J");
 		symbolDict.put("4K","ReadConfiguration_4K");
 		symbolDict.put("4L","RecentlyUsedEmailAddresses_4L");
-		symbolDict.put("4M","RefreshStatus_4M");
 		symbolDict.put("4N","Refresh_4N");
 		symbolDict.put("4O","ReleaseFormatted_4O");
 		symbolDict.put("4P","ServerAdministration_4P");
@@ -317,7 +316,6 @@ public class VegaResources
 		symbolDict.put("7Q","Undo_7Q");
 		symbolDict.put("7R","Unknown_7R");
 		symbolDict.put("7S","UpdateUserQuestion_7S");
-		symbolDict.put("7T","UserActicationQuestion_7T");
 		symbolDict.put("7U","UserActivationSuccess_7U");
 		symbolDict.put("7V","UserDeleted_7V");
 		symbolDict.put("7W","UserId_7W");
@@ -572,6 +570,10 @@ public class VegaResources
 		symbolDict.put("ET","ClearServerCredentials_ET");
 		symbolDict.put("EU","ClearServerCredentialsAys_EU");
 		symbolDict.put("EV","ServerAdminCredentialsCreated_EV");
+		symbolDict.put("EW","UnsentMessages_EW");
+		symbolDict.put("EX","UnsentMessages2_EX");
+		symbolDict.put("EY","ConversationNew_EY");
+		symbolDict.put("EZ","ConversationDelete_EZ");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -1266,7 +1268,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Hi {0},\n\nwelcome to VEGA! Your new user [{1}] on server {2}:{3} (build {4}) has been created and only needs to be activated.\n\nPlease proceed as follows:\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select "Settings > VEGA server settings -> Credentials -> + -> Inactive user from the clipboard".\n\n3. insert the contents of the clipboard into the text field and enter the password that you agreed on with your server administrator. Prss "OK".\n\n4. Activate the user with the button "Activate".\n\n5. Navigate to the tab "Activate server games". Select your user and check the box "Connect as player with credentials".\n\n6. Close the dialog by pressing "OK".\n\nYour user is now active.\n\nEnjoy VEGA!\nYour server administrator [2N]
+	   * Hi {0},\n\nwelcome to VEGA! Your new user [{1}] on server {2}:{3} (build {4}) has been created and only needs to be activated.\n\nPlease proceed as follows:\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select "Settings > VEGA server settings -> Credentials -> + -> Inactive user from the clipboard".\n\n3. insert the contents of the clipboard into the text field and enter the password that you agreed on with your server administrator. Prss "OK".\n\n4. Activate the user with the button "Activate".\n\n5. Navigate to the tab "Activate server games". Select your user and check the box "Connect as player with the credentials".\n\n6. Close the dialog by pressing "OK".\n\nYour user is now active.\n\nEnjoy VEGA!\nYour server administrator [2N]
 	   */
 	public static String NewUserEmailBody(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4) {
 		return symbol ? "£2N§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":MessageFormat.format(messages.getString("NewUserEmailBody_2N"), arg0, arg1, arg2, arg3, arg4);
@@ -1753,13 +1755,6 @@ public class VegaResources
 	   */
 	public static String RecentlyUsedEmailAddresses(boolean symbol) {
 		return symbol ? "£4L£":messages.getString("RecentlyUsedEmailAddresses_4L");
-	}
-
-	/**
-	   * Refresh status [4M]
-	   */
-	public static String RefreshStatus(boolean symbol) {
-		return symbol ? "£4M£":messages.getString("RefreshStatus_4M");
 	}
 
 	/**
@@ -2561,13 +2556,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Do you want to acticate your user [{0}] on server\n{1}:{2}?\nSelect the storage location for the authentication file in the following dialog. [7T]
-	   */
-	public static String UserActicationQuestion(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£7T§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("UserActicationQuestion_7T"), arg0, arg1, arg2);
-	}
-
-	/**
 	   * The user was activated successfully. [7U]
 	   */
 	public static String UserActivationSuccess(boolean symbol) {
@@ -2666,7 +2654,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Connect as player with credentials [88]
+	   * Connect as player with the credentials [88]
 	   */
 	public static String ConnectAsPlayerWithCredentials(boolean symbol) {
 		return symbol ? "£88£":messages.getString("ConnectAsPlayerWithCredentials_88");
@@ -4332,7 +4320,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Attention! All server credentials will be deleted! [EU]
+	   * Attention! All server credentials and messages will be deleted! [EU]
 	   */
 	public static String ClearServerCredentialsAys(boolean symbol) {
 		return symbol ? "£EU£":messages.getString("ClearServerCredentialsAys_EU");
@@ -4343,5 +4331,33 @@ public class VegaResources
 	   */
 	public static String ServerAdminCredentialsCreated(boolean symbol, String arg0) {
 		return symbol ? "£EV§"+arg0+"£":MessageFormat.format(messages.getString("ServerAdminCredentialsCreated_EV"), arg0);
+	}
+
+	/**
+	   * Unsent messages [EW]
+	   */
+	public static String UnsentMessages(boolean symbol) {
+		return symbol ? "£EW£":messages.getString("UnsentMessages_EW");
+	}
+
+	/**
+	   * There are unsent messages. Do you really want to close the messenger? [EX]
+	   */
+	public static String UnsentMessages2(boolean symbol) {
+		return symbol ? "£EX£":messages.getString("UnsentMessages2_EX");
+	}
+
+	/**
+	   * New conversation [EY]
+	   */
+	public static String ConversationNew(boolean symbol) {
+		return symbol ? "£EY£":messages.getString("ConversationNew_EY");
+	}
+
+	/**
+	   * Delete conversation [EZ]
+	   */
+	public static String ConversationDelete(boolean symbol) {
+		return symbol ? "£EZ£":messages.getString("ConversationDelete_EZ");
 	}
 }

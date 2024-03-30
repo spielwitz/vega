@@ -17,6 +17,7 @@
 package uiBaseControls;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -30,6 +31,7 @@ import javax.swing.border.TitledBorder;
 public class PanelWithInsets extends JPanel
 {
 	private Panel panInner;
+	private Panel panBase;
 	
 	public PanelWithInsets(String title, LayoutManager lm)
 	{
@@ -47,7 +49,7 @@ public class PanelWithInsets extends JPanel
 	
 	private void initialize(String title, LayoutManager lm)
 	{
-		Panel panBase = new Panel(new GridBagLayout());
+		this.panBase = new Panel(new GridBagLayout());
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -66,9 +68,9 @@ public class PanelWithInsets extends JPanel
 		
 		this.panInner = new Panel(lm);
 		
-		panBase.add(panInner, c);
+		this.panBase.add(panInner, c);
 		
-		this.add(panBase, BorderLayout.CENTER);
+		this.add(this.panBase, BorderLayout.CENTER);
 		
 		if (title != null)
 		{
@@ -85,5 +87,11 @@ public class PanelWithInsets extends JPanel
 	public void addToInnerPanel(Component comp, Object constraints) // NO_UCD (unused code)
 	{
 		this.panInner.add(comp, constraints);
+	}
+	
+	public void setBackgroundColor(Color col)
+	{
+		this.panBase.setBackground(col);
+		this.panInner.setBackground(col);
 	}
 }
