@@ -30,6 +30,7 @@ class ServerCredentials implements Serializable
 {
 	static final int PASSWORD_MIN_LENGTH = 4;
 	private static final String ACTIVATION_CODE_SEPARATOR = "@";
+	private static Object lockObject = new Object();
 	
 	static String getActivationCode(ClientConfiguration clientConfiguration)
 	{
@@ -88,116 +89,146 @@ class ServerCredentials implements Serializable
 	
 	boolean areCredentialsLocked()
 	{
-		return 
-				this.credentialsEncrypted != null &&
-				this.password == null;
+		synchronized(lockObject)
+		{
+			return 
+					this.credentialsEncrypted != null &&
+					this.password == null;
+		}
 	}
 	
 	boolean changePassword(byte[] oldPassword, byte[] newPassword)
 	{
-		if (this.unlockCredentials(oldPassword))
+		synchronized(lockObject)
 		{
-			Hashtable<UUID, UserData> dict = this.decryptCredentials();
-			this.password = newPassword;
-			this.encryptCredentials(dict);
-			
-			return true;
-		}
-		else
-		{
-			return false;
+			if (this.unlockCredentials(oldPassword))
+			{
+				Hashtable<UUID, UserData> dict = this.decryptCredentials();
+				this.password = newPassword;
+				this.encryptCredentials(dict);
+				
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 	
 	void clear()
 	{
-		this.password = null;
-		this.adminCredentialsSelected = null;
-		this.userCredentialsSelected = null;
-		this.connectionActive = false;
-		this.credentialsEncrypted = null;
+		synchronized(lockObject)
+		{
+			this.password = null;
+			this.adminCredentialsSelected = null;
+			this.userCredentialsSelected = null;
+			this.connectionActive = false;
+			this.credentialsEncrypted = null;
+		}
 	}
 	
 	boolean containsCredentials()
 	{
-		return this.credentialsEncrypted != null;
+		synchronized(lockObject)
+		{
+			return this.credentialsEncrypted != null;
+		}
 	}
 	
 	void deleteCredentials(UUID key)
 	{
-		Hashtable<UUID,UserData> dict = this.decryptCredentials();
-		dict.remove(key);
-		this.encryptCredentials(dict);
+		synchronized(lockObject)
+		{
+			Hashtable<UUID,UserData> dict = this.decryptCredentials();
+			dict.remove(key);
+			this.encryptCredentials(dict);
+		}
 	}
 	
 	ServerCredentials getClone()
 	{
-		ServerCredentials clone = (ServerCredentials)CommonUtils.klon(this);
-		clone.password = this.password;
-		
-		return clone;
+		synchronized(lockObject)
+		{
+			ServerCredentials clone = (ServerCredentials)CommonUtils.klon(this);
+			clone.password = this.password;
+			
+			return clone;
+		}
 	}
 	
 	ArrayList<UUID> getCredentialKeys()
 	{
-		ArrayList<UUID> credentialKeys = new ArrayList<UUID>();
-		credentialKeys.addAll(this.decryptCredentials().keySet());
-		return credentialKeys;
+		synchronized(lockObject)
+		{
+			ArrayList<UUID> credentialKeys = new ArrayList<UUID>();
+			credentialKeys.addAll(this.decryptCredentials().keySet());
+			return credentialKeys;
+		}
 	}
 	
 	ClientConfiguration getCredentials(UUID key)
 	{
-		UserData userData = this.decryptCredentials().get(key);
-		if (userData == null) return null;
-		
-		return userData.config;
+		synchronized(lockObject)
+		{
+			UserData userData = this.decryptCredentials().get(key);
+			if (userData == null) return null;
+			
+			return userData.config;
+		}
 	}
 	
 	Messages getMessages()
 	{
-		if (this.password == null) return null;
-		if (this.userCredentialsSelected == null) return null;
-		
-		Hashtable<UUID,UserData> dict = this.decryptCredentials();
-		UserData userData = dict.get(this.userCredentialsSelected);
-		if (userData == null) return null;
-		
-		String userId = userData.config.getUserId();
-		
-		if (userData.messages == null)
+		synchronized(lockObject)
 		{
-			return new Messages(this.userCredentialsSelected, userId);
-		}
-		else
-		{
-			return userData.messages;
+			if (this.password == null) return null;
+			if (this.userCredentialsSelected == null) return null;
+			
+			Hashtable<UUID,UserData> dict = this.decryptCredentials();
+			UserData userData = dict.get(this.userCredentialsSelected);
+			if (userData == null) return null;
+			
+			String userId = userData.config.getUserId();
+			
+			if (userData.messages == null)
+			{
+				return new Messages(this.userCredentialsSelected, userId);
+			}
+			else
+			{
+				return userData.messages;
+			}
 		}
 	}
 	
 	boolean hasChanges(ServerCredentials other)
 	{
-		Hashtable<UUID,UserData> thisDict = this.decryptCredentials();
-		Hashtable<UUID,UserData> otherDict = other.decryptCredentials();
-
-		if (this.connectionActive != other.connectionActive) return true;
-		if (!Arrays.equals(this.password, other.password)) return true;
-		
-		if (this.userCredentialsSelected == null && other.userCredentialsSelected != null) return true;
-		if (this.userCredentialsSelected != null && other.userCredentialsSelected == null) return true;
-		if (this.userCredentialsSelected != null && other.userCredentialsSelected != null &&
-			!this.userCredentialsSelected.equals(other.userCredentialsSelected)) return true;
-		
-		if (this.adminCredentialsSelected == null && other.adminCredentialsSelected != null) return true;
-		if (this.adminCredentialsSelected != null && other.adminCredentialsSelected == null) return true;
-		if (this.adminCredentialsSelected != null && other.adminCredentialsSelected != null &&
-			!this.adminCredentialsSelected.equals(other.adminCredentialsSelected)) return true;
-		
-		if (thisDict.size() != otherDict.size()) return true;
-		
-		for (UUID credentialsKey: thisDict.keySet())
+		synchronized(lockObject)
 		{
-			if (!otherDict.containsKey(credentialsKey)) return true;
-			if (!thisDict.get(credentialsKey).config.equals(otherDict.get(credentialsKey).config)) return true;
+			Hashtable<UUID,UserData> thisDict = this.decryptCredentials();
+			Hashtable<UUID,UserData> otherDict = other.decryptCredentials();
+	
+			if (this.connectionActive != other.connectionActive) return true;
+			if (!Arrays.equals(this.password, other.password)) return true;
+			
+			if (this.userCredentialsSelected == null && other.userCredentialsSelected != null) return true;
+			if (this.userCredentialsSelected != null && other.userCredentialsSelected == null) return true;
+			if (this.userCredentialsSelected != null && other.userCredentialsSelected != null &&
+				!this.userCredentialsSelected.equals(other.userCredentialsSelected)) return true;
+			
+			if (this.adminCredentialsSelected == null && other.adminCredentialsSelected != null) return true;
+			if (this.adminCredentialsSelected != null && other.adminCredentialsSelected == null) return true;
+			if (this.adminCredentialsSelected != null && other.adminCredentialsSelected != null &&
+				!this.adminCredentialsSelected.equals(other.adminCredentialsSelected)) return true;
+			
+			if (thisDict.size() != otherDict.size()) return true;
+			
+			for (UUID credentialsKey: thisDict.keySet())
+			{
+				if (!otherDict.containsKey(credentialsKey)) return true;
+				if (!thisDict.get(credentialsKey).config.equals(otherDict.get(credentialsKey).config)) return true;
+			}
 		}
 		
 		return false;
@@ -207,50 +238,59 @@ class ServerCredentials implements Serializable
 	{
 		if (this.password == null) return;
 		
-		Hashtable<UUID,UserData> dict = this.decryptCredentials();
-		UserData userData = dict.get(key);
-		
-		if (userData == null)
+		synchronized(lockObject)
 		{
-			userData = new UserData();
+			Hashtable<UUID,UserData> dict = this.decryptCredentials();
+			UserData userData = dict.get(key);
+			
+			if (userData == null)
+			{
+				userData = new UserData();
+			}
+			
+			userData.config = credentials;
+			
+			dict.put(key, userData);
+			this.encryptCredentials(dict); 
 		}
-		
-		userData.config = credentials;
-		
-		dict.put(key, userData);
-		this.encryptCredentials(dict); 
 	}
 	
 	void setMessages(Messages messages)
 	{
 		if (this.password == null) return;
 		
-		Hashtable<UUID,UserData> dict = this.decryptCredentials();
-		UserData userData = dict.get(messages.getCredentialsKey());
-		if (userData == null) return;
-		
-		userData.messages = messages;
-		
-		dict.put(messages.getCredentialsKey(), userData);
-		this.encryptCredentials(dict); 
+		synchronized(lockObject)
+		{
+			Hashtable<UUID,UserData> dict = this.decryptCredentials();
+			UserData userData = dict.get(messages.getCredentialsKey());
+			if (userData == null) return;
+			
+			userData.messages = messages;
+			
+			dict.put(messages.getCredentialsKey(), userData);
+			this.encryptCredentials(dict); 
+		}
 	}
 	
 	boolean unlockCredentials(byte[] passwordBytes)
 	{
-		boolean passwordIsValid = true;
-		
-		this.password = passwordBytes;
-		
-		try
+		synchronized(lockObject)
 		{
-			this.decryptCredentials();
+			boolean passwordIsValid = true;
+			
+			this.password = passwordBytes;
+			
+			try
+			{
+				this.decryptCredentials();
+			}
+			catch (Exception x)
+			{
+				passwordIsValid = false;
+			}
+			
+			return passwordIsValid;
 		}
-		catch (Exception x)
-		{
-			passwordIsValid = false;
-		}
-		
-		return passwordIsValid;
 	}
 	
 	private Hashtable<UUID,UserData> decryptCredentials()
