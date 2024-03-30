@@ -30,4 +30,5 @@ interface IMessengerCallback
 	void pushNotificationFromMessenger(ArrayList<String> recipients, Message message);
 	void removeRecipientsString(String recipientsString);
 	void setMessagesByRecipientsRead(String recipientsString, boolean read);
+	void messengerClosed();
 }

@@ -748,9 +748,15 @@ public class Vega extends Frame // NO_UCD (use default)
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void messengerClosed()
+	{
+		this.config.setMessages(messages);
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
@@ -762,11 +768,11 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public void mousePressed(MouseEvent e) {
 	}
-	
+
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
-
+	
 	@Override
 	public void onConnectionStatusChanged(boolean connected)
 	{
@@ -775,7 +781,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		
 		this.updateConnectionAndMessageStatus();
 	}
-	
+
 	@Override
 	public void onMessageReceived(String sender, ArrayList<String> recipients, long dateCreated, String text)
 	{
@@ -791,7 +797,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			}
 		}
 	}
-
+	
 	@Override
 	public void onNewEvaluationAvailable(PayloadNotificationNewEvaluation payload)
 	{
@@ -813,7 +819,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		else
 			return false;
 	}
-	
+
 	@Override
 	public void pause(int milliseconds)
 	{
@@ -873,7 +879,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			this.messages.removeRecipientsString(recipientsString);
 		}
 	}
-
+	
 	@Override
 	public boolean rmiClientCheckRegistration(String clientId)
 	{
@@ -921,7 +927,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		else
 			return null;
 	}
-	
+
 	@Override
 	public void rmiKeyPressed(String clientId, String languageCode, int id, long when, int modifiers, int keyCode, char keyChart) throws RemoteException
 	{
@@ -930,7 +936,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		if (this.serverFunctions.isClientRegistered(clientId))
 			this.keyPressed(new KeyEventExtended(event, clientId, languageCode));
 	}
-
+	
 	@Override
 	public void saveGame(Game game, boolean autoSave)
 	{
@@ -1026,7 +1032,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.redrawScreen();
 		this.updateTitle();
 	}
-	
+
 	@Override
 	public void setMessagesByRecipientsRead(String recipientsString, boolean read)
 	{
@@ -1040,7 +1046,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			this.updateConnectionAndMessageStatus();
 		}
 	}
-
+	
 	@Override
 	public void updateDisplay(ScreenUpdateEvent event)
 	{
@@ -1077,7 +1083,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		this.tutorialPanel.setText(text, currentStep, totalSteps, enableNextButton);
 	}
-	
+
 	@Override
 	public void windowOpened(WindowEvent e)
 	{
@@ -1121,7 +1127,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		return this.config.isClientsInactiveWhileEnterMoves();
 	}
-
+	
 	VegaConfiguration getConfig()
 	{
 		return this.config;
@@ -1162,12 +1168,12 @@ public class Vega extends Frame // NO_UCD (use default)
 			return null;
 		}
 	}
-	
+
 	WebServer getWebserver()
 	{
 		return this.webserver;
 	}
-
+	
 	void setClientsInactiveWhileEnterMoves(boolean enabled)
 	{
 		this.config.setClientsInactiveWhileEnterMoves(enabled);
@@ -1203,7 +1209,7 @@ public class Vega extends Frame // NO_UCD (use default)
 
 		return result == MessageBoxResult.YES; 
 	}
-	
+
 	private void connectClient()
 	{
 		ClientConfiguration clientConfiguration = this.config.getClientConfiguration();
@@ -1218,7 +1224,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.client.start();
 		this.messages = this.config.getMessages();
 	}
-
+	
 	private void connectDisconnectClient()
 	{		
 		if (this.config.isServerCommunicationEnabled())
@@ -1272,7 +1278,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			}
 		}
 	}
-	
+
 	private JPopupMenu definePopupMenu()
 	{
 		JPopupMenu popupMenu = new JPopupMenu ();
@@ -1617,7 +1623,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	    	catch (Exception xx) {}
 	    }
 	}
-
+	
 	private void openServerGamesDialog()
 	{
 		this.inputEnabled = false;
@@ -1714,12 +1720,12 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.inputEnabled = true;
 		this.redrawScreen();
 	}
-	
+
 	private void redrawScreen ()
 	{
 		this.updateDisplay(new ScreenUpdateEvent(this, this.paintPanel.getScreenContent()));
 	}
-
+	
 	private void reloadCurrentGame()
 	{
 		this.inputEnabled = false;
@@ -1851,7 +1857,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			showServerError(this, response.getResponseInfo());
 		}
 	}
-	
+
 	private void stopTutorial()
 	{
 		this.tutorialPanel.setVisible(false);
@@ -1881,7 +1887,7 @@ public class Vega extends Frame // NO_UCD (use default)
 
 		return dlg.result == MessageBoxResult.OK;
 	}
-
+	
 	private void updateConnectionAndMessageStatus()
 	{
 		this.labConnectionStatus.setVisible(this.config.isServerCommunicationEnabled());
@@ -1948,7 +1954,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		else
 			this.setTitle(VegaResources.Vega(false) + fileName);
 	}
-	
+
 	private class WaitThread extends Thread
 	{
 		private int milliseconds;

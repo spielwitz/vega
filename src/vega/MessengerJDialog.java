@@ -234,6 +234,7 @@ class MessengerJDialog extends Dialog implements IListListener, IButtonListener
 	protected boolean confirmClose()
 	{
 		boolean hasUnsentMessages = false;
+		boolean close = true;
 		
 		for (ListItem listItem: this.listRecipients.getListItems())
 		{
@@ -246,15 +247,22 @@ class MessengerJDialog extends Dialog implements IListListener, IButtonListener
 			}
 		}
 		
-		if (!hasUnsentMessages) return true;
+		if (hasUnsentMessages)
+		{
+			MessageBoxResult result = MessageBox.showYesNo(
+					this, 
+					VegaResources.UnsentMessages2(false), 
+					VegaResources.UnsentMessages(false));
+			
+			close = result == MessageBoxResult.YES;
+		}
 		
-		MessageBoxResult result = MessageBox.showYesNo(
-				this, 
-				VegaResources.UnsentMessages2(false), 
-				VegaResources.UnsentMessages(false));
+		if (close)
+		{
+			this.callback.messengerClosed();
+		}
 		
-		System.out.println(result);
-		return result == MessageBoxResult.YES;
+		return close;
 	}
 
 	private void addNewConversation()
