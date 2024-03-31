@@ -1379,7 +1379,15 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		{
 			if (source == this.comboCredentialsUser)
 			{
-				serverCredentials.userCredentialsSelected = (UUID)selectedListItem.getHandle();
+				UUID credentialsKey = (UUID)selectedListItem.getHandle();
+				serverCredentials.userCredentialsSelected = credentialsKey;
+				int index = this.getListIndexByCredentialsKey(credentialsKey);
+				
+				if (index >= 0)
+				{
+					this.listUsers.setSelectedIndex(index);
+					this.listItemSelected(this.listUsers, null, index, 1);
+				}
 			}
 		}
 		
