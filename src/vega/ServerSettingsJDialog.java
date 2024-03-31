@@ -1035,14 +1035,24 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 								VegaUtils.toBytes(this.panUserDetails.tfPassword1.getPassword()), 
 								activationData);
 						
+						String fileContent = VegaResources.CredentialsTextFileInstructions(
+								false, 
+								reqMsgChangeUser.getName(), 
+								reqMsgChangeUser.getUserId(), 
+								clientConfiguration.getUrl(), 
+								Integer.toString(clientConfiguration.getPort()),
+								response.getResponseInfo().getServerBuild(),
+								base64);
+						
 						try (BufferedWriter bw = new BufferedWriter(new FileWriter(file.getAbsolutePath())))
 						{
-							bw.write(base64);
+							bw.write(fileContent);
 							
 							MessageBox.showInformation(
 									parent, 
 									VegaResources.SaveFileSuccess(false),
 									VegaResources.Success(false));
+							
 						} catch (IOException e)
 						{
 							MessageBox.showError(
