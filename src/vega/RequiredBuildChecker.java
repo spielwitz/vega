@@ -20,7 +20,7 @@ import java.awt.Frame;
 
 import common.Game;
 import common.VegaResources;
-import commonUi.DialogWindow;
+import commonUi.MessageBox;
 import commonUi.MessageWithLink;
 import commonUi.UiConstants;
 
@@ -35,7 +35,7 @@ class RequiredBuildChecker
 		
 		if (Game.BUILD.compareTo(buildRequired) < 0)
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					parent, 
 					new MessageWithLink(
 						parent,

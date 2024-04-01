@@ -70,8 +70,8 @@ import common.CommonUtils;
 import commonServer.PayloadNotificationMessage;
 import commonServer.PayloadNotificationNewEvaluation;
 import commonServer.ResponseMessageGamesAndUsers;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import commonUi.FontHelper;
 import commonUi.IHostComponentMethods;
 import commonUi.IServerMethods;
@@ -102,13 +102,13 @@ public class Vega extends Frame // NO_UCD (use default)
 		IVegaClientCallback,
 		IMessengerCallback
 {
-	transient private final static String FILE_SUFFIX = ".vega";
-	transient private final static String FILE_SUFFIX_BACKUP = ".BAK";
-	transient private final static String FILE_SUFFIX_IMPORT = ".VEG";
-	
 	static final String DEMO_GAME1 = "tutorial/Demo1.VEG";
 	static final String DEMO_GAME2 = "tutorial/Demo2.VEG";
 	static final String TUTORIAL = "/tutorial/Tutorial.json";
+	
+	transient private final static String FILE_SUFFIX = ".vega";
+	transient private final static String FILE_SUFFIX_BACKUP = ".BAK";
+	transient private final static String FILE_SUFFIX_IMPORT = ".VEG";
 	
 	static
 	{
@@ -125,6 +125,23 @@ public class Vega extends Frame // NO_UCD (use default)
 		new Vega();
 	}
 	
+	static void showDefaultCursor(Component parentComponent)
+	{
+		parentComponent.setCursor(Cursor.getDefaultCursor());
+	}
+	
+	static void showServerError(Component parentComponent, ResponseInfo info)
+	{
+		MessageBox.showError(
+				parentComponent,
+			    VegaResources.getString(info.getMessage()),
+			    VegaResources.ConnectionError(false));
+	}
+	static void showWaitCursor(Component parentComponent)
+	{
+		parentComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	}
+	
 	private static void parseCommandLineArguments(String[] args)
 	{
 		if (args.length == 1)
@@ -133,88 +150,68 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 	}
 	
-	static void showDefaultCursor(Component parentComponent)
-	{
-		parentComponent.setCursor(Cursor.getDefaultCursor());
-	}
-	static void showServerError(Component parentComponent, ResponseInfo info)
-	{
-		DialogWindow.showError(
-				parentComponent,
-			    VegaResources.getString(info.getMessage()),
-			    VegaResources.ConnectionError(false));
-	}
-	
-	static void showWaitCursor(Component parentComponent)
-	{
-		parentComponent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-	}
-	
-	private GameThread t;
-	
-	private GameThreadCommunicationStructure threadCommunicationStructure;
-	
-	private Game gameLastRawData;
-	private String fileNameLast;
+	private VegaClient client;
 	
 	private VegaConfiguration config;
-	private VegaDisplayFunctions serverFunctions;
-	private VegaClient client;
-    private boolean playersWaitingForInput;
-    private JPopupMenu popupMenu;
-    private JMenuItem menuTutorial;
-    private JMenuItem menuDemoGame1;
-    private JMenuItem menuDemoGame2;
-    private JMenuItem menuNewGame;
-    private JMenuItem menuLoad;
-    private JMenuItem menuEmailClipboard;
-    private JMenuItem menuParameters;
-    private JMenuItem menuEmailSend;
-    private JMenuItem menuSave;
-    private JMenuItem menuServerHighscores;
-    
-    private JMenuItem menuServerAdmin;
-    private JMenuItem menuServerGames;
-    
-    private JMenuItem menuServerCredentials;
-    
-    private JMenuItem menuLanguage;
-    
-    private JMenuItem menuOutputWindow;
-    private JMenuItem menuServer;
-	
-	private JMenuItem menuWebserver;
-	private JMenuItem menuHighscore;
-	private JMenuItem menuQuit;
-	private JMenuItem menuHelp;
-	private JMenuItem menuAbout;
-	private PanelScreenContent paintPanel;
-	private TutorialPanel tutorialPanel;
-	
-	private OutputWindow outputWindow;
-	private IconLabel labConnectionStatus;
-	private IconLabel labGames;
-	private IconLabel labMessages;
-	private IconLabel labMenu;
-	private ImageIcon iconConnected;
-	
-	private ImageIcon iconDisconnected;
-	private ImageIcon iconGames;
-	
-	private ImageIcon iconGamesNew;
-	
-	private ImageIcon iconMessages;
-	private ImageIcon iconMessagesNew;
-	
-	private boolean inputEnabled;
 	
 	private String currentGameId;
-
-	private WebServer webserver;
+	private String fileNameLast;
 	
+	private Game gameLastRawData;
+	private ImageIcon iconConnected;
+	private ImageIcon iconCredentialsLocked;
+    private ImageIcon iconDisconnected;
+    private ImageIcon iconGames;
+    private ImageIcon iconGamesNew;
+    private ImageIcon iconMessages;
+    private ImageIcon iconMessagesNew;
+    private boolean inputEnabled;
+    private IconLabel labConnectionStatus;
+    private IconLabel labGames;
+    private IconLabel labMenu;
+    private IconLabel labMessages;
+    private JMenuItem menuAbout;
+    private JMenuItem menuDemoGame1;
+    
+    private JMenuItem menuDemoGame2;
+    private JMenuItem menuEmailClipboard;
+    
+    private JMenuItem menuEmailSend;
+    
+    private JMenuItem menuHelp;
+    private JMenuItem menuHighscore;
+	
+	private JMenuItem menuLanguage;
+	private JMenuItem menuLoad;
+	private JMenuItem menuNewGame;
+	private JMenuItem menuOutputWindow;
+	private JMenuItem menuParameters;
+	private JMenuItem menuQuit;
+	private JMenuItem menuSave;
+	
+	private JMenuItem menuServer;
+	private JMenuItem menuServerGames;
+	private JMenuItem menuServerHighscores;
+	private JMenuItem menuServerSettings;
+	private JMenuItem menuTutorial;
+
+	private JMenuItem menuWebserver;
 	private Messages messages;
-		
 	private MessengerJDialog messenger;
+	private OutputWindow outputWindow;
+	private PanelScreenContent paintPanel;
+	private boolean playersWaitingForInput;
+	private JPopupMenu popupMenu;
+	
+	private VegaDisplayFunctions serverFunctions;
+	
+	private GameThread t;
+
+	private GameThreadCommunicationStructure threadCommunicationStructure;
+	
+	private TutorialPanel tutorialPanel;
+		
+	private WebServer webserver;
 	private Vega()
 	{
 		super("", new BorderLayout());
@@ -241,6 +238,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.paintPanel = new PanelScreenContent(this);
 		this.add(this.paintPanel, BorderLayout.CENTER);
 		
+		this.iconCredentialsLocked = new ImageIcon (ClassLoader.getSystemResource("credentialsLocked.png"));
 		this.iconConnected = new ImageIcon (ClassLoader.getSystemResource("connected.png"));
 		this.iconDisconnected = new ImageIcon (ClassLoader.getSystemResource("disconnected.png"));
 		this.iconGames = new ImageIcon (ClassLoader.getSystemResource("games.png"));
@@ -257,24 +255,28 @@ public class Vega extends Frame // NO_UCD (use default)
 		Toolbar toolbar = new Toolbar(this.labMenu);
 		
 		this.labMessages = new IconLabel(
-				this.iconMessages, 
-				this.iconMessagesNew,
+				new ImageIcon[] {
+						this.iconMessages, 
+						this.iconMessagesNew},
 				this);
 		this.labMessages.setVisible(false);
 		
 		toolbar.addIconLabel(this.labMessages, 0);
 		
 		this.labGames = new IconLabel(
-				this.iconGames,
-				this.iconGamesNew,
+				new ImageIcon[] {
+						this.iconGames,
+						this.iconGamesNew},
 				this);
 		this.labGames.setVisible(false);
 		
 		toolbar.addIconLabel(this.labGames, 1);
 		
 		this.labConnectionStatus = new IconLabel(
-				this.iconConnected,
-				this.iconDisconnected,
+				new ImageIcon[] {
+						this.iconCredentialsLocked,
+						this.iconConnected,
+						this.iconDisconnected},
 				this);
 		this.labConnectionStatus.setVisible(this.config.isServerCommunicationEnabled());
 		
@@ -323,7 +325,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			
 			dlg.setVisible(true);
 			
-			if (dlg.dlgResult == DialogWindowResult.OK)
+			if (dlg.dlgResult == MessageBoxResult.OK)
 			{
 				Game game = (Game)dlg.obj;
 				
@@ -461,24 +463,9 @@ public class Vega extends Frame // NO_UCD (use default)
 			this.inputEnabled = true;
 			this.redrawScreen();
 		}
-		else if (JMenuItem == this.menuServerAdmin)
+		else if (JMenuItem == this.menuServerSettings)
 		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			VegaServerAdminJDialog dlg = new VegaServerAdminJDialog(
-					this, 
-					this.config.getServerAdminCredentialFile());
-			dlg.setVisible(true);
-			
-			this.config.setServerAdminCredentialFile(dlg.serverAdminCredentialsFile);
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuServerCredentials)
-		{
-			this.openServerCredentialsDialog();
+			this.openServerSettingsDialog();
 		}
 		else if (JMenuItem == this.menuServerGames)
 		{
@@ -612,7 +599,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public String getClientUserIdForMessenger()
 	{
-		return this.client.getUserId();
+		return this.messages.getUserId();
 	}
 	
 	@Override
@@ -687,7 +674,15 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 		else if (source == this.labConnectionStatus)
 		{
-			this.openServerCredentialsDialog();
+			ServerCredentials serverCredentials = this.config.getServerCredentials();
+			if (serverCredentials.areCredentialsLocked())
+			{
+				this.unlockServerCredentials();
+			}
+			else
+			{
+				this.openServerSettingsDialog();
+			}
 		}
 	}
 	
@@ -753,9 +748,15 @@ public class Vega extends Frame // NO_UCD (use default)
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void messengerClosed()
+	{
+		this.config.setMessages(messages);
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
@@ -767,11 +768,11 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public void mousePressed(MouseEvent e) {
 	}
-	
+
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
-
+	
 	@Override
 	public void onConnectionStatusChanged(boolean connected)
 	{
@@ -780,7 +781,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		
 		this.updateConnectionAndMessageStatus();
 	}
-	
+
 	@Override
 	public void onMessageReceived(String sender, ArrayList<String> recipients, long dateCreated, String text)
 	{
@@ -796,7 +797,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			}
 		}
 	}
-
+	
 	@Override
 	public void onNewEvaluationAvailable(PayloadNotificationNewEvaluation payload)
 	{
@@ -818,7 +819,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		else
 			return false;
 	}
-	
+
 	@Override
 	public void pause(int milliseconds)
 	{
@@ -878,7 +879,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			this.messages.removeRecipientsString(recipientsString);
 		}
 	}
-
+	
 	@Override
 	public boolean rmiClientCheckRegistration(String clientId)
 	{
@@ -926,7 +927,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		else
 			return null;
 	}
-	
+
 	@Override
 	public void rmiKeyPressed(String clientId, String languageCode, int id, long when, int modifiers, int keyCode, char keyChart) throws RemoteException
 	{
@@ -935,7 +936,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		if (this.serverFunctions.isClientRegistered(clientId))
 			this.keyPressed(new KeyEventExtended(event, clientId, languageCode));
 	}
-
+	
 	@Override
 	public void saveGame(Game game, boolean autoSave)
 	{
@@ -1016,7 +1017,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			String errorText = game.toFile(file);
 			
 			if (errorText != null)
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 					    errorText,
 					    "");
@@ -1031,7 +1032,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.redrawScreen();
 		this.updateTitle();
 	}
-	
+
 	@Override
 	public void setMessagesByRecipientsRead(String recipientsString, boolean read)
 	{
@@ -1045,7 +1046,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			this.updateConnectionAndMessageStatus();
 		}
 	}
-
+	
 	@Override
 	public void updateDisplay(ScreenUpdateEvent event)
 	{
@@ -1082,7 +1083,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		this.tutorialPanel.setText(text, currentStep, totalSteps, enableNextButton);
 	}
-	
+
 	@Override
 	public void windowOpened(WindowEvent e)
 	{
@@ -1096,12 +1097,12 @@ public class Vega extends Frame // NO_UCD (use default)
 		{
 			this.config.setFirstTimeStart(false);
 			
-			DialogWindowResult result = DialogWindow.showYesNo(
+			MessageBoxResult result = MessageBox.showYesNo(
 					this, 
 					VegaResources.TutorialStart(false), 
 					VegaResources.TutorialStartTitle(false));
 			
-			if (result == DialogWindowResult.YES)
+			if (result == MessageBoxResult.YES)
 			{
 				this.loadTutorial();
 			}
@@ -1126,7 +1127,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		return this.config.isClientsInactiveWhileEnterMoves();
 	}
-
+	
 	VegaConfiguration getConfig()
 	{
 		return this.config;
@@ -1167,12 +1168,12 @@ public class Vega extends Frame // NO_UCD (use default)
 			return null;
 		}
 	}
-	
+
 	WebServer getWebserver()
 	{
 		return this.webserver;
 	}
-
+	
 	void setClientsInactiveWhileEnterMoves(boolean enabled)
 	{
 		this.config.setClientsInactiveWhileEnterMoves(enabled);
@@ -1192,7 +1193,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.inputEnabled = false;
 		this.redrawScreen();
 		
-		DialogWindowResult result = DialogWindow.showYesNo(
+		MessageBoxResult result = MessageBox.showYesNo(
 				this,
 				VegaResources.DoYouWantToQuitVega(false),
 				VegaResources.QuitVega(false));
@@ -1200,18 +1201,18 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.inputEnabled = true;
 		this.redrawScreen();
 		
-		if (result == DialogWindowResult.YES &&
+		if (result == MessageBoxResult.YES &&
 			this.client != null)
 		{
 			this.disconnectClient();
 		}
 
-		return result == DialogWindowResult.YES; 
+		return result == MessageBoxResult.YES; 
 	}
-	
+
 	private void connectClient()
 	{
-		ClientConfiguration clientConfiguration = ClientConfiguration.readFromFile(this.config.getServerUserCredentialsFile());
+		ClientConfiguration clientConfiguration = this.config.getClientConfiguration();
 		
 		if (clientConfiguration == null)
 		{
@@ -1221,9 +1222,29 @@ public class Vega extends Frame // NO_UCD (use default)
 		
 		this.client = new VegaClient(clientConfiguration, true, this);
 		this.client.start();
-		this.messages = Messages.readFromFile(this.client.getUserId());
+		this.messages = this.config.getMessages();
 	}
+	
+	private void connectDisconnectClient()
+	{		
+		if (this.config.isServerCommunicationEnabled())
+		{
+			if (this.client != null)
+			{
+				this.disconnectClient();
+			}
+			
+			this.connectClient();
+		}
+		else
+		{
+			this.disconnectClient();
+		}
 
+		this.updateConnectionAndMessageStatus();
+		this.setMenuEnabled();
+	}
+	
 	private void createBackup (String fileName) throws IOException
 	{
 		InputStream in = null;
@@ -1257,7 +1278,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			}
 		}
 	}
-	
+
 	private JPopupMenu definePopupMenu()
 	{
 		JPopupMenu popupMenu = new JPopupMenu ();
@@ -1349,13 +1370,9 @@ public class Vega extends Frame // NO_UCD (use default)
 	    this.menuLanguage.addActionListener(this);
 	    menuSettings.add(this.menuLanguage);
 	    
-	    this.menuServerCredentials = new JMenuItem(VegaResources.VegaServerCredentials(false));
-	    this.menuServerCredentials.addActionListener(this);
-	    menuSettings.add(this.menuServerCredentials);
-	    
-	    this.menuServerAdmin = new JMenuItem(VegaResources.AdministrateVegaServer(false));
-	    this.menuServerAdmin.addActionListener(this);
-	    menuSettings.add(this.menuServerAdmin);
+	    this.menuServerSettings = new JMenuItem(VegaResources.ServerSettings(false));
+	    this.menuServerSettings.addActionListener(this);
+	    menuSettings.add(this.menuServerSettings);
 	    
 	    this.menuServer = new JMenuItem(VegaResources.Terminalserver(false));
 	    this.menuServer.addActionListener(this);
@@ -1371,12 +1388,12 @@ public class Vega extends Frame // NO_UCD (use default)
 	    
 	    return popupMenu;
 	}
-	
+
 	private void disconnectClient()
 	{
 		if (this.client != null)
 		{
-			this.messages.writeToFile(this.client.getUserId());
+			this.config.setMessages(messages);
 			this.client.disconnect();
 		}
 		
@@ -1403,23 +1420,6 @@ public class Vega extends Frame // NO_UCD (use default)
 		{
 			this.playersWaitingForInput = response.getPayload();
 			this.updateConnectionAndMessageStatus();
-		}
-	}
-
-	private void showServerHighscores()
-	{
-		if (this.client == null)
-			return;
-		
-		Response<Highscores> response = this.client.getHighscores();
-		
-		if (response.getResponseInfo().isSuccess())
-		{
-			this.showHighscoreDialog(response.getPayload());
-		}
-		else
-		{
-			showServerError(this, response.getResponseInfo());
 		}
 	}
 
@@ -1532,7 +1532,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			
 			if (error == true)
 			{
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 					    errorText,
 					    VegaResources.LoadError(false));
@@ -1556,7 +1556,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			}
 		}
 		else
-			DialogWindow.showError(
+			MessageBox.showError(
 					this, 
 					VegaResources.FileNotExists(false), 
 					VegaResources.LoadError(false));
@@ -1623,46 +1623,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	    	catch (Exception xx) {}
 	    }
 	}
-
-	private void openServerCredentialsDialog()
-	{
-		this.inputEnabled = false;
-		this.redrawScreen();
-		
-		VegaServerCredentialsJDialog dlg = new VegaServerCredentialsJDialog(
-				this, 
-				this.config.isServerCommunicationEnabled(),
-				this.config.getServerUserCredentialsFile());
-		dlg.setVisible(true);
-		
-		if (dlg.ok)
-		{
-			this.config.setServerUserCredentialsFile(dlg.serverUserCredentialsFile);
-			this.config.setServerCommunicationEnabled(dlg.serverCommunicationEnabled);
-			
-			if (this.config.isServerCommunicationEnabled())
-			{
-				if (this.client != null)
-				{
-					this.disconnectClient();
-				}
-				
-				this.connectClient();
-				this.updateConnectionAndMessageStatus();
-			}
-			else
-			{
-				this.disconnectClient();
-			}
-			
-			this.setMenuEnabled();
-		}
-		
-		this.inputEnabled = true;
-		this.redrawScreen();
-
-	}
-
+	
 	private void openServerGamesDialog()
 	{
 		this.inputEnabled = false;
@@ -1670,7 +1631,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		
 		if (this.client == null)
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					this,
 				    VegaResources.ServerCredentialsNotEntered(false),
 				    VegaResources.Error(false));
@@ -1712,6 +1673,54 @@ public class Vega extends Frame // NO_UCD (use default)
 
 	}
 	
+	private void openServerSettingsDialog()
+	{
+		if (this.config.getServerCredentials().areCredentialsLocked())
+		{
+			if (!this.unlockServerCredentials())
+			{
+				return;
+			}
+		}
+		
+		this.inputEnabled = false;
+		this.redrawScreen();
+		
+		if (!this.config.getServerCredentials().containsCredentials())
+		{
+			ServerCredentialsPasswordJDialog dlg = 
+					new ServerCredentialsPasswordJDialog(
+							this, 
+							this.config.getServerCredentials(),
+							ServerCredentialsPasswordJDialogMode.ENTER_PASSWORD_FIRST_TIME);
+				
+			dlg.setVisible(true);
+			
+			if (dlg.result != MessageBoxResult.CANCEL)
+			{
+				this.config.setServerCredentials(dlg.getServerCredentials());
+			}
+			if (dlg.result != MessageBoxResult.OK)
+			{
+				this.inputEnabled = true;
+				this.redrawScreen();
+				return;
+			}
+		}
+
+		ServerSettingsJDialog dlg = new ServerSettingsJDialog(this, this.config.getServerCredentials());
+		dlg.setVisible(true);
+		
+		if (dlg.ok)
+		{
+			this.config.setServerCredentials(dlg.getServerCredentials());
+			this.connectDisconnectClient();
+		}
+		
+		this.inputEnabled = true;
+		this.redrawScreen();
+	}
+
 	private void redrawScreen ()
 	{
 		this.updateDisplay(new ScreenUpdateEvent(this, this.paintPanel.getScreenContent()));
@@ -1825,10 +1834,27 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 		else
 		{
-			DialogWindow.showInformation(
+			MessageBox.showInformation(
 					this, 
 					VegaResources.HighScoresNoEntries(false), 
 					VegaResources.HighScoreList(false));
+		}
+	}
+	
+	private void showServerHighscores()
+	{
+		if (this.client == null)
+			return;
+		
+		Response<Highscores> response = this.client.getHighscores();
+		
+		if (response.getResponseInfo().isSuccess())
+		{
+			this.showHighscoreDialog(response.getPayload());
+		}
+		else
+		{
+			showServerError(this, response.getResponseInfo());
 		}
 	}
 
@@ -1837,41 +1863,65 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.tutorialPanel.setVisible(false);
 	}
 
+	private boolean unlockServerCredentials()
+	{
+		this.inputEnabled = false;
+		this.redrawScreen();
+		
+		ServerCredentialsPasswordJDialog dlg = 
+				new ServerCredentialsPasswordJDialog(
+						this, 
+						this.config.getServerCredentials(),
+						ServerCredentialsPasswordJDialogMode.UNLOCK_CREDENTIALS);
+			
+		dlg.setVisible(true);
+		
+		if (dlg.result != MessageBoxResult.CANCEL)
+		{
+			this.config.setServerCredentials(dlg.getServerCredentials());
+			this.connectDisconnectClient();
+		}
+		
+		this.inputEnabled = true;
+		this.redrawScreen();
+
+		return dlg.result == MessageBoxResult.OK;
+	}
+	
 	private void updateConnectionAndMessageStatus()
 	{
 		this.labConnectionStatus.setVisible(this.config.isServerCommunicationEnabled());
-		this.labConnectionStatus.setIcon2(!(this.client != null && this.client.isConnected()));
 		
-		if (this.client != null && this.client.isConnected())
+		if (this.config.isServerCommunicationEnabled())
 		{
-			this.labConnectionStatus.setToolTipText(
-					VegaResources.ConnectedWithVegaServer(
-							false, 
-							this.client.getConfig().getUrl(), 
-							Integer.toString(this.client.getConfig().getPort()),
-							this.client.getConfig().getUserId()));
-		}
-		else
-		{
-			if (this.config.getServerAdminCredentialFile() == null)			
+			if (this.config.getServerCredentials().areCredentialsLocked())
+			{
+				this.labConnectionStatus.setIconIndex(0);
+				
 				this.labConnectionStatus.setToolTipText(
-					VegaResources.ServerCredentialsNotEntered(false));
+						VegaResources.ServerCredentialsLocked(false));
+				
+			}
+			else if (this.client != null && this.client.isConnected())
+			{
+				this.labConnectionStatus.setIconIndex(1);
+				
+				this.labConnectionStatus.setToolTipText(
+						VegaResources.ConnectedWithVegaServer(
+								false, 
+								ServerCredentials.getCredentialsDisplayName(this.client.getConfig())));
+			}
 			else
 			{
-				ClientConfiguration clientConfiguration = ClientConfiguration.readFromFile(this.config.getServerAdminCredentialFile());
+				this.labConnectionStatus.setIconIndex(2);
 				
-				if (clientConfiguration != null)
-				{
-					this.labConnectionStatus.setToolTipText(
-						VegaResources.ConnectionToServerNotEstablished(
-								false,
-								clientConfiguration.getUrl()));
-				}
+				this.labConnectionStatus.setToolTipText(
+						VegaResources.ConnectionToServerNotEstablished(false));
 			}
 		}
-
+				
 		this.labGames.setVisible(this.config.isServerCommunicationEnabled() && this.client != null && this.client.isConnected());
-		this.labGames.setIcon2(this.playersWaitingForInput);
+		this.labGames.setIconIndex(this.playersWaitingForInput ? 1 : 0);
 		this.labGames.setToolTipText(
 				this.playersWaitingForInput ?
 						VegaResources.PlayersWaitingForInput(false) :
@@ -1880,7 +1930,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.labMessages.setVisible(this.config.isServerCommunicationEnabled() && this.client != null && this.client.isConnected() && this.messages != null);
 		if (this.messages != null)
 		{
-			this.labMessages.setIcon2(this.messages.getUnreadMessages().size() > 0);
+			this.labMessages.setIconIndex(this.messages.getUnreadMessages().size() > 0 ? 1 : 0);
 			this.labMessages.setToolTipText(
 					this.messages.getUnreadMessages().size() > 0 ?
 							VegaResources.MessagesUnread(false) :
@@ -1904,11 +1954,11 @@ public class Vega extends Frame // NO_UCD (use default)
 		else
 			this.setTitle(VegaResources.Vega(false) + fileName);
 	}
-	
+
 	private class WaitThread extends Thread
 	{
-		private Vega parent;
 		private int milliseconds;
+		private Vega parent;
 		
 		public WaitThread(Vega parent, int milliseconds)
 		{

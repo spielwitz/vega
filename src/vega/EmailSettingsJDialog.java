@@ -29,7 +29,7 @@ import common.Colors;
 import common.Player;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBoxResult;
 import uiBaseControls.Button;
 import uiBaseControls.CheckBox;
 import uiBaseControls.Dialog;
@@ -45,22 +45,22 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 	private final static int COLUMNS_TEXT_FIELS = 40;
 	private final static String EMAIL_SELECT_BUTTON_TEXT = ".";
 	
-	private Button butOk;
-	private Button butCancel;
+	public MessageBoxResult dlgResult = MessageBoxResult.CANCEL; // NO_UCD (unused code)
 	String emailGameHost;
 	ArrayList<Player> players;
+	private Button butCancel;
 	
 	private Button butEmailGameHost;
 	
-	private CheckBox[] cbEmailEnabled;
-	private TextField[] tfEmailPlayer;
 	private Button[] butEmailPlayer;
+	private Button butOk;
+	private CheckBox[] cbEmailEnabled;
 	
-	private TextField tfEmailGameHost;
-		
 	private ArrayList<String> emailAdresses;
+		
+	private TextField tfEmailGameHost;
 	
-	public DialogWindowResult dlgResult = DialogWindowResult.CANCEL; // NO_UCD (unused code)
+	private TextField[] tfEmailPlayer;
 	
 	@SuppressWarnings("unchecked") 
 	EmailSettingsJDialog(
@@ -148,11 +148,12 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 		
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		
-		this.butOk = new Button(VegaResources.OK(false), this);
-		panButtons.add(this.butOk);
-		
 		this.butCancel = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butCancel);
+		
+		this.butOk = new Button(VegaResources.OK(false), this);
+		this.setDefaultButton(this.butOk);
+		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 		
@@ -189,7 +190,7 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 			
 			if (ok)
 			{
-				this.dlgResult = DialogWindowResult.OK;
+				this.dlgResult = MessageBoxResult.OK;
 				this.close();
 			}
 		}
@@ -218,6 +219,11 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 	}
 
 	@Override
+	public void textChanged(TextField source)
+	{
+	}
+
+	@Override
 	public void textFieldFocusLost(TextField source)
 	{
 		String a = source.getText().trim();
@@ -228,5 +234,11 @@ class EmailSettingsJDialog extends Dialog implements IButtonListener, ITextField
 		}
 		
 		Collections.sort(this.emailAdresses);		
+	}
+	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 }

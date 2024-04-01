@@ -28,7 +28,7 @@ import java.net.URLEncoder;
 import common.EmailTransportBase;
 import common.Game;
 import common.VegaResources;
-import commonUi.DialogWindow;
+import commonUi.MessageBox;
 
 class EmailToolkit
 {
@@ -61,13 +61,13 @@ class EmailToolkit
 	}
 	
 	static String getEmailObjectPayload(
-			String password, 
+			byte[] passwordBytes, 
 			EmailTransportBase obj)
 	{
 		obj.className = obj.getClass().getName();
 		obj.build = Game.BUILD;
 		
-		String base64 = VegaUtils.convertToBase64(obj, password);
+		String base64 = VegaUtils.convertToBase64(obj, passwordBytes);
 		
 		return BASE64_START + base64 + BASE64_END;
 	}
@@ -77,7 +77,7 @@ class EmailToolkit
 			String recipient, 
 			String subject, 
 			String bodyText, 
-			String password, 
+			byte[] passwordBytes, 
 			EmailTransportBase obj)
 	{
 		boolean ok = true;
@@ -89,7 +89,7 @@ class EmailToolkit
 			uriStr = String.format("mailto:%s?subject=%s&body=%s",
 		            recipient,
 		            urlEncode(subject),
-		            urlEncode(bodyText + "\n\n" + getEmailObjectPayload(password, obj)));
+		            urlEncode(bodyText + "\n\n" + getEmailObjectPayload(passwordBytes, obj)));
 		}
 		else
 			uriStr = String.format("mailto:%s?subject=%s&body=%s",
@@ -103,7 +103,7 @@ class EmailToolkit
 		}
 		catch (Exception x)
 		{
-			DialogWindow.showError(
+			MessageBox.showError(
 					parent, 
 					VegaResources.EmailOpenError(false, x.getMessage()), 
 					VegaResources.Error(false));
@@ -113,7 +113,7 @@ class EmailToolkit
 		return ok;
 	}
 	
-	static <T> EmailTransportBase parseEmail(String body, Class<T> expectedClass, String password)
+	static <T> EmailTransportBase parseEmail(String body, Class<T> expectedClass, byte[] passwordBytes)
 	{
 		body = body.replace(" ", "");
 		
@@ -131,7 +131,7 @@ class EmailToolkit
 		
 		try
 		{
-			obj = (EmailTransportBase)VegaUtils.convertFromBase64(base64, expectedClass, password);
+			obj = (EmailTransportBase)VegaUtils.convertFromBase64(base64, expectedClass, passwordBytes);
 			
 			if (obj != null && !obj.className.equals(expectedClass.getName()))
 				obj = null;

@@ -29,11 +29,12 @@ import java.util.Properties;
 import com.google.gson.Gson;
 
 import common.VegaResources;
+import spielwitz.biDiServer.ClientConfiguration;
 
 class VegaConfiguration
 {
-	private static final String PROPERTIES_FILE_NAME = "VegaProperties";
 	private static String fileName = "VegaConfiguration";
+	private static final String PROPERTIES_FILE_NAME = "VegaProperties";
 	private static Gson	serializer = new Gson();
 	
 	static VegaConfiguration get()
@@ -61,6 +62,11 @@ class VegaConfiguration
 
 		return config;
 	}
+	static void setFileName(String name)
+	{
+		fileName = name;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private static VegaConfiguration getConfigurationFromProperties()
 	{
@@ -93,15 +99,6 @@ class VegaConfiguration
 					(ArrayList<String>) VegaUtils.convertFromBase64(emailBase64, ArrayList.class, null);
 		}
 		
-		if (properties.containsKey("serverAdminCredentials"))
-			config.serverAdminCredentialFile = properties.getProperty("serverAdminCredentials");
-		
-		if (properties.containsKey("serverUserCredentials"))
-			config.serverUserCredentialsFile = properties.getProperty("serverUserCredentials");
-		
-		if (properties.containsKey("serverCommunicationEnabled"))
-			config.serverCommunicationEnabled = Boolean.parseBoolean(properties.getProperty("serverCommunicationEnabled"));
-		
 		if (properties.containsKey("language"))
 			config.locale = properties.getProperty("language");
 		
@@ -125,38 +122,45 @@ class VegaConfiguration
 		return config;
 	}
 	
-	static void setFileName(String name)
-	{
-		fileName = name;
-	}
-	
+	private boolean				clientsInactiveWhileEnterMoves;
 	private String 				directoryNameLast;
 	private ArrayList<String> 	emailAddresses;
-	private String				serverAdminCredentialFile;
-	private String				serverUserCredentialsFile;
-	private boolean				serverCommunicationEnabled;
-	private String				locale;
 	
 	private String				emailSeparator;
+	private boolean				firstTimeStart;
+	
+	private String				locale;
 	private String				myIpAddress;
+	private ServerCredentials	serverCredentials;
 	
 	private int					webserverPort;
-	
-	private boolean				clientsInactiveWhileEnterMoves;
-	
-	private boolean				firstTimeStart;
 	
 	VegaConfiguration()
 	{
 		this.emailAddresses = new ArrayList<String>();
+		this.serverCredentials = new ServerCredentials();
 		this.firstTimeStart = true;
 	}
 	
+	ClientConfiguration getClientConfiguration()
+	{
+		if (this.serverCredentials != null &&
+			!this.serverCredentials.areCredentialsLocked() &&
+			this.serverCredentials.connectionActive &&
+			this.serverCredentials.userCredentialsSelected != null)
+		{
+			return this.serverCredentials.getCredentials(this.serverCredentials.userCredentialsSelected);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	String getDirectoryNameLast()
 	{
 		return directoryNameLast;
 	}
-
 
 	ArrayList<String> getEmailAddresses()
 	{
@@ -168,54 +172,49 @@ class VegaConfiguration
 		return retval;
 	}
 
-
 	String getEmailSeparator()
 	{
 		return emailSeparator;
 	}
 
+	Messages getMessages()
+	{
+		if (this.serverCredentials == null) return null;
+		if (this.serverCredentials.areCredentialsLocked()) return null;
+		
+		return this.serverCredentials.getMessages();
+	}
 
 	String getMyIpAddress()
 	{
 		return myIpAddress;
 	}
 
-
-	String getServerAdminCredentialFile()
+	ServerCredentials getServerCredentials()
 	{
-		return serverAdminCredentialFile;
+		return serverCredentials;
 	}
-
-
-	String getServerUserCredentialsFile()
-	{
-		return serverUserCredentialsFile;
-	}
-
 
 	int getWebserverPort()
 	{
 		return webserverPort;
 	}
 
-
 	boolean isClientsInactiveWhileEnterMoves()
 	{
 		return clientsInactiveWhileEnterMoves;
 	}
-
 
 	boolean isFirstTimeStart()
 	{
 		return firstTimeStart;
 	}
 
-
 	boolean isServerCommunicationEnabled()
 	{
-		return serverCommunicationEnabled;
+		return this.serverCredentials != null &&
+			   this.serverCredentials.connectionActive;
 	}
-
 
 	void setClientsInactiveWhileEnterMoves(boolean clientsInactiveWhileEnterMoves)
 	{
@@ -223,13 +222,11 @@ class VegaConfiguration
 		this.writeToFile();
 	}
 
-
 	void setDirectoryNameLast(String directoryNameLast)
 	{
 		this.directoryNameLast = directoryNameLast;
 		this.writeToFile();
 	}
-
 
 	void setEmailAddresses(ArrayList<String> emailAddresses)
 	{
@@ -237,62 +234,51 @@ class VegaConfiguration
 		this.writeToFile();
 	}
 
-
 	void setEmailSeparator(String emailSeparator)
 	{
 		this.emailSeparator = emailSeparator;
 		this.writeToFile();
 	}
-
-
+	
 	void setFirstTimeStart(boolean firstTimeStart)
 	{
 		this.firstTimeStart = firstTimeStart;
 		this.writeToFile();
 	}
-
-
+	
 	void setLocale(String locale)
 	{
 		this.locale = locale;
 		this.writeToFile();
 	}
-
-
+	
+	void setMessages(Messages messages)
+	{
+		if (this.serverCredentials == null) return;
+		if (this.serverCredentials.areCredentialsLocked()) return;
+		
+		this.serverCredentials.setMessages(messages);
+		this.writeToFile();
+	}
+	
 	void setMyIpAddress(String myIpAddress)
 	{
 		this.myIpAddress = myIpAddress;
 		this.writeToFile();
 	}
-
-
-	void setServerAdminCredentialFile(String serverAdminCredentialFile)
+	
+	void setServerCredentials(ServerCredentials serverCredentials)
 	{
-		this.serverAdminCredentialFile = serverAdminCredentialFile;
+		this.serverCredentials = serverCredentials;
 		this.writeToFile();
 	}
-
-
-	void setServerCommunicationEnabled(boolean serverCommunicationEnabled)
-	{
-		this.serverCommunicationEnabled = serverCommunicationEnabled;
-		this.writeToFile();
-	}
-
-
-	void setServerUserCredentialsFile(String serverUserCredentialsFile)
-	{
-		this.serverUserCredentialsFile = serverUserCredentialsFile;
-		this.writeToFile();
-	}
-
+	
 	void setWebserverPort(int webserverPort)
 	{
 		this.webserverPort = webserverPort;
 		this.writeToFile();
 	}
-
-
+	
 	private boolean writeToFile()
 	{
 		boolean success = true;

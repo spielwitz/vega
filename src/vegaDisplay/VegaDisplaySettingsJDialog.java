@@ -29,7 +29,7 @@ import java.rmi.registry.Registry;
 import common.Game;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.DialogWindow;
+import commonUi.MessageBox;
 import commonUi.IServerMethods;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
@@ -42,18 +42,18 @@ import uiBaseControls.TextField;
 @SuppressWarnings("serial") 
 class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 {
-	private Button butConnect;
 	private Button butClose;
+	private Button butConnect;
 	private Button butGetMyIpAddress;
-	private TextField tfServerIpAddress;
-	private TextField tfMyIpAddress;
-	private PasswordField tfClientCode;
-	private TextField tfMyName;
-	private Label labStatus;
-
 	private VegaDisplayConfiguration config;
-	
+	private Label labStatus;
 	private VegaDisplay parent;
+	private PasswordField tfClientCode;
+	private TextField tfMyIpAddress;
+
+	private TextField tfMyName;
+	
+	private TextField tfServerIpAddress;
 	
 	VegaDisplaySettingsJDialog(
 			VegaDisplay parent,
@@ -139,11 +139,12 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		
-		this.butConnect = new Button(VegaResources.Connect(false), this);
-		panButtons.add(this.butConnect);
-		
 		this.butClose = new Button(VegaResources.Close(false), this);
 		panButtons.add(this.butClose);
+		
+		this.butConnect = new Button(VegaResources.Connect(false), this);
+		this.setDefaultButton(this.butConnect);
+		panButtons.add(this.butConnect);
 		
 		panBase.add(panButtons, BorderLayout.SOUTH);
 		
@@ -192,7 +193,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 						this.config.getMyName());
 				
 				if (errorMsg.length() > 0)
-					DialogWindow.showError(
+					MessageBox.showError(
 							this,
 							errorMsg,
 							VegaResources.Error(false));
@@ -202,7 +203,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 			catch (Exception e) {
 				this.setCursor(Cursor.getDefaultCursor());
 				
-				DialogWindow.showError(
+				MessageBox.showError(
 						this,
 						VegaResources.NoConnectionToServer(false, e.getMessage()),
 						VegaResources.Error(false));
@@ -216,6 +217,12 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		}
 	}
 	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+
 	private void updateConnectionStatus()
 	{
 		boolean authorized = false;
@@ -234,7 +241,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 			}
 			catch (Exception e)
 			{
-				text = VegaResources.ConnectionToServerNotEstablished(false, this.config.getServerIpAddress());
+				text = VegaResources.ConnectionToServerNotEstablished(false);
 			}
 
 			if (text.length() == 0)
@@ -250,10 +257,10 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		
 		this.labStatus.setText(text);
 	}
-
+	
 	private void updateSettings()
 	{
-		this.config.setClientCode(this.tfClientCode.getText());
+		this.config.setClientCode(new String(this.tfClientCode.getPassword()));
 		this.config.setMyName(this.tfMyName.getText());
 		this.config.setMyIpAddress(this.tfMyIpAddress.getText());
 		this.config.setServerIpAddress(this.tfServerIpAddress.getText());

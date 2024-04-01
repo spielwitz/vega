@@ -30,6 +30,7 @@ import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
 import uiBaseControls.IListListener;
 import uiBaseControls.List;
+import uiBaseControls.ListItem;
 import uiBaseControls.Panel;
 
 @SuppressWarnings("serial") 
@@ -37,15 +38,15 @@ class EmailAddressesJDialog extends Dialog
 			implements 	IButtonListener,
 						IListListener
 {
+	int selectedIndex = -1;
 	private Button butCancel;
-	private Button butSelect;
 	private Button butDelete;
 	
+	private Button butSelect;
 	private ArrayList<String> emailAddresses;
 	private List list;
-	private int[] seq;
 	
-	int selectedIndex = -1;
+	private int[] seq;
 	
 	EmailAddressesJDialog(
 			Component parent,
@@ -66,11 +67,12 @@ class EmailAddressesJDialog extends Dialog
 		this.butDelete = new Button(VegaResources.Delete(false), this);
 		panButtons.add(this.butDelete);
 
-		this.butSelect = new Button(VegaResources.Select(false), this);
-		panButtons.add(this.butSelect);
-		
 		this.butCancel = new Button(VegaResources.Close(false), this);
 		panButtons.add(this.butCancel);
+		
+		this.butSelect = new Button(VegaResources.Select(false), this);
+		this.setDefaultButton(this.butSelect);
+		panButtons.add(this.butSelect);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 		
@@ -110,6 +112,18 @@ class EmailAddressesJDialog extends Dialog
 		}
 	}
 	
+	@Override
+	public int[] sortListItems(ArrayList<ListItem> listItems)
+	{
+		return null;
+	}
+
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
+	}
+
 	private void close(boolean abort)
 	{
 		if (abort)
@@ -118,7 +132,7 @@ class EmailAddressesJDialog extends Dialog
 		this.setVisible(false);
 		this.dispose();
 	}
-
+	
 	private void refreshListModel()
 	{
 		Object[] objectList = this.emailAddresses.toArray();

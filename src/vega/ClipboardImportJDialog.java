@@ -25,8 +25,8 @@ import java.awt.Insets;
 
 import common.Game;
 import common.VegaResources;
-import commonUi.DialogWindow;
-import commonUi.DialogWindowResult;
+import commonUi.MessageBox;
+import commonUi.MessageBoxResult;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -39,20 +39,20 @@ import uiBaseControls.TextArea;
 class ClipboardImportJDialog<T> extends Dialog
 				implements IButtonListener
 {
-	private Button butOk;
+	MessageBoxResult dlgResult = MessageBoxResult.CANCEL;
+	Object obj;
 	private Button butCancel;
-	private Button butImport;
 	private Button butDelete;
 	
-	private PasswordField tfPassword;
+	private Button butImport;
 	
-	private TextArea taImportData;
+	private Button butOk;
 	private Class<T> expectedClass;
 	
 	private boolean passwordProtected;
 	
-	DialogWindowResult dlgResult = DialogWindowResult.CANCEL;
-	Object obj;
+	private TextArea taImportData;
+	private PasswordField tfPassword;
 	
 	ClipboardImportJDialog(
 			Component parent, 
@@ -107,11 +107,11 @@ class ClipboardImportJDialog<T> extends Dialog
 		this.butDelete = new Button(VegaResources.Delete(false), this);
 		panButtons.add(this.butDelete);
 		
-		this.butOk = new Button(VegaResources.OK(false), this);
-		panButtons.add(this.butOk);
-		
 		this.butCancel = new Button(VegaResources.Cancel(false), this);
 		panButtons.add(this.butCancel);
+		
+		this.butOk = new Button(VegaResources.OK(false), this);
+		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
 				
@@ -130,14 +130,17 @@ class ClipboardImportJDialog<T> extends Dialog
 			this.taImportData.setText(EmailToolkit.getClipboardContent());
 		else if (source == this.butOk)
 		{
-			String password = this.passwordProtected ?
-								new String(this.tfPassword.getPassword()) :
+			byte[] passwordBytes = this.passwordProtected ?
+								VegaUtils.toBytes(this.tfPassword.getPassword()) :
 								null;
 								
 			boolean ok = false;
 			try
 			{
-				this.obj = EmailToolkit.parseEmail(this.taImportData.getText(), this.expectedClass, password);
+				this.obj = EmailToolkit.parseEmail(
+						this.taImportData.getText(), 
+						this.expectedClass, 
+						passwordBytes);
 				ok = (this.obj != null);
 			}
 			catch (Exception x)
@@ -147,26 +150,31 @@ class ClipboardImportJDialog<T> extends Dialog
 			
 			if (ok)
 			{
-				this.dlgResult = DialogWindowResult.OK;
+				this.dlgResult = MessageBoxResult.OK;
 				this.close();
 			}
 			else
 			{
 				this.obj = null;
-				if (password == null)
-					DialogWindow.showError(
+				if (passwordBytes == null)
+					MessageBox.showError(
 							this,
 							VegaResources.ClipboardImportError(false,
 									Game.BUILD),
 							VegaResources.LoadError(false));
 				else
-					DialogWindow.showError(
+					MessageBox.showError(
 							this,
 							VegaResources.ClipboardImportErrorPassword(false,
 									Game.BUILD),
 							VegaResources.LoadError(false));
 			}
 		}
-		
+	}
+
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 }

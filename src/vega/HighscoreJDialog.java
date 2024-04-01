@@ -141,6 +141,7 @@ class HighscoreJDialog extends Dialog implements IButtonListener
 		Panel panButtons = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		
 		this.butOk = new Button(VegaResources.OK(false), this);
+		this.setDefaultButton(this.butOk);
 		panButtons.add(this.butOk);
 		
 		this.addToInnerPanel(panButtons, BorderLayout.SOUTH);
@@ -153,6 +154,12 @@ class HighscoreJDialog extends Dialog implements IButtonListener
 	public void buttonClicked(Button source)
 	{
 		this.close();
+	}
+	
+	@Override
+	protected boolean confirmClose()
+	{
+		return true;
 	}
 	
 	private String padStringWithSpaces(String text, int length)

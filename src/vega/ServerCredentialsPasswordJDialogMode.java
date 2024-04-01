@@ -14,12 +14,11 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package commonUi;
+package vega;
 
-public enum DialogWindowResult 
+enum ServerCredentialsPasswordJDialogMode
 {
-	OK,
-	CANCEL,
-	YES,
-	NO
+	UNLOCK_CREDENTIALS,
+	ENTER_PASSWORD_FIRST_TIME,
+	CHANGE_PASSWORD
 }

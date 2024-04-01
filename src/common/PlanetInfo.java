@@ -21,13 +21,11 @@ public class PlanetInfo
 	public int positionX;
 	public int positionY;
 	public byte colorIndex;
-	public boolean isHomePlanet;
 
-	PlanetInfo(int positionX, int positionY, byte colorIndex, boolean isHomePlanet)
+	PlanetInfo(int positionX, int positionY, byte colorIndex)
 	{
 		this.positionX = positionX;
 		this.positionY = positionY;
 		this.colorIndex = colorIndex;
-		this.isHomePlanet = isHomePlanet;
 	}
 }

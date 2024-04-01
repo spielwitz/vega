@@ -19,4 +19,5 @@ package uiBaseControls;
 public interface IComboBoxListener
 {
 	void comboBoxItemSelected(ComboBox source, String selectedValue);
+	void comboBoxItemSelected(ComboBox source, ListItem selectedListItem);
 }

@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -41,25 +44,26 @@ import common.VegaResources;
 
 class VegaUtils
 {
-	static <T> Object convertFromBase64(String base64, Class<T> expectedClass, String password)
+	static <T> Object convertFromBase64(String base64, Class<T> expectedClass, byte[] passwordBytes)
 	{
 		Object retval = null;
 		Gson serializer = new Gson();
-		
-		try {
+
+		try
+		{
 			byte[] byteArray = Base64.getMimeDecoder().decode(base64.getBytes());
-			
-			if (password != null)
-				byteArray = aesDecrypt(byteArray, password);
-			
+
+			if (passwordBytes != null)
+				byteArray = aesDecrypt(byteArray, passwordBytes);
+
 			ByteArrayInputStream in = new ByteArrayInputStream(byteArray);
-			GZIPInputStream zipin = new GZIPInputStream (in);
+			GZIPInputStream zipin = new GZIPInputStream(in);
 			ObjectInputStream iis = new ObjectInputStream(zipin);
 			String json = (String) iis.readObject();
 			retval = serializer.fromJson(json, expectedClass);
 			in.close();
-		}
-		catch (Exception e) {
+		} catch (Exception e)
+		{
 			retval = null;
 		}
 
@@ -69,70 +73,70 @@ class VegaUtils
 	static String convertMillisecondsToString(long dateLong)
 	{
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-		
+
 		Instant instant = Instant.ofEpochMilli(dateLong);
-	    LocalDateTime date = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
-	    
-	    return date.format(formatter);
+		LocalDateTime date = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+		return date.format(formatter);
 	}
-	
-	static String convertToBase64(Object obj, String password)
+
+	static String convertToBase64(Object obj, byte[] passwordBytes)
 	{
 		String outString = "";
-		
+
 		Gson serializer = new Gson();
 		String json = serializer.toJson(obj);
-		
-		try {
+
+		try
+		{
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			GZIPOutputStream zipout = new GZIPOutputStream(out);
 			ObjectOutputStream oos = new ObjectOutputStream(zipout);
 			oos.writeObject(json);
 			oos.close();
-			
+
 			byte[] byteArray = out.toByteArray();
-			
-			if (password != null)
-				byteArray = aesEncrypt(byteArray, password);
-			
+
+			if (passwordBytes != null)
+				byteArray = aesEncrypt(byteArray, passwordBytes);
+
 			outString = Base64.getMimeEncoder().encodeToString(byteArray);
-		}
-			catch (Exception e) {
+		} catch (Exception e)
+		{
 		}
 
 		return outString;
 	}
-		
-	static String formatDateTimeString(String unformattedString)
-	{
-		String jahr = unformattedString.substring(0, 4);
-		String monat = unformattedString.substring(4, 6);
-		String tag = unformattedString.substring(6, 8);
-		
-		String stunde = unformattedString.substring(8, 10);
-		String minute = unformattedString.substring(10, 12);
-		
-		return VegaResources.ReleaseFormatted(
-				false, tag, monat, jahr, stunde, minute);
-	}
-	
+
 	static String formatDateString(String unformattedString)
 	{
 		String jahr = unformattedString.substring(0, 4);
 		String monat = unformattedString.substring(4, 6);
 		String tag = unformattedString.substring(6, 8);
-		
+
 		return VegaResources.DateFormatted(false, tag, monat, jahr);
 	}
-	
-	static byte[] readAllBytes(InputStream inputStream) throws IOException 
+
+	static String formatDateTimeString(String unformattedString)
+	{
+		String jahr = unformattedString.substring(0, 4);
+		String monat = unformattedString.substring(4, 6);
+		String tag = unformattedString.substring(6, 8);
+
+		String stunde = unformattedString.substring(8, 10);
+		String minute = unformattedString.substring(10, 12);
+
+		return VegaResources.ReleaseFormatted(false, tag, monat, jahr, stunde, minute);
+	}
+
+	static byte[] readAllBytes(InputStream inputStream) throws IOException
 	{
 		int bufLen = 4000;
 		byte[] buf = new byte[bufLen];
 		int readLen;
 		IOException exception = null;
 
-		try 
+		try
 		{
 			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream())
 			{
@@ -141,56 +145,61 @@ class VegaUtils
 
 				return outputStream.toByteArray();
 			}
-	    } 
-		catch (IOException e)
+		} catch (IOException e)
 		{
 			exception = e;
 			throw e;
-		} 
-		finally 
+		} finally
 		{
 			if (exception == null)
 				inputStream.close();
 			else
 			{
-				try 
+				try
 				{
 					inputStream.close();
-				}
-				catch (IOException e)
+				} catch (IOException e)
 				{
 					exception.addSuppressed(e);
 				}
 			}
 		}
 	}
-	
-	private static byte[] aesDecrypt(byte[] encryptedBytes, String password) throws Exception
+
+	static byte[] toBytes(char[] chars)
+	{
+		if (chars == null) return null;
+		CharBuffer charBuffer = CharBuffer.wrap(chars);
+		ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
+		byte[] bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
+		return bytes;
+	}
+
+	private static byte[] aesDecrypt(byte[] encryptedBytes, byte[] passwordBytes) throws Exception
 	{
 		Cipher cipher2 = Cipher.getInstance("AES");
-		cipher2.init(Cipher.DECRYPT_MODE, aesGetKey(password));
+		cipher2.init(Cipher.DECRYPT_MODE, aesGetKey(passwordBytes));
 		byte[] decrypted = cipher2.doFinal(encryptedBytes);
-		
+
 		return decrypted;
 	}
 
-	private static byte[] aesEncrypt(byte[] unencryptedBytes, String password) throws Exception
+	private static byte[] aesEncrypt(byte[] unencryptedBytes, byte[] passwordBytes) throws Exception
 	{
 		Cipher cipher = Cipher.getInstance("AES");
-		cipher.init(Cipher.ENCRYPT_MODE, aesGetKey(password));
+		cipher.init(Cipher.ENCRYPT_MODE, aesGetKey(passwordBytes));
 		byte[] encrypted = cipher.doFinal(unencryptedBytes);
-		
+
 		return encrypted;
 	}
 
-	private static SecretKeySpec aesGetKey(String password) throws Exception
+	private static SecretKeySpec aesGetKey(byte[] passwordBytes) throws Exception
 	{
-		byte[] key = password.getBytes("UTF-8");
 		MessageDigest sha = MessageDigest.getInstance("SHA-256");
-		key = sha.digest(key);
-		key = Arrays.copyOf(key, 16); 
+		byte[] key = sha.digest(passwordBytes);
+		key = Arrays.copyOf(key, 16);
 		SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-		
+
 		return secretKeySpec;
-	}	
+	}
 }

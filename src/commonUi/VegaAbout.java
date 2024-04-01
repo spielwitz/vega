@@ -24,7 +24,7 @@ public class VegaAbout
 {
 	public static void show(Frame parent)
 	{
-		DialogWindow.showInformation(
+		MessageBox.showInformation(
 				parent, 
 				new MessageWithLink(
 						parent,

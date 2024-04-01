@@ -40,11 +40,6 @@ public class TextArea extends JScrollPane
 		this.setViewportView(this.textArea);
 	}
 	
-	public void appendText(String text)
-	{
-		this.textArea.append(text);
-	}
-	
 	public Document getDocument()
 	{
 		return this.textArea.getDocument();

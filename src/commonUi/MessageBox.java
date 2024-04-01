@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 
 import common.VegaResources;
 
-public class DialogWindow 
+public class MessageBox 
 {
 	public static int showCustomButtons(Component parent, Object text, String title, String[] buttons)
 	{
@@ -67,7 +67,7 @@ public class DialogWindow
 				null, buttons, buttons[0]);
 	}
 
-	public static DialogWindowResult showOkCancel(Component parent, Object text, String title)
+	public static MessageBoxResult showOkCancel(Component parent, Object text, String title)
 	{
 		String[] buttons = new String[] 
 				{
@@ -84,12 +84,12 @@ public class DialogWindow
 					null, buttons, buttons[0]);
 
 		if (result == 0)
-			return DialogWindowResult.OK;
+			return MessageBoxResult.OK;
 		else
-			return DialogWindowResult.CANCEL;
+			return MessageBoxResult.CANCEL;
 	}
 	
-	public static DialogWindowResult showYesNo(Component parent, Object text, String title)
+	public static MessageBoxResult showYesNo(Component parent, Object text, String title)
 	{
 		String[] buttons = new String[] 
 				{
@@ -106,12 +106,12 @@ public class DialogWindow
 					null, buttons, buttons[0]);
 
 		if (result == 0)
-			return DialogWindowResult.YES;
+			return MessageBoxResult.YES;
 		else
-			return DialogWindowResult.NO;
+			return MessageBoxResult.NO;
 	}
 	
-	public static DialogWindowResult showYesNoCancel(Component parent, Object text, String title)
+	public static MessageBoxResult showYesNoCancel(Component parent, Object text, String title)
 	{
 		String[] buttons = new String[] 
 				{
@@ -129,10 +129,10 @@ public class DialogWindow
 					null, buttons, buttons[0]);
 
 		if (result == 0)
-			return DialogWindowResult.YES;
+			return MessageBoxResult.YES;
 		else if (result == 1)
-			return DialogWindowResult.NO;
+			return MessageBoxResult.NO;
 		else
-			return DialogWindowResult.CANCEL;
+			return MessageBoxResult.CANCEL;
 	}
 }
