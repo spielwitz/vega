@@ -730,7 +730,7 @@ class EnterMoves
 					
 					try
 					{
-						offenderCount = Integer.parseInt(input.getInputText());
+						offenderCount = Math.abs(Integer.parseInt(input.getInputText()));
 						break;
 					}
 					catch (Exception x)
@@ -754,7 +754,7 @@ class EnterMoves
 					
 					try
 					{
-						defenderCount = Integer.parseInt(input.getInputText());
+						defenderCount = Math.abs(Integer.parseInt(input.getInputText()));
 						break;
 					}
 					catch (Exception x)
@@ -766,7 +766,6 @@ class EnterMoves
 			
 			Tuple<Integer,Integer> countsAfterFight = Evaluation.fight(
 					this.game.getConsole(), 
-					VegaResources.Attacker(false),
 					offenderCount, 
 					defenderCount);
 			

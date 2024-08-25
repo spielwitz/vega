@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: F0
+		// Last used symbolic key: F2
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -396,7 +396,6 @@ public class VegaResources
 		symbolDict.put("9Z","Arrival_9Z");
 		symbolDict.put("A0","AssignUsersToAllPlayers_A0");
 		symbolDict.put("A1","AttackFailed_A1");
-		symbolDict.put("A2","Attacker_A2");
 		symbolDict.put("A3","Attributes_A3");
 		symbolDict.put("A4","AuthenticationFile_A4");
 		symbolDict.put("A5","AutomaticSave_A5");
@@ -575,6 +574,8 @@ public class VegaResources
 		symbolDict.put("EY","ConversationNew_EY");
 		symbolDict.put("EZ","ConversationDelete_EZ");
 		symbolDict.put("F0","CredentialsTextFileInstructions_F0");
+		symbolDict.put("F1","FightAttacker_F1");
+		symbolDict.put("F2","FightDefender_F2");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -3117,13 +3118,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Attacker [A2]
-	   */
-	public static String Attacker(boolean symbol) {
-		return symbol ? "£A2£":messages.getString("Attacker_A2");
-	}
-
-	/**
 	   * Attributes [A3]
 	   */
 	public static String Attributes(boolean symbol) {
@@ -4367,5 +4361,19 @@ public class VegaResources
 	   */
 	public static String CredentialsTextFileInstructions(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4, String arg5) {
 		return symbol ? "£F0§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"§"+arg5+"£":MessageFormat.format(messages.getString("CredentialsTextFileInstructions_F0"), arg0, arg1, arg2, arg3, arg4, arg5);
+	}
+
+	/**
+	   * Attacker: {0} [{1}] -> {2} [{3}] [F1]
+	   */
+	public static String FightAttacker(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
+		return symbol ? "£F1§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":MessageFormat.format(messages.getString("FightAttacker_F1"), arg0, arg1, arg2, arg3);
+	}
+
+	/**
+	   * Defender: {0} [{1}] -> {2} [{3}] [F2]
+	   */
+	public static String FightDefender(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
+		return symbol ? "£F2§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":MessageFormat.format(messages.getString("FightDefender_F2"), arg0, arg1, arg2, arg3);
 	}
 }

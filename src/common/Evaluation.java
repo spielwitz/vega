@@ -26,7 +26,7 @@ class Evaluation
 {
 	private static final double BAR_LENGTH_CHARS = 20;
 	
-	static Tuple<Integer,Integer> fight(Console console, String offenderName, int offenderCount, int defenderCount)
+	static Tuple<Integer,Integer> fight(Console console, int offenderCount, int defenderCount)
 	{
 		int offenderCountAfterFight = offenderCount;
 		int defenderCountAfterFight = defenderCount;
@@ -39,39 +39,35 @@ class Evaluation
 				defenderCountAfterFight--;
 		}
 		
-		String offenderCountString = Integer.toString(offenderCount);
-		String defenderCountString = Integer.toString(defenderCount);
+		int maxValue =
+				Math.max(
+					Math.max(
+							Math.max(offenderCount, defenderCount),
+							offenderCountAfterFight),
+					defenderCountAfterFight);
 		
-		String offenderCountAfterFightString = Integer.toString(offenderCountAfterFight);
-		String defenderCountAfterFightString = Integer.toString(defenderCountAfterFight);
+		int digits = 
+				maxValue > 0 ?
+						(int)Math.log10(maxValue) + 1 :
+						1;
 		
-		int digitsOffender = Math.max(offenderCountString.length(), offenderCountAfterFightString.length());
-		int digitsDefender = Math.max(defenderCountString.length(), defenderCountAfterFightString.length());
-		
-		double maxCount = Math.max(1, Math.max(offenderCount, defenderCount));
-		
-		console.appendText(VegaResources.Fight(
+		console.appendText(VegaResources.FightAttacker(
 				true, 
-				offenderName,
-				CommonUtils.padString(offenderCountString, digitsOffender), 
-				getBar(offenderCount, maxCount),
-				CommonUtils.padString(defenderCountString, digitsDefender), 
-				getBar(defenderCount, maxCount)));
+				CommonUtils.padString(Integer.toString(offenderCount), digits), 
+				getBar(offenderCount, maxValue),
+				CommonUtils.padString(Integer.toString(offenderCountAfterFight), digits), 
+				getBar(offenderCountAfterFight, maxValue)));
 		
 		console.lineBreak();
 		
-		if (offenderCount > 0 && defenderCount > 0)
-		{
-			console.appendText(VegaResources.Fight(
-					true, 
-					offenderName,
-					CommonUtils.padString(offenderCountAfterFightString, digitsOffender), 
-					getBar(offenderCountAfterFight, maxCount),
-					CommonUtils.padString(defenderCountAfterFightString, digitsDefender), 
-					getBar(defenderCountAfterFight, maxCount)));
-			
-			console.lineBreak();
-		}
+		console.appendText(VegaResources.FightDefender(
+				true, 
+				CommonUtils.padString(Integer.toString(defenderCount), digits), 
+				getBar(defenderCount, maxValue),
+				CommonUtils.padString(Integer.toString(defenderCountAfterFight), digits), 
+				getBar(defenderCountAfterFight, maxValue)));
+		
+		console.lineBreak();
 		
 		return new Tuple<Integer,Integer>(offenderCountAfterFight, defenderCountAfterFight);
 	}
@@ -639,8 +635,6 @@ class Evaluation
 
 	private void battleshipsAttack(Planet planet, Ship ship, int planetIndex, int day)
 	{
-		String playerNameOffender = ship.getOwnerName(this.game);
-
 		int offenderCount = ship.getCount();
 		int defenderCount = planet.getShipsCount(ShipType.BATTLESHIPS) + planet.getDefensiveBattleshipsCount();
 		int defenderCountStart = defenderCount;
@@ -655,7 +649,6 @@ class Evaluation
 		
 		Tuple<Integer,Integer> countsAfterFight = fight(
 				this.game.getConsole(), 
-				playerNameOffender,
 				offenderCount, 
 				defenderCount);
 		
@@ -681,7 +674,7 @@ class Evaluation
 				this.game.getConsole().appendText(
 						VegaResources.PlanetConquered(
 								true,
-								playerNameOffender));
+								ship.getOwnerName(this.game)));
 			}
 		}
 		else
