@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: F2
+		// Last used symbolic key: F3
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -304,8 +304,8 @@ public class VegaResources
 		symbolDict.put("7E","TutorialText14_7E");
 		symbolDict.put("7F","TutorialText15_7F");
 		symbolDict.put("7G","TutorialText16_7G");
-		symbolDict.put("7H","TutorialText17_7H");
-		symbolDict.put("7I","TutorialText18_7I");
+		symbolDict.put("7H","TutorialText18_7H");
+		symbolDict.put("7I","TutorialText17_7I");
 		symbolDict.put("7J","TutorialText19_7J");
 		symbolDict.put("7K","TutorialText20_7K");
 		symbolDict.put("7L","TutorialText21_7L");
@@ -576,6 +576,7 @@ public class VegaResources
 		symbolDict.put("F0","CredentialsTextFileInstructions_F0");
 		symbolDict.put("F1","FightAttacker_F1");
 		symbolDict.put("F2","FightDefender_F2");
+		symbolDict.put("F3","TutorialText07a_F3");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -2376,7 +2377,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Battleships]\n\nYou can conquer and defend planets with battleships. Battleships fly 2 light years per year. You can send battleships out individually or in fleets. Battleships can be recognized by the symbol ![img=tutorial/iconFighters12x12.png]. The battleships that are available on the planets for attacks and defense can be seen in the list at the top right of the screen. At the start of the game, there are 350 battleships on the players' planets, and 0 to 10 on the neutral planets.\n\nIn addition, a planet can have up to 700 defensive battleships that contribute to defense but cannot be used for attacks. Defensive battleships are not visible in the list. To see whether a foreign planet has defensive battleships, you must send a spy to the planet or form an alliance with the owner. The players' starting planets have 350 defensive battleships, the neutral planets have 0.\n\nWhen a foreign battleship fleet attacks a planet, the attacker's and defender's battleships fight each other individually. An attacking ship has a 45% chance of survival, a defending ship 55%. The battle is decided as soon as one party has lost all of its battleships. If the attacker's battleships remain, the attacker takes over the planet with its remaining battleships. [73]
+	   * ![size=1.5;color=1;bold|Battleships]\n\nYou can conquer and defend planets with battleships. Battleships fly 2 light years per year. You can send battleships out individually or in fleets. Battleships can be recognized by the symbol ![img=tutorial/iconFighters12x12.png]. The battleships that are available on the planets for attacks and defense can be seen in the list at the top right of the screen. At the start of the game, there are 350 battleships on the players' planets, and 0 to 10 on the neutral planets.\n\nIn addition, a planet can have up to 700 defensive battleships that contribute to defense but cannot be used for attacks. Defensive battleships are not visible in the list. To see whether a foreign planet has defensive battleships, you must send a spy to the planet or form an alliance with the owner. The players' starting planets have 350 defensive battleships, the neutral planets have 0.\n\nWhen a foreign battleship fleet attacks a planet, the attacker's and defender's battleships fight each other one by one. An attacking ship has a 45% chance of survival, a defending ship 55%. The battle is decided as soon as one party has lost all of its battleships. If the attacker's battleships remain, the attacker takes over the planet with its remaining battleships. [73]
 	   */
 	public static String TutorialText03(boolean symbol) {
 		return symbol ? "£73£":messages.getString("TutorialText03_73");
@@ -2404,7 +2405,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Launch more battleships]\n\nPress the right arrow key. You will see the spaceships that are currently on the move at the top right, i.e. your 35 battleships on the way from ![color=3|LM] to ![color=2|JM].\n\nPress the right arrow key several times to see more information until you see the list of battleships again.\n\n![color=1|Task]: ![italic;color=1|Send 35 battleships from your planet LM to planet JJ.] [77]
+	   * ![size=1.5;color=1;bold|Launch more battleships (1)]\n\nPress the right arrow key. You will see the spaceships that are currently on the move at the top right, i.e. your 35 battleships on the way from ![color=3|LM] to ![color=2|JM].\n\nPress the right arrow key several times to see more information until you see the list of battleships again.\n\n![color=1|Task]: ![italic;color=1|Send 35 battleships from your planet LM to planet JJ.] [77]
 	   */
 	public static String TutorialText07(boolean symbol) {
 		return symbol ? "£77£":messages.getString("TutorialText07_77");
@@ -2425,14 +2426,14 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The annual evaluation]\n\nYou have now entered all the moves for year 1 for the tutorial. In a real game, you would launch further attacks on neighboring planets with your remaining 280 battleships, change your planet's production ![color=3|LM] or buy other types of spaceships.\n\nComplete the move entry with the ![inverse|TAB] key and confirm the query with ![inverse|1] "Yes". Start the evaluation with ![inverse|TAB] "Evaluation" and go through the evaluation with the ![inverse|TAB] or ![inverse|0] keys.\n\nThe computer implements the moves and moves the spaceships in 365 day increments. You can see on which day a spaceship reaches its destination in the spaceship list at the top right. If two events take place on the same day, the order is decided by chance. On the last day of the year, the first battleships reach the planets ![color=2|CF], ![color=2|CJ], ![color=2|LD], ![color=2|NF] and ![color=2|JM].\n\nAt the end of the evaluation, all planets produce $ and new battleships. After that, the new year 2 begins and you are back in the main menu. You see that a battleship fleet, a minelayer and two spies are still on the way, which will reach their goals in the following evaluations. [7A]
+	   * ![size=1.5;color=1;bold|The annual evaluation]\n\nYou have now entered all the moves for year 1 for the tutorial. In a real game, you would launch further attacks on neighboring planets with your remaining 200 battleships, change your planet's production ![color=3|LM] or buy other types of spaceships.\n\nComplete the move entry with the ![inverse|TAB] key and confirm the query with ![inverse|1] "Yes". Start the evaluation with ![inverse|TAB] "Evaluation" and go through the evaluation with the ![inverse|TAB] or ![inverse|0] keys.\n\nThe computer implements the moves and moves the spaceships in 365 day increments. You can see on which day a spaceship reaches its destination in the spaceship list at the top right. If two events take place on the same day, the order is decided by chance. On the last day of the year, the first battleships reach the planets ![color=2|CF], ![color=2|CJ], ![color=2|LD], ![color=2|NF] and ![color=2|JM].\n\nAt the end of the evaluation, all planets produce $ and new battleships. After that, the new year 2 begins and you are back in the main menu. You see that a battleship fleet, a minelayer and two spies are still on the way, which will reach their goals in the following evaluations. [7A]
 	   */
 	public static String TutorialText10(boolean symbol) {
 		return symbol ? "£7A£":messages.getString("TutorialText10_7A");
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The situation in year 2]\n\nStart the move entry for your user ![color=3|Alice] again. You have successfully conquered the planet ![color=3|JM]. Open the planet editor for the new planet ![color=3|JM]. The planet is very valuable with its annual production of $8. Therefore, you should protect it with defensive battleships, but the planet does not have enough $ for that.\n\nYou also see that ![color=4|Bob] has sent a spy to your new planet ![color=3|JM]. The spy reaches his goal in year 3.\n\nYour battleships to planet ![color=2|JJ] reach their goal in year 2. There are now 12 battleships on the planet, but this should not be a problem for the 35 attacking battleships. [7B]
+	   * ![size=1.5;color=1;bold|The situation in year 2]\n\nStart the move entry for your user ![color=3|Alice] again. You have successfully conquered the planet ![color=3|JM]. Open the planet editor for the new planet ![color=3|JM]. The planet is very valuable with its annual production of $8. Therefore, you should protect it with defensive battleships, but the planet does not have enough $ for that.\n\nYou also see that ![color=4|Bob] has sent a spy to your new planet ![color=3|JM]. The spy reaches his goal in year 3.\n\nYour battleships to planet ![color=2|JJ] reach their goal in year 2. There are now 12 battleships on the planet, but this should not be a problem for the 35 attacking battleships.\n\n![color=5|Carol], as if she had sensed your attack on planet ![color=2|LG], has sent a minelayer to sector ![color=2|LH] for a 100 mine. Learn more about mines in the next step. [7B]
 	   */
 	public static String TutorialText11(boolean symbol) {
 		return symbol ? "£7B£":messages.getString("TutorialText11_7B");
@@ -2467,28 +2468,28 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Launch a patrol]\n\nSend the patrol from the planet ![color=3|JM] to meet the alien spy so that the spy gets into the patrol's observation circle and is captured.\n\n![color=1|Task]: ![italic;color=1|Send a patrol in "mission" mode from the planet JM to sector IL.] [7G]
+	   * ![size=1.5;color=1;bold|Launch a patrol]\n\nSend the patrol from the planet ![color=3|JM] towards the alien spy so that the spy gets into the patrol's observation circle and is captured.\n\n![color=1|Task]: ![italic;color=1|Send a patrol in "mission" mode from the planet JM to sector IL.] [7G]
 	   */
 	public static String TutorialText16(boolean symbol) {
 		return symbol ? "£7G£":messages.getString("TutorialText16_7G");
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Evaluation of year 3]\n\nComplete the turn input for year 3 and start the evaluation.\n\nYour patrol detects and captures the foreign spy. The spy now waits for you to send him to another planet on the next turn input. He will fly there in "transfer" mode, i.e. he can be re-deployed from the target planet. Your patrol flies on to sector ![color=2|IL], which it will reach in year 4. There it will turn around and return to planet ![color=3|JM].\n\nMeanwhile, ![color=5|Carol] has laid a 100-strength mine in sector LH. You will learn how mines work in the next step.\n\nAfter the evaluation, start the turn input for year 4. You will be asked for a new destination planet for the captured spy.\n\n![color=1|Task]: ![italic;color=1|Send the captured spy to planet JM.] [7H]
-	   */
-	public static String TutorialText17(boolean symbol) {
-		return symbol ? "£7H£":messages.getString("TutorialText17_7H");
-	}
-
-	/**
-	   * ![size=1.5;color=1;bold|Mines]\n\n![img=tutorial/mines.png]\n\nWith mines you can make sectors of the playing field impassable for battleships. Send a mine from a planet into a sector. There the minelayer turns into a live mine and destroys battleships that cross the sector boundaries, including your own battleships. You can recognize minelayers by the symbol ![img=tutorial/iconMineLayer12x12.png]. Minelayers fly 2 light years per year. Minelayers can transfer them to one of your planets to use them from there.\n\nThere are 50, 100, 250 and 500 mines. A 50 mine can destroy up to 50 battleships before it disappears. Accordingly, a 100 mine can destroy 100 battleships, and so on. If you place more mines in a mined sector, the strengths of the mines add up to a large mine. You can recognize the strength of a mine by the number in the diamond symbol.\n\n![size=1.5;color=1;bold|Minesweeper]\n\nSend a minesweeper to a sector or planet. On the way there, it flies at 1 light year/year and removes the mines from all the sectors it flies through. If the minesweeper's destination is a sector, it turns around and flies back to its starting planet at 2 light years/year, but does not clear any mines on the way back.\n\nYou can recognize minesweepers by the symbol ![img=tutorial/iconMineSweeper12x12.png]. [7I]
+	   * ![size=1.5;color=1;bold|Evaluation of year 3]\n\nComplete the turn input for year 3 and start the evaluation.\n\nYour patrol detects and captures the foreign spy. The spy now waits for you to send him to another planet on the next turn input. He will fly there in "transfer" mode, i.e. he can be re-deployed from the target planet. Your patrol flies on to sector ![color=2|IL], which it will reach in year 4. There it will turn around and return to planet ![color=3|JM].\n\nMeanwhile, ![color=5|Carol] has placed a mine with a strength of 100 in the sector ![color=2|LH]. Shortly afterwards, your 80 battleships enter the mined sector and are destroyed. The mine then only has a strength of 20.\n\nAfter the evaluation, start the turn input for year 4. You will be asked for a new destination planet for the captured spy.\n\n![color=1|Task]: ![italic;color=1|Send the captured spy to planet JM.] [7H]
 	   */
 	public static String TutorialText18(boolean symbol) {
-		return symbol ? "£7I£":messages.getString("TutorialText18_7I");
+		return symbol ? "£7H£":messages.getString("TutorialText18_7H");
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The Black Hole]\n\nIn the evaluation of year 8, the black hole appears for the first time in a random location. In each evaluation, it moves 2 light years further in a random direction. All spaceships that are within a radius of 0.5 light years around the black hole are lost. If the black hole enters a sector with mines, all mines there are cleared. After a random number of years, the black hole disappears and after some time appears in a random location.\n\nThe black hole has the symbol ![img=tutorial/iconBlackHole12x12.png].\n\n![size=1.5;color=1;bold|Neutral battleship fleets]\n\nIn the evaluations of years 10, 15, 20, 25, etc., neutral battleship fleets start, flying from a random sector to a random planet. If a neutral fleet conquers a planet, the planet becomes neutral again. The planet's production output is halved. [7J]
+	   * ![size=1.5;color=1;bold|Mines]\n\n![img=tutorial/mines.png]\n\nWith mines you can make sectors of the playing field impassable for battleships. Send a mine from a planet into a sector. There the minelayer turns into a live mine and destroys battleships that cross the sector boundaries, including your own battleships. You can recognize minelayers by the symbol ![img=tutorial/iconMineLayer12x12.png]. Minelayers fly 2 light years per year. You can transfer minelayers to one of your planets to use them from there.\n\nThere are 50, 100, 250 and 500 mines. A 50 mine can destroy up to 50 battleships before it disappears. Accordingly, a 100 mine can destroy 100 battleships, and so on. If you place more mines in a mined sector, the strengths of the mines add up to a large mine. You can recognize the strength of a mine by the number in the diamond symbol.\n\n![size=1.5;color=1;bold|Minesweeper]\n\nSend a minesweeper to a sector or planet. On the way there, it flies at 1 light year/year and removes the mines from all the sectors it flies through. If the minesweeper's destination is a sector, it turns around and flies back to its starting planet at 2 light years/year, but does not clear any mines on the way back.\n\nYou can recognize minesweepers by the symbol ![img=tutorial/iconMineSweeper12x12.png]. [7I]
+	   */
+	public static String TutorialText17(boolean symbol) {
+		return symbol ? "£7I£":messages.getString("TutorialText17_7I");
+	}
+
+	/**
+	   * ![size=1.5;color=1;bold|The black hole]\n\nIn the evaluation of year 8, the black hole appears for the first time in a random location. In each evaluation, it moves 2 light years further in a random direction. All spaceships that are within a radius of 0.5 light years around the black hole are lost. If the black hole enters a sector with mines, all mines there are cleared. After a random number of years, the black hole disappears and after some time appears in a random location.\n\nThe black hole has the symbol ![img=tutorial/iconBlackHole12x12.png].\n\n![size=1.5;color=1;bold|Neutral battleship fleets]\n\nIn the evaluations of years 10, 15, 20, 25, etc., neutral battleship fleets start, flying from a random sector to a random planet. If a neutral fleet conquers a planet, the planet becomes neutral again. The planet's production output is halved. [7J]
 	   */
 	public static String TutorialText19(boolean symbol) {
 		return symbol ? "£7J£":messages.getString("TutorialText19_7J");
@@ -4375,5 +4376,12 @@ public class VegaResources
 	   */
 	public static String FightDefender(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
 		return symbol ? "£F2§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":MessageFormat.format(messages.getString("FightDefender_F2"), arg0, arg1, arg2, arg3);
+	}
+
+	/**
+	   * ![size=1.5;color=1;bold|Launch more battleships (2)]\n\n![color=1|Task]: ![italic;color=1|Send 80 battleships from your planet LM to planet LG.] [F3]
+	   */
+	public static String TutorialText07a(boolean symbol) {
+		return symbol ? "£F3£":messages.getString("TutorialText07a_F3");
 	}
 }

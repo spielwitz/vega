@@ -203,6 +203,26 @@ class Tutorial implements Serializable
 				new TutorialStep(
 						VegaResources.TutorialText07(true),
 						expectedMove));
+		
+		// 7a: Launch more battleships
+		Ship ship07a = new Ship(
+				0,
+				12,
+				new Point(12, 11),
+				new Point(6, 11),
+				ShipType.BATTLESHIPS,
+				80,
+				0,
+				false,
+				true,
+				null);
+
+		expectedMove = new Move(0, ship07a, null);
+
+		this.steps.add(
+				new TutorialStep(
+						VegaResources.TutorialText07a(true),
+						expectedMove));
 
 		// 8: Buy a spy
 		Hashtable<ShipType, Integer> ships08 = new Hashtable<ShipType, Integer>();
@@ -259,6 +279,13 @@ class Tutorial implements Serializable
 				new TutorialStep(
 						VegaResources.TutorialText11(true),
 						null));
+
+		// 17: Mines
+		this.steps.add(
+				new TutorialStep(
+						VegaResources.TutorialText17(true),
+						null,
+						true));
 
 		// 12: Buy a transporter
 		planetBefore = planetAfter;
@@ -354,20 +381,13 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText16(true),
 						expectedMove));
 
-		// 17: Evaluation of year 3
+		// 18: Evaluation of year 3
 		expectedMove = new Move(null, UUID.randomUUID(), 3);
 		
 		this.steps.add(
 				new TutorialStep(
-						VegaResources.TutorialText17(true),
-						expectedMove));
-
-		// 18: Mines
-		this.steps.add(
-				new TutorialStep(
 						VegaResources.TutorialText18(true),
-						null,
-						true));
+						expectedMove));
 		
 		// 19: The Black Hole
 				this.steps.add(
@@ -397,7 +417,7 @@ class Tutorial implements Serializable
 		this.numberOfMovesByYear = new ArrayList<Integer>();
 
 		// Year 0
-		this.numberOfMovesByYear.add(5);
+		this.numberOfMovesByYear.add(6);
 
 		Hashtable<Integer,ArrayList<Move>> moves = new Hashtable<Integer,ArrayList<Move>>();
 
