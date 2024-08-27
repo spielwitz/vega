@@ -103,37 +103,37 @@ class Tutorial implements Serializable
 
 	private void defineSteps()
 	{
-		// 0
+		// 0: VEGA
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText00(true),
 						null));
 
-		// 1
+		// 1: The game board
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText01(true),
 						null));
 
-		// 2
+		// 2: The year
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText02(true),
 						null));
 
-		// 3
+		// 3: Battleships
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText03(true),
 						null));
 
-		// 4
+		// 4: Planets
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText04(true),
 						null));
 
-		// 5
+		// 5: The planet editor
 		Hashtable<ShipType, Integer> ships05 = new Hashtable<ShipType, Integer>();
 		ships05.put(ShipType.BATTLESHIPS, 350);
 
@@ -164,7 +164,7 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText05(true),
 						expectedMove));
 
-		// 6
+		// 6: Launch battleships
 		Ship ship06 = new Ship(
 				0,
 				3,
@@ -184,7 +184,7 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText06(true),
 						expectedMove));
 
-		// 7
+		// 7: Launch more battleships
 		Ship ship07 = new Ship(
 				0,
 				10,
@@ -204,7 +204,7 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText07(true),
 						expectedMove));
 
-		// 8
+		// 8: Buy a spy
 		Hashtable<ShipType, Integer> ships08 = new Hashtable<ShipType, Integer>();
 		ships08.put(ShipType.BATTLESHIPS, 0);
 		ships08.put(ShipType.SPY, 1);
@@ -228,7 +228,7 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText08(true),
 						expectedMove));
 
-		// 9
+		// 9: Launch a spy
 		Ship ship09 = new Ship(
 				0,
 				15,
@@ -248,19 +248,19 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText09(true),
 						expectedMove));
 
-		// 10
+		// 10: The annual evaluation
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText10(true),
 						null));
 
-		// 11
+		// 11: The situation in year 2
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText11(true),
 						null));
 
-		// 12
+		// 12: Buy a transporter
 		planetBefore = planetAfter;
 
 		Hashtable<ShipType, Integer> ships12After = new Hashtable<ShipType, Integer>();
@@ -284,7 +284,7 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText12(true),
 						expectedMove));
 
-		// 13
+		// 13: Launch a transporter
 		Ship ship13 = new Ship(
 				0,
 				3,
@@ -303,13 +303,13 @@ class Tutorial implements Serializable
 				new TutorialStep(
 						VegaResources.TutorialText13(true),
 						expectedMove));
-		// 14
+		// 14: Evaluation of year 2
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText14(true),
 						null));
 
-		// 15
+		// 15: Buy a patrol
 		planetBefore = planetAfter;
 
 		Hashtable<ShipType, Integer> ships15After = new Hashtable<ShipType, Integer>();
@@ -334,7 +334,7 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText15(true),
 						expectedMove));
 
-		// 16
+		// 16: Launch a patrol
 		Ship ship16 = new Ship(
 				3,
 				-1,
@@ -354,7 +354,7 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText16(true),
 						expectedMove));
 
-		// 17
+		// 17: Evaluation of year 3
 		expectedMove = new Move(null, UUID.randomUUID(), 3);
 		
 		this.steps.add(
@@ -362,28 +362,28 @@ class Tutorial implements Serializable
 						VegaResources.TutorialText17(true),
 						expectedMove));
 
-		// 18
+		// 18: Mines
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText18(true),
 						null,
 						true));
 		
-		// 19
+		// 19: The Black Hole
 				this.steps.add(
 						new TutorialStep(
 								VegaResources.TutorialText19(true),
 								null,
 								true));
 
-		// 20
+		// 20: Alliances
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText20(true),
 						null,
 						true));
 
-		// 21
+		// 21: End of the tutorial
 		this.steps.add(
 				new TutorialStep(
 						VegaResources.TutorialText21(true),
