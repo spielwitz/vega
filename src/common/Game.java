@@ -569,6 +569,7 @@ public class Game extends EmailTransportBase implements Serializable
 		this.prepareYearSetPrice(ShipType.MONEY_PRODUCTION);
 		this.prepareYearSetPrice(ShipType.BATTLESHIP_PRODUCTION);
 		this.prepareYearSetPrice(ShipType.DEFENSIVE_BATTLESHIPS);
+		this.prepareYearSetPrice(ShipType.BONUS);
 		this.prepareYearSetPrice(ShipType.MINE50);
 		this.prepareYearSetPrice(ShipType.MINE100);
 		this.prepareYearSetPrice(ShipType.MINE250);
@@ -605,7 +606,8 @@ public class Game extends EmailTransportBase implements Serializable
 					playerIndex,
 					false,
 					true,
-					null); 				
+					null,
+					0); 				
 
   			ArrayList<Move> moves = new ArrayList<Move>();
   	
@@ -2660,14 +2662,7 @@ public class Game extends EmailTransportBase implements Serializable
 				}
 				else if (shipTypeDisplay == ShipType.DEFENSIVE_BATTLESHIPS)
 				{
-					if (planet.getDefensiveBattleshipsCount() > 0)
-					{
-						shipCount = Integer.toString(planet.getDefensiveBattleshipsCount());
-					}
-					else
-					{
-						shipCount = "-";
-					}
+					shipCount = planet.getDefensiveBattleshipsCount() + "/" + planet.getBonus();
 				}
 				else if (shipTypeDisplay == ShipType.MONEY_PRODUCTION)
 				{

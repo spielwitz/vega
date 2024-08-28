@@ -175,7 +175,8 @@ class Tutorial implements Serializable
 				0,
 				false,
 				true,
-				null);
+				null,
+				0);
 
 		expectedMove = new Move(0, ship06, null);
 
@@ -195,7 +196,8 @@ class Tutorial implements Serializable
 				0,
 				false,
 				true,
-				null);
+				null,
+				0);
 
 		expectedMove = new Move(0, ship07, null);
 
@@ -215,7 +217,8 @@ class Tutorial implements Serializable
 				0,
 				false,
 				true,
-				null);
+				null,
+				0);
 
 		expectedMove = new Move(0, ship07a, null);
 
@@ -259,7 +262,8 @@ class Tutorial implements Serializable
 				0,
 				false,
 				true,
-				null);
+				null,
+				0);
 
 		expectedMove = new Move(0, ship09, null);
 
@@ -322,7 +326,8 @@ class Tutorial implements Serializable
 				0,
 				false,
 				true,
-				null);
+				null,
+				0);
 
 		expectedMove = new Move(0, ship13, null);
 
@@ -372,7 +377,8 @@ class Tutorial implements Serializable
 				0,
 				false,
 				true,
-				null);
+				null,
+				0);
 
 		expectedMove = new Move(3, ship16, null);
 
@@ -464,7 +470,8 @@ class Tutorial implements Serializable
 								1,
 								false,
 								true,
-								null),
+								null,
+								0),
 						null));
 
 		movesPlayer1.add(
@@ -479,7 +486,8 @@ class Tutorial implements Serializable
 								1,
 								false,
 								true,
-								null),
+								null,
+								0),
 						null));
 
 		movesPlayer1.add(
@@ -494,7 +502,8 @@ class Tutorial implements Serializable
 								1,
 								false,
 								true,
-								null),
+								null,
+								0),
 						null));
 
 		moves.put(1, movesPlayer1);
@@ -542,7 +551,8 @@ class Tutorial implements Serializable
 								2,
 								false,
 								true,
-								null),
+								null,
+								0),
 						null));
 
 		movesPlayer2.add(
@@ -557,7 +567,8 @@ class Tutorial implements Serializable
 								2,
 								false,
 								true,
-								null),
+								null,
+								0),
 						null));
 		
 		movesPlayer2.add(
@@ -572,7 +583,8 @@ class Tutorial implements Serializable
 								2,
 								false,
 								true,
-								null),
+								null,
+								0),
 						null));
 
 		moves.put(2, movesPlayer2);

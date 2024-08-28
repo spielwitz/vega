@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: F3
+		// Last used symbolic key: F5
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -577,6 +577,8 @@ public class VegaResources
 		symbolDict.put("F1","FightAttacker_F1");
 		symbolDict.put("F2","FightDefender_F2");
 		symbolDict.put("F3","TutorialText07a_F3");
+		symbolDict.put("F4","BattleBonus_F4");
+		symbolDict.put("F5","BattleBonusShort_F5");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -3546,7 +3548,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Defensive battleships [BS]
+	   * Defensive battleships / battle bonus [BS]
 	   */
 	public static String DefensiveBattleships(boolean symbol) {
 		return symbol ? "£BS£":messages.getString("DefensiveBattleships_BS");
@@ -3854,7 +3856,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Battleships attacker [D0]
+	   * Attacker/battle bonus [D0]
 	   */
 	public static String FightSimulationAttackerCount(boolean symbol) {
 		return symbol ? "£D0£":messages.getString("FightSimulationAttackerCount_D0");
@@ -3868,7 +3870,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Battleships planet [D2]
+	   * Defender/battle bonus [D2]
 	   */
 	public static String FightSimulationPlanetCount(boolean symbol) {
 		return symbol ? "£D2£":messages.getString("FightSimulationPlanetCount_D2");
@@ -4383,5 +4385,19 @@ public class VegaResources
 	   */
 	public static String TutorialText07a(boolean symbol) {
 		return symbol ? "£F3£":messages.getString("TutorialText07a_F3");
+	}
+
+	/**
+	   * Battle bonus [F4]
+	   */
+	public static String BattleBonus(boolean symbol) {
+		return symbol ? "£F4£":messages.getString("BattleBonus_F4");
+	}
+
+	/**
+	   * Bon [F5]
+	   */
+	public static String BattleBonusShort(boolean symbol) {
+		return symbol ? "£F5£":messages.getString("BattleBonusShort_F5");
 	}
 }

@@ -285,7 +285,8 @@ class EnterMoves
 				this.playerIndexNow,
 				false,
 				true,
-				null); 				
+				null,
+				0); 				
 
 		this.game.getShips().add(ship);
 
@@ -682,7 +683,8 @@ class EnterMoves
 				this.playerIndexNow,
 				false,
 				true,
-				alliance);
+				alliance,
+				this.game.getPlanets()[planetIndexStart].getBonus());
 
 		this.game.getShips().add(ship);
 
@@ -706,7 +708,9 @@ class EnterMoves
 		
 		ArrayList<ConsoleKey> allowedKeys = null;
 		int offenderCount = 0;
+		int offenderBonus = 0;
 		int defenderCount = 0;
+		int defenderBonus = 0;
 		boolean enterNumbers = true;
 		
 		while (true)
@@ -720,7 +724,7 @@ class EnterMoves
 					this.game.getConsole().appendText(
 							VegaResources.FightSimulationAttackerCount(true) + ": ");
 					
-					ConsoleInput input = this.game.getConsole().waitForTextEntered(5, allowedKeys, false, true);
+					ConsoleInput input = this.game.getConsole().waitForTextEntered(7, allowedKeys, false, true);
 					
 					if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 					{
@@ -728,15 +732,38 @@ class EnterMoves
 						return;
 					}
 					
+					String[] inputArray = input.getInputText().split("/");
+					
 					try
 					{
-						offenderCount = Math.abs(Integer.parseInt(input.getInputText()));
-						break;
+						offenderCount = Math.abs(Integer.parseInt(inputArray[0]));
 					}
 					catch (Exception x)
 					{
 						this.game.getConsole().outInvalidInput();
+						continue;
 					}
+					
+					try
+					{
+						offenderBonus = 
+								inputArray.length > 1 ?
+										Math.abs(Integer.parseInt(inputArray[1])) :
+										0;
+					}
+					catch (Exception x)
+					{
+						this.game.getConsole().outInvalidInput();
+						continue;
+					}
+					
+					if (offenderCount < 0 || offenderBonus < 0 || offenderBonus > Planet.MAX_BONUS)
+					{
+						this.game.getConsole().outInvalidInput();
+						continue;
+					}
+					
+					break;
 				}
 		
 				while (true)
@@ -744,7 +771,7 @@ class EnterMoves
 					this.game.getConsole().appendText(
 							VegaResources.FightSimulationPlanetCount(true) + ": ");
 					
-					ConsoleInput input = this.game.getConsole().waitForTextEntered(5, allowedKeys, false, true);
+					ConsoleInput input = this.game.getConsole().waitForTextEntered(7, allowedKeys, false, true);
 					
 					if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 					{
@@ -752,22 +779,47 @@ class EnterMoves
 						return;
 					}
 					
+					String[] inputArray = input.getInputText().split("/");
+					
 					try
 					{
-						defenderCount = Math.abs(Integer.parseInt(input.getInputText()));
-						break;
+						defenderCount = Math.abs(Integer.parseInt(inputArray[0]));
 					}
 					catch (Exception x)
 					{
 						this.game.getConsole().outInvalidInput();
+						continue;
 					}
+					
+					try
+					{
+						defenderBonus = 
+								inputArray.length > 1 ?
+										Math.abs(Integer.parseInt(inputArray[1])) :
+										0;
+					}
+					catch (Exception x)
+					{
+						this.game.getConsole().outInvalidInput();
+						continue;
+					}
+					
+					if (defenderCount < 0 || defenderBonus < 0 || defenderBonus > Planet.MAX_BONUS)
+					{
+						this.game.getConsole().outInvalidInput();
+						continue;
+					}
+					
+					break;
 				}
 			}
 			
 			Tuple<Integer,Integer> countsAfterFight = Evaluation.fight(
 					this.game.getConsole(), 
 					offenderCount, 
-					defenderCount);
+					offenderBonus,
+					defenderCount,
+					defenderBonus);
 			
 			if (countsAfterFight.getE1() > 0)
 				this.game.getConsole().appendText(VegaResources.FightSimulationAttackSuccess(true));
@@ -1131,7 +1183,8 @@ class EnterMoves
 				this.playerIndexNow,
 				transfer,
 				true,
-				null);
+				null,
+				0);
 
 		this.game.getShips().add(ship);
 
@@ -1455,7 +1508,8 @@ class EnterMoves
 					this.playerIndexNow,
 					transfer,
 					true,
-					null);
+					null,
+					0);
 
 		}
 		else if (type == ShipType.TRANSPORT)
@@ -1522,7 +1576,8 @@ class EnterMoves
 					this.playerIndexNow,
 					false,
 					true,
-					null);
+					null,
+					0);
 
 		}
 

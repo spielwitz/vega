@@ -25,18 +25,52 @@ import spielwitz.biDiServer.Tuple;
 class Evaluation
 {
 	private static final double BAR_LENGTH_CHARS = 20;
+	private static final int MAX_DICE_COUNT_OFFENDER = 3;
+	private static final int MAX_DICE_COUNT_DEFENDER = 2;
 	
-	static Tuple<Integer,Integer> fight(Console console, int offenderCount, int defenderCount)
+	static Tuple<Integer,Integer> fight(
+			Console console, 
+			int offenderCount,
+			int offenderBonus,
+			int defenderCount,
+			int defenderBonus)
 	{
 		int offenderCountAfterFight = offenderCount;
 		int defenderCountAfterFight = defenderCount;
 		
 		while (offenderCountAfterFight > 0 && defenderCountAfterFight > 0)
 		{
-			if (CommonUtils.getRandomInteger(1000) < 550)
-				offenderCountAfterFight--;
-			else
-				defenderCountAfterFight--;
+			int[] diceOffender = new int[Math.min(
+										MAX_DICE_COUNT_OFFENDER + Math.min(offenderBonus, Planet.MAX_BONUS),
+										offenderCountAfterFight)];
+			
+			for (int i = 0; i < diceOffender.length; i++)
+			{
+				diceOffender[i] = CommonUtils.getRandomInteger(6);
+			}
+			int[] seqOffender = CommonUtils.sortValues(diceOffender, true);
+			
+			int[] diceDefender = new int[Math.min(
+										MAX_DICE_COUNT_DEFENDER + Math.min(defenderBonus, Planet.MAX_BONUS), 
+										defenderCountAfterFight)];
+			
+			for (int i = 0; i < diceDefender.length; i++)
+			{
+				diceDefender[i] = CommonUtils.getRandomInteger(6);
+			}
+			int[] seqDefender = CommonUtils.sortValues(diceDefender, true);
+			
+			for (int i = 0; i < Math.min(diceOffender.length, diceDefender.length); i++)
+			{
+				if (diceDefender[seqDefender[i]] >= diceOffender[seqOffender[i]])
+				{
+					offenderCountAfterFight--;
+				}
+				else
+				{
+					defenderCountAfterFight--;
+				}
+			}
 		}
 		
 		int maxValue =
@@ -650,7 +684,9 @@ class Evaluation
 		Tuple<Integer,Integer> countsAfterFight = fight(
 				this.game.getConsole(), 
 				offenderCount, 
-				defenderCount);
+				ship.getBonus(),
+				defenderCount,
+				planet.getBonus());
 		
 		offenderCount = countsAfterFight.getE1();
 		defenderCount = countsAfterFight.getE2();
@@ -1134,7 +1170,8 @@ class Evaluation
 							playerIndex,
 							false,
 							false,
-							null);
+							null,
+							this.game.getPlanets()[planetIndex].getBonus());
 
 					obj.setStopped(true);
 

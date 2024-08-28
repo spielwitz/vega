@@ -691,16 +691,19 @@ public class ScreenPainter
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsBuy()), 
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsSell())), 
 				5);
+		this.drawPlanetEditorLine(ShipType.BONUS, screenContentPlanetEditor, 
+				VegaResources.BattleBonus(false), 
+				6);
 		
-		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 7);
-		this.drawPlanetEditorLine(ShipType.TRANSPORT, screenContentPlanetEditor, VegaResources.TransporterPlural(false), 8);
-		this.drawPlanetEditorLine(ShipType.PATROL, screenContentPlanetEditor, VegaResources.PatrouillePlural(false), 9);
-		this.drawPlanetEditorLine(ShipType.MINESWEEPER, screenContentPlanetEditor, VegaResources.MinenraeumerPlural(false), 10);
+		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 8);
+		this.drawPlanetEditorLine(ShipType.TRANSPORT, screenContentPlanetEditor, VegaResources.TransporterPlural(false), 9);
+		this.drawPlanetEditorLine(ShipType.PATROL, screenContentPlanetEditor, VegaResources.PatrouillePlural(false), 10);
+		this.drawPlanetEditorLine(ShipType.MINESWEEPER, screenContentPlanetEditor, VegaResources.MinenraeumerPlural(false), 11);
 		
-		this.drawPlanetEditorLine(ShipType.MINE50, screenContentPlanetEditor, VegaResources.Mine50Plural(false), 12);
-		this.drawPlanetEditorLine(ShipType.MINE100, screenContentPlanetEditor, VegaResources.Mine100Plural(false), 13);
-		this.drawPlanetEditorLine(ShipType.MINE250, screenContentPlanetEditor, VegaResources.Mine250Plural(false), 14);
-		this.drawPlanetEditorLine(ShipType.MINE500, screenContentPlanetEditor, VegaResources.Mine500Plural(false), 15);
+		this.drawPlanetEditorLine(ShipType.MINE50, screenContentPlanetEditor, VegaResources.Mine50Plural(false), 13);
+		this.drawPlanetEditorLine(ShipType.MINE100, screenContentPlanetEditor, VegaResources.Mine100Plural(false), 14);
+		this.drawPlanetEditorLine(ShipType.MINE250, screenContentPlanetEditor, VegaResources.Mine250Plural(false), 15);
+		this.drawPlanetEditorLine(ShipType.MINE500, screenContentPlanetEditor, VegaResources.Mine500Plural(false), 16);
 	}
 	
 	private void drawPlanetEditorLine(
@@ -734,7 +737,8 @@ public class ScreenPainter
 		
 		this.drawPlanetEditorTextLeft(this.getPriceRangeString(type, false), PLANET_EDITOR_COLUMN2+9, line, Colors.get(Colors.NEUTRAL));
 		
-		if (type == ShipType.MONEY_PRODUCTION)
+		if (type == ShipType.MONEY_PRODUCTION ||
+			type == ShipType.BONUS)
 			return;
 		
 		colorIndex = screenContentPlanetEditor.getColorIndex();

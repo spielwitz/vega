@@ -75,6 +75,7 @@ class Ship implements Serializable
 	private int yearCount;
 	private ShipType type;
 	private int count;
+	private int bonus;
 	
 	private int owner;
 	
@@ -124,7 +125,8 @@ class Ship implements Serializable
 			int owner, 
 			boolean transfer, 
 			boolean recentlyStarted, 
-			Alliance alliance)
+			Alliance alliance,
+			int bonus)
 	{
 		this.planetIndexStart = planetIndexStart;
 		this.planetIndexDestination = planetIndexDestination;
@@ -138,6 +140,7 @@ class Ship implements Serializable
 		this.startedRecently = recentlyStarted;
 		this.toBeDeleted = false;
 		this.alliance = alliance;
+		this.bonus = bonus;
 	}
 
 	void capture(int ownerNew, Point positionCurrent)
@@ -199,6 +202,10 @@ class Ship implements Serializable
 		}
 		else
 			return this.alliance.getBattleshipsCount(playerIndex);
+	}
+	
+	int getBonus() {
+		return bonus;
 	}
 
 	int getOwner() {
