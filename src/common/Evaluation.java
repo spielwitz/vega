@@ -1171,7 +1171,7 @@ class Evaluation
 							false,
 							false,
 							null,
-							this.game.getPlanets()[planetIndex].getBonus());
+							0);
 
 					obj.setStopped(true);
 
