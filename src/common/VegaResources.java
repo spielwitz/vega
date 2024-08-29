@@ -577,8 +577,8 @@ public class VegaResources
 		symbolDict.put("F1","FightAttacker_F1");
 		symbolDict.put("F2","FightDefender_F2");
 		symbolDict.put("F3","TutorialText07a_F3");
-		symbolDict.put("F4","BattleBonus_F4");
-		symbolDict.put("F5","BattleBonusShort_F5");
+		symbolDict.put("F4","CombatBonus_F4");
+		symbolDict.put("F5","CombatBonusShort_F5");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -3548,7 +3548,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Defensive battleships / battle bonus [BS]
+	   * Defensive battleships / combat bonus [BS]
 	   */
 	public static String DefensiveBattleships(boolean symbol) {
 		return symbol ? "£BS£":messages.getString("DefensiveBattleships_BS");
@@ -4388,16 +4388,16 @@ public class VegaResources
 	}
 
 	/**
-	   * Battle bonus [F4]
+	   * Combat bonus [F4]
 	   */
-	public static String BattleBonus(boolean symbol) {
-		return symbol ? "£F4£":messages.getString("BattleBonus_F4");
+	public static String CombatBonus(boolean symbol) {
+		return symbol ? "£F4£":messages.getString("CombatBonus_F4");
 	}
 
 	/**
 	   * Bon [F5]
 	   */
-	public static String BattleBonusShort(boolean symbol) {
-		return symbol ? "£F5£":messages.getString("BattleBonusShort_F5");
+	public static String CombatBonusShort(boolean symbol) {
+		return symbol ? "£F5£":messages.getString("CombatBonusShort_F5");
 	}
 }

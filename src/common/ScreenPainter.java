@@ -692,7 +692,7 @@ public class ScreenPainter
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsSell())), 
 				5);
 		this.drawPlanetEditorLine(ShipType.BONUS, screenContentPlanetEditor, 
-				VegaResources.BattleBonus(false), 
+				VegaResources.CombatBonus(false), 
 				6);
 		
 		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 8);

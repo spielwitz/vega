@@ -139,7 +139,7 @@ class Inventory
 		chapter.table.cells.add(VegaResources.DefensiveBattleshipsShort(false));
 		chapter.table.colAlignRight[5] = true;
 		
-		chapter.table.cells.add(VegaResources.BattleBonusShort(false));
+		chapter.table.cells.add(VegaResources.CombatBonusShort(false));
 		chapter.table.colAlignRight[6] = true;
 
 		chapter.table.cells.add(VegaResources.BattleshipsShort(false));
