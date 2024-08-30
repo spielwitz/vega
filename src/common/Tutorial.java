@@ -154,7 +154,7 @@ class Tutorial implements Serializable
 				null,
 				ships05,
 				0,
-				350,
+				450,
 				30,
 				10,
 				10);
@@ -164,7 +164,7 @@ class Tutorial implements Serializable
 				null,
 				ships05,
 				0,
-				350,
+				450,
 				30,
 				10,
 				0);
@@ -251,7 +251,7 @@ class Tutorial implements Serializable
 				null,
 				ships08,
 				0,
-				350,
+				450,
 				27,
 				10,
 				0);
@@ -315,7 +315,7 @@ class Tutorial implements Serializable
 				null,
 				ships12After,
 				0,
-				350,
+				450,
 				0,
 				10,
 				0);
