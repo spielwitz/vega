@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: F5
+		// Last used symbolic key: F7
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -579,6 +579,8 @@ public class VegaResources
 		symbolDict.put("F3","TutorialText07a_F3");
 		symbolDict.put("F4","CombatBonus_F4");
 		symbolDict.put("F5","CombatBonusShort_F5");
+		symbolDict.put("F6","TutorialText04a_F6");
+		symbolDict.put("F7","TutorialText04b_F7");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -2386,14 +2388,14 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Planets]\n\nPlanets produce money ($) and spaceships. You also need to have the most planets to win the game.\n\nPlanets produce between $1 and $15 annually. A new battleship is created from each $ produced. You can reduce the production of battleships and buy other types of spaceships and defensive battleships from the $ you have saved up. You can also use $ to increase the planet's production in $5 increments up to $100/year.\n\nNow start entering your moves. First open the planet editor for your planet ![color=3|LM]. To do this, first press the ![inverse|1] key for "Alice" in the main menu. In the move entry menu, select ![inverse|0] for "Planet" and enter the name of your planet LM. [74]
+	   * ![size=1.5;color=1;bold|Planets]\n\nPlanets produce money ($) and spaceships. You also need to have the most planets to win the game.\n\nPlanets produce between $1 and $15 annually. A new battleship is created from each $ produced. You can reduce the production of battleships and buy other types of spaceships, defensive battleships and combat bonus points from the $ you have saved up. You can also use $ to increase the planet's production in $5 increments up to $100/year. [74]
 	   */
 	public static String TutorialText04(boolean symbol) {
 		return symbol ? "£74£":messages.getString("TutorialText04_74");
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The planet editor]\n\nYou see the data for your planet ![color=3|LM]. Like all of the players' planets, it has $30 in stock at the start of the game and produces $10, which means 10 new battleships per year. You also see the 350 defensive battleships that defend the planet in addition to the regular battleships.\n\nBelow you see a list of other types of spaceships that you can buy or sell for 2/3 of the purchase price. The prices for all items change annually, but are the same on all planets in the universe.\n\nUse the up and down arrow keys to navigate between the items, and use left and right to decrease or increase the number of an item.\n\n![color=1|Task]: ![italic;color=1|Move the cursor to the line "Production of battleships/year", reduce the value to 0 and accept the changes with the ENTER key. Do not buy or sell other items!]\n\nThe tutorial will not continue until you have solved the task correctly. If you have accidentally bought or sold other items, exit the editor with the ![inverse|ESC] key and start it again for the planet ![color=3|LM]. [75]
+	   * ![size=1.5;color=1;bold|The planet editor]\n\nNow start entering your moves. Open the planet editor for your planet ![color=3|LM]. To do this, first press the ![inverse|1] key for "Alice" in the main menu. In the move entry menu, select ![inverse|0] for "Planet" and enter the name of your planet LM.\n\nYou see the data for your planet ![color=3|LM]. Like all of the players' planets, it has $30 in stock at the start of the game and produces $10, which means 10 new battleships per year. You also see the 350 defensive battleships that defend the planet in addition to the regular battleships.\n\nBelow you see a list of other types of spaceships that you can buy or sell for 2/3 of the purchase price. The prices for all items change annually, but are the same on all planets in the universe.\n\nUse the up and down arrow keys to navigate between the items, and use left and right to decrease or increase the number of an item.\n\n![color=1|Task]: ![italic;color=1|Move the cursor to the line "Production of battleships/year", reduce the value to 0 and accept the changes with the ENTER key. Do not buy or sell other items!]\n\nThe tutorial will not continue until you have solved the task correctly. If you have accidentally bought or sold other items, exit the editor with the ![inverse|ESC] key and start it again for the planet ![color=3|LM]. [75]
 	   */
 	public static String TutorialText05(boolean symbol) {
 		return symbol ? "£75£":messages.getString("TutorialText05_75");
@@ -2491,7 +2493,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The black hole]\n\nIn the evaluation of year 8, the black hole appears for the first time in a random location. In each evaluation, it moves 2 light years further in a random direction. All spaceships that are within a radius of 0.5 light years around the black hole are lost. If the black hole enters a sector with mines, all mines there are cleared. After a random number of years, the black hole disappears and after some time appears in a random location.\n\nThe black hole has the symbol ![img=tutorial/iconBlackHole12x12.png].\n\n![size=1.5;color=1;bold|Neutral battleship fleets]\n\nIn the evaluations of years 10, 15, 20, 25, etc., neutral battleship fleets start, flying from a random sector to a random planet. If a neutral fleet conquers a planet, the planet becomes neutral again. The planet's production output is halved. [7J]
+	   * ![size=1.5;color=1;bold|The black hole]\n\nIn the evaluation of year 8, the black hole appears for the first time in a random location. In each evaluation, it moves 2 light years further in a random direction. All spaceships that are within a radius of 0.5 light years around the black hole are lost. If the black hole enters a sector with mines, all mines there are cleared. After a random number of years, the black hole disappears and after some time appears in a random location.\n\nThe black hole has the symbol ![img=tutorial/iconBlackHole12x12.png].\n\n![size=1.5;color=1;bold|Neutral battleship fleets]\n\nIn the evaluations of years 10, 15, 20, 25, etc., neutral battleship fleets start, flying from a random sector to a random planet. If a neutral fleet conquers a planet, the planet becomes neutral again. The planet's production output is halved, and all combat bonus points are lost. [7J]
 	   */
 	public static String TutorialText19(boolean symbol) {
 		return symbol ? "£7J£":messages.getString("TutorialText19_7J");
@@ -4399,5 +4401,19 @@ public class VegaResources
 	   */
 	public static String CombatBonusShort(boolean symbol) {
 		return symbol ? "£F5£":messages.getString("CombatBonusShort_F5");
+	}
+
+	/**
+	   * ![size=1.5;color=1;bold|Conquer and defend planets]\n\nSend battleships to an alien planet to conquer it. You fight against all battleships on the planet, including the defensive battleships.\n\nImagine the battle like a dice game: The attacker takes 3 dice in his hand, and if there are fewer than 3 battleships, he has as many dice as there are battleships. The defender gets 2 dice, and if there are fewer than 2 battleships, he has as many dice as there are battleships. So the attacker has 1 to 3, and the defender has 0 to 2 dice. Then the dice are rolled simultaneously.\n\nThe attacker's and defender's dice are sorted in descending order by their values and then compared in pairs, i.e. the attacker's highest value with the defender's highest value, then the second highest values, and so on. In each pair comparison, the defender loses a battleship if the attacker has a higher value, otherwise the attacker loses. All of this reminds you of the board game "Risk"? Me too ;-)\n\nIn this example, attacker and defender each lose 1 battleship:\n\nAtt.  Def.\n===========\n 6      6  -> Att. loses 1\n 5      2  -> Def. loses 1\n 2         -> Not evaluated\n\nVEGA rolls the dice until the attacker or defender have lost all of their battleships. If any of the attacker's ships remain, the attacker takes over the planet with its remaining battleships. [F6]
+	   */
+	public static String TutorialText04a(boolean symbol) {
+		return symbol ? "£F6£":messages.getString("TutorialText04a_F6");
+	}
+
+	/**
+	   * ![size=1.5;color=1;bold|The combat bonus]\n\nYou can equip your planets with up to 2 combat bonus points. When you launch an attack, your battleships receive the combat bonus of the starting planet. The defender uses the combat bonus of the attacked planet.\n\nFor each bonus point, attackers and defenders receive an additional die. If there are fewer battleships than dice, only as many dice as battleships are used, so the attacker can use 1 to 5 dice and the defender 0 to 4. [F7]
+	   */
+	public static String TutorialText04b(boolean symbol) {
+		return symbol ? "£F7£":messages.getString("TutorialText04b_F7");
 	}
 }

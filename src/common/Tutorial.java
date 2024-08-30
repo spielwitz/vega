@@ -132,6 +132,18 @@ class Tutorial implements Serializable
 				new TutorialStep(
 						VegaResources.TutorialText04(true),
 						null));
+		
+		// 4a: Combat
+				this.steps.add(
+						new TutorialStep(
+								VegaResources.TutorialText04a(true),
+								null));
+				
+		// 4b: Combat bonus
+		this.steps.add(
+				new TutorialStep(
+						VegaResources.TutorialText04b(true),
+						null));
 
 		// 5: The planet editor
 		Hashtable<ShipType, Integer> ships05 = new Hashtable<ShipType, Integer>();
