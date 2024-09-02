@@ -16,7 +16,9 @@ Extract Vega.jar, VegaDisplay.jar, and VegaServer.jar from the zip file and copy
 
 ![VEGA](vegaEN.png)
 
-VEGA is a turn-based strategy game for two to six players with a retro 80s look. After all, the game has been around since 1989. Conquer as many planets as possible with your spaceships. Fight alone or form alliances with your fellow players and go on a conquest tour together. You need strategic and diplomatic skills and a bit of luck to assert yourself in space. You have different types of spaceships with special abilities at your disposal. You can expand your planets to increase their production capacity and defense strength. The players who own the most planets at the end of the agreed playing time win.
+VEGA is a turn-based strategy game for 2 to 6 people in an 80s retro design. Whoever conquers the most planets with their spaceships wins the game. Play individually or in teams. Strategic thinking, diplomatic skills and a little luck are required. That's why VEGA is most fun in a friendly group of at least four players. There are no computer opponents, nor are there any graphic or sound effects.
+
+There are various types of spaceships with special abilities at your disposal. You can expand your planets to increase production capacity and combat strength.
 
 You can play VEGA in different ways:
 
