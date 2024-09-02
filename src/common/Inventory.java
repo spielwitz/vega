@@ -118,7 +118,7 @@ class Inventory
 
 		this.game.setScreenContent(new ScreenContent());
 
-		chapter.table = new InventoryPdfTable(17);
+		chapter.table = new InventoryPdfTable(18);
 
 		// Columns headers
 		chapter.table.cells.add(VegaResources.PlanetShort(false));
@@ -138,39 +138,42 @@ class Inventory
 
 		chapter.table.cells.add(VegaResources.DefensiveBattleshipsShort(false));
 		chapter.table.colAlignRight[5] = true;
-
-		chapter.table.cells.add(VegaResources.BattleshipsShort(false));
+		
+		chapter.table.cells.add(VegaResources.CombatBonusShort(false));
 		chapter.table.colAlignRight[6] = true;
 
-		chapter.table.cells.add(VegaResources.SpyShort(false));
+		chapter.table.cells.add(VegaResources.BattleshipsShort(false));
 		chapter.table.colAlignRight[7] = true;
 
-		chapter.table.cells.add(VegaResources.TransporterShort(false));
+		chapter.table.cells.add(VegaResources.SpyShort(false));
 		chapter.table.colAlignRight[8] = true;
 
-		chapter.table.cells.add(VegaResources.PatrolShort(false));
+		chapter.table.cells.add(VegaResources.TransporterShort(false));
 		chapter.table.colAlignRight[9] = true;
 
-		chapter.table.cells.add(VegaResources.MinesweeperShort(false));
+		chapter.table.cells.add(VegaResources.PatrolShort(false));
 		chapter.table.colAlignRight[10] = true;
 
-		chapter.table.cells.add(VegaResources.Mine50Short(false));
+		chapter.table.cells.add(VegaResources.MinesweeperShort(false));
 		chapter.table.colAlignRight[11] = true;
 
-		chapter.table.cells.add(VegaResources.Mine100Short(false));
+		chapter.table.cells.add(VegaResources.Mine50Short(false));
 		chapter.table.colAlignRight[12] = true;
 
-		chapter.table.cells.add(VegaResources.Mine250Short(false));
+		chapter.table.cells.add(VegaResources.Mine100Short(false));
 		chapter.table.colAlignRight[13] = true;
 
-		chapter.table.cells.add(VegaResources.Mine500Short(false));
+		chapter.table.cells.add(VegaResources.Mine250Short(false));
 		chapter.table.colAlignRight[14] = true;
 
+		chapter.table.cells.add(VegaResources.Mine500Short(false));
+		chapter.table.colAlignRight[15] = true;
+
 		chapter.table.cells.add(VegaResources.AllianceShort(false));
-		chapter.table.colAlignRight[15] = false;
+		chapter.table.colAlignRight[16] = false;
 
 		chapter.table.cells.add(VegaResources.ForeignSpies(false));
-		chapter.table.colAlignRight[16] = false;
+		chapter.table.colAlignRight[17] = false;
 
 		for (int index = 0; index < game.getPlanetsCount(); index++)
 		{
@@ -195,6 +198,7 @@ class Inventory
 			chapter.table.cells.add(visible ? CommonUtils.convertToString(planet.getBattleshipProduction()) : "?");
 
 			chapter.table.cells.add(visible ? CommonUtils.convertToString(planet.getDefensiveBattleshipsCount()) : "?");
+			chapter.table.cells.add(visible ? CommonUtils.convertToString(planet.getBonus()) : "?");
 			chapter.table.cells.add(CommonUtils.convertToString(planet.getShipsCount(ShipType.BATTLESHIPS)));
 
 			chapter.table.cells.add(visible ? CommonUtils.convertToString(planet.getShipsCount(ShipType.SPY)) : "?");

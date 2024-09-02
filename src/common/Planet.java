@@ -27,6 +27,7 @@ class Planet implements Serializable
 	static final int NO_PLANET = -1;
 	
 	static final double PRICE_RATIO_BUY_SELL = 2./3.;
+	static final int MAX_BONUS = 2;
 	
 	static Hashtable<ShipType, PriceRange> PRICES_MIN_MAX;
 	
@@ -37,6 +38,7 @@ class Planet implements Serializable
 		PRICES_MIN_MAX.put(ShipType.DEFENSIVE_BATTLESHIPS, new PriceRange(60, 90));
 		PRICES_MIN_MAX.put(ShipType.MONEY_PRODUCTION, new PriceRange(60, 90));
 		PRICES_MIN_MAX.put(ShipType.BATTLESHIP_PRODUCTION, new PriceRange(0, 0));
+		PRICES_MIN_MAX.put(ShipType.BONUS, new PriceRange(60, 90));
 		
 		PRICES_MIN_MAX.put(ShipType.SPY, new PriceRange(3, 6));
 		PRICES_MIN_MAX.put(ShipType.PATROL, new PriceRange(12, 18));
@@ -58,6 +60,7 @@ class Planet implements Serializable
 	private int moneyProduction;
 	private int battleshipProduction;
 	private HashSet<Integer> radioStationsByPlayer;
+	private int bonus;
 	
 	Planet(Point position, Alliance alliance,
 			Hashtable<ShipType, Integer> ships, int owner, int defensiveBattleshipsCount,
@@ -90,6 +93,7 @@ class Planet implements Serializable
 		this.moneyProduction = planet.moneyProduction;
 		this.battleshipProduction = planet.battleshipProduction;
 		this.defensiveBattleshipsCount = planet.defensiveBattleshipsCount;
+		this.bonus = planet.bonus;
 	}
 	
 	void addPlayerToAlliance(int playersCount, int playerIndex)
@@ -162,6 +166,15 @@ class Planet implements Serializable
 		}
 	}
 	
+	void buyBonus(int price)
+	{
+		if (this.bonus < MAX_BONUS && this.moneySupply >= price)
+		{
+			this.bonus++;
+			this.moneySupply -= price;
+		}
+	}
+	
 	void buyShip(ShipType type, int count, int price)
 	{
 		if (this.moneySupply >= price)
@@ -224,6 +237,7 @@ class Planet implements Serializable
 		if (newOwner == Player.NEUTRAL)
 		{
 			this.moneyProduction = CommonUtils.round((double)this.moneyProduction / 2);
+			this.bonus = 0;
 		}
 	}
 	
@@ -261,6 +275,7 @@ class Planet implements Serializable
 		plClone.battleshipProduction = 0;
 		plClone.moneySupply = 0;
 		plClone.defensiveBattleshipsCount = 0;
+		plClone.bonus = 0;
 		
 		return plClone;
 	}
@@ -301,6 +316,7 @@ class Planet implements Serializable
 		areDifferent =  this.battleshipProduction != other.battleshipProduction;
 		areDifferent |= this.moneyProduction != other.moneyProduction;
 		areDifferent |= this.defensiveBattleshipsCount != other.defensiveBattleshipsCount;
+		areDifferent |= this.bonus != other.bonus;
 		
 		areDifferent |= (this.ships == null && other.ships != null) ||
 				(this.ships != null && other.ships == null);
@@ -412,6 +428,11 @@ class Planet implements Serializable
 		}
 		else
 			return this.alliance.getBattleshipsCount(playerIndex);
+	}
+	
+	int getBonus()
+	{
+		return this.bonus;
 	}
 	
 	int getMoneyProduction()

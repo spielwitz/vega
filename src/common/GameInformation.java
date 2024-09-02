@@ -221,7 +221,8 @@ class GameInformation
 
 			ArrayList<Byte> frameCols = new ArrayList<Byte>();
 
-			if (this.game.getPlanets()[planetIndex].getDefensiveBattleshipsCount() > 0)
+			if (this.game.getPlanets()[planetIndex].getDefensiveBattleshipsCount() > 0 ||
+				this.game.getPlanets()[planetIndex].getBonus() > 0)
 			{
 				frameCols.add(Colors.WHITE);
 				frames.put(planetIndex, frameCols);
@@ -250,8 +251,11 @@ class GameInformation
 				int planetIndex = this.game.getPlanetsSorted()[index];
 
 				if (this.game.getPlanets()[planetIndex].getOwner() != playerIndex ||
-						this.game.getPlanets()[planetIndex].getDefensiveBattleshipsCount() == 0)
+					(this.game.getPlanets()[planetIndex].getDefensiveBattleshipsCount() == 0 &&
+					 this.game.getPlanets()[planetIndex].getBonus() == 0))
+				{
 					continue;
+				}
 
 				String playerName = (playerIndex == Player.NEUTRAL) ?
 						VegaResources.Neutral(false) :
@@ -270,7 +274,7 @@ class GameInformation
 				}
 
 				String planetName = " " + this.game.getPlanetNameFromIndex(planetIndex);
-				String defensiveBattleshipsCount = "     " + this.game.getPlanets()[planetIndex].getDefensiveBattleshipsCount();
+				String defensiveBattleshipsCount = "     " + this.game.getPlanets()[planetIndex].getDefensiveBattleshipsCount() + "/" + this.game.getPlanets()[planetIndex].getBonus();
 				text.add(planetName.substring(planetName.length()-2, planetName.length()) + 
 						":" +
 						defensiveBattleshipsCount.substring(defensiveBattleshipsCount.length()-5, defensiveBattleshipsCount.length()));

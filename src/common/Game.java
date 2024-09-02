@@ -47,7 +47,7 @@ public class Game extends EmailTransportBase implements Serializable
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0007";
+	public static final String 		BUILD_COMPATIBLE = "0008";
 
 	// Game board dimensions 
 	public static final int 		BOARD_MAX_X = 20;
@@ -57,9 +57,9 @@ public class Game extends EmailTransportBase implements Serializable
 	public static final int 		PLAYERS_COUNT_MAX = 6;
 	public static final int 		PLAYERS_COUNT_MIN = 2;
 	public static final int 		PLANETS_COUNT_MAX = 42;
-	static final int				DEFENSIVE_BATTLESHIPS_BUY_SELL = 350;
-	static final int				DEFENSIVE_BATTLESHIPSS_COUNT_MAX = 700;
-	static final int 				DEFENSIVE_BATTLESHIPS_COUNT_INITIAL_PLAYERS = 350;
+	static final int				DEFENSIVE_BATTLESHIPS_BUY_SELL = 450;
+	static final int				DEFENSIVE_BATTLESHIPSS_COUNT_MAX = 900;
+	static final int 				DEFENSIVE_BATTLESHIPS_COUNT_INITIAL_PLAYERS = 450;
 	static final int 				MONEY_PRODUCTION_PURCHASE = 5;
 	static final int 				TRANSPORT_MONEY_MAX = 30;
 	static final int 				BATTLESHIPS_COUNT_INITIAL_PLAYERS = 350;
@@ -569,6 +569,7 @@ public class Game extends EmailTransportBase implements Serializable
 		this.prepareYearSetPrice(ShipType.MONEY_PRODUCTION);
 		this.prepareYearSetPrice(ShipType.BATTLESHIP_PRODUCTION);
 		this.prepareYearSetPrice(ShipType.DEFENSIVE_BATTLESHIPS);
+		this.prepareYearSetPrice(ShipType.BONUS);
 		this.prepareYearSetPrice(ShipType.MINE50);
 		this.prepareYearSetPrice(ShipType.MINE100);
 		this.prepareYearSetPrice(ShipType.MINE250);
@@ -605,7 +606,8 @@ public class Game extends EmailTransportBase implements Serializable
 					playerIndex,
 					false,
 					true,
-					null); 				
+					null,
+					0); 				
 
   			ArrayList<Move> moves = new ArrayList<Move>();
   	
@@ -2660,14 +2662,7 @@ public class Game extends EmailTransportBase implements Serializable
 				}
 				else if (shipTypeDisplay == ShipType.DEFENSIVE_BATTLESHIPS)
 				{
-					if (planet.getDefensiveBattleshipsCount() > 0)
-					{
-						shipCount = Integer.toString(planet.getDefensiveBattleshipsCount());
-					}
-					else
-					{
-						shipCount = "-";
-					}
+					shipCount = planet.getDefensiveBattleshipsCount() + "/" + planet.getBonus();
 				}
 				else if (shipTypeDisplay == ShipType.MONEY_PRODUCTION)
 				{

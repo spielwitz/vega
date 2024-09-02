@@ -44,6 +44,7 @@ class PlanetEditor
 		this.itemSequence.add(ShipType.MONEY_PRODUCTION);
 		this.itemSequence.add(ShipType.BATTLESHIP_PRODUCTION);
 		this.itemSequence.add(ShipType.DEFENSIVE_BATTLESHIPS);
+		this.itemSequence.add(ShipType.BONUS);
 
 		this.itemSequence.add(ShipType.SPY);
 		this.itemSequence.add(ShipType.TRANSPORT);
@@ -162,6 +163,11 @@ class PlanetEditor
 			if (buy)
 				planet.buyMoneyProduction(this.game.getPriceBuy(ShipType.MONEY_PRODUCTION));
 		}
+		else if (itemType == ShipType.BONUS)
+		{
+			if (buy)
+				planet.buyBonus(this.game.getPriceBuy(ShipType.BONUS));
+		}
 		else if (itemType == ShipType.BATTLESHIP_PRODUCTION)
 		{
 			if (buy)
@@ -213,6 +219,11 @@ class PlanetEditor
 				count = planet.getDefensiveBattleshipsCount();
 				countString = CommonUtils.convertToString(count);
 			}
+			else if (itemType == ShipType.BONUS)
+			{
+				count = planet.getBonus();
+				countString = CommonUtils.convertToString(count);
+			}
 			else
 			{
 				count = planet.getShipsCount(itemType);
@@ -230,6 +241,8 @@ class PlanetEditor
 				}
 			}
 			else if (itemType == ShipType.MONEY_PRODUCTION && planet.getMoneyProduction() >= Game.MONEY_PRODUCTION_MAX)
+				buyImpossible.add(itemType);
+			else if (itemType == ShipType.BONUS && planet.getBonus() >= Planet.MAX_BONUS)
 				buyImpossible.add(itemType);
 			else if (this.game.getPriceBuy(itemType) > moneySupply)
 				buyImpossible.add(itemType);
