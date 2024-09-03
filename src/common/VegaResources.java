@@ -2416,7 +2416,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Buy a spy]\n\nSend a spy to another planet. The spy will install a radio transmitter there, which will give you full insight into the planet's data until the end of the game. You can also transfer a spy to a planet before deploying it from there. You can recognize spies by the symbol ![img=tutorial/iconScout12x12.png]. Spies in "mission" mode fly 4 light years per year, in "transfer" mode 2 light years per year.\n\n![color=1|Task]: ![italic;color=1|Open the planet editor of your planet LM and buy a spy. Confirm the purchase with the ENTER key.] [78]
+	   * ![size=1.5;color=1;bold|Buy a spy]\n\nSend a spy to another planet. The spy will install a radio transmitter there, which will give you full insight into the planet's data until the end of the game. You can  transfer a spy to a planet before deploying it from there. You can recognize spies by the symbol ![img=tutorial/iconScout12x12.png]. Spies in "mission" mode fly 4 light years per year, in "transfer" mode 2 light years per year.\n\n![color=1|Task]: ![italic;color=1|Open the planet editor of your planet LM and buy a spy. Confirm the purchase with the ENTER key.] [78]
 	   */
 	public static String TutorialText08(boolean symbol) {
 		return symbol ? "£78£":messages.getString("TutorialText08_78");
