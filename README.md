@@ -30,18 +30,19 @@ Manual: [German](resources/VegaHelp_de-DE.pdf), [English](resources/VegaHelp_en-
 
 ## Download and Execute
 
-[https://github.com/spielwitz/vega/releases](https://github.com/spielwitz/vega/releases)
+Download the zip file from the `Release` folder and extract its contents to a local folder of your choice. The following jar files are executables and can usually be started by double-clicking on them:
 
-Copy the contents of the zip file into a local folder of your choice. The following jar files are executables and can usually be started by double-clicking on them:
+* `Vega.jar`
 
-* Vega.jar
-
-* VegaDisplay.jar
+* `VegaDisplay.jar`
 
 If double-clicking should not work, open a command prompt, go to your local folder and execute the apps as follows:
 
 ```
 java -jar Vega.jar
+```
+
+```
 java -jar VegaDisplay.jar
 ```
 
