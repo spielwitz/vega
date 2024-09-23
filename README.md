@@ -36,7 +36,7 @@ Download the zip file from the `Release` folder and extract its contents to a lo
 
 * `VegaDisplay.jar`
 
-If double-clicking should not work, open a command prompt, go to your local folder and execute the apps as follows:
+You can also open a command prompt and execute the apps as follows:
 
 ```
 java -jar Vega.jar
