@@ -30,7 +30,7 @@ Manual: [German](resources/VegaHelp_de-DE.pdf), [English](resources/VegaHelp_en-
 
 ## Download and Execute
 
-Download the zip file from the `Release` folder and extract its contents to a local folder of your choice. The following jar files are executables and can usually be started by double-clicking on them:
+Download the zip file from the `Release` folder and extract its contents to a local folder of your choice. The following jar files are executables and can be started by double-click:
 
 * `Vega.jar`
 
