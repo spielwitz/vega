@@ -1,7 +1,7 @@
 .settings
 .DS*
 bin
-jars/build
+build/jars
 README.txt
 ResourceBundleUtilityProperties
 VegaDisplayProperties
