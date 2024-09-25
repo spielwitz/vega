@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: F7
+		// Last used symbolic key: F8
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -581,6 +581,7 @@ public class VegaResources
 		symbolDict.put("F5","CombatBonusShort_F5");
 		symbolDict.put("F6","TutorialText04a_F6");
 		symbolDict.put("F7","TutorialText04b_F7");
+		symbolDict.put("F8","VegaHelpError_F8");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4415,5 +4416,12 @@ public class VegaResources
 	   */
 	public static String TutorialText04b(boolean symbol) {
 		return symbol ? "£F7£":messages.getString("TutorialText04b_F7");
+	}
+
+	/**
+	   * Error when opening the game manual file {0}.\n\n{1} [F8]
+	   */
+	public static String VegaHelpError(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£F8§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("VegaHelpError_F8"), arg0, arg1);
 	}
 }

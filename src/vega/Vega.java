@@ -37,7 +37,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.rmi.RemoteException;
 import java.security.PrivateKey;
 import java.util.ArrayList;
@@ -72,6 +71,7 @@ import commonServer.PayloadNotificationNewEvaluation;
 import commonServer.ResponseMessageGamesAndUsers;
 import commonUi.MessageBox;
 import commonUi.MessageBoxResult;
+import commonUi.CommonUiUtils;
 import commonUi.FontHelper;
 import commonUi.IHostComponentMethods;
 import commonUi.IServerMethods;
@@ -506,7 +506,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 		else if (JMenuItem == this.menuHelp)
 		{
-			this.openManual();
+			CommonUiUtils.showManual(this);
 		}
 		else if (JMenuItem == this.menuLanguage)
 		{
@@ -1590,40 +1590,6 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.tutorialPanel.setVisible(true);
 	}
 
-	private void openManual()
-	{
-		Desktop desktop = Desktop.getDesktop();   
-	    InputStream resource = getClass().getResourceAsStream("/VegaHelp_"+
-	    		VegaResources.getLocale() +
-	    		".pdf");
-	    try
-	    {
-	    	Path tempOutput = Files.createTempFile("VegaHelp", ".pdf");
-	        tempOutput.toFile().deleteOnExit();
-	        try
-	        {
-	        	Files.copy(resource,tempOutput,StandardCopyOption.REPLACE_EXISTING);
-	        }
-	        finally
-	        {
-	            resource.close();
-	        }
-	        desktop.open(tempOutput.toFile());   
-	    }   
-	    catch (Exception x)
-	    {
-	    	
-	    }
-	    finally
-	    {
-	    	try
-	    	{
-	        resource.close();
-	    	}
-	    	catch (Exception xx) {}
-	    }
-	}
-	
 	private void openServerGamesDialog()
 	{
 		this.inputEnabled = false;
