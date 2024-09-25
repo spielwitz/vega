@@ -26,7 +26,7 @@ VEGA offers you a tutorial for a quick introduction to the game.
 
 ## Documentation
 
-Manual: [German](resources/VegaHelp_de-DE.pdf), [English](resources/VegaHelp_en-US.pdf) 
+Manual: [German](VegaHelp_de-DE.pdf), [English](VegaHelp_en-US.pdf) 
 
 ## Download and Execute
 
