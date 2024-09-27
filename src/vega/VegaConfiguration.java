@@ -23,11 +23,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Properties;
 
 import com.google.gson.Gson;
 
+import common.CommonUtils;
 import common.VegaResources;
 import spielwitz.biDiServer.ClientConfiguration;
 
@@ -47,7 +49,7 @@ class VegaConfiguration
 		}
 		else
 		{
-			try (BufferedReader br = new BufferedReader(new FileReader(new File(fileName))))
+			try (BufferedReader br = new BufferedReader(new FileReader(getFileName())))
 			{
 				String json = br.readLine();
 				config = serializer.fromJson(json, VegaConfiguration.class);
@@ -155,6 +157,11 @@ class VegaConfiguration
 		{
 			return null;
 		}
+	}
+	
+	private static File getFileName()
+	{
+		return Paths.get(CommonUtils.getHomeDir(), fileName).toFile();
 	}
 
 	String getDirectoryNameLast()
@@ -283,7 +290,7 @@ class VegaConfiguration
 	{
 		boolean success = true;
 		
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName)))
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(getFileName())))
 		{
 			bw.write(serializer.toJson(this));			
 		} catch (IOException e)

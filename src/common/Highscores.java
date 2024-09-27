@@ -42,7 +42,7 @@ public class Highscores
 			File file = new File(getFilePath());
 			if (file.exists())
 			{
-				try (BufferedReader br = new BufferedReader(new FileReader(new File(getFilePath()))))
+				try (BufferedReader br = new BufferedReader(new FileReader(file)))
 				{
 					String jsonString = br.readLine();
 					Highscores highscores = new Gson().fromJson(jsonString, Highscores.class);
@@ -65,7 +65,10 @@ public class Highscores
 	
 	private static String getFilePath()
 	{
-		return Paths.get(rootFolder, FILE_NAME).toString();
+		return 
+				rootFolder.equals("") ?
+						Paths.get(CommonUtils.getHomeDir(), FILE_NAME).toString() :
+						Paths.get(rootFolder, FILE_NAME).toString();
 	}
 	
 	private ArrayList<HighscoreEntry> entries;

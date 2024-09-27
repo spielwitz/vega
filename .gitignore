@@ -2,15 +2,11 @@
 .DS*
 bin
 build/jars
+data
 README.txt
 ResourceBundleUtilityProperties
-VegaDisplayProperties
-VegaDisplayConfiguration
-VegaHighscores
-VegaProperties
-VegaConfiguration*
-ServerData*
 Users*
+Release*
 Messages*
 Web
 docs/.~lock.*
