@@ -24,8 +24,8 @@ cp *.jar build/jars
 cp VegaHelp*.pdf build/jars
 cp LICENSE build/jars/licenses
 cp src/*.txt build/jars/licenses
-rm -rf Release/*
+rm -rf release/*
 
 cd build/jars
-zip -r ../../Release/Vega_Build_$vegaRelease.zip *.jar VegaHelp*.pdf licenses
+zip -r ../../release/Vega_Build_$vegaRelease.zip *.jar VegaHelp*.pdf licenses
 rm release.txt
