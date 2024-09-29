@@ -22,10 +22,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -43,6 +39,7 @@ import common.ScreenContent;
 import common.ScreenContentClient;
 import commonUi.MessageBox;
 import commonUi.MessageBoxResult;
+import commonUi.CommonUiUtils;
 import commonUi.FontHelper;
 import commonUi.IVegaDisplayMethods;
 import commonUi.IHostComponentMethods;
@@ -195,7 +192,7 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		}
 		else if (JMenuItem == this.menuHelp)
 		{
-			this.openManual();
+			CommonUiUtils.showManual(this);
 		}
 		else if (JMenuItem == this.menuLanguage)
 		{
@@ -346,40 +343,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		catch (Exception e) {}
 	}
 
-	private void openManual()
-	{
-		Desktop desktop = Desktop.getDesktop();   
-	    InputStream resource = getClass().getResourceAsStream("/VegaHelp_"+
-	    		VegaResources.getLocale() +
-	    		".pdf");
-	    try
-	    {
-	    	Path tempOutput = Files.createTempFile("VegaHelp", ".pdf");
-	        tempOutput.toFile().deleteOnExit();
-	        try
-	        {
-	        	Files.copy(resource,tempOutput,StandardCopyOption.REPLACE_EXISTING);
-	        }
-	        finally
-	        {
-	            resource.close();
-	        }
-	        desktop.open(tempOutput.toFile());   
-	    }   
-	    catch (Exception x)
-	    {
-	    	
-	    }
-	    finally
-	    {
-	    	try
-	    	{
-	        resource.close();
-	    	}
-	    	catch (Exception xx) {}
-	    }
-	}
-	
 	private void updateScreenDisplayContent()
 	{
 		ScreenContentClient screenContentClient = null;

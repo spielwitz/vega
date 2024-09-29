@@ -1,0 +1,31 @@
+mkdir jars
+
+cd ../bin
+java version.VersionCreator ../build/jars ../Web
+cd ../build
+
+vegaRelease=$(<jars/release.txt)
+
+cd jars
+rm -rf licenses
+mkdir licenses
+rm *.jar
+rm *.pdf
+cd ../../bin
+
+jar cvfm ../build/jars/Vega.jar ../build/MANIFEST_vega.MF vega common commonUi commonServer uiBaseControls ic_menu.png cancel.png connected.png credentialsLocked.png disconnected.png games.png gamesNew.png mail.png mailNew.png JetBrainsMono-Regular.ttf tutorial VegaResources_de_DE.properties VegaResources_en_US.properties
+
+jar cvfm ../build/jars/VegaDisplay.jar ../build/MANIFEST_display.MF vegaDisplay common commonUi uiBaseControls ic_menu.png JetBrainsMono-Regular.ttf VegaResources_de_DE.properties VegaResources_en_US.properties
+
+jar cvfm ../build/jars/VegaServer.jar ../build/MANIFEST_server.MF vegaServer common commonServer VegaResources_de_DE.properties VegaResources_en_US.properties
+
+cd ..
+cp *.jar build/jars
+cp VegaHelp*.pdf build/jars
+cp LICENSE build/jars/licenses
+cp src/*.txt build/jars/licenses
+rm -rf release/*
+
+cd build/jars
+zip -r ../../release/Vega_Build_$vegaRelease.zip *.jar VegaHelp*.pdf licenses
+rm release.txt

@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import common.CommonUtils;
 import common.Game;
 import common.GameInfo;
 import common.Highscores;
@@ -45,7 +46,6 @@ import commonServer.PayloadRequestPostNewGame;
 import commonServer.RequestMessageGetGamesWaitingForInput;
 import commonServer.PayloadRequestMessageGetHighscores;
 import commonServer.ResponseMessageGamesAndUsers;
-import commonServer.ServerUtils;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.DataSet;
 import spielwitz.biDiServer.DataSetInfo;
@@ -64,7 +64,7 @@ public class VegaServer extends Server
 	private static ServerConfiguration serverConfig;
 	private final static File fileServerCredentials = 
 			Paths.get(
-					ServerUtils.getHomeFolder(),
+					CommonUtils.getHomeDir(),
 					Server.FOLDER_NAME_ROOT,
 					"ServerConfig.json").
 			toFile(); 
@@ -78,7 +78,7 @@ public class VegaServer extends Server
 	{
 		ServerConfiguration serverConfiguration = getServerConfig();
 		
-		String homeDir = ServerUtils.getHomeFolder();
+		String homeDir = CommonUtils.getHomeDir();
 		
 		try {
 			VegaServer server = new VegaServer(

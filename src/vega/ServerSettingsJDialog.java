@@ -42,12 +42,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
+import common.CommonUtils;
 import common.Game;
 import common.Player;
 import common.VegaResources;
 import commonServer.ClientServerConstants;
 import commonServer.ResponseMessageChangeUser;
-import commonServer.ServerUtils;
 import commonUi.MessageBox;
 import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Client;
@@ -203,6 +203,13 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 		{
 			this.serverCredentials = dlg.getServerCredentials();
 		}
+	}
+	
+	private static String getCredentialFileName(String userId, String url, int port)
+	{
+		String userIdTrimmed = userId.replaceAll("[^a-zA-Z0-9.-]", "_");
+		String urlTrimmed = url.replaceAll("[^a-zA-Z0-9.-]", "_");
+		return userIdTrimmed + "_" + urlTrimmed + "_" + port; 
 	}
 	
 	private class AdminPanel extends Panel implements IButtonListener, IComboBoxListener, IListListener
@@ -1014,9 +1021,9 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 					fc.setCurrentDirectory(
 							selectedDirectoryActivationFile != null ?
 									selectedDirectoryActivationFile :
-									new File(ServerUtils.getHomeFolder()));
+									new File(CommonUtils.getHomeDir()));
 					
-					String filename = ServerUtils.getCredentialFileName(
+					String filename = getCredentialFileName(
 															reqMsgChangeUser.getUserId(),
 															clientConfiguration.getUrl(),
 															clientConfiguration.getPort())
@@ -1664,7 +1671,7 @@ class ServerSettingsJDialog extends Dialog implements IButtonListener
 				this.panCredentials.setValues(clientConfiguration);
 			}
 		}
-
+		
 		private class CredentialsPanel extends Panel implements IButtonListener, ITextFieldListener
 		{
 			private Button butActivate;

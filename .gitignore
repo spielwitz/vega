@@ -1,15 +1,10 @@
 .settings
 .DS*
 bin
-jars
+build/jars
+data
 README.txt
 ResourceBundleUtilityProperties
-VegaDisplayProperties
-VegaDisplayConfiguration
-VegaHighscores
-VegaProperties
-VegaConfiguration*
-ServerData*
 Users*
 Messages*
 Web

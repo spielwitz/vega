@@ -42,12 +42,12 @@ import com.google.gson.JsonObject;
 public class Game extends EmailTransportBase implements Serializable
 {
 	/// The current build
-	public static final String		BUILD = "0009";
+	public static final String		BUILD = "0010";
 	
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0009";
+	public static final String 		BUILD_COMPATIBLE = "0010";
 
 	// Game board dimensions 
 	public static final int 		BOARD_MAX_X = 20;
@@ -2337,8 +2337,8 @@ public class Game extends EmailTransportBase implements Serializable
 		
 		headers.add(
 				new ScreenContentPlanetsColoredListHeaderColumn(
-						VegaResources.Arrival(true),
-						9,
+						VegaResources.FromShort(true),
+						2,
 						false));
 		
 		headers.add(
@@ -2356,16 +2356,16 @@ public class Game extends EmailTransportBase implements Serializable
 		
 		headers.add(
 				new ScreenContentPlanetsColoredListHeaderColumn(
-						VegaResources.FromShort(true),
+						VegaResources.ToShort(true),
 						2,
 						false));
 		
 		headers.add(
 				new ScreenContentPlanetsColoredListHeaderColumn(
-						VegaResources.ToShort(true),
-						2,
+						VegaResources.Arrival(true),
+						9,
 						false));
-		
+
 		headers.add(
 				new ScreenContentPlanetsColoredListHeaderColumn(
 						VegaResources.Attributes(true),
@@ -2412,14 +2412,12 @@ public class Game extends EmailTransportBase implements Serializable
 			
 			ScreenContentPlanetsColoredListCellValue[] values = new ScreenContentPlanetsColoredListCellValue[headers.size()];
 			
-			if (!ship.isStopped())
-			{
-				values[0] = 
-						new ScreenContentPlanetsColoredListCellValue(
-								Colors.NEUTRAL,
-								travelTime.toOutputStringForPlanetList(this.year, true));
-			}
+			values[0] = 
+					new ScreenContentPlanetsColoredListCellValue(
+							this.getPlanetColorIndex(ship.getPlanetIndexStart()),
+							this.getSectorNameFromPosition(ship.getPositionStart()));
 			
+
 			values[1] =  
 					new ScreenContentPlanetsColoredListCellValue(
 							ship.getOwnerColorIndex(this),
@@ -2432,20 +2430,18 @@ public class Game extends EmailTransportBase implements Serializable
 							ship.getOwnerColorIndex(this),
 							Byte.toString(ship.getScreenDisplaySymbol()));
 			
-			
-			values[3] = 
-					new ScreenContentPlanetsColoredListCellValue(
-							this.getPlanetColorIndex(ship.getPlanetIndexStart()),
-							this.getSectorNameFromPosition(ship.getPositionStart()));
-			
 			if (!ship.isStopped())
 			{
-				values[4] =
+				values[3] =
 						new ScreenContentPlanetsColoredListCellValue(
 								this.getPlanetColorIndex(ship.getPlanetIndexDestination()),
 								this.getSectorNameFromPosition(ship.getPositionDestination()));
+				values[4] = 
+						new ScreenContentPlanetsColoredListCellValue(
+								Colors.NEUTRAL,
+								travelTime.toOutputStringForPlanetList(this.year, true));
 			}
-			
+
 			if (ship.getType() == ShipType.BATTLESHIPS && ship.isAlliance())
 			{						
 				StringBuilder sb = new StringBuilder();

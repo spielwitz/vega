@@ -6,12 +6,6 @@ A strategy game since 1989.
 
 Michael Schweitzer
 
-## Download
-
-[https://github.com/spielwitz/vega/releases](https://github.com/spielwitz/vega/releases)
-
-Extract Vega.jar, VegaDisplay.jar, and VegaServer.jar from the zip file and copy them to a local folder of your choice.
-
 ## What is VEGA?
 
 ![VEGA](vegaEN.png)
@@ -32,8 +26,31 @@ VEGA offers you a tutorial for a quick introduction to the game.
 
 ## Documentation
 
-Manual: [German](resources/VegaHelp_de-DE.pdf), [English](resources/VegaHelp_en-US.pdf) 
+Manual: [German](VegaHelp_de-DE.pdf), [English](VegaHelp_en-US.pdf) 
 
+## Download and Execute
+
+Download the zip file from the `release` folder and extract its contents to a local folder of your choice. The following jar files are executables and can be started by double-click:
+
+* `Vega.jar`
+
+* `VegaDisplay.jar`
+
+You can also open a command prompt and execute the apps as follows:
+
+```
+java -jar Vega.jar
+```
+
+```
+java -jar VegaDisplay.jar
+```
+
+The VEGA server can only be started from the command prompt:
+
+```
+java -jar VegaServer.jar
+```
 
 ## Built With
 

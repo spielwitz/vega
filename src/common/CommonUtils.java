@@ -18,9 +18,11 @@ package common;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -30,6 +32,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CommonUtils
 {
 	public final static String	RMI_REGISTRATION_NAME_SERVER = "Vega";
+	private final static String	DATA_FOLDER = "data";
 	
 	private static Object cloneLock = new Object(); 
 	
@@ -102,6 +105,18 @@ public class CommonUtils
 		}
 		
 		return meineIP;
+	}
+	
+	public static String getHomeDir()
+	{
+		File dir = Paths.get(System.getProperty("user.dir"), DATA_FOLDER).toFile();
+		
+		if (!dir.exists())
+		{
+			dir.mkdirs();
+		}
+		
+		return dir.getAbsolutePath();
 	}
 	
 	public static int getRandomInteger(int valueMax)

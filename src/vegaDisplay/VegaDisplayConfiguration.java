@@ -23,11 +23,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.UUID;
 
 import com.google.gson.Gson;
 
+import common.CommonUtils;
 import common.VegaResources;
 
 class VegaDisplayConfiguration
@@ -46,7 +48,7 @@ class VegaDisplayConfiguration
 		}
 		else
 		{
-			try (BufferedReader br = new BufferedReader(new FileReader(new File(FILE_NAME))))
+			try (BufferedReader br = new BufferedReader(new FileReader(getFileName())))
 			{
 				String json = br.readLine();
 				config = serializer.fromJson(json, VegaDisplayConfiguration.class);
@@ -104,6 +106,12 @@ class VegaDisplayConfiguration
 		
 		return config;
 	}
+	
+	private static File getFileName()
+	{
+		return Paths.get(CommonUtils.getHomeDir(), FILE_NAME).toFile();
+	}
+	
 	private String				serverIpAddress;
 	private String				myIpAddress;
 	
@@ -190,7 +198,7 @@ class VegaDisplayConfiguration
 	{
 		boolean success = true;
 		
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME)))
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(getFileName())))
 		{
 			bw.write(serializer.toJson(this));			
 		} catch (IOException e)
