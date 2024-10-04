@@ -137,15 +137,14 @@ class DistanceMatrix
 
 				if (distance > 0)
 				{
-					String distanceString = String.format(
-							locale,
-							"%.3f", 
-							distance);
+					String distanceString = 
+							CommonUtils.formatNumericValue(
+									CommonUtils.round(distance, 2)); 
 
 					String integer = distanceString.substring(0, distanceString.indexOf(decimalSeparator));
 					String decimal = distanceString.substring(distanceString.indexOf(decimalSeparator) +1);
 
-					if (decimal.equals("000"))
+					if (decimal.equals("00"))
 					{
 						chapter.table.cells.add(integer);
 					}

@@ -35,7 +35,8 @@ public class ScreenContent implements Serializable
 	private int m;
 	private boolean u;
 	private boolean s;
-	private int g;
+	private int y;
+	private int d;
 	
 	ScreenContent()
 	{
@@ -52,7 +53,12 @@ public class ScreenContent implements Serializable
 	
 	int getEventDay()
 	{
-		return this.g;
+		return this.d;
+	}
+	
+	int getEventYear()
+	{
+		return this.y;
 	}
 	
 	int getMode() {
@@ -89,9 +95,14 @@ public class ScreenContent implements Serializable
 		this.c = screenContentConsole;
 	}
 
-	void setEventDay(int tag)
+	void setEventDay(int day)
 	{
-		this.g = tag;
+		this.d = day;
+	}
+	
+	void setEventYear(int year)
+	{
+		this.y = year;
 	}
 	
 	void setMode(int modus)

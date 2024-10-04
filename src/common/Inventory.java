@@ -429,11 +429,10 @@ class Inventory
 			else
 				chapter.table.cells.add("");
 
-			travelTimeRemaining.year += this.game.getYear();
 			chapter.table.cells.add(
 					ship2.isStopped() ?
 							"" :
-								travelTimeRemaining.toOutputString(false));
+								travelTimeRemaining.toOutputString(this.game.getYear(), false));
 
 			if (ship2.getType() == ShipType.BATTLESHIPS && ship2.isAlliance())
 			{

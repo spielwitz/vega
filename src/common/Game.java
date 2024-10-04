@@ -42,18 +42,18 @@ import com.google.gson.JsonObject;
 public class Game extends EmailTransportBase implements Serializable
 {
 	/// The current build
-	public static final String		BUILD = "0010";
+	public static final String		BUILD = "0011";
 	
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0010";
+	public static final String 		BUILD_COMPATIBLE = "0011";
 
 	// Game board dimensions 
 	public static final int 		BOARD_MAX_X = 20;
 	public static final int 		BOARD_MAX_Y = 18;
 	
-	static final int 				DAYS_OF_YEAR_COUNT = 365;
+	static final int 				YEARS_FRACTION = 100;
 	public static final int 		PLAYERS_COUNT_MAX = 6;
 	public static final int 		PLAYERS_COUNT_MIN = 2;
 	public static final int 		PLANETS_COUNT_MAX = 42;
@@ -225,7 +225,7 @@ public class Game extends EmailTransportBase implements Serializable
 	
 	transient private ShipTravelTime[][] distanceMatrix;
 	
-	transient private int[][] distanceMatrixYears;
+	//transient private int[][] distanceMatrixYears;
 	
 	@SuppressWarnings("unchecked")
 	public Game(HashSet<GameOptions> options,
@@ -338,7 +338,7 @@ public class Game extends EmailTransportBase implements Serializable
 		if (this.distanceMatrix == null)
 		{
 			this.distanceMatrix = new ShipTravelTime[planetsCount][planetsCount];
-			this.distanceMatrixYears = new int[planetsCount][planetsCount];
+			//this.distanceMatrixYears = new int[planetsCount][planetsCount];
 			
 			for (int planetIndex = 0; planetIndex < planetsCount - 1; planetIndex++)
 			{
@@ -352,8 +352,8 @@ public class Game extends EmailTransportBase implements Serializable
 					
 					this.distanceMatrix[planetIndex2][planetIndex] = this.distanceMatrix[planetIndex][planetIndex2];
 					
-					this.distanceMatrixYears[planetIndex][planetIndex2] = this.distanceMatrix[planetIndex][planetIndex2].year;
-					this.distanceMatrixYears[planetIndex2][planetIndex] = this.distanceMatrixYears[planetIndex][planetIndex2];
+//					this.distanceMatrixYears[planetIndex][planetIndex2] = this.distanceMatrix[planetIndex][planetIndex2].year;
+//					this.distanceMatrixYears[planetIndex2][planetIndex] = this.distanceMatrixYears[planetIndex][planetIndex2];
 				}
 			}  			
 		}
@@ -1497,6 +1497,7 @@ public class Game extends EmailTransportBase implements Serializable
 						objects,
 						mines));
 		
+		this.screenContent.setEventYear(this.year + 1);
 		this.screenContent.setEventDay(day);
 		
 		if (!this.console.isBackground())

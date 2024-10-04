@@ -50,22 +50,7 @@ class Ship implements Serializable
 	}
 	private static ShipTravelTime getTravelTimeInternal(double dist, double v)
 	{
-		double yearFraction = dist/v;
-		
-		int daysCount = CommonUtils.round(yearFraction * (double)Game.DAYS_OF_YEAR_COUNT);
-		
-		if (daysCount % Game.DAYS_OF_YEAR_COUNT == 0)
-		{
-			return new ShipTravelTime(daysCount / Game.DAYS_OF_YEAR_COUNT - 1, Game.DAYS_OF_YEAR_COUNT);
-		}
-		else
-		{
-			return new ShipTravelTime(daysCount / Game.DAYS_OF_YEAR_COUNT, daysCount % Game.DAYS_OF_YEAR_COUNT);
-		}
-	}
-	private static double getYearFraction(int day)
-	{
-		return (double)day / (double)Game.DAYS_OF_YEAR_COUNT;
+		return new ShipTravelTime(CommonUtils.round(dist/v, 2));
 	}
 	
 	private int planetIndexStart;
@@ -268,7 +253,7 @@ class Ship implements Serializable
 		
 		double v = getSpeed(this.getType(), this.transfer);
 		
-		double yearFraction = Ship.getYearFraction(day);
+		double yearFraction = (double)day / (double)Game.YEARS_FRACTION;
 		
 		double yearCountDay = (double)this.yearCount +  yearFraction * v;
 		

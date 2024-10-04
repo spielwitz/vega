@@ -27,6 +27,7 @@ import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CommonUtils
@@ -93,6 +94,13 @@ public class CommonUtils
 		
 		return losses;
 	}
+	
+	public static String formatNumericValue(double arg)
+	{
+		Locale l = Locale.forLanguageTag(VegaResources.getLocale());
+		return String.format(l, "%.2f", arg);
+	}
+	
 	public static String getMyIPAddress()
 	{
 		String meineIP = null;
@@ -159,6 +167,12 @@ public class CommonUtils
 	public static int round (double arg)
 	{
 		return (int)Math.round(arg);		
+	}
+	
+	public static double round (double arg, int digits)
+	{
+		double factor = Math.pow(10, digits);
+		return Math.round(arg * factor) / factor;
 	}
 	
 	public static int[] sortList (String values[], boolean descending)

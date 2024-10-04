@@ -142,7 +142,7 @@ class Evaluation
 				Colors.NEUTRAL);
 
 		this.game.getConsole().clear();
-		this.printDayBeginOfYear();
+		this.printDayEvent(0);
 		this.game.getConsole().appendText(
 				VegaResources.EvaluationBegins(true));
 		this.waitForKeyPressed();
@@ -166,7 +166,7 @@ class Evaluation
 
 		this.processCapitulations();
 
-		for (int day = 0; day <= Game.DAYS_OF_YEAR_COUNT; day++)
+		for (int day = 0; day <= Game.YEARS_FRACTION; day++)
 		{
 			if (day > 0)
 			{
@@ -192,7 +192,7 @@ class Evaluation
 			}
 		}
 
-		this.game.updateBoard(Game.DAYS_OF_YEAR_COUNT);
+		this.game.updateBoard(Game.YEARS_FRACTION);
 		this.game.updatePlanetList(false);
 
 		for (Ship ships: this.game.getShips())
@@ -210,7 +210,7 @@ class Evaluation
 		this.checkIfPlayerIsDead();
 
 		this.game.getConsole().setLineColor(Colors.WHITE);
-		this.printDayEndOfYear();
+		this.printDayEvent(Game.YEARS_FRACTION);
 
 		this.game.getConsole().appendText(
 				VegaResources.PlanetsProducing(true));
@@ -324,10 +324,9 @@ class Evaluation
 		if (ship.getType() == ShipType.BLACK_HOLE)
 			return;
 		
-		double distanceTotal = ship.getPositionStart().distance(ship.getPositionDestination());
-		double distanceCurrent = ship.getPositionStart().distance(ship.getPositionOnDay(day));
-
-		if (distanceCurrent <= distanceTotal - Point.PRECISION)
+		double travelTimeRemaining = ship.getTravelTimeRemaining().travelTime;
+		
+		if (travelTimeRemaining > (double)day/Game.YEARS_FRACTION)
 		{
 			return;
 		}
@@ -658,7 +657,7 @@ class Evaluation
 			this.game.getPlayers()[playerIndex].setDead(true);
 
 			this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
-			this.printDayEndOfYear();
+			this.printDayEvent(Game.YEARS_FRACTION);
 			this.game.getConsole().appendText(
 					VegaResources.PlayerGameOver(
 							true, 
@@ -997,29 +996,10 @@ class Evaluation
 			mine.addToStrength(strength);
 	}
 
-	private void printDayBeginOfYear()
-	{
-		this.game.getConsole().appendText(">>> ");
-		this.game.getConsole().enableEvaluationProgressBar(true);
-	}
-
-	private void printDayEndOfYear()
-	{
-		this.game.getConsole().appendText(">>> ");
-		this.game.getConsole().setEvaluationProgressBarDay(Game.DAYS_OF_YEAR_COUNT);
-	}
-
 	private void printDayEvent(int day)
 	{
-		if (day < 1)
-			printDayBeginOfYear();
-		else if (day >= Game.DAYS_OF_YEAR_COUNT)
-			printDayEndOfYear();
-		else
-		{		
-			this.game.getConsole().appendText(">>> ");
-			this.game.getConsole().setEvaluationProgressBarDay(day);
-		}
+		this.game.getConsole().appendText(">>> ");
+		this.game.getConsole().setEvaluationProgressBarDay(day);
 	}
 
 	private HashSet<Integer> processAllianceChanges()

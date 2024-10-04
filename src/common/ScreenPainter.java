@@ -525,26 +525,15 @@ public class ScreenPainter
 			int progressActual = 0;
 			String text = "";
 			
-			if (screenContentConsole.getProgressBarDay() == 0)
-			{
-				progressActual = 0;
-				text = VegaResources.BeginningOfYear(false);
-			}
-			else if (screenContentConsole.getProgressBarDay() == Game.DAYS_OF_YEAR_COUNT)
-			{
-				progressActual = progressBarWidth;
-				text = VegaResources.EndOfYear(false);
-			}
-			else
-			{
-				progressActual = CommonUtils.round(
-						(double) progressBarWidth * (double)screenContentConsole.getProgressBarDay() / 
-						(double)Game.DAYS_OF_YEAR_COUNT);
-				text = VegaResources.DayOf(
-						false,
-						Integer.toString(screenContentConsole.getProgressBarDay()),
-						Integer.toString(Game.DAYS_OF_YEAR_COUNT));
-			}
+			progressActual = CommonUtils.round(
+					(double) progressBarWidth * (double)screenContentConsole.getProgressBarDay() / 
+					(double)Game.YEARS_FRACTION);
+			text = VegaResources.ArrivalTime(
+					false,
+					CommonUtils.formatNumericValue(
+							CommonUtils.round(
+									this.screenContent.getEventYear() + 
+									(double)screenContentConsole.getProgressBarDay()/Game.YEARS_FRACTION, 2)));
 			
 			this.drawRect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
 			this.fillRect(progressBarX, progressBarY, progressActual, progressBarHeight);

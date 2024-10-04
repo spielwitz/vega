@@ -625,9 +625,8 @@ class EnterMoves
 				this.game.getConsole().appendText(
 						VegaResources.Arrival2(true));
 
-				travelTime.year += this.game.getYear();
 				this.game.getConsole().appendText(
-						travelTime.toOutputString(true));
+						travelTime.toOutputString(this.game.getYear(), true));
 
 				this.game.getConsole().waitForKeyPressed();
 				continue;

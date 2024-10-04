@@ -20,55 +20,40 @@ import java.util.Comparator;
 
 class ShipTravelTime implements Comparator<ShipTravelTime> 
 {
-	int year;
-	private int day;
+	double travelTime;
 	Ship ship;
 	
 	ShipTravelTime() {}
 	
-	ShipTravelTime(int year, int day)
+	ShipTravelTime(double travelTime)
 	{
-		this.year = year;
-		this.day = day;
+		this.travelTime = travelTime;
 	}
 	
 	@Override
 	public int compare(ShipTravelTime o1, ShipTravelTime o2) 
 	{
-		int days1 = o1.year * Game.DAYS_OF_YEAR_COUNT + o1.day;
-		int days2 = o2.year * Game.DAYS_OF_YEAR_COUNT + o2.day;
-		
-		if (days1 == days2)
+		if (o1.travelTime == o2.travelTime)
 			return 0;
-		if (days1 > days2)
+		if (o1.travelTime > o2.travelTime)
 			return 1;
 		else
 			return -1;
 	}
 	
-	String toOutputString(boolean symbol)
+	String toOutputString(int currentYear, boolean symbol)
 	{
-		if (day < Game.DAYS_OF_YEAR_COUNT)
-			return VegaResources.YearDay(
-					symbol, 
-					Integer.toString(year+1), 
-					Integer.toString(day+1));
-		else
-			return VegaResources.YearEndOfYear(
-					symbol, 
-					Integer.toString(year+1));
+		return VegaResources.ArrivalTime(
+				symbol, 
+				CommonUtils.formatNumericValue(currentYear + 1 + this.travelTime)
+				);
 	}
 	
 	String toOutputStringForPlanetList(int currentYear, boolean symbol)
 	{
-		if (day < Game.DAYS_OF_YEAR_COUNT)
-			return VegaResources.YearDayShort(
-					symbol, 
-					Integer.toString(currentYear + year + 1), 
-					Integer.toString(day+1));
-		else
-			return VegaResources.YearEndShort(
-					symbol, 
-					Integer.toString(currentYear + year+1));
+		return VegaResources.ArrivalTimeShort(
+				symbol, 
+				CommonUtils.padString(CommonUtils.formatNumericValue(currentYear + 1 + this.travelTime), 6)
+				);
 	}
 }

@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: F8
+		// Last used symbolic key: FA
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -347,10 +347,6 @@ public class VegaResources
 		symbolDict.put("8M","WriteEmail_8M");
 		symbolDict.put("8N","YearAlreadyEvaluated_8N");
 		symbolDict.put("8O","YearBack_8O");
-		symbolDict.put("8P","YearDayShort_8P");
-		symbolDict.put("8Q","YearDay_8Q");
-		symbolDict.put("8R","YearEndOfYear_8R");
-		symbolDict.put("8S","YearEndShort_8S");
 		symbolDict.put("8T","YearForward_8T");
 		symbolDict.put("8U","YearOf_8U");
 		symbolDict.put("8V","YearOf_8V");
@@ -411,7 +407,6 @@ public class VegaResources
 		symbolDict.put("AF","BattleshipsShort_AF");
 		symbolDict.put("AG","BattleshipsWaiting_AG");
 		symbolDict.put("AH","Battleships_AH");
-		symbolDict.put("AI","BeginningOfYear_AI");
 		symbolDict.put("AJ","BlackHoleDestroyedBattleships_AJ");
 		symbolDict.put("AK","BlackHoleMine_AK");
 		symbolDict.put("AL","BlackHoleMines_AL");
@@ -454,7 +449,6 @@ public class VegaResources
 		symbolDict.put("BM","CreateUserQuestion_BM");
 		symbolDict.put("BN","CurrentAllies_BN");
 		symbolDict.put("BO","DateFormatted_BO");
-		symbolDict.put("BP","DayOf_BP");
 		symbolDict.put("BQ","Default_BQ");
 		symbolDict.put("BR","DefensiveBattleshipsShort_BR");
 		symbolDict.put("BS","DefensiveBattleships_BS");
@@ -491,7 +485,6 @@ public class VegaResources
 		symbolDict.put("CN","EmailWasCreatedInStandardClient_CN");
 		symbolDict.put("CO","Email_CO");
 		symbolDict.put("CP","EmailsWereCreated_CP");
-		symbolDict.put("CQ","EndOfYear_CQ");
 		symbolDict.put("CR","EnterAllianceMembers_CR");
 		symbolDict.put("CS","EnterMoves_CS");
 		symbolDict.put("CT","EntriesCorrectQuestion_CT");
@@ -582,6 +575,8 @@ public class VegaResources
 		symbolDict.put("F6","TutorialText04a_F6");
 		symbolDict.put("F7","TutorialText04b_F7");
 		symbolDict.put("F8","VegaHelpError_F8");
+		symbolDict.put("F9","ArrivalTime_F9");
+		symbolDict.put("FA","ArrivalTimeShort_FA");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -2781,34 +2776,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Y{0}-D{1} [8P]
-	   */
-	public static String YearDayShort(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£8P§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("YearDayShort_8P"), arg0, arg1);
-	}
-
-	/**
-	   * Year {0}, day {1} [8Q]
-	   */
-	public static String YearDay(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£8Q§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("YearDay_8Q"), arg0, arg1);
-	}
-
-	/**
-	   * Year {0}, end of the year [8R]
-	   */
-	public static String YearEndOfYear(boolean symbol, String arg0) {
-		return symbol ? "£8R§"+arg0+"£":MessageFormat.format(messages.getString("YearEndOfYear_8R"), arg0);
-	}
-
-	/**
-	   * Y{0}-End [8S]
-	   */
-	public static String YearEndShort(boolean symbol, String arg0) {
-		return symbol ? "£8S§"+arg0+"£":MessageFormat.format(messages.getString("YearEndShort_8S"), arg0);
-	}
-
-	/**
 	   * Year +\n [8T]
 	   */
 	public static String YearForward(boolean symbol) {
@@ -3229,13 +3196,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Beginning of the year [AI]
-	   */
-	public static String BeginningOfYear(boolean symbol) {
-		return symbol ? "£AI£":messages.getString("BeginningOfYear_AI");
-	}
-
-	/**
 	   * The Black Hole destroyed {0} battleships. [AJ]
 	   */
 	public static String BlackHoleDestroyedBattleships(boolean symbol, String arg0) {
@@ -3530,13 +3490,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Day {0} of {1} [BP]
-	   */
-	public static String DayOf(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£BP§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("DayOf_BP"), arg0, arg1);
-	}
-
-	/**
 	   * default [BQ]
 	   */
 	public static String Default(boolean symbol) {
@@ -3786,13 +3739,6 @@ public class VegaResources
 	   */
 	public static String EmailsWereCreated(boolean symbol, String arg0) {
 		return symbol ? "£CP§"+arg0+"£":MessageFormat.format(messages.getString("EmailsWereCreated_CP"), arg0);
-	}
-
-	/**
-	   * End of the year [CQ]
-	   */
-	public static String EndOfYear(boolean symbol) {
-		return symbol ? "£CQ£":messages.getString("EndOfYear_CQ");
 	}
 
 	/**
@@ -4423,5 +4369,19 @@ public class VegaResources
 	   */
 	public static String VegaHelpError(boolean symbol, String arg0, String arg1) {
 		return symbol ? "£F8§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("VegaHelpError_F8"), arg0, arg1);
+	}
+
+	/**
+	   * Year {0} [F9]
+	   */
+	public static String ArrivalTime(boolean symbol, String arg0) {
+		return symbol ? "£F9§"+arg0+"£":MessageFormat.format(messages.getString("ArrivalTime_F9"), arg0);
+	}
+
+	/**
+	   * Y {0} [FA]
+	   */
+	public static String ArrivalTimeShort(boolean symbol, String arg0) {
+		return symbol ? "£FA§"+arg0+"£":MessageFormat.format(messages.getString("ArrivalTimeShort_FA"), arg0);
 	}
 }

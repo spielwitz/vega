@@ -59,7 +59,7 @@ class Replay
 
 	private void animate(ScreenContent screenContentDayEventPrevious, ScreenContent screenContentDayEventCurrent)
 	{
-		int day = screenContentDayEventPrevious.getEventDay() + 2;
+		int day = screenContentDayEventPrevious.getEventDay();
 
 		if (day >= screenContentDayEventCurrent.getEventDay() - 1)
 			return;
@@ -124,7 +124,7 @@ class Replay
 
 			this.game.getGameThread().updateDisplay(screenContentDayEventPrevious);
 
-			day += 2;
+			day ++;
 		}
 
 		this.game.pause(PAUSE_MILLISECS_ANIMATION);
