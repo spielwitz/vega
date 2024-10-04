@@ -48,6 +48,13 @@ public class Migrator
 			jobj.addProperty(PROP_BUILD, "0004");
 			migrate(jobj);
 		}
+		else if (build.compareTo("0011") < 0)
+		{
+			jobj.remove("replayLast");
+			
+			jobj.addProperty(PROP_BUILD, "0011");
+			migrate(jobj);
+		}
 		else
 		{
 			jobj.addProperty(PROP_BUILD, Game.BUILD);
