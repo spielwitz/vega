@@ -51,9 +51,6 @@ class ShipTravelTime implements Comparator<ShipTravelTime>
 	
 	String toOutputStringForPlanetList(int currentYear, boolean symbol)
 	{
-		return VegaResources.ArrivalTimeShort(
-				symbol, 
-				CommonUtils.padString(CommonUtils.formatNumericValue(currentYear + 1 + this.travelTime), 6)
-				);
+		return CommonUtils.padString(CommonUtils.formatNumericValue(currentYear + 1 + this.travelTime), 7);
 	}
 }
