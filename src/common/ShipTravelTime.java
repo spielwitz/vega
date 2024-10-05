@@ -18,6 +18,8 @@ package common;
 
 import java.util.Comparator;
 
+import commonUi.CommonUiUtils;
+
 class ShipTravelTime implements Comparator<ShipTravelTime> 
 {
 	double travelTime;
@@ -51,6 +53,12 @@ class ShipTravelTime implements Comparator<ShipTravelTime>
 	
 	String toOutputStringForPlanetList(int currentYear, boolean symbol)
 	{
-		return CommonUtils.padString(CommonUtils.formatNumericValue(currentYear + 1 + this.travelTime), 7);
+		String travelTimeString = CommonUtils.formatNumericValue(currentYear + 1 + this.travelTime);		
+		String[] s = travelTimeString.split(CommonUiUtils.getDecimalSeparator());
+		
+		return VegaResources.ArrivalTimeShort(
+				symbol,
+				s[0],
+				s[1]);
 	}
 }

@@ -16,11 +16,9 @@
 
 package common;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
+
+import commonUi.CommonUiUtils;
 
 class DistanceMatrix
 {
@@ -117,11 +115,7 @@ class DistanceMatrix
 
 		this.createGridHeaderLine(chapter.table);
 
-		String[] localeStrings = VegaResources.getLocale().split("-");
-		Locale locale = new Locale(localeStrings[0], localeStrings[1]);
-		DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(locale);
-		DecimalFormatSymbols decimalFormatSymbols = decimalFormat.getDecimalFormatSymbols();
-		String decimalSeparator = Character.toString(decimalFormatSymbols.getDecimalSeparator());
+		String decimalSeparator = CommonUiUtils.getDecimalSeparator();
 
 		for (int i = 0; i < this.game.getPlanetsCount(); i++)
 		{
@@ -133,25 +127,23 @@ class DistanceMatrix
 			{
 				int planetIndexDestination = game.getPlanetsSorted()[j];
 
-				double distance = this.game.getPlanets()[planetIndexStart].getPosition().distance(this.game.getPlanets()[planetIndexDestination].getPosition());
+				double distance = 
+						CommonUtils.round(this.game.getPlanets()[planetIndexStart].getPosition().distance(this.game.getPlanets()[planetIndexDestination].getPosition()),2);
 
 				if (distance > 0)
 				{
-					String distanceString = 
-							CommonUtils.formatNumericValue(
-									CommonUtils.round(distance, 2)); 
+					String distanceString = CommonUtils.formatNumericValue(distance);
+					
+					String[] s = distanceString.split(decimalSeparator);
 
-					String integer = distanceString.substring(0, distanceString.indexOf(decimalSeparator));
-					String decimal = distanceString.substring(distanceString.indexOf(decimalSeparator) +1);
-
-					if (decimal.equals("00"))
+					if (s[1].equals("00"))
 					{
-						chapter.table.cells.add(integer);
+						chapter.table.cells.add(s[0]);
 					}
 					else
 					{
 						chapter.table.cells.add(
-								integer+decimalSeparator+"\n"+decimal);
+								s[0]+decimalSeparator+"\n"+s[1]);
 					}
 				}
 				else
@@ -189,7 +181,6 @@ class DistanceMatrix
 		}
 		
 		table.cells.add("");
-		//table.colAlignRight[0] = true;
 	}
 
 	private ArrayList<ScreenContentBoardPlanet> getBoard()

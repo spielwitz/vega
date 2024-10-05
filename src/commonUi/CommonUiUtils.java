@@ -18,6 +18,10 @@ package commonUi;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import common.VegaResources;
 import uiBaseControls.Frame;
@@ -42,5 +46,13 @@ public class CommonUiUtils
 					VegaResources.VegaHelpError(false, filename, x.getLocalizedMessage()), 
 					VegaResources.Error(false));
 		}
+	}
+	
+	public static String getDecimalSeparator()
+	{
+		Locale locale = Locale.forLanguageTag(VegaResources.getLocale()); 
+		DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(locale);
+		DecimalFormatSymbols decimalFormatSymbols = decimalFormat.getDecimalFormatSymbols();
+		return Character.toString(decimalFormatSymbols.getDecimalSeparator());
 	}
 }
