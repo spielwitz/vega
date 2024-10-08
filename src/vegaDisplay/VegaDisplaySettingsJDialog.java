@@ -17,20 +17,13 @@
 package vegaDisplay;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.InetAddress;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
-import common.Game;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.MessageBox;
-import commonUi.IServerMethods;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -169,51 +162,51 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		}
 		else if (source == this.butConnect)
 		{
-			this.updateSettings();
-			System.setProperty("java.rmi.server.hostname",this.config.getMyIpAddress());
-			
-			String errorMsg = null;
-			
-			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			
-			try {
-				if (!InetAddress.getByName( this.config.getServerIpAddress() ).isReachable( 2000 ))
-					throw new Exception(
-							VegaResources.ServerNotReached(false,
-									this.config.getServerIpAddress()));
-				IServerMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-				
-				errorMsg = rmiServer.rmiClientConnectionRequest(
-						this.config.getClientId(),
-						Game.BUILD,
-						this.config.getMyIpAddress(),
-						this.config.getClientCode(),
-						this.config.getMyName());
-				
-				if (errorMsg.length() > 0)
-					MessageBox.showError(
-							this,
-							errorMsg,
-							VegaResources.Error(false));
-				else
-					this.parent.connected = true;
-			}
-			catch (Exception e) {
-				this.setCursor(Cursor.getDefaultCursor());
-				
-				MessageBox.showError(
-						this,
-						VegaResources.NoConnectionToServer(false, e.getMessage()),
-						VegaResources.Error(false));
-				
-				this.parent.connected = false;
-			}
-			
-			this.setCursor(Cursor.getDefaultCursor());
-			
-			this.updateConnectionStatus();
+//			this.updateSettings();
+//			System.setProperty("java.rmi.server.hostname",this.config.getMyIpAddress());
+//			
+//			String errorMsg = null;
+//			
+//			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//			
+//			try {
+//				if (!InetAddress.getByName( this.config.getServerIpAddress() ).isReachable( 2000 ))
+//					throw new Exception(
+//							VegaResources.ServerNotReached(false,
+//									this.config.getServerIpAddress()));
+//				IServerMethods rmiServer;
+//				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
+//				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
+//				
+//				errorMsg = rmiServer.rmiClientConnectionRequest(
+//						this.config.getClientId(),
+//						Game.BUILD,
+//						this.config.getMyIpAddress(),
+//						this.config.getClientCode(),
+//						this.config.getMyName());
+//				
+//				if (errorMsg.length() > 0)
+//					MessageBox.showError(
+//							this,
+//							errorMsg,
+//							VegaResources.Error(false));
+//				else
+//					this.parent.connected = true;
+//			}
+//			catch (Exception e) {
+//				this.setCursor(Cursor.getDefaultCursor());
+//				
+//				MessageBox.showError(
+//						this,
+//						VegaResources.NoConnectionToServer(false, e.getMessage()),
+//						VegaResources.Error(false));
+//				
+//				this.parent.connected = false;
+//			}
+//			
+//			this.setCursor(Cursor.getDefaultCursor());
+//			
+//			this.updateConnectionStatus();
 		}
 	}
 	
@@ -225,37 +218,37 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 
 	private void updateConnectionStatus()
 	{
-		boolean authorized = false;
-		
-		String text = "";
-		
-		if (this.parent.connected)
-		{
-			try 
-			{
-				IServerMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-
-				authorized = rmiServer.rmiClientCheckRegistration(this.config.getClientId());
-			}
-			catch (Exception e)
-			{
-				text = VegaResources.ConnectionToServerNotEstablished(false);
-			}
-
-			if (text.length() == 0)
-			{
-				if (authorized)
-					text = VegaResources.ConnectedWithServer(false, this.config.getServerIpAddress()); 
-				else
-					text = VegaResources.VegaDisplayNotRegistered(false, this.config.getServerIpAddress()); 
-			}
-		}
-		else
-			text = VegaResources.NotConnected(false);
-		
-		this.labStatus.setText(text);
+//		boolean authorized = false;
+//		
+//		String text = "";
+//		
+//		if (this.parent.connected)
+//		{
+//			try 
+//			{
+//				IServerMethods rmiServer;
+//				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
+//				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
+//
+//				authorized = rmiServer.rmiClientCheckRegistration(this.config.getClientId());
+//			}
+//			catch (Exception e)
+//			{
+//				text = VegaResources.ConnectionToServerNotEstablished(false);
+//			}
+//
+//			if (text.length() == 0)
+//			{
+//				if (authorized)
+//					text = VegaResources.ConnectedWithServer(false, this.config.getServerIpAddress()); 
+//				else
+//					text = VegaResources.VegaDisplayNotRegistered(false, this.config.getServerIpAddress()); 
+//			}
+//		}
+//		else
+//			text = VegaResources.NotConnected(false);
+//		
+//		this.labStatus.setText(text);
 	}
 	
 	private void updateSettings()

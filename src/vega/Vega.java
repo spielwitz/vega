@@ -37,7 +37,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.rmi.RemoteException;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +54,6 @@ import common.EmailTransportBase;
 import common.IGameThreadEventListener;
 import common.KeyEventExtended;
 import common.ScreenContent;
-import common.ScreenContentClient;
 import common.ScreenUpdateEvent;
 import common.Game;
 import common.GameOptions;
@@ -74,7 +72,6 @@ import commonUi.MessageBoxResult;
 import commonUi.CommonUiUtils;
 import commonUi.FontHelper;
 import commonUi.IHostComponentMethods;
-import commonUi.IServerMethods;
 import commonUi.PanelScreenContent;
 import commonUi.LanguageSelectionJDialog;
 import commonUi.VegaAbout;
@@ -96,7 +93,6 @@ public class Vega extends Frame // NO_UCD (use default)
 		IGameThreadEventListener, 
 		ActionListener,
 		MouseListener,
-		IServerMethods,
 		IHostComponentMethods,
 		IIconLabelListener,
 		IVegaClientCallback,
@@ -878,63 +874,6 @@ public class Vega extends Frame // NO_UCD (use default)
 		{
 			this.messages.removeRecipientsString(recipientsString);
 		}
-	}
-	
-	@Override
-	public boolean rmiClientCheckRegistration(String clientId)
-	{
-		return this.serverFunctions.isClientRegistered(clientId);
-	}
-	
-	@Override
-	public String rmiClientConnectionRequest(
-			String clientId, 
-			String release, 
-			String ip,
-			String clientCode, 
-			String clientName) 
-					throws RemoteException
-	{
-		if (release.equals(Game.BUILD))
-			return this.serverFunctions.connectClient(
-					clientId, 
-					ip, 
-					clientCode, 
-					clientName, 
-					this.config.isClientsInactiveWhileEnterMoves());
-		else
-			return VegaResources.ClientServerDifferentBuilds(false);
-	}
-	
-	@Override
-	public void rmiClientLogoff(String clientId) throws RemoteException
-	{
-		this.serverFunctions.disconnectClient(clientId);
-	}
-	
-	@Override
-	public ScreenContentClient rmiGetCurrentScreenDisplayContent(String clientId)
-			throws RemoteException
-	{
-		if (this.serverFunctions.isClientRegistered(clientId))
-		{
-			ScreenContentClient contentClient = new ScreenContentClient();
-			contentClient.screenContent = this.paintPanel.getScreenContent();
-			contentClient.inputEnabled = this.inputEnabled;
-			
-			return contentClient; 
-		}
-		else
-			return null;
-	}
-
-	@Override
-	public void rmiKeyPressed(String clientId, String languageCode, int id, long when, int modifiers, int keyCode, char keyChart) throws RemoteException
-	{
-		KeyEvent event = new KeyEvent(this.paintPanel, id, when, modifiers, keyCode, keyChart);
-		
-		if (this.serverFunctions.isClientRegistered(clientId))
-			this.keyPressed(new KeyEventExtended(event, clientId, languageCode));
 	}
 	
 	@Override

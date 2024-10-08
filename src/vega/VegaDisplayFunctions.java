@@ -29,8 +29,6 @@ import common.ScreenContent;
 import common.VegaResources;
 import common.CommonUtils;
 import commonUi.MessageBox;
-import commonUi.IVegaDisplayMethods;
-import commonUi.IServerMethods;
 
 class VegaDisplayFunctions
 {
@@ -108,22 +106,22 @@ class VegaDisplayFunctions
 	
 	boolean openPdf(byte[] pdfBytes, String clientId)
 	{
-		ClientScreenDisplayContentUpdater c = this.registeredClients.get(clientId);
-		
-		if (c != null)
-		{
-			try {
-				IVegaDisplayMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(c.clientIp);
-				rmiServer = (IVegaDisplayMethods) registry.lookup( c.clientId );
-				return rmiServer.openPdf(pdfBytes);
-			}
-			catch (Exception e)
-			{
-				return false;
-			}
-		}
-		else
+//		ClientScreenDisplayContentUpdater c = this.registeredClients.get(clientId);
+//		
+//		if (c != null)
+//		{
+//			try {
+//				IVegaDisplayMethods rmiServer;
+//				Registry registry = LocateRegistry.getRegistry(c.clientIp);
+//				rmiServer = (IVegaDisplayMethods) registry.lookup( c.clientId );
+//				return rmiServer.openPdf(pdfBytes);
+//			}
+//			catch (Exception e)
+//			{
+//				return false;
+//			}
+//		}
+//		else
 			return false;
 	}
 	
@@ -136,28 +134,28 @@ class VegaDisplayFunctions
 		}
 		catch (Exception e) {}
 		
-		IServerMethods stub;
-		try {
-			stub = (IServerMethods) UnicastRemoteObject.exportObject(parent, 0 );
-			Registry registry;
-			registry = LocateRegistry.getRegistry();
-			registry.rebind( CommonUtils.RMI_REGISTRATION_NAME_SERVER, stub );
-			
-			ok = true;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			
-			Frame parentFrame = (Frame)parent;
-			
-			MessageBox.showError(
-					parentFrame, 
-					e.toString(),
-					VegaResources.Error(false));
-		}
-		
-		if (ok)
-			this.serverEnabled = true;
+//		IServerMethods stub;
+//		try {
+//			stub = (IServerMethods) UnicastRemoteObject.exportObject(parent, 0 );
+//			Registry registry;
+//			registry = LocateRegistry.getRegistry();
+//			registry.rebind( CommonUtils.RMI_REGISTRATION_NAME_SERVER, stub );
+//			
+//			ok = true;
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			
+//			Frame parentFrame = (Frame)parent;
+//			
+//			MessageBox.showError(
+//					parentFrame, 
+//					e.toString(),
+//					VegaResources.Error(false));
+//		}
+//		
+//		if (ok)
+//			this.serverEnabled = true;
 
 		return ok;
 		
@@ -234,8 +232,8 @@ class VegaDisplayFunctions
 		private String clientIp;
 		private String clientName;
 		private boolean inactiveWhileEnterMoves;
-		private ScreenContent content;
-		private boolean inputEnabled;
+//		private ScreenContent content;
+//		private boolean inputEnabled;
 		private boolean showInputDisabled;
 		
 		private ClientScreenDisplayContentUpdater(
@@ -273,18 +271,18 @@ class VegaDisplayFunctions
 		@Override
 		public void run()
 		{
-			try {
-				IVegaDisplayMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(this.clientIp);
-				rmiServer = (IVegaDisplayMethods) registry.lookup( this.clientId );
-				rmiServer.updateScreen(
-						this.content, 
-						this.inputEnabled,
-						this.showInputDisabled);
-			}
-			catch (Exception e)
-			{
-			}
+//			try {
+//				IVegaDisplayMethods rmiServer;
+//				Registry registry = LocateRegistry.getRegistry(this.clientIp);
+//				rmiServer = (IVegaDisplayMethods) registry.lookup( this.clientId );
+//				rmiServer.updateScreen(
+//						this.content, 
+//						this.inputEnabled,
+//						this.showInputDisabled);
+//			}
+//			catch (Exception e)
+//			{
+//			}
 		}
 
 		private void setContent(
@@ -292,9 +290,9 @@ class VegaDisplayFunctions
 				boolean inputEnabled,
 				boolean showInputDisabled)
 		{
-			this.content = content;
-			this.inputEnabled = inputEnabled;
-			this.showInputDisabled = showInputDisabled;
+//			this.content = content;
+//			this.inputEnabled = inputEnabled;
+//			this.showInputDisabled = showInputDisabled;
 		}
 	}
 }

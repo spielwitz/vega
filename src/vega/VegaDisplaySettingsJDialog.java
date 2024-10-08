@@ -197,11 +197,11 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener, IChe
 			if (this.cbServerEnabled.isSelected())
 			{
 				this.serverFunctions.setIp(this.tfIpAddress.getText());
-				this.serverFunctions.startServer(this.parent);
+				//this.serverFunctions.startServer(this.parent);
 			}
 			else
 			{
-				this.serverFunctions.stopServer(this.parent);
+				//this.serverFunctions.stopServer(this.parent);
 			}
 			
 			this.setCursor(Cursor.getDefaultCursor());
