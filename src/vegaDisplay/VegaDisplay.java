@@ -147,8 +147,7 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		IVegaDisplayMethods stub;
 		try {
 			stub = (IVegaDisplayMethods) UnicastRemoteObject.exportObject( this, 0 );
-			Registry registry;
-			registry = LocateRegistry.getRegistry();
+			Registry registry = LocateRegistry.getRegistry(this.config.getMyIpAddress());
 			registry.rebind( this.config.getClientId(), stub );			
 		} catch (AccessException e) {
 			e.printStackTrace();

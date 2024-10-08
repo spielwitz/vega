@@ -139,8 +139,7 @@ class VegaDisplayFunctions
 		IServerMethods stub;
 		try {
 			stub = (IServerMethods) UnicastRemoteObject.exportObject(parent, 0 );
-			Registry registry;
-			registry = LocateRegistry.getRegistry();
+			Registry registry = LocateRegistry.getRegistry(this.getMeineIp());
 			registry.rebind( CommonUtils.RMI_REGISTRATION_NAME_SERVER, stub );
 			
 			ok = true;
