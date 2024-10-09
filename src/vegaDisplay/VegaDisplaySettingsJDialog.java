@@ -98,7 +98,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		panServer.add(new Label(VegaResources.ServerIp(false)), cPanServer);
 		
 		cPanServer.gridx = 1; cPanServer.gridy = 1;
-		this.tfServerIpAddress = new TextField(this.config.getServerIpAddress(), null, 0, -1, null);
+		this.tfServerIpAddress = new TextField("Dummy", null, 0, -1, null);
 		panServer.add(this.tfServerIpAddress, cPanServer);
 		
 		cPanServer.gridx = 0; cPanServer.gridy = 2;
@@ -112,7 +112,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		panServer.add(new Label(VegaResources.MyName(false)), cPanServer);
 		
 		cPanServer.gridx = 1; cPanServer.gridy = 3;
-		this.tfMyName = new TextField(this.config.getMyName(), null, 0, -1, null);
+		this.tfMyName = new TextField("Dummy2", null, 0, -1, null);
 		panServer.add(this.tfMyName, cPanServer);
 		
 		panMain.add(panServer, BorderLayout.CENTER);
@@ -122,7 +122,6 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		
 		this.labStatus = new Label("");
 		panStatus.add(this.labStatus);
-		this.updateConnectionStatus();
 		
 		panMain.add(panStatus, BorderLayout.SOUTH);
 		
@@ -162,6 +161,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		}
 		else if (source == this.butConnect)
 		{
+			parent.startServer(this.config);
 //			this.updateSettings();
 //			System.setProperty("java.rmi.server.hostname",this.config.getMyIpAddress());
 //			
@@ -215,47 +215,12 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 	{
 		return true;
 	}
-
-	private void updateConnectionStatus()
-	{
-//		boolean authorized = false;
-//		
-//		String text = "";
-//		
-//		if (this.parent.connected)
-//		{
-//			try 
-//			{
-//				IServerMethods rmiServer;
-//				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-//				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-//
-//				authorized = rmiServer.rmiClientCheckRegistration(this.config.getClientId());
-//			}
-//			catch (Exception e)
-//			{
-//				text = VegaResources.ConnectionToServerNotEstablished(false);
-//			}
-//
-//			if (text.length() == 0)
-//			{
-//				if (authorized)
-//					text = VegaResources.ConnectedWithServer(false, this.config.getServerIpAddress()); 
-//				else
-//					text = VegaResources.VegaDisplayNotRegistered(false, this.config.getServerIpAddress()); 
-//			}
-//		}
-//		else
-//			text = VegaResources.NotConnected(false);
-//		
-//		this.labStatus.setText(text);
-	}
 	
 	private void updateSettings()
 	{
 		this.config.setClientCode(new String(this.tfClientCode.getPassword()));
-		this.config.setMyName(this.tfMyName.getText());
+		//this.config.setMyName(this.tfMyName.getText());
 		this.config.setMyIpAddress(this.tfMyIpAddress.getText());
-		this.config.setServerIpAddress(this.tfServerIpAddress.getText());
+		//this.config.setServerIpAddress(this.tfServerIpAddress.getText());
 	}
 }

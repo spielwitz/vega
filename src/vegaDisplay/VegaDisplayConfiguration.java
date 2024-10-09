@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.UUID;
 
 import com.google.gson.Gson;
 
@@ -36,6 +35,7 @@ class VegaDisplayConfiguration
 {
 	private static final String FILE_NAME = "VegaDisplayConfiguration";
 	private static final String PROPERTIES_FILE_NAME = "VegaDisplayProperties";
+	public static final int SERVER_PORT = 56085;
 	private static Gson	serializer = new Gson();
 	
 	static VegaDisplayConfiguration get()
@@ -58,15 +58,14 @@ class VegaDisplayConfiguration
 			}
 		}
 		
-		config.clientId = UUID.randomUUID().toString();
-		
         if (config.clientCode == null)
         	config.clientCode = "";
-        if (config.myName == null)
-        	config.myName = "";
 		
 		if (config.locale != null)
 			VegaResources.setLocale(config.locale);
+		
+		if (config.port == 0)
+			config.port = SERVER_PORT;
 
 		return config;
 	}
@@ -91,12 +90,8 @@ class VegaDisplayConfiguration
 		  try { reader.close(); } catch ( Exception e ) { }
 		}
 		
-		if (properties.containsKey("serverIpAddress"))
-			config.serverIpAddress = properties.getProperty("serverIpAddress");
 		if (properties.containsKey("myIpAddress"))
 			config.myIpAddress = properties.getProperty("myIpAddress");
-		if (properties.containsKey("myName"))
-			config.myName = properties.getProperty("myName");
 		if (properties.containsKey("language"))
 			config.locale = properties.getProperty("language");
 		
@@ -112,21 +107,19 @@ class VegaDisplayConfiguration
 		return Paths.get(CommonUtils.getHomeDir(), FILE_NAME).toFile();
 	}
 	
-	private String				serverIpAddress;
 	private String				myIpAddress;
+	private int					port;
 	
-	private String				myName;
 	private String				locale;
 	
 	private boolean				firstTimeStart;
-	
-	private transient String	clientId;
 	
 	private transient String	clientCode;
 	
 	VegaDisplayConfiguration()
 	{
 		this.firstTimeStart = true;
+		this.port = SERVER_PORT;
 	}
 	
 	String getClientCode()
@@ -134,24 +127,14 @@ class VegaDisplayConfiguration
 		return clientCode;
 	}
 
-	String getClientId()
-	{
-		return clientId;
-	}
-
 	String getMyIpAddress()
 	{
 		return myIpAddress;
 	}
-
-	String getMyName()
+	
+	int getPort()
 	{
-		return myName;
-	}
-
-	String getServerIpAddress()
-	{
-		return serverIpAddress;
+		return this.port;
 	}
 
 	boolean isFirstTimeStart()
@@ -179,18 +162,6 @@ class VegaDisplayConfiguration
 	void setMyIpAddress(String myIpAddress)
 	{
 		this.myIpAddress = myIpAddress;
-		this.writeToFile();
-	}
-
-	void setMyName(String myName)
-	{
-		this.myName = myName;
-		this.writeToFile();
-	}
-
-	void setServerIpAddress(String serverIpAddress)
-	{
-		this.serverIpAddress = serverIpAddress;
 		this.writeToFile();
 	}
 

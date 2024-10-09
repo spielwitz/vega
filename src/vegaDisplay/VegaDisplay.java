@@ -21,13 +21,16 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
+import java.io.DataInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.google.gson.Gson;
 
 import common.ScreenContent;
 import commonUi.MessageBox;
@@ -69,6 +72,9 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	
 	boolean connected = false;
 	
+	private static final int SOCKET_TIMEOUT = 10000;
+
+	private ServerSocketThread socketThread;
 	private PanelScreenContent paintPanel;
     private VegaDisplayConfiguration config;  
     private JPopupMenu popupMenu;
@@ -106,9 +112,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		if (config.getMyIpAddress() == null || config.getMyIpAddress().equals(""))
 			config.setMyIpAddress(CommonUtils.getMyIPAddress());
 		
-		if (config.getServerIpAddress() == null || config.getServerIpAddress().equals(""))
-			config.setServerIpAddress(config.getMyIpAddress());
-		
 		Dimension dim = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		this.setBounds(0, 0, dim.width, dim.height);
 
@@ -126,24 +129,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		this.paintPanel = new PanelScreenContent(null);
 		this.add(this.paintPanel, BorderLayout.CENTER);
 		
-//		try {
-//			LocateRegistry.createRegistry( Registry.REGISTRY_PORT    );
-//		}
-//		catch ( RemoteException e ) 
-//		{}
-//
-//		IVegaDisplayMethods stub;
-//		try {
-//			stub = (IVegaDisplayMethods) UnicastRemoteObject.exportObject( this, 0 );
-//			Registry registry;
-//			registry = LocateRegistry.getRegistry();
-//			registry.rebind( this.config.getClientId(), stub );			
-//		} catch (AccessException e) {
-//			e.printStackTrace();
-//		} catch (RemoteException e) {
-//			e.printStackTrace();
-//		}
-				
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setVisible(true);
 		this.paintPanel.requestFocusInWindow();
@@ -196,8 +181,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 				
 				this.config.setLocale(dlg.languageCode);
 				
-				this.logoff();
-				
 				System.exit(0);
 			}
 		}
@@ -222,16 +205,16 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		Dimension dim = this.labMenu.getSize();
 		this.popupMenu.show(this.labMenu, dim.width / 2, dim.height / 2);
 	}
-
-	public void updateScreen(
-			ScreenContent screenContent, 
-			boolean inputEnabled,
-			boolean showInputDisabled)
-			throws RemoteException
-	{
-		this.paintPanel.redraw(screenContent, inputEnabled, showInputDisabled);
-	}
 	
+	void startServer(VegaDisplayConfiguration config)
+	{
+		if (this.socketThread != null && this.socketThread.isAlive()) return;
+		
+		this.socketThread = null;
+		this.socketThread = new ServerSocketThread(config);
+		this.socketThread.start();
+	}
+
 	@Override
 	protected boolean confirmClose()
 	{
@@ -242,7 +225,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 
 		if (result == MessageBoxResult.YES)
 		{
-			this.logoff();
 			return true;
 		}
 		else
@@ -284,43 +266,64 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	    
 	    return popupMenu;
 	}
-
-	private void logoff()
+	
+	private class ServerSocketThread extends Thread
 	{
-		if (!this.connected)
-			return;
+		private ServerSocket serverSocket;
+		private Gson serializer = new Gson();
+		VegaDisplayConfiguration config;
 		
-//		try {
-//			IServerMethods rmiServer;
-//			Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-//			rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-//			rmiServer.rmiClientLogoff(this.config.getClientId());
-//		}
-//		catch (Exception e) {}
-	}
+		ServerSocketThread(VegaDisplayConfiguration config)
+		{
+			this.config = config;
+		}
+		
+		public void run()
+		{
+			try
+			{
+				this.serverSocket = new ServerSocket(config.getPort());
+			} catch (Exception e)
+			{
+				// TODO Write error message
+				e.printStackTrace();
+				return;
+			}
+			
+			while (true)
+			{
+				try
+				{
+				    Socket clientSocket = this.serverSocket.accept();
+				    clientSocket.setSoTimeout(SOCKET_TIMEOUT);
 
-//	private void updateScreenDisplayContent()
-//	{
-//		ScreenContentClient screenContentClient = null;
-//		
-//		if (this.connected)
-//		{		
-//			try {
-//				IServerMethods rmiServer;
-//				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-//				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-//				screenContentClient = rmiServer.rmiGetCurrentScreenDisplayContent(this.config.getClientId());
-//			}
-//			catch (Exception e) {
-//			}
-//		}
-//	
-//		if (screenContentClient != null)
-//			this.paintPanel.redraw(
-//					screenContentClient.screenContent, 
-//					screenContentClient.inputEnabled,
-//					screenContentClient.showInputDisabled);
-//		else
-//			this.paintPanel.redraw(null, false, true);
-//	}
+				    DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+				    
+				    byte[] lengthBytes = new byte[4];
+				    in.readFully(lengthBytes);
+				    
+				    int length = this.convertByteArrayToInt(lengthBytes);
+				    
+				    byte[] bytes = new byte[length];
+				    in.readFully(bytes);
+				    
+				    String jsonStringScreenContent = new String(bytes);
+				    ScreenContent screenContent = serializer.fromJson(jsonStringScreenContent, ScreenContent.class);
+				    
+				    paintPanel.redraw(screenContent, false, false);
+				}
+				catch (Exception x)
+				{
+				}
+			}
+		}
+		
+		private int convertByteArrayToInt(byte[] b)
+		{
+			return   b[3] & 0xFF |
+		            (b[2] & 0xFF) << 8 |
+		            (b[1] & 0xFF) << 16 |
+		            (b[0] & 0xFF) << 24; 
+		}
+	}
 }
