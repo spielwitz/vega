@@ -31,7 +31,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CommonUtils
 {
-	public final static String	RMI_REGISTRATION_NAME_SERVER = "Vega";
 	private final static String	DATA_FOLDER = "data";
 	
 	private static Object cloneLock = new Object(); 

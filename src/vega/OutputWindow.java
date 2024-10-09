@@ -24,8 +24,6 @@ import java.awt.event.WindowListener;
 
 import common.ScreenContent;
 import common.VegaResources;
-import commonUi.IHostComponentMethods;
-import commonUi.PanelScreenContent;
 
 @SuppressWarnings("serial")
 class OutputWindow extends Frame

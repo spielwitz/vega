@@ -29,7 +29,6 @@ import common.Colors;
 import common.Player;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.MessageBoxResult;
 import uiBaseControls.Button;
 import uiBaseControls.CheckBox;
 import uiBaseControls.Dialog;

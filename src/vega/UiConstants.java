@@ -14,21 +14,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package commonUi;
+package vega;
 
-import java.awt.Frame;
-
-import common.Game;
-
-public class VegaAbout
+public class UiConstants
 {
-	public static void show(Frame parent)
-	{
-		MessageBox.showInformation(
-				parent, 
-				new MessageWithLink(
-						parent,
-						"VEGA - (c) 1989-2024 Michael Schweitzer - <a href=\""+UiConstants.VEGA_URL+"\">"+UiConstants.VEGA_URL+"</a>"),
-				"Build " + Game.BUILD);
-	}
+	public static final String 	FONT_NAME = "/JetBrainsMono-Regular.ttf";
+	public static final float 	FONT_DIALOG_SIZE = 11F;
+
+	public static final String 	VEGA_URL = "https://github.com/spielwitz/vega";
 }

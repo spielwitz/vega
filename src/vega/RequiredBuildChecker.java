@@ -20,9 +20,6 @@ import java.awt.Frame;
 
 import common.Game;
 import common.VegaResources;
-import commonUi.MessageBox;
-import commonUi.MessageWithLink;
-import commonUi.UiConstants;
 
 class RequiredBuildChecker
 {

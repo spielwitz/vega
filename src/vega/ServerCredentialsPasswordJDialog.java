@@ -24,8 +24,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import common.VegaResources;
-import commonUi.MessageBox;
-import commonUi.MessageBoxResult;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;

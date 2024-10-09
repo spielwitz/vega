@@ -28,7 +28,6 @@ import java.net.URLEncoder;
 import common.EmailTransportBase;
 import common.Game;
 import common.VegaResources;
-import commonUi.MessageBox;
 
 class EmailToolkit
 {

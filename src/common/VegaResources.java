@@ -122,8 +122,6 @@ public class VegaResources
 		symbolDict.put("2A","MovesOfEmailPlayersNotYetImported_2A");
 		symbolDict.put("2B","MovesSuccessfullyImported_2B");
 		symbolDict.put("2C","MovesTransmittedToServer_2C");
-		symbolDict.put("2D","MyIp_2D");
-		symbolDict.put("2E","MyName_2E");
 		symbolDict.put("2F","NameOfGame_2F");
 		symbolDict.put("2G","Name_2G");
 		symbolDict.put("2H","NeutralFleet_2H");
@@ -138,12 +136,10 @@ public class VegaResources
 		symbolDict.put("2Q","Next_2Q");
 		symbolDict.put("2R","NoAllianceOnPlanet_2R");
 		symbolDict.put("2S","NoAlliance_2S");
-		symbolDict.put("2T","NoConnectionToServer_2T");
 		symbolDict.put("2U","Credentials_2U");
 		symbolDict.put("2V","NoPlanetsWithAlliances_2V");
 		symbolDict.put("2W","NoSpaceships_2W");
 		symbolDict.put("2X","No_2X");
-		symbolDict.put("2Y","NotConnected_2Y");
 		symbolDict.put("2Z","NotEnoughBattleships_2Z");
 		symbolDict.put("30","OK_30");
 		symbolDict.put("31","Off_31");
@@ -196,13 +192,10 @@ public class VegaResources
 		symbolDict.put("4D","ProductionOfBattleships_4D");
 		symbolDict.put("4E","PublishGameQuestion_4E");
 		symbolDict.put("4F","PublishGame_4F");
-		symbolDict.put("4G","QuitVegaDisplayQuestion_4G");
-		symbolDict.put("4H","QuitVegaDisplay_4H");
 		symbolDict.put("4I","QuitVega_4I");
 		symbolDict.put("4J","Random_4J");
 		symbolDict.put("4K","ReadConfiguration_4K");
 		symbolDict.put("4L","RecentlyUsedEmailAddresses_4L");
-		symbolDict.put("4N","Refresh_4N");
 		symbolDict.put("4O","ReleaseFormatted_4O");
 		symbolDict.put("4P","ServerAdministration_4P");
 		symbolDict.put("4Q","RenewCredentials_4Q");
@@ -218,8 +211,6 @@ public class VegaResources
 		symbolDict.put("50","SaveLogFileError_50");
 		symbolDict.put("51","SaveLogFile_51");
 		symbolDict.put("52","UnsavedChanges_52");
-		symbolDict.put("53","SecurityCodeInvalid_53");
-		symbolDict.put("54","SecurityCode_54");
 		symbolDict.put("55","Select_55");
 		symbolDict.put("56","SellPrice_56");
 		symbolDict.put("57","Sell_57");
@@ -232,13 +223,11 @@ public class VegaResources
 		symbolDict.put("5E","ServerCredentialsNotEntered_5E");
 		symbolDict.put("5F","ServerIp_5F");
 		symbolDict.put("5G","ServerLogEmpty_5G");
-		symbolDict.put("5H","ServerNotReached_5H");
 		symbolDict.put("5I","ServerPort_5I");
 		symbolDict.put("5J","ServerSetupAborted_5J");
 		symbolDict.put("5K","ServerShutdownSuccessfully_5K");
 		symbolDict.put("5L","ServerStatus_5L");
 		symbolDict.put("5M","ServerUrl_5M");
-		symbolDict.put("5N","Settings_5N");
 		symbolDict.put("5O","ShipsLaunched_5O");
 		symbolDict.put("5P","ShutdownServerQuestion_5P");
 		symbolDict.put("5Q","ShutdownServer_5Q");
@@ -257,7 +246,6 @@ public class VegaResources
 		symbolDict.put("63","Statistics_63");
 		symbolDict.put("64","SubmitChangesToServer_64");
 		symbolDict.put("65","Success_65");
-		symbolDict.put("66","Terminalserver_66");
 		symbolDict.put("67","TerminateAlliance_67");
 		symbolDict.put("68","TextFile_68");
 		symbolDict.put("69","ThereAreNoMoves_69");
@@ -314,7 +302,6 @@ public class VegaResources
 		symbolDict.put("7O","Type_7O");
 		symbolDict.put("7P","UndoLastMoveQuestion_7P");
 		symbolDict.put("7Q","Undo_7Q");
-		symbolDict.put("7R","Unknown_7R");
 		symbolDict.put("7S","UpdateUserQuestion_7S");
 		symbolDict.put("7U","UserActivationSuccess_7U");
 		symbolDict.put("7V","UserDeleted_7V");
@@ -324,11 +311,6 @@ public class VegaResources
 		symbolDict.put("7Z","UserNotParticipating_7Z");
 		symbolDict.put("80","UserUpdated_80");
 		symbolDict.put("81","Users_81");
-		symbolDict.put("82","VegaDisplayNotRegistered_82");
-		symbolDict.put("83","VegaDisplayServerActive_83");
-		symbolDict.put("84","VegaDisplayServer_84");
-		symbolDict.put("85","VegaDisplay_85");
-		symbolDict.put("86","VegaDisplaysPassive_86");
 		symbolDict.put("87","VegaLanguage_87");
 		symbolDict.put("88","ConnectAsPlayerWithCredentials_88");
 		symbolDict.put("89","VegaServerSetupWelcome_89");
@@ -429,20 +411,15 @@ public class VegaResources
 		symbolDict.put("AX","ChangeLogLevel_AX");
 		symbolDict.put("AY","ChangeSelection_AY");
 		symbolDict.put("AZ","ClientBuild_AZ");
-		symbolDict.put("B0","ClientServerDifferentBuilds_B0");
 		symbolDict.put("B1","ClipboardImportErrorPassword_B1");
 		symbolDict.put("B2","ClipboardImportError_B2");
 		symbolDict.put("B3","CloseStatistics_B3");
 		symbolDict.put("B4","Close_B4");
 		symbolDict.put("B5","Color_B5");
 		symbolDict.put("B6","Commander_B6");
-		symbolDict.put("B7","Connect_B7");
-		symbolDict.put("B8","ConnectedVegaDisplayClients_B8");
-		symbolDict.put("B9","ConnectedWithServer_B9");
 		symbolDict.put("BA","ConnectedWithVegaServer_BA");
 		symbolDict.put("BB","ConnectionError_BB");
 		symbolDict.put("BC","ConnectionSettings_BC");
-		symbolDict.put("BD","ConnectionStatus_BD");
 		symbolDict.put("BE","ConnectionSuccessful_BE");
 		symbolDict.put("BF","ConnectionTest_BF");
 		symbolDict.put("BG","ConnectionToServerNotEstablished_BG");
@@ -506,12 +483,10 @@ public class VegaResources
 		symbolDict.put("D2","FightSimulationPlanetCount_D2");
 		symbolDict.put("D3","FightSimulationRepeat_D3");
 		symbolDict.put("D4","FightSimulation_D4");
-		symbolDict.put("D5","Fight_D5");
 		symbolDict.put("D6","FileContainsInvalidCredentials_D6");
 		symbolDict.put("D7","FileFilterDescription_D7");
 		symbolDict.put("D8","FileNotExists_D8");
 		symbolDict.put("D9","FileNotValid_D9");
-		symbolDict.put("DA","ActivateServerGames_DA");
 		symbolDict.put("DB","FinalizeGameQuestion_DB");
 		symbolDict.put("DC","FinalizeGameQuestion_DC");
 		symbolDict.put("DD","FinalizeGame_DD");
@@ -1206,20 +1181,6 @@ public class VegaResources
 	}
 
 	/**
-	   * My IP address [2D]
-	   */
-	public static String MyIp(boolean symbol) {
-		return symbol ? "£2D£":messages.getString("MyIp_2D");
-	}
-
-	/**
-	   * My name [2E]
-	   */
-	public static String MyName(boolean symbol) {
-		return symbol ? "£2E£":messages.getString("MyName_2E");
-	}
-
-	/**
 	   * Name of the game [2F]
 	   */
 	public static String NameOfGame(boolean symbol) {
@@ -1318,13 +1279,6 @@ public class VegaResources
 	}
 
 	/**
-	   * No connection to server {0} [2T]
-	   */
-	public static String NoConnectionToServer(boolean symbol, String arg0) {
-		return symbol ? "£2T§"+arg0+"£":MessageFormat.format(messages.getString("NoConnectionToServer_2T"), arg0);
-	}
-
-	/**
 	   * Credentials [2U]
 	   */
 	public static String Credentials(boolean symbol) {
@@ -1350,13 +1304,6 @@ public class VegaResources
 	   */
 	public static String No(boolean symbol) {
 		return symbol ? "£2X£":messages.getString("No_2X");
-	}
-
-	/**
-	   * Not connected [2Y]
-	   */
-	public static String NotConnected(boolean symbol) {
-		return symbol ? "£2Y£":messages.getString("NotConnected_2Y");
 	}
 
 	/**
@@ -1724,20 +1671,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Do you really want to quit VEGA Display? [4G]
-	   */
-	public static String QuitVegaDisplayQuestion(boolean symbol) {
-		return symbol ? "£4G£":messages.getString("QuitVegaDisplayQuestion_4G");
-	}
-
-	/**
-	   * Quit VEGA Display [4H]
-	   */
-	public static String QuitVegaDisplay(boolean symbol) {
-		return symbol ? "£4H£":messages.getString("QuitVegaDisplay_4H");
-	}
-
-	/**
 	   * Quit VEGA [4I]
 	   */
 	public static String QuitVega(boolean symbol) {
@@ -1763,13 +1696,6 @@ public class VegaResources
 	   */
 	public static String RecentlyUsedEmailAddresses(boolean symbol) {
 		return symbol ? "£4L£":messages.getString("RecentlyUsedEmailAddresses_4L");
-	}
-
-	/**
-	   * Refresh [4N]
-	   */
-	public static String Refresh(boolean symbol) {
-		return symbol ? "£4N£":messages.getString("Refresh_4N");
 	}
 
 	/**
@@ -1878,20 +1804,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Invalid security code. [53]
-	   */
-	public static String SecurityCodeInvalid(boolean symbol) {
-		return symbol ? "£53£":messages.getString("SecurityCodeInvalid_53");
-	}
-
-	/**
-	   * Security code [54]
-	   */
-	public static String SecurityCode(boolean symbol) {
-		return symbol ? "£54£":messages.getString("SecurityCode_54");
-	}
-
-	/**
 	   * Select [55]
 	   */
 	public static String Select(boolean symbol) {
@@ -1976,13 +1888,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Server {0} cannot be reached [5H]
-	   */
-	public static String ServerNotReached(boolean symbol, String arg0) {
-		return symbol ? "£5H§"+arg0+"£":MessageFormat.format(messages.getString("ServerNotReached_5H"), arg0);
-	}
-
-	/**
 	   * Server port [5I]
 	   */
 	public static String ServerPort(boolean symbol) {
@@ -2015,13 +1920,6 @@ public class VegaResources
 	   */
 	public static String ServerUrl(boolean symbol) {
 		return symbol ? "£5M£":messages.getString("ServerUrl_5M");
-	}
-
-	/**
-	   * Settings [5N]
-	   */
-	public static String Settings(boolean symbol) {
-		return symbol ? "£5N£":messages.getString("Settings_5N");
 	}
 
 	/**
@@ -2148,13 +2046,6 @@ public class VegaResources
 	   */
 	public static String Success(boolean symbol) {
 		return symbol ? "£65£":messages.getString("Success_65");
-	}
-
-	/**
-	   * VEGA Display server [66]
-	   */
-	public static String Terminalserver(boolean symbol) {
-		return symbol ? "£66£":messages.getString("Terminalserver_66");
 	}
 
 	/**
@@ -2550,13 +2441,6 @@ public class VegaResources
 	}
 
 	/**
-	   * [Unknown] [7R]
-	   */
-	public static String Unknown(boolean symbol) {
-		return symbol ? "£7R£":messages.getString("Unknown_7R");
-	}
-
-	/**
 	   * Do you really want to update user [{0}]? [7S]
 	   */
 	public static String UpdateUserQuestion(boolean symbol, String arg0) {
@@ -2617,41 +2501,6 @@ public class VegaResources
 	   */
 	public static String Users(boolean symbol) {
 		return symbol ? "£81£":messages.getString("Users_81");
-	}
-
-	/**
-	   * VEGA Display has not been registered at server {0} [82]
-	   */
-	public static String VegaDisplayNotRegistered(boolean symbol, String arg0) {
-		return symbol ? "£82§"+arg0+"£":MessageFormat.format(messages.getString("VegaDisplayNotRegistered_82"), arg0);
-	}
-
-	/**
-	   * VEGA Display server is active [83]
-	   */
-	public static String VegaDisplayServerActive(boolean symbol) {
-		return symbol ? "£83£":messages.getString("VegaDisplayServerActive_83");
-	}
-
-	/**
-	   * VEGA Display server [84]
-	   */
-	public static String VegaDisplayServer(boolean symbol) {
-		return symbol ? "£84£":messages.getString("VegaDisplayServer_84");
-	}
-
-	/**
-	   * VEGA Display [85]
-	   */
-	public static String VegaDisplay(boolean symbol) {
-		return symbol ? "£85£":messages.getString("VegaDisplay_85");
-	}
-
-	/**
-	   * VEGA Displays passive while moves are being entered [86]
-	   */
-	public static String VegaDisplaysPassive(boolean symbol) {
-		return symbol ? "£86£":messages.getString("VegaDisplaysPassive_86");
 	}
 
 	/**
@@ -3355,13 +3204,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Client and server are using different VEGA builds [B0]
-	   */
-	public static String ClientServerDifferentBuilds(boolean symbol) {
-		return symbol ? "£B0£":messages.getString("ClientServerDifferentBuilds_B0");
-	}
-
-	/**
 	   * Data could not be interpreted. Check the following:\n\n1. Is the data coming from a VEGA e-mail?\n2. Is the password correct?\n3. Did you use an e-mail from a wrong context?\n4. Is you VEGA build ({0}) compatible with the build of the sender (see e-mail)?\n\u0009\u0009\u0009\u0009\u0009\u0009 [B1]
 	   */
 	public static String ClipboardImportErrorPassword(boolean symbol, String arg0) {
@@ -3404,27 +3246,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Connect [B7]
-	   */
-	public static String Connect(boolean symbol) {
-		return symbol ? "£B7£":messages.getString("Connect_B7");
-	}
-
-	/**
-	   * Connected VEGA Display clients [B8]
-	   */
-	public static String ConnectedVegaDisplayClients(boolean symbol) {
-		return symbol ? "£B8£":messages.getString("ConnectedVegaDisplayClients_B8");
-	}
-
-	/**
-	   * Connected with server {0} [B9]
-	   */
-	public static String ConnectedWithServer(boolean symbol, String arg0) {
-		return symbol ? "£B9§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedWithServer_B9"), arg0);
-	}
-
-	/**
 	   * Connected as {0} [BA]
 	   */
 	public static String ConnectedWithVegaServer(boolean symbol, String arg0) {
@@ -3443,13 +3264,6 @@ public class VegaResources
 	   */
 	public static String ConnectionSettings(boolean symbol) {
 		return symbol ? "£BC£":messages.getString("ConnectionSettings_BC");
-	}
-
-	/**
-	   * Connection status [BD]
-	   */
-	public static String ConnectionStatus(boolean symbol) {
-		return symbol ? "£BD£":messages.getString("ConnectionStatus_BD");
 	}
 
 	/**
@@ -3894,13 +3708,6 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: {1} [{2}] - Planet: {3} [{4}] [D5]
-	   */
-	public static String Fight(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4) {
-		return symbol ? "£D5§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":MessageFormat.format(messages.getString("Fight_D5"), arg0, arg1, arg2, arg3, arg4);
-	}
-
-	/**
 	   * The file {0}\ndoes not contain valid credentials. [D6]
 	   */
 	public static String FileContainsInvalidCredentials(boolean symbol, String arg0) {
@@ -3926,13 +3733,6 @@ public class VegaResources
 	   */
 	public static String FileNotValid(boolean symbol) {
 		return symbol ? "£D9£":messages.getString("FileNotValid_D9");
-	}
-
-	/**
-	   * Activate server games [DA]
-	   */
-	public static String ActivateServerGames(boolean symbol) {
-		return symbol ? "£DA£":messages.getString("ActivateServerGames_DA");
 	}
 
 	/**

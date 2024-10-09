@@ -38,8 +38,6 @@ import javax.swing.event.DocumentListener;
 import common.CommonUtils;
 import common.Player;
 import common.VegaResources;
-import commonUi.MessageBox;
-import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Tuple;
 import spielwitz.biDiServer.User;
 import uiBaseControls.Button;

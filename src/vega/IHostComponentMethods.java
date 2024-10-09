@@ -14,12 +14,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package commonUi;
+package vega;
 
-public class UiConstants
+import java.awt.event.KeyEvent;
+
+public interface IHostComponentMethods
 {
-	public static final String 	FONT_NAME = "/JetBrainsMono-Regular.ttf";
-	public static final float 	FONT_DIALOG_SIZE = 11F;
-
-	public static final String 	VEGA_URL = "https://github.com/spielwitz/vega";
+	public void hostKeyPressed(KeyEvent arg0, String languageCode);
+	public void menuKeyPressed();
 }

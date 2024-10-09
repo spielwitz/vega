@@ -35,8 +35,6 @@ import javax.swing.SwingConstants;
 import common.Game;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.FontHelper;
-import commonUi.UiConstants;
 import uiBaseControls.Button;
 import uiBaseControls.CheckBox;
 import uiBaseControls.ComboBox;

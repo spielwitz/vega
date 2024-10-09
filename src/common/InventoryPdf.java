@@ -45,7 +45,7 @@ import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
-import commonUi.PanelScreenContent;
+import vega.PanelScreenContent;
 
 class InventoryPdf extends PdfPageEventHelper
 {

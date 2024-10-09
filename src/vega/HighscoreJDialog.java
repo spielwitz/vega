@@ -28,7 +28,6 @@ import common.HighscoreEntry;
 import common.Highscores;
 import common.Player;
 import common.VegaResources;
-import commonUi.FontHelper;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;

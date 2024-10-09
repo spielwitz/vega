@@ -35,7 +35,6 @@ import common.GameOptions;
 import common.PlanetDistribution;
 import common.Player;
 import common.VegaResources;
-import commonUi.MessageBox;
 import spielwitz.biDiServer.User;
 import uiBaseControls.Button;
 import uiBaseControls.CheckBox;

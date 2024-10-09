@@ -14,14 +14,38 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package common;
+package vega;
 
-import java.io.Serializable;
+import java.awt.Desktop;
+import java.io.File;
 
-@SuppressWarnings("serial")
-public class ScreenContentClient implements Serializable 
+import common.VegaResources;
+import uiBaseControls.Frame;
+
+public class CommonUiUtils
 {
-	public ScreenContent screenContent;
-	public boolean inputEnabled;
-	public boolean showInputDisabled;
+	public static void showManual(Frame parent)
+	{
+		Desktop desktop = Desktop.getDesktop();
+		String filename = getManualFileName();
+		
+		try
+		{
+			desktop.open(new File(filename));   
+		}
+		catch (Exception x)
+		{
+			MessageBox.showError(
+					parent, 
+					VegaResources.VegaHelpError(false, filename, x.getLocalizedMessage()), 
+					VegaResources.Error(false));
+		}
+	}
+	
+	public static String getManualFileName()
+	{
+		return "VegaHelp_"+
+	    		VegaResources.getLocale() +
+	    		".pdf";
+	}
 }

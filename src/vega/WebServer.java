@@ -24,11 +24,12 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +44,6 @@ import common.ScreenContent;
 import common.ScreenPainter;
 import common.VegaResources;
 import common.CommonUtils;
-import commonUi.FontHelper;
-import commonUi.PanelScreenContent;
 
 class WebServer implements Runnable
 {
@@ -156,13 +155,10 @@ class WebServer implements Runnable
 							}
 							else if (request.arg.equals(MANUAL_URL))
 							{
-								InputStream resource = getClass().getResourceAsStream("/VegaHelp_"+
-							    		VegaResources.getLocale() +
-							    		".pdf");
-								
 								try
 								{
-									responseBytes = VegaUtils.readAllBytes(resource);
+									responseBytes = Files.readAllBytes(
+											Path.of(CommonUiUtils.getManualFileName()));
 								} catch (IOException e)
 								{
 								}

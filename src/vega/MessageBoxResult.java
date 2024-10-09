@@ -14,33 +14,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package commonUi;
+package vega;
 
-import java.awt.Desktop;
-import java.io.File;
-
-import common.VegaResources;
-import uiBaseControls.Frame;
-
-public class CommonUiUtils
+public enum MessageBoxResult 
 {
-	public static void showManual(Frame parent)
-	{
-		Desktop desktop = Desktop.getDesktop();
-		String filename = "VegaHelp_"+
-	    		VegaResources.getLocale() +
-	    		".pdf";
-		
-		try
-		{
-			desktop.open(new File(filename));   
-		}
-		catch (Exception x)
-		{
-			MessageBox.showError(
-					parent, 
-					VegaResources.VegaHelpError(false, filename, x.getLocalizedMessage()), 
-					VegaResources.Error(false));
-		}
-	}
+	OK,
+	CANCEL,
+	YES,
+	NO
 }

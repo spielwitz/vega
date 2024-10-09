@@ -45,8 +45,6 @@ import javax.swing.JOptionPane;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
-import commonUi.FontHelper;
-import commonUi.UiConstants;
 import uiBaseControls.Button;
 import uiBaseControls.Frame;
 import uiBaseControls.IButtonListener;
@@ -54,6 +52,8 @@ import uiBaseControls.Label;
 import uiBaseControls.LookAndFeel;
 import uiBaseControls.Panel;
 import uiBaseControls.TextField;
+import vega.FontHelper;
+import vega.UiConstants;
 
 @SuppressWarnings("serial")
 public class ResourceBundleUtility extends Frame // NO_UCD (unused code)

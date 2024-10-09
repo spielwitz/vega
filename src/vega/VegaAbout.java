@@ -14,12 +14,21 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package commonUi;
+package vega;
 
-import java.awt.event.KeyEvent;
+import java.awt.Frame;
 
-public interface IHostComponentMethods
+import common.Game;
+
+public class VegaAbout
 {
-	public void hostKeyPressed(KeyEvent arg0, String languageCode);
-	public void menuKeyPressed();
+	public static void show(Frame parent)
+	{
+		MessageBox.showInformation(
+				parent, 
+				new MessageWithLink(
+						parent,
+						"VEGA - (c) 1989-2024 Michael Schweitzer - <a href=\""+UiConstants.VEGA_URL+"\">"+UiConstants.VEGA_URL+"</a>"),
+				"Build " + Game.BUILD);
+	}
 }

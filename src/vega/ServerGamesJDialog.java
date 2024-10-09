@@ -42,8 +42,6 @@ import common.GameOptions;
 import common.PlanetDistribution;
 import common.PlanetInfo;
 import commonServer.ResponseMessageGamesAndUsers;
-import commonUi.MessageBox;
-import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Response;
 import spielwitz.biDiServer.ResponseInfo;
 import uiBaseControls.Button;

@@ -48,8 +48,6 @@ import common.Player;
 import common.VegaResources;
 import commonServer.ClientServerConstants;
 import commonServer.ResponseMessageChangeUser;
-import commonUi.MessageBox;
-import commonUi.MessageBoxResult;
 import spielwitz.biDiServer.Client;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.LogLevel;

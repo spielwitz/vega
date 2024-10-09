@@ -67,16 +67,6 @@ import common.CommonUtils;
 import commonServer.PayloadNotificationMessage;
 import commonServer.PayloadNotificationNewEvaluation;
 import commonServer.ResponseMessageGamesAndUsers;
-import commonUi.MessageBox;
-import commonUi.MessageBoxResult;
-import commonUi.CommonUiUtils;
-import commonUi.FontHelper;
-import commonUi.IHostComponentMethods;
-import commonUi.PanelScreenContent;
-import commonUi.LanguageSelectionJDialog;
-import commonUi.VegaAbout;
-import commonUi.Toolbar;
-import commonUi.UiConstants;
 import spielwitz.biDiServer.ClientConfiguration;
 import spielwitz.biDiServer.Response;
 import spielwitz.biDiServer.ResponseInfo;
@@ -185,7 +175,6 @@ public class Vega extends Frame // NO_UCD (use default)
 	private JMenuItem menuQuit;
 	private JMenuItem menuSave;
 	
-	private JMenuItem menuServer;
 	private JMenuItem menuServerGames;
 	private JMenuItem menuServerHighscores;
 	private JMenuItem menuServerSettings;
@@ -198,8 +187,6 @@ public class Vega extends Frame // NO_UCD (use default)
 	private PanelScreenContent paintPanel;
 	private boolean playersWaitingForInput;
 	private JPopupMenu popupMenu;
-	
-	private VegaDisplayFunctions serverFunctions;
 	
 	private GameThread t;
 
@@ -284,7 +271,6 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.add(tutorialPanel, BorderLayout.EAST);
 		this.tutorialPanel.setVisible(false);
 		
-		this.serverFunctions = new VegaDisplayFunctions(this.config.getMyIpAddress());
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setVisible(true);
 		this.updateTitle();
@@ -438,26 +424,6 @@ public class Vega extends Frame // NO_UCD (use default)
 		else if (JMenuItem == this.menuQuit)
 		{
 			this.close();
-		}
-		else if (JMenuItem == this.menuServer)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			VegaDisplaySettingsJDialog dlg = 
-					new VegaDisplaySettingsJDialog(
-							this, 
-							this.config.getMyIpAddress(),
-							this.serverFunctions);
-
-			dlg.setVisible(true);
-			
-			this.config.setMyIpAddress(dlg.myIpAddress);
-			
-			this.updateTitle();
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
 		}
 		else if (JMenuItem == this.menuServerSettings)
 		{
@@ -714,14 +680,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public boolean isMoveEnteringOpen() 
 	{
-		if ((this.serverFunctions != null && this.serverFunctions.isServerEnabled() && !this.areClientsInactiveWhileEnterMoves()))
-		{
-			return false;
-		}
-		
-		return
-				(this.outputWindow != null && this.outputWindow.isVisible()) ||
-				(this.serverFunctions != null && this.serverFunctions.isServerEnabled() && this.areClientsInactiveWhileEnterMoves());
+		return (this.outputWindow != null && this.outputWindow.isVisible());
 	}
 
 	@Override
@@ -810,10 +769,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public boolean openPdf(byte[] pdfBytes, String clientId)
 	{
-		if (this.serverFunctions != null && this.serverFunctions.isServerEnabled())
-			return this.serverFunctions.openPdf(pdfBytes, clientId);
-		else
-			return false;
+		return false;
 	}
 
 	@Override
@@ -989,21 +945,6 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public void updateDisplay(ScreenUpdateEvent event)
 	{
-		if (this.serverFunctions != null && this.serverFunctions.isServerEnabled())
-		{
-			ScreenContent screenContent = null;
-			
-			if (this.t != null && this.t.getGame() != null)
-			{
-				screenContent = this.t.getGame().getScreenContentWhileMovesEntered();
-			}
-			
-			this.serverFunctions.updateClients(
-					event.getScreenContent(), 
-					screenContent, 
-					this.inputEnabled);
-		}
-
 		if (this.outputWindow != null && this.outputWindow.isVisible())
 		{
 			ScreenContent screenContent = null;
@@ -1062,11 +1003,6 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 	}
 
-	boolean areClientsInactiveWhileEnterMoves() // NO_UCD (use default)
-	{
-		return this.config.isClientsInactiveWhileEnterMoves();
-	}
-	
 	VegaConfiguration getConfig()
 	{
 		return this.config;
@@ -1111,11 +1047,6 @@ public class Vega extends Frame // NO_UCD (use default)
 	WebServer getWebserver()
 	{
 		return this.webserver;
-	}
-	
-	void setClientsInactiveWhileEnterMoves(boolean enabled)
-	{
-		this.config.setClientsInactiveWhileEnterMoves(enabled);
 	}
 	
 	void setTutorialNextStep()
@@ -1303,21 +1234,13 @@ public class Vega extends Frame // NO_UCD (use default)
 	    
 	    popupMenu.addSeparator();
 	    
-	    JMenu menuSettings = new JMenu (VegaResources.Settings(false));
-	    
 	    this.menuLanguage = new JMenuItem(VegaResources.Language(false));
 	    this.menuLanguage.addActionListener(this);
-	    menuSettings.add(this.menuLanguage);
+	    popupMenu.add(this.menuLanguage);
 	    
 	    this.menuServerSettings = new JMenuItem(VegaResources.ServerSettings(false));
 	    this.menuServerSettings.addActionListener(this);
-	    menuSettings.add(this.menuServerSettings);
-	    
-	    this.menuServer = new JMenuItem(VegaResources.Terminalserver(false));
-	    this.menuServer.addActionListener(this);
-	    menuSettings.add(this.menuServer);
-	    
-	    popupMenu.add(menuSettings);
+	    popupMenu.add(this.menuServerSettings);
 	    
 	    popupMenu.addSeparator();
 	    
@@ -1852,12 +1775,7 @@ public class Vega extends Frame // NO_UCD (use default)
 							" <" + this.t.getGame().getName() + ">" :
 							"";
 		
-		if (this.serverFunctions != null && this.serverFunctions.isServerEnabled())
-			this.setTitle(
-					VegaResources.VegaDisplayServerActive(false)+
-					fileName);
-		else
-			this.setTitle(VegaResources.Vega(false) + fileName);
+		this.setTitle(VegaResources.Vega(false) + fileName);
 	}
 
 	private class WaitThread extends Thread
