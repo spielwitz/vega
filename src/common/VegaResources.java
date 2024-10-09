@@ -1587,7 +1587,7 @@ public class VegaResources
 	}
 
 	/**
-	   * >>> A player is entering his moves. Input is disabled. <<< [43]
+	   * >>> A player is entering his moves. <<< [43]
 	   */
 	public static String PlayerEnteringMovesInputDisabled(boolean symbol) {
 		return symbol ? "£43£":messages.getString("PlayerEnteringMovesInputDisabled_43");
@@ -2833,7 +2833,7 @@ public class VegaResources
 	}
 
 	/**
-	   * VEGA server settings [9I]
+	   * VEGA server [9I]
 	   */
 	public static String ServerSettings(boolean symbol) {
 		return symbol ? "£9I£":messages.getString("ServerSettings_9I");

@@ -30,20 +30,14 @@ Manual: [German](VegaHelp_de-DE.pdf), [English](VegaHelp_en-US.pdf)
 
 ## Download and Execute
 
-Download the zip file from the `release` folder and extract its contents to a local folder of your choice. The following jar files are executables and can be started by double-click:
+Download the zip file from the `release` folder and extract its contents to a local folder of your choice. The following jar file is an executable and can be started by double-click:
 
 * `Vega.jar`
 
-* `VegaDisplay.jar`
-
-You can also open a command prompt and execute the apps as follows:
+You can also open a command prompt and execute the app from there:
 
 ```
 java -jar Vega.jar
-```
-
-```
-java -jar VegaDisplay.jar
 ```
 
 The VEGA server can only be started from the command prompt:
