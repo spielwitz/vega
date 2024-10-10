@@ -23,14 +23,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.net.InetAddress;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import common.Game;
 import common.VegaResources;
 import common.CommonUtils;
 import commonUi.MessageBox;
 import commonUi.IServerMethods;
+import commonUi.IVegaDisplayMethods;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -177,13 +180,26 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			
 			try {
+				try {
+					LocateRegistry.createRegistry( Registry.REGISTRY_PORT    );
+				}
+				catch ( RemoteException e ) 
+				{}
+
+				if (parent.stub == null)
+				{
+					parent.stub = (IVegaDisplayMethods) UnicastRemoteObject.exportObject( parent, 0 );
+					Registry registry = LocateRegistry.getRegistry(this.config.getMyIpAddress());
+					registry.rebind( this.config.getClientId(), parent.stub );
+				}
+				
 				if (!InetAddress.getByName( this.config.getServerIpAddress() ).isReachable( 2000 ))
 					throw new Exception(
 							VegaResources.ServerNotReached(false,
 									this.config.getServerIpAddress()));
 				IServerMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
+				Registry registryServer = LocateRegistry.getRegistry(this.config.getServerIpAddress());
+				rmiServer = (IServerMethods) registryServer.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
 				
 				errorMsg = rmiServer.rmiClientConnectionRequest(
 						this.config.getClientId(),
