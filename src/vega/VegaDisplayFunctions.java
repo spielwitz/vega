@@ -93,7 +93,7 @@ class VegaDisplayFunctions
 			return "";
 		}
 		else
-			return VegaResources.SecurityCodeInvalid(false);
+			return VegaResources.SecurityCodeInvalid(true);
 	}
 	
 	void disconnectClient(String clientId)

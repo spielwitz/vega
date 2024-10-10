@@ -211,7 +211,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 				if (errorMsg.length() > 0)
 					MessageBox.showError(
 							this,
-							errorMsg,
+							VegaResources.getString(errorMsg),
 							VegaResources.Error(false));
 				else
 					this.parent.connected = true;
