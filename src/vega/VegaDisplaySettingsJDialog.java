@@ -65,7 +65,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener, IChe
 		super (parent, VegaResources.Terminalserver(false), new BorderLayout());
 		
 		this.myIpAddress = myIpAddress == null || myIpAddress.equals("") ?
-				serverFunctions.getMeineIp() : myIpAddress;
+				serverFunctions.getMyIpAddress() : myIpAddress;
 		
 		this.serverFunctions = serverFunctions;
 		this.parent = parent;
@@ -196,7 +196,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener, IChe
 			
 			if (this.cbServerEnabled.isSelected())
 			{
-				this.serverFunctions.setIp(this.tfIpAddress.getText());
+				this.serverFunctions.setMyIpAddress(this.tfIpAddress.getText());
 				this.serverFunctions.startServer(this.parent);
 			}
 			else
