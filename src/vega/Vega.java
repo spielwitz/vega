@@ -903,7 +903,7 @@ public class Vega extends Frame // NO_UCD (use default)
 					clientName, 
 					this.config.isClientsInactiveWhileEnterMoves());
 		else
-			return VegaResources.ClientServerDifferentBuilds(false);
+			return VegaResources.ClientServerDifferentBuilds(true);
 	}
 	
 	@Override

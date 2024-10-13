@@ -27,9 +27,7 @@ public class CommonUiUtils
 	public static void showManual(Frame parent)
 	{
 		Desktop desktop = Desktop.getDesktop();
-		String filename = "VegaHelp_"+
-	    		VegaResources.getLocale() +
-	    		".pdf";
+		String filename = getManualFileName();
 		
 		try
 		{
@@ -42,5 +40,12 @@ public class CommonUiUtils
 					VegaResources.VegaHelpError(false, filename, x.getLocalizedMessage()), 
 					VegaResources.Error(false));
 		}
+	}
+	
+	public static String getManualFileName()
+	{
+		return "VegaHelp_"+
+	    		VegaResources.getLocale() +
+	    		".pdf";
 	}
 }

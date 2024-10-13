@@ -506,12 +506,10 @@ public class VegaResources
 		symbolDict.put("D2","FightSimulationPlanetCount_D2");
 		symbolDict.put("D3","FightSimulationRepeat_D3");
 		symbolDict.put("D4","FightSimulation_D4");
-		symbolDict.put("D5","Fight_D5");
 		symbolDict.put("D6","FileContainsInvalidCredentials_D6");
 		symbolDict.put("D7","FileFilterDescription_D7");
 		symbolDict.put("D8","FileNotExists_D8");
 		symbolDict.put("D9","FileNotValid_D9");
-		symbolDict.put("DA","ActivateServerGames_DA");
 		symbolDict.put("DB","FinalizeGameQuestion_DB");
 		symbolDict.put("DC","FinalizeGameQuestion_DC");
 		symbolDict.put("DD","FinalizeGame_DD");
@@ -3894,13 +3892,6 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: {1} [{2}] - Planet: {3} [{4}] [D5]
-	   */
-	public static String Fight(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4) {
-		return symbol ? "£D5§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":MessageFormat.format(messages.getString("Fight_D5"), arg0, arg1, arg2, arg3, arg4);
-	}
-
-	/**
 	   * The file {0}\ndoes not contain valid credentials. [D6]
 	   */
 	public static String FileContainsInvalidCredentials(boolean symbol, String arg0) {
@@ -3926,13 +3917,6 @@ public class VegaResources
 	   */
 	public static String FileNotValid(boolean symbol) {
 		return symbol ? "£D9£":messages.getString("FileNotValid_D9");
-	}
-
-	/**
-	   * Activate server games [DA]
-	   */
-	public static String ActivateServerGames(boolean symbol) {
-		return symbol ? "£DA£":messages.getString("ActivateServerGames_DA");
 	}
 
 	/**

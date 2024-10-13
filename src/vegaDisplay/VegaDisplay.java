@@ -22,11 +22,9 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
@@ -95,6 +93,8 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	
 	private IconLabel labMenu;
 	
+	IVegaDisplayMethods stub;
+	
 	private VegaDisplay()
 	{
 		super(VegaResources.VegaDisplay(false), new BorderLayout());
@@ -138,24 +138,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		this.paintPanel = new PanelScreenContent(this);
 		this.add(this.paintPanel, BorderLayout.CENTER);
 		
-		try {
-			LocateRegistry.createRegistry( Registry.REGISTRY_PORT    );
-		}
-		catch ( RemoteException e ) 
-		{}
-
-		IVegaDisplayMethods stub;
-		try {
-			stub = (IVegaDisplayMethods) UnicastRemoteObject.exportObject( this, 0 );
-			Registry registry;
-			registry = LocateRegistry.getRegistry();
-			registry.rebind( this.config.getClientId(), stub );			
-		} catch (AccessException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-				
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setVisible(true);
 		this.paintPanel.requestFocusInWindow();

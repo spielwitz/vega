@@ -59,7 +59,7 @@ class VegaDisplayFunctions
 		return clientCode;
 	}
 
-	public String getMeineIp() {
+	public String getMyIpAddress() {
 		return myIpAddress;
 	}
 
@@ -72,9 +72,9 @@ class VegaDisplayFunctions
 		return serverEnabled;
 	}
 	
-	public void setIp(String meineIp)
+	public void setMyIpAddress(String myIpAddress)
 	{
-		this.myIpAddress = (meineIp == null) ? CommonUtils.getMyIPAddress() : meineIp;
+		this.myIpAddress = (myIpAddress == null) ? CommonUtils.getMyIPAddress() : myIpAddress;
 		System.setProperty("java.rmi.server.hostname",this.myIpAddress);
 	}
 		
@@ -93,7 +93,7 @@ class VegaDisplayFunctions
 			return "";
 		}
 		else
-			return VegaResources.SecurityCodeInvalid(false);
+			return VegaResources.SecurityCodeInvalid(true);
 	}
 	
 	void disconnectClient(String clientId)
@@ -139,8 +139,7 @@ class VegaDisplayFunctions
 		IServerMethods stub;
 		try {
 			stub = (IServerMethods) UnicastRemoteObject.exportObject(parent, 0 );
-			Registry registry;
-			registry = LocateRegistry.getRegistry();
+			Registry registry = LocateRegistry.getRegistry(this.getMyIpAddress());
 			registry.rebind( CommonUtils.RMI_REGISTRATION_NAME_SERVER, stub );
 			
 			ok = true;
