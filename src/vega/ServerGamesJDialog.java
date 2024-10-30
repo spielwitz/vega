@@ -144,17 +144,17 @@ class ServerGamesJDialog extends Dialog
 		ButtonGroup groupViewSelect = new ButtonGroup();
 		
 		cPanNorth.gridx = 0; cPanNorth.gridy = 0;  
-		this.rbGamesWaitingForMe = new RadioButton(VegaResources.PlayersAreWaiting(false), this);
+		this.rbGamesWaitingForMe = new RadioButton(VegaResources.PlayersAreWaiting(false, ""), this);
 		groupViewSelect.add(this.rbGamesWaitingForMe);
 		panNorth.add(this.rbGamesWaitingForMe, cPanNorth);
 		
 		cPanNorth.gridx = 1; cPanNorth.gridy = 0;  
-		this.rbGamesWaitingForOthers = new RadioButton(VegaResources.WaitingForOtherPlayers(false), this);
+		this.rbGamesWaitingForOthers = new RadioButton(VegaResources.WaitingForOtherPlayers(false, ""), this);
 		groupViewSelect.add(this.rbGamesWaitingForOthers);
 		panNorth.add(this.rbGamesWaitingForOthers, cPanNorth);
 		
 		cPanNorth.gridx = 2; cPanNorth.gridy = 0;  
-		this.rbGamesFinalized = new RadioButton(VegaResources.FinalizedGames(false), this);
+		this.rbGamesFinalized = new RadioButton(VegaResources.FinalizedGames(false, ""), this);
 		groupViewSelect.add(this.rbGamesFinalized);
 		panNorth.add(this.rbGamesFinalized, cPanNorth);
 		
@@ -314,6 +314,8 @@ class ServerGamesJDialog extends Dialog
 		
 		this.pack();
 		this.setLocationRelativeTo(parent);	
+		
+		this.updateRadioButtonLabels();
 	}
 	
 	@Override
@@ -592,6 +594,24 @@ class ServerGamesJDialog extends Dialog
 		Collections.sort(this.gamesByCategory.get(this.rbGamesWaitingForOthers));
 		
 		return rbCurrentGame;
+	}
+	
+	private void updateRadioButtonLabels()
+	{
+		this.rbGamesWaitingForMe.setText(
+				VegaResources.PlayersAreWaiting(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesWaitingForMe).size())));
+		
+		this.rbGamesWaitingForOthers.setText(
+				VegaResources.WaitingForOtherPlayers(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesWaitingForOthers).size())));
+		
+		this.rbGamesFinalized.setText(
+				VegaResources.FinalizedGames(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesFinalized).size())));
 	}
 	
 	private String[] getPlanetComboBoxValues(int playersCount)

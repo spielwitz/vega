@@ -1659,10 +1659,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Players are waiting for me [47]
+	   * Players are waiting for me ({0}) [47]
 	   */
-	public static String PlayersAreWaiting(boolean symbol) {
-		return symbol ? "£47£":messages.getString("PlayersAreWaiting_47");
+	public static String PlayersAreWaiting(boolean symbol, String arg0) {
+		return symbol ? "£47§"+arg0+"£":MessageFormat.format(messages.getString("PlayersAreWaiting_47"), arg0);
 	}
 
 	/**
@@ -2702,10 +2702,10 @@ public class VegaResources
 	}
 
 	/**
-	   * I am waiting for other players [8E]
+	   * I am waiting for other players ({0}) [8E]
 	   */
-	public static String WaitingForOtherPlayers(boolean symbol) {
-		return symbol ? "£8E£":messages.getString("WaitingForOtherPlayers_8E");
+	public static String WaitingForOtherPlayers(boolean symbol, String arg0) {
+		return symbol ? "£8E§"+arg0+"£":MessageFormat.format(messages.getString("WaitingForOtherPlayers_8E"), arg0);
 	}
 
 	/**
@@ -3976,10 +3976,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Finalized games [DJ]
+	   * Finalized games ({0}) [DJ]
 	   */
-	public static String FinalizedGames(boolean symbol) {
-		return symbol ? "£DJ£":messages.getString("FinalizedGames_DJ");
+	public static String FinalizedGames(boolean symbol, String arg0) {
+		return symbol ? "£DJ§"+arg0+"£":MessageFormat.format(messages.getString("FinalizedGames_DJ"), arg0);
 	}
 
 	/**
