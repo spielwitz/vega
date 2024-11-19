@@ -222,7 +222,7 @@ class PlanetEditor
 			else if (itemType == ShipType.BONUS)
 			{
 				count = planet.getBonus();
-				countString = CommonUtils.convertToString(count);
+				countString = CommonUtils.convertToString((int)(100 * Evaluation.getCombatStrength(count))) + "%";
 			}
 			else
 			{
@@ -285,6 +285,7 @@ class PlanetEditor
 						colorIndex,
 						planet.getMoneySupply(),
 						planet.getMoneyProductionMaxIncrease(),
+						planet.getCombatFactorBuyCountMax(),
 						planet.getDefensiveBattleshipsBuyCountMax(),
 						planet.getDefensiveBattleshipsSellCountMax(),
 						this.readOnly));

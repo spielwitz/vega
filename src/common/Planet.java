@@ -28,6 +28,7 @@ class Planet implements Serializable
 	
 	static final double PRICE_RATIO_BUY_SELL = 2./3.;
 	static final int MAX_BONUS = 2;
+	static final int BONUS_INCREMENT_PERECENTAGE = 50;
 	
 	static Hashtable<ShipType, PriceRange> PRICES_MIN_MAX;
 	
@@ -364,6 +365,20 @@ class Planet implements Serializable
 			
 			return allianceCopy;
 		}
+	}
+	
+	int getCombatFactorBuyCountMax()
+	{
+		return
+				this.bonus < Planet.MAX_BONUS ?
+						BONUS_INCREMENT_PERECENTAGE :
+						0;
+	}
+	
+	String getDefensiveBattleshipCombatStrengthConcatenated()
+	{
+		String combatStrength = Integer.toString(CommonUtils.round(Evaluation.getCombatStrength(this.bonus) * 100));
+		return this.defensiveBattleshipsCount + "/" + combatStrength + "%";
 	}
 	
 	int getDefensiveBattleshipsBuyActualPrice(int price)

@@ -706,114 +706,36 @@ class EnterMoves
 		
 		this.game.getConsole().clear();
 		
-		ArrayList<ConsoleKey> allowedKeys = null;
-		int offenderCount = 0;
-		int offenderBonus = 0;
-		int defenderCount = 0;
-		int defenderBonus = 0;
-		boolean enterNumbers = true;
-		
 		while (true)
 		{
-			if (enterNumbers)
+			int offenderCount = this.fightSimulationGetBattleships(VegaResources.FightSimulationAttackerCount(true));
+			if (offenderCount < 0)
 			{
-				allowedKeys = new ArrayList<ConsoleKey>();
-				
-				while (true)
-				{
-					this.game.getConsole().appendText(
-							VegaResources.FightSimulationAttackerCount(true) + ": ");
-					
-					ConsoleInput input = this.game.getConsole().waitForTextEntered(7, allowedKeys, false, true);
-					
-					if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
-					{
-						this.game.getConsole().clear();
-						return;
-					}
-					
-					String[] inputArray = input.getInputText().split("/");
-					
-					try
-					{
-						offenderCount = Math.abs(Integer.parseInt(inputArray[0]));
-					}
-					catch (Exception x)
-					{
-						this.game.getConsole().outInvalidInput();
-						continue;
-					}
-					
-					try
-					{
-						offenderBonus = 
-								inputArray.length > 1 ?
-										Math.abs(Integer.parseInt(inputArray[1])) :
-										0;
-					}
-					catch (Exception x)
-					{
-						this.game.getConsole().outInvalidInput();
-						continue;
-					}
-					
-					if (offenderCount < 0 || offenderBonus < 0 || offenderBonus > Planet.MAX_BONUS)
-					{
-						this.game.getConsole().outInvalidInput();
-						continue;
-					}
-					
-					break;
-				}
-		
-				while (true)
-				{
-					this.game.getConsole().appendText(
-							VegaResources.FightSimulationPlanetCount(true) + ": ");
-					
-					ConsoleInput input = this.game.getConsole().waitForTextEntered(7, allowedKeys, false, true);
-					
-					if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
-					{
-						this.game.getConsole().clear();
-						return;
-					}
-					
-					String[] inputArray = input.getInputText().split("/");
-					
-					try
-					{
-						defenderCount = Math.abs(Integer.parseInt(inputArray[0]));
-					}
-					catch (Exception x)
-					{
-						this.game.getConsole().outInvalidInput();
-						continue;
-					}
-					
-					try
-					{
-						defenderBonus = 
-								inputArray.length > 1 ?
-										Math.abs(Integer.parseInt(inputArray[1])) :
-										0;
-					}
-					catch (Exception x)
-					{
-						this.game.getConsole().outInvalidInput();
-						continue;
-					}
-					
-					if (defenderCount < 0 || defenderBonus < 0 || defenderBonus > Planet.MAX_BONUS)
-					{
-						this.game.getConsole().outInvalidInput();
-						continue;
-					}
-					
-					break;
-				}
+				this.game.getConsole().clear();
+				return;
 			}
 			
+			int offenderBonus = this.fightSimulationGetBonus();
+			if (offenderBonus < 0)
+			{
+				this.game.getConsole().clear();
+				return;
+			}
+
+			int defenderCount = this.fightSimulationGetBattleships(VegaResources.FightSimulationPlanetCount(true));
+			if (defenderCount < 0)
+			{
+				this.game.getConsole().clear();
+				return;
+			}
+			
+			int defenderBonus = this.fightSimulationGetBonus();
+			if (defenderBonus < 0)
+			{
+				this.game.getConsole().clear();
+				return;
+			}
+				
 			Tuple<Integer,Integer> countsAfterFight = Evaluation.fight(
 					this.game.getConsole(), 
 					offenderCount, 
@@ -827,21 +749,78 @@ class EnterMoves
 				this.game.getConsole().appendText(VegaResources.FightSimulationAttackNoSuccess(true));
 			
 			this.game.getConsole().lineBreak();
+		}
+	}
+	
+	private int fightSimulationGetBattleships(String text)
+	{
+		while(true)
+		{
+			this.game.getConsole().appendText(text + ": ");
 			
-			allowedKeys = new ArrayList<ConsoleKey>();
-			allowedKeys.add(new ConsoleKey("ESC", VegaResources.Cancel(true)));
-			allowedKeys.add(new ConsoleKey("ENTER", VegaResources.FightSimulationRepeat(true)));
-			allowedKeys.add(new ConsoleKey(VegaResources.OtherKey(true), VegaResources.FightSimulationOtherValues(true)));
-			
-			ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys, false);
+			ConsoleInput input = this.game.getConsole().waitForTextEntered(7, new ArrayList<ConsoleKey>(), false, true);
 			
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{
 				this.game.getConsole().clear();
-				return;
+				return -1;
 			}
 			
-			enterNumbers =  input.getLastKeyCode() != KeyEvent.VK_ENTER;
+			int count = 0;
+			
+			try
+			{
+				count = Math.abs(Integer.parseInt(input.getInputText()));
+			}
+			catch (Exception x)
+			{
+				this.game.getConsole().outInvalidInput();
+				continue;
+			}
+			
+			if (count >= 0) return count;
+			this.game.getConsole().outInvalidInput();
+		}
+	}
+	
+	private int fightSimulationGetBonus()
+	{
+		ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();
+		
+		for (int i = 0; i <= Planet.MAX_BONUS; i++)
+		{
+			allowedKeys.add(
+					new ConsoleKey(
+							Integer.toString(i),
+							CommonUtils.round(Evaluation.getCombatStrength(i) * 100) + "%"));
+		}
+		
+		while(true)
+		{
+			this.game.getConsole().appendText(VegaResources.FightSimulationCombatStrength(true) + ": ");
+			
+			ConsoleInput input = this.game.getConsole().waitForTextEntered(7, allowedKeys, false, true);
+			
+			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
+			{
+				this.game.getConsole().clear();
+				return -1;
+			}
+			
+			int bonus = 0;
+			
+			try
+			{
+				bonus = Math.abs(Integer.parseInt(input.getInputText()));
+			}
+			catch (Exception x)
+			{
+				this.game.getConsole().outInvalidInput();
+				continue;
+			}
+			
+			if (bonus >= 0 && bonus <= Planet.MAX_BONUS) return bonus;
+			this.game.getConsole().outInvalidInput();
 		}
 	}
 

@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: F8
+		// Last used symbolic key: FA
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -575,11 +575,12 @@ public class VegaResources
 		symbolDict.put("F1","FightAttacker_F1");
 		symbolDict.put("F2","FightDefender_F2");
 		symbolDict.put("F3","TutorialText07a_F3");
-		symbolDict.put("F4","CombatBonus_F4");
-		symbolDict.put("F5","CombatBonusShort_F5");
+		symbolDict.put("F5","CombatStrengthShort_F5");
 		symbolDict.put("F6","TutorialText04a_F6");
 		symbolDict.put("F7","TutorialText04b_F7");
 		symbolDict.put("F8","VegaHelpError_F8");
+		symbolDict.put("F9","FightSimulationCombatStrength_F9");
+		symbolDict.put("FA","BuySellCombatStrength_FA");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -2401,7 +2402,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Launch battleships]\n\nSend battleships to the neighboring planets. Since your opponents are far away and there are no attacks from neutral planets, you don't have to worry about defending your planet ![color=3|LM] yet.\n\nIn the turn input menu ![inverse|1], select "Battleships". Enter the fleet's starting and destination planet and the number of battleships.\n\nThe number is determined by the number of battleships on the target planet, its annual battleship production and the flight time of your battleships. You will only see the battleship production if you have a spy on the planet or have formed an alliance with the owner. In the early stages of the game, it is still easy to conquer neutral planets. There are no defensive battleships on neutral planets, and their production is between 1 and 15 battleships per year.\n\nYou want to conquer planet ![color=2|JM]. There are 8 battleships there and you reach the planet in year 1. If you send out 35 battleships, you will most likely conquer the planet.\n\n![color=1|Task]: ![italic;color=1|Send 35 battleships from your planet LM to planet JM.] [76]
+	   * ![size=1.5;color=1;bold|Launch battleships]\n\nSend battleships to the neighboring planets. Since your opponents are far away and there are no attacks from neutral planets, you don't have to worry about defending your planet ![color=3|LM] yet.\n\nIn the turn input menu ![inverse|1], select "Battleships". Enter the fleet's starting and destination planet and the number of battleships.\n\nThe number is determined by the number of battleships on the target planet, its annual battleship production and the flight time of your battleships. You will only see the battleship production if you have a spy on the planet or have formed an alliance with the owner. In the early stages of the game, it is still easy to conquer neutral planets. There are no defensive battleships on neutral planets, and their production is between 1 and 15 battleships per year.\n\nYou want to conquer planet ![color=2|JM]. There are 8 battleships there and you reach the planet in year 1. If you send out 35 battleships, you will take over the planet with 27 battleships.\n\n![color=1|Task]: ![italic;color=1|Send 35 battleships from your planet LM to planet JM.] [76]
 	   */
 	public static String TutorialText06(boolean symbol) {
 		return symbol ? "£76£":messages.getString("TutorialText06_76");
@@ -2492,14 +2493,14 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The black hole]\n\nIn the evaluation of year 8, the black hole appears for the first time in a random location. In each evaluation, it moves 2 light years in a random direction. All spaceships that are within a radius of 0.5 light years around the black hole are lost. If the black hole enters a sector with mines, all mines there are cleared. After a random number of years, the black hole disappears and after some time appears in a random location.\n\nThe black hole has the symbol ![img=tutorial/iconBlackHole12x12.png].\n\n![size=1.5;color=1;bold|Neutral battleship fleets]\n\nIn the evaluations of years 10, 15, 20, 25, etc., neutral battleship fleets start, flying from a random sector to a random planet. If a neutral fleet conquers a planet, the planet becomes neutral again. The planet's production output is halved, and all combat bonus points are lost. [7J]
+	   * ![size=1.5;color=1;bold|The black hole]\n\nIn the evaluation of year 8, the black hole appears for the first time in a random location. In each evaluation, it moves 2 light years in a random direction. All spaceships that are within a radius of 0.5 light years around the black hole are lost. If the black hole enters a sector with mines, all mines there are cleared. After a random number of years, the black hole disappears and after some time appears in a random location.\n\nThe black hole has the symbol ![img=tutorial/iconBlackHole12x12.png].\n\n![size=1.5;color=1;bold|Neutral battleship fleets]\n\nIn the evaluations of years 10, 15, 20, 25, etc., neutral battleship fleets start, flying from a random sector to a random planet. If a neutral fleet conquers a planet, the planet becomes neutral again. The planet's production output is halved, and the combat strength drops back to 100%. [7J]
 	   */
 	public static String TutorialText19(boolean symbol) {
 		return symbol ? "£7J£":messages.getString("TutorialText19_7J");
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Alliances]\n\nPlayers can declare individual planets as alliance planets in order to jointly defend them and launch joint attacks from there. Losses from attacks and defenses are divided proportionally.\n\nAlliance partners can only control the battleships on the planet, not the other spaceship types. The alliance partners have full insight into the planet's production data and supplies, but cannot change them. Detailed information about alliances can be found in the game manual.\n\n![size=1.5;color=1;bold|Capitulate]\n\nIf the situation seems hopeless to you, you can use the "capitulate" command to raise the white flag and leave the game. All your planets become neutral, all your flying spaceships disintegrate, and you are eliminated from all alliances. However, the defensive battleships, the $ supplies, combat bonus points, and spaceships that have not yet been launched remain on your former planets. The capitulation is implemented at the beginning of the evaluation.\n\n![size=1.5;color=1;bold|End of the game]\n\nThe game ends when the agreed playing time in years has passed or there is only one player left. You can end the game early with the consent of all players. The player with the most planets wins. [7K]
+	   * ![size=1.5;color=1;bold|Alliances]\n\nPlayers can declare individual planets as alliance planets in order to jointly defend them and launch joint attacks from there. Losses from attacks and defenses are divided proportionally.\n\nAlliance partners can only control the battleships on the planet, not the other spaceship types. The alliance partners have full insight into the planet's production data and supplies, but cannot change them. Detailed information about alliances can be found in the game manual.\n\n![size=1.5;color=1;bold|Capitulate]\n\nIf the situation seems hopeless to you, you can use the "capitulate" command to raise the white flag and leave the game. All your planets become neutral, all your flying spaceships disintegrate, and you are eliminated from all alliances. However, the defensive battleships, the $ supplies, combat strengths, and spaceships that have not yet been launched remain on your former planets. The capitulation is implemented at the beginning of the evaluation.\n\n![size=1.5;color=1;bold|End of the game]\n\nThe game ends when the agreed playing time in years has passed or there is only one player left. You can end the game early with the consent of all players. The player with the most planets wins. [7K]
 	   */
 	public static String TutorialText20(boolean symbol) {
 		return symbol ? "£7K£":messages.getString("TutorialText20_7K");
@@ -3549,7 +3550,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Defensive battleships / combat bonus [BS]
+	   * Def. b'ships / combat strength [BS]
 	   */
 	public static String DefensiveBattleships(boolean symbol) {
 		return symbol ? "£BS£":messages.getString("DefensiveBattleships_BS");
@@ -3857,7 +3858,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Attacker/battle bonus [D0]
+	   * Attacker [D0]
 	   */
 	public static String FightSimulationAttackerCount(boolean symbol) {
 		return symbol ? "£D0£":messages.getString("FightSimulationAttackerCount_D0");
@@ -3871,7 +3872,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Defender/battle bonus [D2]
+	   * Defender [D2]
 	   */
 	public static String FightSimulationPlanetCount(boolean symbol) {
 		return symbol ? "£D2£":messages.getString("FightSimulationPlanetCount_D2");
@@ -4375,28 +4376,21 @@ public class VegaResources
 	}
 
 	/**
-	   * Combat bonus [F4]
+	   * ComS [F5]
 	   */
-	public static String CombatBonus(boolean symbol) {
-		return symbol ? "£F4£":messages.getString("CombatBonus_F4");
+	public static String CombatStrengthShort(boolean symbol) {
+		return symbol ? "£F5£":messages.getString("CombatStrengthShort_F5");
 	}
 
 	/**
-	   * Bon [F5]
-	   */
-	public static String CombatBonusShort(boolean symbol) {
-		return symbol ? "£F5£":messages.getString("CombatBonusShort_F5");
-	}
-
-	/**
-	   * ![size=1.5;color=1;bold|Conquer and defend planets]\n\nSend battleships to an alien planet to conquer it. You fight against all battleships on the planet, including the defensive battleships.\n\nImagine the battle like a dice game: The attacker takes 3 dice in his hand, and if there are fewer than 3 battleships, he has as many dice as there are battleships. The defender gets 2 dice, and if there are fewer than 2 battleships, he has as many dice as there are battleships. So the attacker has 1 to 3, and the defender has 0 to 2 dice. Then the dice are rolled simultaneously.\n\nThe attacker's and defender's dice are sorted in descending order by their values and then compared in pairs, i.e. the attacker's highest value with the defender's highest value, then the second highest values, and so on. In each pair comparison, the defender loses a battleship if the attacker has a higher value, otherwise the attacker loses. All of this reminds you of the board game "Risk"? Me too ;-)\n\nIn this example, attacker and defender each lose 1 battleship:\n\nAtt.  Def.\n===========\n 6      6  -> Att. loses 1\n 5      2  -> Def. loses 1\n 2         -> Not evaluated\n\nVEGA rolls the dice until the attacker or defender have lost all of their battleships. If any of the attacker's ships remain, the attacker takes over the planet with its remaining battleships. [F6]
+	   * ![size=1.5;color=1;bold|Conquer and defend planets]\n\nSend battleships to conquer a foreign planet. You fight against all battleships on the planet, including the defensive battleships. The outcome of the battle is very easy to calculate:\n\nThe defender loses the number of attacking battleships, the attacker loses the number of defending battleships. If there are any attacker ships left, the attacker takes over the planet.\n\nExample:\n\nAttacker: 100\nDefender:  75\n\nAfter the fight:\n\nAttacker: 100 -  75 = 25\nDefender:  75 - 100 <  0\n\nIn this example, the attacker takes over the planet with 25 ships. [F6]
 	   */
 	public static String TutorialText04a(boolean symbol) {
 		return symbol ? "£F6£":messages.getString("TutorialText04a_F6");
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The combat bonus]\n\nYou can equip your planets with up to 2 combat bonus points. When you launch an attack, your battleships receive the combat bonus of the starting planet. The defender uses the combat bonus of the attacked planet.\n\nFor each bonus point, attackers and defenders receive an additional die. If there are fewer battleships than dice, only as many dice as battleships are used, so the attacker can use 1 to 5 dice and the defender 0 to 4. [F7]
+	   * ![size=1.5;color=1;bold|The combat bonus]\n\nYou can equip your planets with up to 2 combat bonus points. When you launch an attack, your battleships receive the combat strength of the starting planet. The defender uses the combat strength of the attacked planet.\n\nFor each bonus point, attackers and defenders receive an additional die. If there are fewer battleships than dice, only as many dice as battleships are used, so the attacker can use 1 to 5 dice and the defender 0 to 4. [F7]
 	   */
 	public static String TutorialText04b(boolean symbol) {
 		return symbol ? "£F7£":messages.getString("TutorialText04b_F7");
@@ -4407,5 +4401,19 @@ public class VegaResources
 	   */
 	public static String VegaHelpError(boolean symbol, String arg0, String arg1) {
 		return symbol ? "£F8§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("VegaHelpError_F8"), arg0, arg1);
+	}
+
+	/**
+	   * Combat strength [F9]
+	   */
+	public static String FightSimulationCombatStrength(boolean symbol) {
+		return symbol ? "£F9£":messages.getString("FightSimulationCombatStrength_F9");
+	}
+
+	/**
+	   * Combat strength (+{0}%) [FA]
+	   */
+	public static String BuySellCombatStrength(boolean symbol, String arg0) {
+		return symbol ? "£FA§"+arg0+"£":MessageFormat.format(messages.getString("BuySellCombatStrength_FA"), arg0);
 	}
 }

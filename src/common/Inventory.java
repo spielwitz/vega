@@ -139,7 +139,7 @@ class Inventory
 		chapter.table.cells.add(VegaResources.DefensiveBattleshipsShort(false));
 		chapter.table.colAlignRight[5] = true;
 		
-		chapter.table.cells.add(VegaResources.CombatBonusShort(false));
+		chapter.table.cells.add(VegaResources.CombatStrengthShort(false));
 		chapter.table.colAlignRight[6] = true;
 
 		chapter.table.cells.add(VegaResources.BattleshipsShort(false));
@@ -198,7 +198,9 @@ class Inventory
 			chapter.table.cells.add(visible ? CommonUtils.convertToString(planet.getBattleshipProduction()) : "?");
 
 			chapter.table.cells.add(visible ? CommonUtils.convertToString(planet.getDefensiveBattleshipsCount()) : "?");
-			chapter.table.cells.add(visible ? CommonUtils.convertToString(planet.getBonus()) : "?");
+			chapter.table.cells.add(visible ? 
+					CommonUtils.round(Evaluation.getCombatStrength(planet.getBonus()) * 100) + "%"
+					 : "?");
 			chapter.table.cells.add(CommonUtils.convertToString(planet.getShipsCount(ShipType.BATTLESHIPS)));
 
 			chapter.table.cells.add(visible ? CommonUtils.convertToString(planet.getShipsCount(ShipType.SPY)) : "?");

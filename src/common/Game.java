@@ -47,7 +47,7 @@ public class Game extends EmailTransportBase implements Serializable
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0010";
+	public static final String 		BUILD_COMPATIBLE = "0012";
 
 	// Game board dimensions 
 	public static final int 		BOARD_MAX_X = 20;
@@ -2608,6 +2608,7 @@ public class Game extends EmailTransportBase implements Serializable
 						" " + this.getPlanetNameFromIndex(planetIndex);
 				
 				String shipCount = "";
+				int pad = 5;
 				
 				if (shipTypeDisplay == ShipType.BATTLESHIPS)
 				{
@@ -2658,7 +2659,8 @@ public class Game extends EmailTransportBase implements Serializable
 				}
 				else if (shipTypeDisplay == ShipType.DEFENSIVE_BATTLESHIPS)
 				{
-					shipCount = planet.getDefensiveBattleshipsCount() + "/" + planet.getBonus();
+					shipCount = planet.getDefensiveBattleshipCombatStrengthConcatenated();
+					pad = 8;
 				}
 				else if (shipTypeDisplay == ShipType.MONEY_PRODUCTION)
 				{
@@ -2677,7 +2679,7 @@ public class Game extends EmailTransportBase implements Serializable
 					shipCount = Integer.toString(this.planets[planetIndex].getShipsCount(shipTypeDisplay));
 				}
 								
-				shipCount = CommonUtils.padString(shipCount, 5);
+				shipCount = CommonUtils.padString(shipCount, pad);
 				
 				text.add(planetName.substring(planetName.length()-2, planetName.length()) + 
 						":" +
