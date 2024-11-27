@@ -4159,7 +4159,7 @@ public class VegaResources
 	}
 
 	/**
-	   * The neutral fleet has conquered the planet. The $ production has halved. [E9]
+	   * The neutral fleet has conquered the planet. [E9]
 	   */
 	public static String PlanetConqueredNeutral(boolean symbol) {
 		return symbol ? "£E9£":messages.getString("PlanetConqueredNeutral_E9");

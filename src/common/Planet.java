@@ -220,8 +220,6 @@ class Planet implements Serializable
 			if (this.alliance.getMembersCount() <= 1)
 				this.alliance = null;
 		}
-		
-		this.battleshipProduction = this.moneyProduction;
 	}
 	
 	void conquer(int playersCount, int newOwner, Ship ship)
@@ -234,12 +232,6 @@ class Planet implements Serializable
 		
 		if (ship != null)
 			this.mergeBattleships(playersCount, ship);
-		
-		if (newOwner == Player.NEUTRAL)
-		{
-			this.moneyProduction = CommonUtils.round((double)this.moneyProduction / 2);
-			this.bonus = 0;
-		}
 	}
 	
 	Alliance copyAllianceStructure(int[] reductions)
