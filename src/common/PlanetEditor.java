@@ -160,19 +160,14 @@ class PlanetEditor
 	{
 		PlanetEditorAction undoLastAction = null;
 		PlanetEditorAction lastAction = null;
-		ArrayList<PlanetEditorAction> actionsByItem = null;
+		ArrayList<PlanetEditorAction> actionsByItem = this.actions.get(itemType);
 		
-		if (this.actions.containsKey(itemType))
+		if (actionsByItem.size() > 0)
 		{
-			actionsByItem = this.actions.get(itemType);
+			undoLastAction = actionsByItem.getLast();
 			
-			if (actionsByItem.size() > 0)
-			{
-				undoLastAction = actionsByItem.getLast();
-				
-				if (buy && undoLastAction.delta >= 0) undoLastAction = null;
-				if (!buy && undoLastAction.delta <= 0) undoLastAction = null;
-			}
+			if (buy && undoLastAction.delta >= 0) undoLastAction = null;
+			if (!buy && undoLastAction.delta <= 0) undoLastAction = null;
 		}
 		
 		if (itemType == ShipType.MONEY_PRODUCTION)
