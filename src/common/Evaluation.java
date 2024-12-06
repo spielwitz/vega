@@ -19,6 +19,8 @@ package common;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import spielwitz.biDiServer.Tuple;
 
@@ -1187,42 +1189,42 @@ class Evaluation
 
 	private void processCapitulations()
 	{
-		int[] shipsSequence = CommonUtils.getRandomList(game.getShips().size());
-
-		for (int i = 0; i < game.getShips().size(); i++)
+		List<Ship> capitulationShips =
+			game.getShips().stream()
+				.filter(s -> !s.isToBeDeleted() && s.getType() == ShipType.CAPITULATION)
+				.collect(Collectors.toList());
+		
+		for (Ship capitulationShip: capitulationShips)
 		{
-			Ship ship = game.getShips().get(shipsSequence[i]);
+			capitulationShip.setToBeDeleted();
+			
+			this.printDayEvent(0);
 
-			if (!ship.isToBeDeleted() && ship.getType() == ShipType.CAPITULATION)
+			this.game.getConsole().setLineColor(capitulationShip.getOwnerColorIndex(this.game));
+			this.game.getConsole().appendText(
+					VegaResources.PlayerCapitulated(
+							true,
+							capitulationShip.getOwnerName(this.game)));
+
+			for (Planet planet: this.game.getPlanets())
 			{
-				ship.setToBeDeleted();
-				
-				this.printDayEvent(0);
-
-				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-				this.game.getConsole().appendText(
-						VegaResources.PlayerCapitulated(
-								true,
-								ship.getOwnerName(this.game)));
-
-				for (Planet planet: this.game.getPlanets())
-				{
-					planet.changeOwner(ship.getOwner(), Player.NEUTRAL);
-				}
-
-				for (Ship ship2: this.game.getShips())
-				{
-					if (ship2.isPlayerInvolved(ship.getOwner()))
-					{
-						ship2.setToBeDeleted();
-					}
-				}
-
-				this.game.updatePlanetList(false);
-				this.game.updateBoard(0);
-				
-				this.waitForKeyPressed();
+				planet.changeOwner(capitulationShip.getOwner(), Player.NEUTRAL);
 			}
+			
+			List<Ship> shipsWithPlayerInvolement =
+					game.getShips().stream()
+						.filter(s -> s.isPlayerInvolved(capitulationShip.getOwner()))
+						.collect(Collectors.toList());
+
+			for (Ship shipWithPlayerInvolement: shipsWithPlayerInvolement)
+			{
+				shipWithPlayerInvolement.setToBeDeleted();
+			}
+
+			this.game.updatePlanetList(false);
+			this.game.updateBoard(0);
+			
+			this.waitForKeyPressed();
 		}
 	}
 
