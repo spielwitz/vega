@@ -235,7 +235,7 @@ class PlanetEditor
 		
 		if (undoLastAction != null)
 		{
-			actionsByItem.removeLast();
+			CommonUtils.ArrayListRemoveLast(actionsByItem);
 		}
 		else if (lastAction != null)
 		{

@@ -200,6 +200,12 @@ public class CommonUtils
 		return list.get(list.size() - 1);
 	}
 	
+	static <T> void ArrayListRemoveLast(ArrayList<T> list)
+	{
+		if (list == null || list.size() == 0) return;
+		list.remove(list.size() - 1);
+	}
+	
 	static String convertDateToString(long dateLong)
 	{
 		Date date = new Date(dateLong);
