@@ -158,14 +158,13 @@ class PlanetEditor
 			ShipType itemType)
 
 	{
-		PlanetEditorAction undoLastAction = null;
 		PlanetEditorAction lastAction = null;
 		ArrayList<PlanetEditorAction> actionsByItem = this.actions.get(itemType);
+
+		PlanetEditorAction undoLastAction = CommonUtils.ArrayListGetLast(actionsByItem);
 		
-		if (actionsByItem.size() > 0)
+		if (undoLastAction != null)
 		{
-			undoLastAction = actionsByItem.getLast();
-			
 			if (buy && undoLastAction.delta >= 0) undoLastAction = null;
 			if (!buy && undoLastAction.delta <= 0) undoLastAction = null;
 		}
