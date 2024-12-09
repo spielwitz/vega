@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class PlanetDistribution
 {
-	final static int NEARBY_PLANETS_COUNT = 5;
+	final static int NEARBY_PLANETS_COUNT = 4;
 	private final static double BOARD_RATIO = (double)Game.BOARD_MAX_X / (double)Game.BOARD_MAX_Y;
 	private static final double BOARD_SECTORS_PER_PLANET = 8.57;
 

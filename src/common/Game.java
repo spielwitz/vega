@@ -72,7 +72,7 @@ public class Game extends EmailTransportBase implements Serializable
 	static final int 				MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W1 = 15;
 	static final int 				MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W2 = 200;
 	static final int 				MONEY_PRODUCTION_MAX = 100;
-	static final int				MONEY_PRODUCTION_NEARBY_PLANETS = 30;
+	static final int				MONEY_PRODUCTION_NEARBY_PLANETS = 25;
 	static final int 				PLANET_NAME_LENGTH_MAX = 2;
 	public static final int 		GAME_NAME_LENGTH_MIN = 3;
 	public static final int 		GAME_NAME_LENGTH_MAX = 18;
