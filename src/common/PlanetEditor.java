@@ -165,6 +165,8 @@ class PlanetEditor
 		
 		if (undoLastAction != null)
 		{
+			if (buy && planet.getMoneySupply() < -undoLastAction.price) return;
+
 			if (buy && undoLastAction.delta >= 0) undoLastAction = null;
 			if (!buy && undoLastAction.delta <= 0) undoLastAction = null;
 		}
