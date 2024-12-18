@@ -1947,6 +1947,10 @@ public class Game extends EmailTransportBase implements Serializable
   			
 	private void mainLoop()
 	{
+		Bot bot = new Bot(this, 2);
+		bot.getMoves();
+		//------------
+		
 		if (this.moves == null)
 			this.moves = new Hashtable<Integer, ArrayList<Move>>();
 		
@@ -3209,6 +3213,24 @@ public class Game extends EmailTransportBase implements Serializable
 				if (game.year >= game.yearMax)
 					game.finalized = true;
 			}
+			
+			// --------------
+			for (Planet planet: game.planets) planet.dissolveAlliance();
+			
+			Ship obj = new Ship(
+					Planet.NO_PLANET, 
+					18, 
+					new Point(3,0),
+					new Point(6,1),
+					0, 
+					ShipType.BATTLESHIPS,
+					50, 
+					Player.NEUTRAL, 
+					false,
+					null);
+			
+			game.ships.add(obj);
+			// --------------
 			
 	  		game.replayLast = new ArrayList<ScreenContent>();
 	  		

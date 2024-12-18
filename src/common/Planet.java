@@ -791,4 +791,9 @@ class Planet implements Serializable
 		else
 			this.incrementShipsCount(ShipType.BATTLESHIPS, count);
 	}
+	
+	public String toString()
+	{
+		return Game.getSectorNameFromPositionStatic(this.position);
+	}
 }
