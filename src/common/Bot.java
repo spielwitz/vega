@@ -43,7 +43,7 @@ class Bot
 		Hashtable<Planet, Double> threatScoresByPlanet = this.getThreatScores();
 		Hashtable<Planet, AttackScore> attackScoresByPlanet = this.getAttackScores(threatScoresByPlanet);
 		
-		// Chancen bewerten
+		// Chancen auf fremde Planeten bewerten
 		
 		// Entwicklung von Planeten ($-Produktion, Abwehrkampfschiffe, Kampfbonus)
 	}
@@ -125,6 +125,8 @@ class Bot
 									 s.getPlanetIndexDestination() == planetIndexForSearch)
 						.collect(Collectors.toList());
 			
+			if (attackingShips.size() == 0) continue;
+			
 			ArrayList<ShipTravelTime> arrivals = new ArrayList<ShipTravelTime>(); 
 			
 			for (Ship attackingShip: attackingShips)
@@ -136,26 +138,42 @@ class Bot
 			}
 			
 			Collections.sort(arrivals, new ShipTravelTime());
+			int shipsOnPlanetUponArrival = planet.getShipsCount(ShipType.BATTLESHIPS);
+			int lastArrivalYear = 0;
+			
+			AttackScore attackScore = new AttackScore();
 			
 			for (ShipTravelTime arrival: arrivals)
 			{
-				int shipsOnPlanetUponArrival =
-				CommonUtils.round(
-						(planet.getShipsCount(ShipType.BATTLESHIPS) +
-						 planet.getBattleshipProduction() * arrival.year +
-						 planet.getDefensiveBattleshipsCount()) *
-									Evaluation.getCombatStrength(planet.getBonus()));
+				shipsOnPlanetUponArrival +=
+					CommonUtils.round(
+							(planet.getBattleshipProduction() * (arrival.year - lastArrivalYear) +
+							 planet.getDefensiveBattleshipsCount()) *
+										Evaluation.getCombatStrength(planet.getBonus()));
+				
+				lastArrivalYear = arrival.year;
+				int arrivingShipCount = CommonUtils.round(arrival.ship.getCount() * 1.25);
 		
-				if (shipsOnPlanetUponArrival > arrival.ship.getCount())
+				if (shipsOnPlanetUponArrival > arrivingShipCount)
 				{
-					threat.attackType = ThreatAttackType.BEING_ATTACKED_BUT_SAFE;
+					// Assume a combat strength of 1.25
+					shipsOnPlanetUponArrival -= arrivingShipCount;
+					
+					if (attackScore.type != AttackType.WILL_BE_DEFEATED)
+						attackScore.type = AttackType.BEING_ATTACKED_BUT_SAFE;
 				}
 				else
 				{
-					// Is it possible to get support from nearby planets quick?
-		}
-
+					if (attackScore.type != AttackType.WILL_BE_DEFEATED)
+					{
+						attackScore.type = AttackType.WILL_BE_DEFEATED;
+						attackScore.year = arrival.year;
+					}
+					attackScore.missingShips += arrivingShipCount;
+				}
 			}
+			
+			attackScores.put(planet, attackScore);
 		}
 		
 		return attackScores;
@@ -163,7 +181,8 @@ class Bot
 	
 	private class AttackScore
 	{
-		double score;
+		int missingShips;
+		int year;
 		AttackType type;
 	}
 	
