@@ -283,6 +283,7 @@ class Evaluation
 					case MINE100:
 					case MINE250:
 					case MINE500:
+						this.game.getConsole().setLineColor(Colors.WHITE);
 						this.game.getConsole().appendText(
 								VegaResources.BlackHoleMine(true));
 						break;
