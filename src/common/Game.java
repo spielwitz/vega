@@ -76,7 +76,7 @@ public class Game extends EmailTransportBase implements Serializable
 	static final int 				PLANET_NAME_LENGTH_MAX = 2;
 	public static final int 		GAME_NAME_LENGTH_MIN = 3;
 	public static final int 		GAME_NAME_LENGTH_MAX = 18;
-	static final double 			PATROL_RADAR_RANGE = 1.25;
+	static final double 			PATROL_RADAR_RANGE = 1.5;
 	static final int 				PATROL_CAPUTURES_BATTLESHIPS_COUNT_MAX = 5;
 	
 	private static final int 		BLACK_HOLE_YEARS_ON_MIN = 2;
