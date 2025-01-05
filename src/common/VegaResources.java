@@ -610,21 +610,21 @@ public class VegaResources
 	}
 
 	/**
-	   * High score list on the VEGA Server [00]
+	   * Leaderboard on the VEGA Server [00]
 	   */
 	public static String HighScoreListOnServer(boolean symbol) {
 		return symbol ? "£00£":messages.getString("HighScoreListOnServer_00");
 	}
 
 	/**
-	   * High score list [01]
+	   * Leaderboard [01]
 	   */
 	public static String HighScoreList(boolean symbol) {
 		return symbol ? "£01£":messages.getString("HighScoreList_01");
 	}
 
 	/**
-	   * The high score list does not contain entries. [02]
+	   * The leaderboard is empty. [02]
 	   */
 	public static String HighScoresNoEntries(boolean symbol) {
 		return symbol ? "£02£":messages.getString("HighScoresNoEntries_02");
@@ -757,7 +757,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Local high score list [0L]
+	   * Local leaderboard [0L]
 	   */
 	public static String LocalHighScoreList(boolean symbol) {
 		return symbol ? "£0L£":messages.getString("LocalHighScoreList_0L");
@@ -2962,7 +2962,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Do you want to add the positions to the high score list? [9F]
+	   * Do you want to add the positions to the leaderboard? [9F]
 	   */
 	public static String AddToHighScoreListQuestion(boolean symbol) {
 		return symbol ? "£9F£":messages.getString("AddToHighScoreListQuestion_9F");
