@@ -2879,7 +2879,7 @@ public class Game extends EmailTransportBase implements Serializable
 			if (!((setup & 4) > 0 && game.yearMax > 0))
 			{
 				// Endless game
-				game.year = Integer.parseInt(Game.YEARS[Game.YEARS.length - 1]);
+				game.yearMax = Integer.parseInt(Game.YEARS[Game.YEARS.length - 1]);
 			}
 			
 			game.playersCount = this.inasc();
