@@ -52,7 +52,6 @@ import uiBaseControls.TextField;
 @SuppressWarnings("serial") 
 class GameParametersJDialog extends Dialog implements IButtonListener, IComboBoxListener, IColorChooserCallback
 {
-	private final static String ENDLESS_GAME_STRING = VegaResources.Infinite(false);
 	static boolean checkEmailSettings(Component c, String emailGameHost, ArrayList<Player> players)
 	{
 		boolean ok = true;
@@ -176,8 +175,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 		cPanCombo.gridx = 0; cPanCombo.gridy = 0;
 		panYearMax.add(new Label(VegaResources.Years(false)), cPanCombo);
 		
-		String[] years = { ENDLESS_GAME_STRING, "15", "20", "30", "40", "50", "75", "100", "150", "200" };
-		this.comboYearLast = new ComboBox(years, 12, null, null);
+		this.comboYearLast = new ComboBox(Game.YEARS, 12, null, null);
 		
 		cPanCombo.gridx = 1; cPanCombo.gridy = 0;
 		panYearMax.add(this.comboYearLast, cPanCombo);
@@ -284,16 +282,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 			
 			String yearMaxString = (String)this.comboYearLast.getSelectedItem();
 			
-			if (yearMaxString.equals(ENDLESS_GAME_STRING))
-			{
-				this.yearMax = 0;
-				this.options.remove(GameOptions.LIMITED_NUMBER_OF_YEARS);
-			}
-			else
-			{
-				this.yearMax = Integer.parseInt(yearMaxString);
-				this.options.add(GameOptions.LIMITED_NUMBER_OF_YEARS);
-			}
+			this.yearMax = Integer.parseInt(yearMaxString);
 			
 			if (ok)
 			{
@@ -407,12 +396,7 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 			
 			this.options = (HashSet<GameOptions>)CommonUtils.klon(game.getOptions());
 			
-			if (this.options.contains(GameOptions.LIMITED_NUMBER_OF_YEARS))
-			{
-				this.yearMax = game.getYearMax();
-			}
-			else
-				this.yearMax = Game.YEARS_COUNT_MAX_DEFAULT;
+			this.yearMax = game.getYearMax();
 			
 			this.players = new ArrayList<Player>();
 			ArrayList<Player> playersDefault = Game.getPlayersDefault();
@@ -586,10 +570,6 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 		for (GameOptions option: this.cbOptions.keySet())
 			this.cbOptions.get(option).setSelected(this.options.contains(option));
 
-		if (this.options.contains(GameOptions.LIMITED_NUMBER_OF_YEARS))
-			this.comboYearLast.setSelectedItem(Integer.toString(this.yearMax));
-		else
-			this.comboYearLast.setSelectedItem(ENDLESS_GAME_STRING);
-		
+		this.comboYearLast.setSelectedItem(Integer.toString(this.yearMax));
 	}
 }

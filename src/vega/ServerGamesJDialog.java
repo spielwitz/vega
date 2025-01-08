@@ -69,7 +69,6 @@ class ServerGamesJDialog extends Dialog
 								IComboBoxListener,
 								IColorChooserCallback
 {
-	private final static String ENDLESS_GAME_STRING = VegaResources.Infinite(false);
 	Game gameLoaded;
 	private BoardDisplay 	board;
 	private Button 			butGameDelete;
@@ -476,9 +475,7 @@ class ServerGamesJDialog extends Dialog
 		this.comboPlanets.setSelectedItem(Integer.toString(Game.PLANETS_COUNT_MAX));
 		this.comboPlanets.enableEvents(true);
 		
-		String[] years = { ENDLESS_GAME_STRING, "15", "20", "30", "40", "50", "75", "100", "150", "200" };
-		
-		this.comboYearLast.setItems(years);
+		this.comboYearLast.setItems(Game.YEARS);
 		this.comboYearLast.setSelectedItem(Integer.toString(Game.YEARS_COUNT_MAX_DEFAULT));
 		
 		this.labYear.setText(VegaResources.Years(false));
@@ -723,14 +720,7 @@ class ServerGamesJDialog extends Dialog
 			
 			this.labYear.setText(VegaResources.YearOf(false, Integer.toString(gameInfo.year + 1)));
 			
-			if (gameInfo.yearMax > 0)
-			{
-				this.comboYearLast.setItems(new String[] {Integer.toString(gameInfo.yearMax)});
-			}
-			else
-			{
-				this.comboYearLast.setItems(new String[] {ENDLESS_GAME_STRING});
-			}
+			this.comboYearLast.setItems(new String[] {Integer.toString(gameInfo.yearMax)});
 			
 			this.labUpdateLast.setText(
 					VegaResources.LastActivity(
@@ -871,16 +861,7 @@ class ServerGamesJDialog extends Dialog
 		options.remove(GameOptions.EMAIL_BASED);
 		options.add(GameOptions.SERVER_BASED);
 		
-		if (yearsMaxString.equals(ENDLESS_GAME_STRING))
-		{
-			this.game.setYearMax(0);
-			options.remove(GameOptions.LIMITED_NUMBER_OF_YEARS);
-		}
-		else
-		{
-			this.game.setYearMax(Integer.parseInt(yearsMaxString));
-			options.add(GameOptions.LIMITED_NUMBER_OF_YEARS);
-		}
+		this.game.setYearMax(Integer.parseInt(yearsMaxString));
 		
 		this.game.prepareYear();
 		

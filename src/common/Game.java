@@ -90,6 +90,7 @@ public class Game extends EmailTransportBase implements Serializable
 	
 	// Default values for a new game
 	public static final int 		PLAYERS_COUNT_DEFAULT = 6;
+	public static final String[] 	YEARS = { "15", "20", "30", "40", "50", "75", "100", "150", "200", "999" };
 	public static final int 		YEARS_COUNT_MAX_DEFAULT = 50;
 	
 	public static Game create(HashSet<GameOptions> options,
@@ -133,7 +134,6 @@ public class Game extends EmailTransportBase implements Serializable
 	{
 		HashSet<GameOptions> options = new HashSet<GameOptions>();
 		
-		options.add(GameOptions.LIMITED_NUMBER_OF_YEARS);
 		options.add(GameOptions.AUTO_SAVE);
 		
 		return options;
@@ -1062,13 +1062,10 @@ public class Game extends EmailTransportBase implements Serializable
 		}
 		else
 		{
-			if (this.options.contains(GameOptions.LIMITED_NUMBER_OF_YEARS))
-				return VegaResources.YearOf(
+			return VegaResources.YearOf(
 						true, 
 						Integer.toString(this.year+1), 
 						Integer.toString(this.yearMax));
-			else
-				return VegaResources.Year(true, Integer.toString(this.year+1));
 		}
 	}
 	
@@ -1607,7 +1604,7 @@ public class Game extends EmailTransportBase implements Serializable
 	{
 		if (!this.finalized)
 		{
-			if (this.options.contains(GameOptions.LIMITED_NUMBER_OF_YEARS) && this.year >= this.yearMax)
+			if (this.year >= this.yearMax)
 				this.finalizeGame(background);
 			else
 			{
@@ -2879,8 +2876,11 @@ public class Game extends EmailTransportBase implements Serializable
 			game.options = new HashSet<GameOptions>();
 			if ((setup & 8) > 0)
 				blackHole = true;
-			if ((setup & 4) > 0 && game.yearMax > 0)
-				game.options.add(GameOptions.LIMITED_NUMBER_OF_YEARS);
+			if (!((setup & 4) > 0 && game.yearMax > 0))
+			{
+				// Endless game
+				game.year = Integer.parseInt(Game.YEARS[Game.YEARS.length - 1]);
+			}
 			
 			game.playersCount = this.inasc();
 			game.players = new Player[game.playersCount];
@@ -3204,11 +3204,8 @@ public class Game extends EmailTransportBase implements Serializable
 				}
 			}
 			
-			if (game.options.contains(GameOptions.LIMITED_NUMBER_OF_YEARS))
-			{
-				if (game.year >= game.yearMax)
-					game.finalized = true;
-			}
+			if (game.year >= game.yearMax)
+				game.finalized = true;
 			
 	  		game.replayLast = new ArrayList<ScreenContent>();
 	  		

@@ -44,7 +44,6 @@ public class VegaResources
 		symbolDict.put("04","ImportGameFromClipboard_04");
 		symbolDict.put("05","ImportMovesOfPlayer_05");
 		symbolDict.put("06","IncreaseMoneyProduction_06");
-		symbolDict.put("07","Infinite_07");
 		symbolDict.put("08","Info_08");
 		symbolDict.put("09","InputDisabled_09");
 		symbolDict.put("0A","Insert_0A");
@@ -656,13 +655,6 @@ public class VegaResources
 	   */
 	public static String IncreaseMoneyProduction(boolean symbol, String arg0) {
 		return symbol ? "£06§"+arg0+"£":MessageFormat.format(messages.getString("IncreaseMoneyProduction_06"), arg0);
-	}
-
-	/**
-	   * Infinite [07]
-	   */
-	public static String Infinite(boolean symbol) {
-		return symbol ? "£07£":messages.getString("Infinite_07");
 	}
 
 	/**

@@ -18,7 +18,6 @@ package common;
 
 public enum GameOptions
 {
-	LIMITED_NUMBER_OF_YEARS,
 	AUTO_SAVE,
 	EMAIL_BASED,
 	SERVER_BASED
