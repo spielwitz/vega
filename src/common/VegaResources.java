@@ -501,9 +501,7 @@ public class VegaResources
 		symbolDict.put("CY","FightSimulationAttackNoSuccess_CY");
 		symbolDict.put("CZ","FightSimulationAttackSuccess_CZ");
 		symbolDict.put("D0","FightSimulationAttackerCount_D0");
-		symbolDict.put("D1","FightSimulationOtherValues_D1");
 		symbolDict.put("D2","FightSimulationPlanetCount_D2");
-		symbolDict.put("D3","FightSimulationRepeat_D3");
 		symbolDict.put("D4","FightSimulation_D4");
 		symbolDict.put("D6","FileContainsInvalidCredentials_D6");
 		symbolDict.put("D7","FileFilterDescription_D7");
@@ -3857,24 +3855,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Other values [D1]
-	   */
-	public static String FightSimulationOtherValues(boolean symbol) {
-		return symbol ? "£D1£":messages.getString("FightSimulationOtherValues_D1");
-	}
-
-	/**
 	   * Defender [D2]
 	   */
 	public static String FightSimulationPlanetCount(boolean symbol) {
 		return symbol ? "£D2£":messages.getString("FightSimulationPlanetCount_D2");
-	}
-
-	/**
-	   * Repeat [D3]
-	   */
-	public static String FightSimulationRepeat(boolean symbol) {
-		return symbol ? "£D3£":messages.getString("FightSimulationRepeat_D3");
 	}
 
 	/**
