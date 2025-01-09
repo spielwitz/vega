@@ -90,7 +90,7 @@ public class Game extends EmailTransportBase implements Serializable
 	
 	// Default values for a new game
 	public static final int 		PLAYERS_COUNT_DEFAULT = 6;
-	public static final String[] 	YEARS = { "15", "20", "30", "40", "50", "75", "100", "150", "200", "999" };
+	public static final String[] 	YEARS = { "15", "20", "30", "40", "50", "75", "100", "150", "200", "500", "999" };
 	public static final int 		YEARS_COUNT_MAX_DEFAULT = 50;
 	
 	public static Game create(HashSet<GameOptions> options,
