@@ -4366,7 +4366,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The combat bonus]\n\nYou can increase the combat strength of a planet from 100% to 150% and 200%. When the planet is attacked, all battleships on the planet - including defensive battleships and battleships of allied partners - receive a 150% or 200% increase in strength. 100 battleships therefore act like 150 or 200 battleships. When you launch an attack on another planet from one planet, the battleships take on the combat strength of the starting planet.\n\nWith a higher combat strength, you can inflict more damage on the opponent while reducing your own losses. If both parties have the same combat strength, the effect is canceled out. [F7]
+	   * ![size=1.5;color=1;bold|The combat bonus]\n\nYou can increase the combat strength of a planet from 100% to 150% and 200%. When the planet is attacked, the strength of all battleships on the planet \u2013 including defensive battleships and battleships of allied partners \u2013 is multiplied by 1.5 and 2 respectively. 100 battleships therefore act like 150 or 200 battleships. When you launch an attack on another planet from one planet, the battleships take on the combat strength of the starting planet.\n\nWith a higher combat strength, you can inflict more damage on the opponent while reducing your own losses. If both parties have the same combat strength, the effect is canceled out. [F7]
 	   */
 	public static String TutorialText04b(boolean symbol) {
 		return symbol ? "£F7£":messages.getString("TutorialText04b_F7");
