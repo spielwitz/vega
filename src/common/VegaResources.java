@@ -4366,7 +4366,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|The combat bonus]\n\nYou can equip your planets with up to 2 combat bonus points. When you launch an attack, your battleships receive the combat strength of the starting planet. The defender uses the combat strength of the attacked planet.\n\nFor each bonus point, attackers and defenders receive an additional die. If there are fewer battleships than dice, only as many dice as battleships are used, so the attacker can use 1 to 5 dice and the defender 0 to 4. [F7]
+	   * ![size=1.5;color=1;bold|The combat bonus]\n\nYou can increase the combat strength of a planet from 100% to 150% and 200%. When the planet is attacked, all battleships on the planet - including defensive battleships and battleships of allied partners - receive a 150% or 200% increase in strength. 100 battleships therefore act like 150 or 200 battleships. When you launch an attack on another planet from one planet, the battleships take on the combat strength of the starting planet.\n\nWith a higher combat strength, you can inflict more damage on the opponent while reducing your own losses. If both parties have the same combat strength, the effect is canceled out. [F7]
 	   */
 	public static String TutorialText04b(boolean symbol) {
 		return symbol ? "£F7£":messages.getString("TutorialText04b_F7");
