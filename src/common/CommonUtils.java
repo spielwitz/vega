@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Date;
@@ -32,9 +33,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CommonUtils
 {
 	public final static String	RMI_REGISTRATION_NAME_SERVER = "Vega";
-	private final static String	DATA_FOLDER = "data";
+	private static Object cloneLock = new Object();
 	
-	private static Object cloneLock = new Object(); 
+	private final static String	DATA_FOLDER = "data"; 
 	
 	public static int[] distributeLoss(int[] originalCounts, int lossCount, int indexPreferred)
 	{
@@ -93,6 +94,18 @@ public class CommonUtils
 		
 		return losses;
 	}
+	public static String getHomeDir()
+	{
+		File dir = Paths.get(System.getProperty("user.dir"), DATA_FOLDER).toFile();
+		
+		if (!dir.exists())
+		{
+			dir.mkdirs();
+		}
+		
+		return dir.getAbsolutePath();
+	}
+	
 	public static String getMyIPAddress()
 	{
 		String meineIP = null;
@@ -105,18 +118,6 @@ public class CommonUtils
 		}
 		
 		return meineIP;
-	}
-	
-	public static String getHomeDir()
-	{
-		File dir = Paths.get(System.getProperty("user.dir"), DATA_FOLDER).toFile();
-		
-		if (!dir.exists())
-		{
-			dir.mkdirs();
-		}
-		
-		return dir.getAbsolutePath();
 	}
 	
 	public static int getRandomInteger(int valueMax)
@@ -193,6 +194,18 @@ public class CommonUtils
 		return sequence;
 	}
 	
+	static <T> T ArrayListGetLast(ArrayList<T> list)
+	{
+		if (list == null || list.size() == 0) return null;
+		return list.get(list.size() - 1);
+	}
+	
+	static <T> void ArrayListRemoveLast(ArrayList<T> list)
+	{
+		if (list == null || list.size() == 0) return;
+		list.remove(list.size() - 1);
+	}
+	
 	static String convertDateToString(long dateLong)
 	{
 		Date date = new Date(dateLong);
@@ -207,12 +220,12 @@ public class CommonUtils
 		else
 			return Integer.toString(value);
 	}
-	
+		
 	static int[] getRandomList(int elementsCount)
 	{
 		return getRandomList(elementsCount, elementsCount);
 	}
-		
+	
 	static int[] getSequentialList(int elementsCount)
 	{
 		int retval[] = new int[elementsCount];
@@ -239,7 +252,7 @@ public class CommonUtils
 	{
 		return padString(Integer.toString(value), stringLength);
 	}
-	
+
 	static String padString(String text, int stringLength)
 	{
 		StringBuilder sb = null;
@@ -250,7 +263,7 @@ public class CommonUtils
 		
 		return sb.substring(sb.length()-stringLength, sb.length());
 	}
-
+	
 	static String padStringLeft(String text, int stringLength)
 	{
 		return (text + getStringWithGivenLength(' ', stringLength)).substring(0, stringLength);

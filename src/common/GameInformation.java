@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -273,11 +273,11 @@ class GameInformation
 					firstLine = false;
 				}
 
-				String planetName = " " + this.game.getPlanetNameFromIndex(planetIndex);
-				String defensiveBattleshipsCount = "     " + this.game.getPlanets()[planetIndex].getDefensiveBattleshipsCount() + "/" + this.game.getPlanets()[planetIndex].getBonus();
+				String planetName = this.game.getPlanetNameFromIndex(planetIndex);
+				String defensiveBattleshipsCount = "     " + this.game.getPlanets()[planetIndex].getDefensiveBattleshipCombatStrengthConcatenated();
 				text.add(planetName.substring(planetName.length()-2, planetName.length()) + 
 						":" +
-						defensiveBattleshipsCount.substring(defensiveBattleshipsCount.length()-5, defensiveBattleshipsCount.length()));
+						defensiveBattleshipsCount.substring(defensiveBattleshipsCount.length()-8, defensiveBattleshipsCount.length()));
 
 				textCol.add(colorIndex);
 			}

@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -26,6 +26,7 @@ class PlanetEditor
 	private ArrayList<ShipType> itemSequence;
 	private Hashtable<ShipType, Integer> pricesBuy = new Hashtable<ShipType, Integer>();
 	private Hashtable<ShipType, Integer> pricesSell = new Hashtable<ShipType, Integer>();
+	private Hashtable<ShipType, ArrayList<PlanetEditorAction>> actions = new Hashtable<ShipType, ArrayList<PlanetEditorAction>>();
 	private Game game;
 	private boolean readOnly;
 
@@ -45,12 +46,10 @@ class PlanetEditor
 		this.itemSequence.add(ShipType.BATTLESHIP_PRODUCTION);
 		this.itemSequence.add(ShipType.DEFENSIVE_BATTLESHIPS);
 		this.itemSequence.add(ShipType.BONUS);
-
 		this.itemSequence.add(ShipType.SPY);
 		this.itemSequence.add(ShipType.TRANSPORT);
 		this.itemSequence.add(ShipType.PATROL);
 		this.itemSequence.add(ShipType.MINESWEEPER);
-
 		this.itemSequence.add(ShipType.MINE50);
 		this.itemSequence.add(ShipType.MINE100);
 		this.itemSequence.add(ShipType.MINE250);
@@ -62,6 +61,7 @@ class PlanetEditor
 		{
 			pricesBuy.put(shipType, this.game.getPriceBuy(shipType));
 			pricesSell.put(shipType, this.game.getPriceSell(shipType));
+			this.actions.put(shipType, new ArrayList<PlanetEditorAction>());
 		}
 
 		Planet planet = (Planet)CommonUtils.klon(game.getPlanets()[planetIndex]);
@@ -158,15 +158,46 @@ class PlanetEditor
 			ShipType itemType)
 
 	{
+		PlanetEditorAction lastAction = null;
+		ArrayList<PlanetEditorAction> actionsByItem = this.actions.get(itemType);
+
+		PlanetEditorAction undoLastAction = CommonUtils.ArrayListGetLast(actionsByItem);
+		
+		if (undoLastAction != null)
+		{
+			if (buy && undoLastAction.delta < 0 && planet.getMoneySupply() < -undoLastAction.price) return;
+
+			if (buy && undoLastAction.delta >= 0) undoLastAction = null;
+			if (!buy && undoLastAction.delta <= 0) undoLastAction = null;
+		}
+		
 		if (itemType == ShipType.MONEY_PRODUCTION)
 		{
-			if (buy)
-				planet.buyMoneyProduction(this.game.getPriceBuy(ShipType.MONEY_PRODUCTION));
+			if (undoLastAction != null)
+			{
+				planet.undoMoneyProductionBuy(undoLastAction);
+			}
+			else
+			{
+				if (buy)
+				{
+					lastAction = planet.buyMoneyProduction(this.game.getPriceBuy(ShipType.MONEY_PRODUCTION));
+				}
+			}
 		}
 		else if (itemType == ShipType.BONUS)
 		{
-			if (buy)
-				planet.buyBonus(this.game.getPriceBuy(ShipType.BONUS));
+			if (undoLastAction != null)
+			{
+				planet.undoBonusBuy(undoLastAction);
+			}
+			else
+			{
+				if (buy)
+				{
+					lastAction = planet.buyBonus(this.game.getPriceBuy(ShipType.BONUS));
+				}
+			}
 		}
 		else if (itemType == ShipType.BATTLESHIP_PRODUCTION)
 		{
@@ -177,17 +208,40 @@ class PlanetEditor
 		}
 		else if (itemType == ShipType.DEFENSIVE_BATTLESHIPS)
 		{
-			if (buy)
-				planet.buyDefensiveBattleships(this.game.getPriceBuy(itemType));				
+			if (undoLastAction != null)
+			{
+				planet.undoDefensiveBattleshipsBuySell(undoLastAction);
+			}
 			else
-				planet.sellDefensiveBattleships(this.game.getPriceSell(itemType));
+			{
+				if (buy)
+					lastAction = planet.buyDefensiveBattleships(this.game.getPriceBuy(itemType));				
+				else
+					lastAction = planet.sellDefensiveBattleships(this.game.getPriceSell(itemType));
+			}
 		}
 		else
 		{
-			if (buy)
-				planet.buyShip(itemType, 1, this.game.getPriceBuy(itemType));
+			if (undoLastAction != null)
+			{
+				planet.undoShipBuySell(itemType, undoLastAction);
+			}
 			else
-				planet.sellShip(itemType, this.game.getPriceSell(itemType));
+			{
+				if (buy)
+					lastAction = planet.buyShip(itemType, 1, this.game.getPriceBuy(itemType));
+				else
+					lastAction = planet.sellShip(itemType, this.game.getPriceSell(itemType));
+				} 
+		}
+		
+		if (undoLastAction != null)
+		{
+			CommonUtils.ArrayListRemoveLast(actionsByItem);
+		}
+		else if (lastAction != null)
+		{
+			actionsByItem.add(lastAction);
 		}
 	}
 
@@ -222,7 +276,7 @@ class PlanetEditor
 			else if (itemType == ShipType.BONUS)
 			{
 				count = planet.getBonus();
-				countString = CommonUtils.convertToString(count);
+				countString = CommonUtils.convertToString((int)(100 * Evaluation.getCombatStrength(count))) + "%";
 			}
 			else
 			{
@@ -285,6 +339,7 @@ class PlanetEditor
 						colorIndex,
 						planet.getMoneySupply(),
 						planet.getMoneyProductionMaxIncrease(),
+						planet.getCombatFactorBuyCountMax(),
 						planet.getDefensiveBattleshipsBuyCountMax(),
 						planet.getDefensiveBattleshipsSellCountMax(),
 						this.readOnly));

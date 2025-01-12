@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -24,10 +24,11 @@ import java.util.Hashtable;
 @SuppressWarnings("serial") 
 class Planet implements Serializable
 {
-	static final int NO_PLANET = -1;
+	static final int BONUS_INCREMENT_PERECENTAGE = 50;
 	
-	static final double PRICE_RATIO_BUY_SELL = 2./3.;
 	static final int MAX_BONUS = 2;
+	static final int NO_PLANET = -1;
+	static final double PRICE_RATIO_BUY_SELL = 2./3.;
 	
 	static Hashtable<ShipType, PriceRange> PRICES_MIN_MAX;
 	
@@ -51,16 +52,16 @@ class Planet implements Serializable
 		PRICES_MIN_MAX.put(ShipType.MINE500, new PriceRange(60, 70));		
 	}
 	
-	private Point position;
 	private Alliance alliance;
-	private Hashtable<ShipType,Integer> ships;
-	private int owner;
-	private int defensiveBattleshipsCount;
-	private int moneySupply;
-	private int moneyProduction;
 	private int battleshipProduction;
-	private HashSet<Integer> radioStationsByPlayer;
 	private int bonus;
+	private int defensiveBattleshipsCount;
+	private int moneyProduction;
+	private int moneySupply;
+	private int owner;
+	private Point position;
+	private HashSet<Integer> radioStationsByPlayer;
+	private Hashtable<ShipType,Integer> ships;
 	
 	Planet(Point position, Alliance alliance,
 			Hashtable<ShipType, Integer> ships, int owner, int defensiveBattleshipsCount,
@@ -130,58 +131,78 @@ class Planet implements Serializable
 			   this.isAllianceMember(playerIndex);
 	}
 	
-	void buyDefensiveBattleships(int price)
-	{
-		int buyCountMax = this.getDefensiveBattleshipsBuyCountMax();
-		
-		if (buyCountMax == 0)
-			return;
-		
-		int actualPrice = this.getDefensiveBattleshipsBuyActualPrice(price);
-		if (actualPrice == 0)
-			return;
-		
-		if (this.moneySupply >= actualPrice)
-		{
-			this.defensiveBattleshipsCount += buyCountMax;
-			this.moneySupply -= actualPrice;
-		}
-	}
-	
-	void buyMoneyProduction(int price)
-	{
-		int buyCountMax = this.getMoneyProductionMaxIncrease();
-		
-		if (buyCountMax == 0)
-			return;
-		
-		int actualPrice = this.getMoneyProductionIncreaseActualPrice(price);
-		if (actualPrice == 0)
-			return;
-		
-		if (this.moneySupply >= actualPrice)
-		{
-			this.moneyProduction += buyCountMax;
-			this.moneySupply -= actualPrice;
-		}
-	}
-	
-	void buyBonus(int price)
+	PlanetEditorAction buyBonus(int price)
 	{
 		if (this.bonus < MAX_BONUS && this.moneySupply >= price)
 		{
 			this.bonus++;
 			this.moneySupply -= price;
+			
+			return new PlanetEditorAction(1, price);
+		}
+		else
+		{
+			return null;
 		}
 	}
 	
-	void buyShip(ShipType type, int count, int price)
+	PlanetEditorAction buyDefensiveBattleships(int price)
+	{
+		int buyCountMax = this.getDefensiveBattleshipsBuyCountMax();
+		
+		if (buyCountMax == 0)
+			return null;
+		
+		int actualPrice = this.getDefensiveBattleshipsBuyActualPrice(price);
+		if (actualPrice == 0)
+			return null;
+		
+		if (this.moneySupply >= actualPrice)
+		{
+			this.defensiveBattleshipsCount += buyCountMax;
+			this.moneySupply -= actualPrice;
+			
+			return new PlanetEditorAction(buyCountMax, actualPrice);
+		}
+		else
+			return null;
+	}
+	
+	PlanetEditorAction buyMoneyProduction(int price)
+	{
+		int buyCountMax = this.getMoneyProductionMaxIncrease();
+		
+		if (buyCountMax == 0)
+			return null;
+		
+		int actualPrice = this.getMoneyProductionIncreaseActualPrice(price);
+		if (actualPrice == 0)
+			return null;
+		
+		if (this.moneySupply >= actualPrice)
+		{
+			this.moneyProduction += buyCountMax;
+			this.moneySupply -= actualPrice;
+			
+			return new PlanetEditorAction(buyCountMax, actualPrice);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	PlanetEditorAction buyShip(ShipType type, int count, int price)
 	{
 		if (this.moneySupply >= price)
 		{
 			this.incrementShipsCount(type,count);
 			this.moneySupply -= price;
+			
+			return new PlanetEditorAction(count, price);
 		}
+		else
+			return null;
 	}
 	
 	void changeOwner(int playerIndexBefore, int playerIndexAfter)
@@ -219,8 +240,6 @@ class Planet implements Serializable
 			if (this.alliance.getMembersCount() <= 1)
 				this.alliance = null;
 		}
-		
-		this.battleshipProduction = this.moneyProduction;
 	}
 	
 	void conquer(int playersCount, int newOwner, Ship ship)
@@ -233,12 +252,6 @@ class Planet implements Serializable
 		
 		if (ship != null)
 			this.mergeBattleships(playersCount, ship);
-		
-		if (newOwner == Player.NEUTRAL)
-		{
-			this.moneyProduction = CommonUtils.round((double)this.moneyProduction / 2);
-			this.bonus = 0;
-		}
 	}
 	
 	Alliance copyAllianceStructure(int[] reductions)
@@ -286,12 +299,12 @@ class Planet implements Serializable
 			this.battleshipProduction--;
 	}
 	
-	void decrementShipsCount(ShipType type, int ount)
+	void decrementShipsCount(ShipType type, int count)
 	{
 		if (this.ships.containsKey(type))
 		{
-			if (this.ships.get(type) - ount > 0)
-				this.ships.put(type, this.ships.get(type) - ount);			
+			if (this.ships.get(type) - count > 0)
+				this.ships.put(type, this.ships.get(type) - count);			
 			else
 				this.ships.remove(type);
 		}
@@ -366,6 +379,43 @@ class Planet implements Serializable
 		}
 	}
 	
+	int getBattleshipProduction()
+	{
+		return this.battleshipProduction;
+	}
+	
+	int getBattleshipsCount(int playerIndex)
+	{
+		if (!this.allianceExists())
+		{
+			if (playerIndex == this.owner)
+				return this.getShipsCount(ShipType.BATTLESHIPS);
+			else
+				return 0;
+		}
+		else
+			return this.alliance.getBattleshipsCount(playerIndex);
+	}
+	
+	int getBonus()
+	{
+		return this.bonus;
+	}
+	
+	int getCombatFactorBuyCountMax()
+	{
+		return
+				this.bonus < Planet.MAX_BONUS ?
+						BONUS_INCREMENT_PERECENTAGE :
+						0;
+	}
+	
+	String getDefensiveBattleshipCombatStrengthConcatenated()
+	{
+		String combatStrength = Integer.toString(CommonUtils.round(Evaluation.getCombatStrength(this.bonus) * 100));
+		return this.defensiveBattleshipsCount + "/" + combatStrength + "%";
+	}
+	
 	int getDefensiveBattleshipsBuyActualPrice(int price)
 	{
 		int buyCountMax = this.getDefensiveBattleshipsBuyCountMax();
@@ -410,29 +460,6 @@ class Planet implements Serializable
 		return Math.min(
 				this.defensiveBattleshipsCount, 
 				Game.DEFENSIVE_BATTLESHIPS_BUY_SELL);
-	}
-	
-	int getBattleshipProduction()
-	{
-		return this.battleshipProduction;
-	}
-	
-	int getBattleshipsCount(int playerIndex)
-	{
-		if (!this.allianceExists())
-		{
-			if (playerIndex == this.owner)
-				return this.getShipsCount(ShipType.BATTLESHIPS);
-			else
-				return 0;
-		}
-		else
-			return this.alliance.getBattleshipsCount(playerIndex);
-	}
-	
-	int getBonus()
-	{
-		return this.bonus;
 	}
 	
 	int getMoneyProduction()
@@ -609,20 +636,22 @@ class Planet implements Serializable
 		this.moneySupply += (this.moneyProduction - this.battleshipProduction);
 	}
 	
-	void sellDefensiveBattleships(int price)
+	PlanetEditorAction sellDefensiveBattleships(int price)
 	{
 		int sellCountMax = this.getDefensiveBattleshipsSellCountMax();
 		
 		if (sellCountMax == 0)
-			return;
+			return null;
 		
 		int actualPrice = this.getDefensiveBattleshipsSellActualPrice(price);
 		
 		this.defensiveBattleshipsCount -= sellCountMax;
 		this.moneySupply += actualPrice;
+		
+		return new PlanetEditorAction(-sellCountMax, -actualPrice);
 	}
-
-	void sellShip(ShipType type, int price)
+	
+	PlanetEditorAction sellShip(ShipType type, int price)
 	{
 		int count = this.getShipsCount(type);
 		
@@ -634,7 +663,11 @@ class Planet implements Serializable
 				this.ships.remove(type);
 			
 			this.moneySupply += price;
+			
+			return new PlanetEditorAction(-1, -price);
 		}
+		else
+			return null;
 	}
 	
 	void setRadioStation(int playerIndex)
@@ -710,13 +743,42 @@ class Planet implements Serializable
 		
 		return reductions;
 	}
-	
+
 	void subtractMoneySupply(int count)
 	{
 		this.moneySupply -= count;
 		
 		if (this.moneySupply < 0)
 			this.moneySupply = 0;
+	}
+	
+	void undoBonusBuy(PlanetEditorAction action)
+	{
+		this.moneySupply += action.price;
+		this.bonus -= action.delta;
+	}
+	
+	void undoDefensiveBattleshipsBuySell(PlanetEditorAction action)
+	{
+		this.moneySupply += action.price;
+		this.defensiveBattleshipsCount -= action.delta;
+	}
+	
+	void undoMoneyProductionBuy(PlanetEditorAction action)
+	{
+		this.moneySupply += action.price;
+		this.moneyProduction -= action.delta;
+		this.battleshipProduction = Math.min(this.battleshipProduction, this.moneyProduction);
+	}
+	
+	void undoShipBuySell(ShipType type, PlanetEditorAction action)
+	{
+		if (action.delta > 0)
+			this.decrementShipsCount(type, action.delta);
+		else if (action.delta < 0)
+			this.incrementShipsCount(type, -action.delta);
+		
+		this.moneySupply += action.price;
 	}
 
 	private void incrementBattleshipsCount(int playerIndex, int count)

@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -45,20 +45,27 @@ public class PlanetDistribution
 	{
 		int planetsCount = Math.max(getPlanetCountMin(playerCount), planetCount);
 
-		this.positions = new Point[planetsCount];
-		this.homePlanetIndices = new int[playerCount];
-		this.nearbyPlanetIndicesPerPlayer = new int[playerCount][NEARBY_PLANETS_COUNT];
 		this.statistics = new Statistics(playerCount);
 
 		double h = Math.sqrt(BOARD_SECTORS_PER_PLANET * (double) planetsCount / BOARD_RATIO);
 		double w = BOARD_RATIO * h;
 		this.boardSize = new Point(CommonUtils.round(w), CommonUtils.round(h));
 
-		this.blockedSectors = new boolean[(int) this.boardSize.x][(int) this.boardSize.y];
+		boolean ok = false;
+		
+		while (!ok)
+		{
+			this.positions = new Point[planetsCount];
+			this.homePlanetIndices = new int[playerCount];
+			this.nearbyPlanetIndicesPerPlayer = new int[playerCount][NEARBY_PLANETS_COUNT];
+			this.blockedSectors = new boolean[(int) this.boardSize.x][(int) this.boardSize.y];
 
-		this.placeHomePlanets();
-		this.placeNearbyPlanets();
-		this.placeRegularPlanets();
+			if (!this.placeHomePlanets()) continue;
+			if (!this.placeNearbyPlanets()) continue;
+			if (!this.placeRegularPlanets()) continue;
+			
+			ok = true;
+		}
 	}
 
 	public Statistics getStatistics()
@@ -114,7 +121,7 @@ public class PlanetDistribution
 		return cloneList;
 	}
 
-	private void placeHomePlanets()
+	private boolean placeHomePlanets()
 	{
 		Circle[] circles = new Circle[this.homePlanetIndices.length];
 		boolean ok = true;
@@ -159,9 +166,11 @@ public class PlanetDistribution
 			this.positions[homePlanetIndex] = circles[playerIndex].pos;
 			this.blockSectorsAroundPlanet(this.positions[homePlanetIndex]);
 		}
+		
+		return ok;
 	}
 
-	private void placeNearbyPlanets()
+	private boolean placeNearbyPlanets()
 	{
 		for (int playerIndex = 0; playerIndex < this.homePlanetIndices.length; playerIndex++)
 		{
@@ -189,6 +198,7 @@ public class PlanetDistribution
 
 			boolean ok;
 			Point[] planetPositions;
+			int numberTries = 0;
 
 			do
 			{
@@ -208,6 +218,10 @@ public class PlanetDistribution
 
 					planetPositions[i] = this.placePlanet(potentialSectors);
 				}
+				numberTries++;
+				
+				if (numberTries > 1000) return false;
+				
 			} while (!ok);
 
 			for (int i = 0; i < NEARBY_PLANETS_COUNT; i++)
@@ -218,6 +232,8 @@ public class PlanetDistribution
 				this.blockSectorsAroundPlanet(this.positions[planetIndex]);
 			}
 		}
+		
+		return true;
 	}
 
 	private Point placePlanet(ArrayList<String> potentialSectors)
@@ -238,7 +254,7 @@ public class PlanetDistribution
 		return new Point(posX, posY);
 	}
 	
-	private void placeRegularPlanets()
+	private boolean placeRegularPlanets()
 	{
 		ArrayList<String> potentialSectorsMaster = new ArrayList<String>((int) (this.boardSize.x * this.boardSize.y));
 
@@ -271,6 +287,7 @@ public class PlanetDistribution
 		this.startIndexRegularPlanets = this.homePlanetIndices.length * (NEARBY_PLANETS_COUNT + 1);
 
 		boolean ok;
+		int numberTries = 0;
 
 		do
 		{
@@ -289,7 +306,14 @@ public class PlanetDistribution
 
 				this.positions[planetIndex] = this.placePlanet(potentialSectors);
 			}
+			
+			numberTries++;
+			
+			if (numberTries > 1000) return false;
+			
 		} while (!ok);
+		
+		return true;
 	}
 
 	public class Statistics

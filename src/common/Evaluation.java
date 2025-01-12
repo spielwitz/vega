@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -19,14 +19,14 @@ package common;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import spielwitz.biDiServer.Tuple;
 
 class Evaluation
 {
 	private static final double BAR_LENGTH_CHARS = 20;
-	private static final int MAX_DICE_COUNT_OFFENDER = 3;
-	private static final int MAX_DICE_COUNT_DEFENDER = 2;
 	
 	static Tuple<Integer,Integer> fight(
 			Console console, 
@@ -35,44 +35,27 @@ class Evaluation
 			int defenderCount,
 			int defenderBonus)
 	{
-		int offenderCountAfterFight = offenderCount;
-		int defenderCountAfterFight = defenderCount;
+		int offenderEffectiveStrength = CommonUtils.round(offenderCount * getCombatStrength(offenderBonus));
+		int defenderEffectiveStrength = CommonUtils.round(defenderCount * getCombatStrength(defenderBonus));
 		
-		while (offenderCountAfterFight > 0 && defenderCountAfterFight > 0)
+		int offenderCountAfterFight = 0;
+		int defenderCountAfterFight = 0;
+		
+		if (offenderEffectiveStrength > defenderEffectiveStrength)
 		{
-			int[] diceOffender = new int[Math.min(
-										MAX_DICE_COUNT_OFFENDER + Math.min(offenderBonus, Planet.MAX_BONUS),
-										offenderCountAfterFight)];
-			
-			for (int i = 0; i < diceOffender.length; i++)
-			{
-				diceOffender[i] = CommonUtils.getRandomInteger(6);
-			}
-			int[] seqOffender = CommonUtils.sortValues(diceOffender, true);
-			
-			int[] diceDefender = new int[Math.min(
-										MAX_DICE_COUNT_DEFENDER + Math.min(defenderBonus, Planet.MAX_BONUS), 
-										defenderCountAfterFight)];
-			
-			for (int i = 0; i < diceDefender.length; i++)
-			{
-				diceDefender[i] = CommonUtils.getRandomInteger(6);
-			}
-			int[] seqDefender = CommonUtils.sortValues(diceDefender, true);
-			
-			for (int i = 0; i < Math.min(diceOffender.length, diceDefender.length); i++)
-			{
-				if (diceDefender[seqDefender[i]] >= diceOffender[seqOffender[i]])
-				{
-					offenderCountAfterFight--;
-				}
-				else
-				{
-					defenderCountAfterFight--;
-				}
-			}
+			offenderCountAfterFight = 
+					CommonUtils.round(
+							(offenderEffectiveStrength - defenderEffectiveStrength) / 
+							getCombatStrength(offenderBonus));
 		}
-		
+		else if (offenderEffectiveStrength < defenderEffectiveStrength)
+		{
+			defenderCountAfterFight = 
+					CommonUtils.round(
+							(defenderEffectiveStrength - offenderEffectiveStrength) / 
+							getCombatStrength(defenderBonus));
+		}
+				
 		int maxValue =
 				Math.max(
 					Math.max(
@@ -117,6 +100,11 @@ class Evaluation
 		return 
 				CommonUtils.getStringWithGivenLength('#', barLength) +
 				CommonUtils.getStringWithGivenLength('-', (int)(BAR_LENGTH_CHARS - barLength));
+	}
+	
+	static double getCombatStrength(int bonus)
+	{
+		return 1 + (double)Planet.BONUS_INCREMENT_PERECENTAGE * bonus / 100; 
 	}
 	
 	private Game game;
@@ -295,6 +283,7 @@ class Evaluation
 					case MINE100:
 					case MINE250:
 					case MINE500:
+						this.game.getConsole().setLineColor(Colors.WHITE);
 						this.game.getConsole().appendText(
 								VegaResources.BlackHoleMine(true));
 						break;
@@ -1201,42 +1190,42 @@ class Evaluation
 
 	private void processCapitulations()
 	{
-		int[] shipsSequence = CommonUtils.getRandomList(game.getShips().size());
-
-		for (int i = 0; i < game.getShips().size(); i++)
+		List<Ship> capitulationShips =
+			game.getShips().stream()
+				.filter(s -> !s.isToBeDeleted() && s.getType() == ShipType.CAPITULATION)
+				.collect(Collectors.toList());
+		
+		for (Ship capitulationShip: capitulationShips)
 		{
-			Ship ship = game.getShips().get(shipsSequence[i]);
+			capitulationShip.setToBeDeleted();
+			
+			this.printDayEvent(0);
 
-			if (!ship.isToBeDeleted() && ship.getType() == ShipType.CAPITULATION)
+			this.game.getConsole().setLineColor(capitulationShip.getOwnerColorIndex(this.game));
+			this.game.getConsole().appendText(
+					VegaResources.PlayerCapitulated(
+							true,
+							capitulationShip.getOwnerName(this.game)));
+
+			for (Planet planet: this.game.getPlanets())
 			{
-				ship.setToBeDeleted();
-				
-				this.printDayEvent(0);
-
-				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-				this.game.getConsole().appendText(
-						VegaResources.PlayerCapitulated(
-								true,
-								ship.getOwnerName(this.game)));
-
-				for (Planet planet: this.game.getPlanets())
-				{
-					planet.changeOwner(ship.getOwner(), Player.NEUTRAL);
-				}
-
-				for (Ship ship2: this.game.getShips())
-				{
-					if (ship2.isPlayerInvolved(ship.getOwner()))
-					{
-						ship2.setToBeDeleted();
-					}
-				}
-
-				this.game.updatePlanetList(false);
-				this.game.updateBoard(0);
-				
-				this.waitForKeyPressed();
+				planet.changeOwner(capitulationShip.getOwner(), Player.NEUTRAL);
 			}
+			
+			List<Ship> shipsWithPlayerInvolement =
+					game.getShips().stream()
+						.filter(s -> s.isPlayerInvolved(capitulationShip.getOwner()))
+						.collect(Collectors.toList());
+
+			for (Ship shipWithPlayerInvolement: shipsWithPlayerInvolement)
+			{
+				shipWithPlayerInvolement.setToBeDeleted();
+			}
+
+			this.game.updatePlanetList(false);
+			this.game.updateBoard(0);
+			
+			this.waitForKeyPressed();
 		}
 	}
 

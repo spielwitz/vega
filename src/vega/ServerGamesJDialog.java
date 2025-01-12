@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -69,7 +69,6 @@ class ServerGamesJDialog extends Dialog
 								IComboBoxListener,
 								IColorChooserCallback
 {
-	private final static String ENDLESS_GAME_STRING = VegaResources.Infinite(false);
 	Game gameLoaded;
 	private BoardDisplay 	board;
 	private Button 			butGameDelete;
@@ -144,17 +143,17 @@ class ServerGamesJDialog extends Dialog
 		ButtonGroup groupViewSelect = new ButtonGroup();
 		
 		cPanNorth.gridx = 0; cPanNorth.gridy = 0;  
-		this.rbGamesWaitingForMe = new RadioButton(VegaResources.PlayersAreWaiting(false), this);
+		this.rbGamesWaitingForMe = new RadioButton(VegaResources.PlayersAreWaiting(false, ""), this);
 		groupViewSelect.add(this.rbGamesWaitingForMe);
 		panNorth.add(this.rbGamesWaitingForMe, cPanNorth);
 		
 		cPanNorth.gridx = 1; cPanNorth.gridy = 0;  
-		this.rbGamesWaitingForOthers = new RadioButton(VegaResources.WaitingForOtherPlayers(false), this);
+		this.rbGamesWaitingForOthers = new RadioButton(VegaResources.WaitingForOtherPlayers(false, ""), this);
 		groupViewSelect.add(this.rbGamesWaitingForOthers);
 		panNorth.add(this.rbGamesWaitingForOthers, cPanNorth);
 		
 		cPanNorth.gridx = 2; cPanNorth.gridy = 0;  
-		this.rbGamesFinalized = new RadioButton(VegaResources.FinalizedGames(false), this);
+		this.rbGamesFinalized = new RadioButton(VegaResources.FinalizedGames(false, ""), this);
 		groupViewSelect.add(this.rbGamesFinalized);
 		panNorth.add(this.rbGamesFinalized, cPanNorth);
 		
@@ -314,6 +313,8 @@ class ServerGamesJDialog extends Dialog
 		
 		this.pack();
 		this.setLocationRelativeTo(parent);	
+		
+		this.updateRadioButtonLabels();
 	}
 	
 	@Override
@@ -474,9 +475,7 @@ class ServerGamesJDialog extends Dialog
 		this.comboPlanets.setSelectedItem(Integer.toString(Game.PLANETS_COUNT_MAX));
 		this.comboPlanets.enableEvents(true);
 		
-		String[] years = { ENDLESS_GAME_STRING, "15", "20", "30", "40", "50", "75", "100", "150", "200" };
-		
-		this.comboYearLast.setItems(years);
+		this.comboYearLast.setItems(Game.YEARS);
 		this.comboYearLast.setSelectedItem(Integer.toString(Game.YEARS_COUNT_MAX_DEFAULT));
 		
 		this.labYear.setText(VegaResources.Years(false));
@@ -594,6 +593,24 @@ class ServerGamesJDialog extends Dialog
 		return rbCurrentGame;
 	}
 	
+	private void updateRadioButtonLabels()
+	{
+		this.rbGamesWaitingForMe.setText(
+				VegaResources.PlayersAreWaiting(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesWaitingForMe).size())));
+		
+		this.rbGamesWaitingForOthers.setText(
+				VegaResources.WaitingForOtherPlayers(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesWaitingForOthers).size())));
+		
+		this.rbGamesFinalized.setText(
+				VegaResources.FinalizedGames(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesFinalized).size())));
+	}
+	
 	private String[] getPlanetComboBoxValues(int playersCount)
 	{
 		int planetCountMin = PlanetDistribution.getPlanetCountMin(playersCount);
@@ -703,14 +720,7 @@ class ServerGamesJDialog extends Dialog
 			
 			this.labYear.setText(VegaResources.YearOf(false, Integer.toString(gameInfo.year + 1)));
 			
-			if (gameInfo.yearMax > 0)
-			{
-				this.comboYearLast.setItems(new String[] {Integer.toString(gameInfo.yearMax)});
-			}
-			else
-			{
-				this.comboYearLast.setItems(new String[] {ENDLESS_GAME_STRING});
-			}
+			this.comboYearLast.setItems(new String[] {Integer.toString(gameInfo.yearMax)});
 			
 			this.labUpdateLast.setText(
 					VegaResources.LastActivity(
@@ -851,16 +861,7 @@ class ServerGamesJDialog extends Dialog
 		options.remove(GameOptions.EMAIL_BASED);
 		options.add(GameOptions.SERVER_BASED);
 		
-		if (yearsMaxString.equals(ENDLESS_GAME_STRING))
-		{
-			this.game.setYearMax(0);
-			options.remove(GameOptions.LIMITED_NUMBER_OF_YEARS);
-		}
-		else
-		{
-			this.game.setYearMax(Integer.parseInt(yearsMaxString));
-			options.add(GameOptions.LIMITED_NUMBER_OF_YEARS);
-		}
+		this.game.setYearMax(Integer.parseInt(yearsMaxString));
 		
 		this.game.prepareYear();
 		

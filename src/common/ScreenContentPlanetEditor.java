@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General License as
@@ -34,6 +34,7 @@ class ScreenContentPlanetEditor implements Serializable
 	private byte colorIndex;
 	private int moneySupply;
 	private int productionIncrese;
+	private int combatFactorBuy;
 	private int defensiveBattleshipsBuy;
 	private int defensiveBattleshipsSell;
 	
@@ -47,6 +48,7 @@ class ScreenContentPlanetEditor implements Serializable
 			byte colorIndex,
 			int moneySupply,
 			int productionIncrese,
+			int combatFactorBuy,
 			int defensiveBattleshipsBuy,
 			int defensiveBattleshipsSell,
 			boolean readOnly) 
@@ -62,6 +64,7 @@ class ScreenContentPlanetEditor implements Serializable
 		this.moneySupply = moneySupply;
 		this.readOnly = readOnly;
 		this.productionIncrese = productionIncrese;
+		this.combatFactorBuy = combatFactorBuy;
 		this.defensiveBattleshipsBuy = defensiveBattleshipsBuy;
 		this.defensiveBattleshipsSell = defensiveBattleshipsSell;
 	}
@@ -112,6 +115,11 @@ class ScreenContentPlanetEditor implements Serializable
 	int getProductionIncrese()
 	{
 		return productionIncrese;
+	}
+	
+	int getCombatFactorBuy()
+	{
+		return combatFactorBuy;
 	}
 
 	int getDefensiveBattleshipsBuy()

@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -93,7 +93,7 @@ public class ScreenPainter
 		titleLinesCount.add("  `   .@@##Qm `:jjjwW$#pgpP                  `    `                         ");
 		titleLinesCount.add("  `  .@@kh###D#VyyppogpP`   `           `              `  `                 ");
 		titleLinesCount.add("`   .@$kh#opV#pppgpHT`      `    `      `                `         `        ");
-		titleLinesCount.add("   .@$#k3f#gg#H='                `           `    `      (c) 1989-2024      ");
+		titleLinesCount.add("   .@$#k3f#gg#H='                `           `    `      (c) 1989-2025      ");
 		titleLinesCount.add("   @@$@8PT'           `     `    `      `              Michael Schweitzer   ");
 		titleLinesCount.add("`              `  `    `                     `    `        Build " + Game.BUILD + "       ");
 
@@ -692,7 +692,9 @@ public class ScreenPainter
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsSell())), 
 				5);
 		this.drawPlanetEditorLine(ShipType.BONUS, screenContentPlanetEditor, 
-				VegaResources.CombatBonus(false), 
+				VegaResources.BuySellCombatStrength(
+						false,
+						Integer.toString(screenContentPlanetEditor.getCombatFactorBuy())), 
 				6);
 		
 		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 8);

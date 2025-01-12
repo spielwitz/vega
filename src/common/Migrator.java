@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2024 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -16,6 +16,7 @@
 
 package common;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -46,6 +47,38 @@ public class Migrator
 			}
 			
 			jobj.addProperty(PROP_BUILD, "0004");
+			migrate(jobj);
+		}
+		else if (build.compareTo("0012") < 0)
+		{
+			JsonArray jsonArrayOptions = (JsonArray)jobj.get("options");
+			
+			boolean updateOptions = false;
+			
+			for (int i = jsonArrayOptions.size() - 1; i >= 0; i--)
+			{
+				String option = jsonArrayOptions.get(i).getAsString();
+				
+				if (option.equals("LIMITED_NUMBER_OF_YEARS"))
+				{
+					jsonArrayOptions.remove(i);
+					updateOptions = true;
+				}
+			}
+			
+			if (updateOptions)
+			{
+				jobj.add("options", jsonArrayOptions);
+			}
+			
+			int yearMax = jobj.get("yearMax").getAsInt();
+			
+			if (yearMax <= 0)
+			{
+				jobj.addProperty("yearMax", Integer.parseInt(Game.YEARS[Game.YEARS.length - 1]));
+			}
+			
+			jobj.addProperty(PROP_BUILD, "0012");
 			migrate(jobj);
 		}
 		else
