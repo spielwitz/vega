@@ -86,7 +86,6 @@ class EnterMoves
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.Planet(true), 
-					!game.isMoveEnteringOpen(), 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)
@@ -128,7 +127,7 @@ class EnterMoves
 			this.game.getConsole().appendText(
 					VegaResources.EnterAllianceMembers(true)+": ");
 
-			ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, !game.isMoveEnteringOpen(), true);
+			ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, true);
 
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{
@@ -267,7 +266,7 @@ class EnterMoves
 		this.game.getConsole().appendText(VegaResources.AreYouSure(true));
 		this.game.getConsole().lineBreak();
 
-		String input = this.game.getConsole().waitForKeyPressedYesNo(!game.isMoveEnteringOpen()).getInputText().toUpperCase();
+		String input = this.game.getConsole().waitForKeyPressedYesNo().getInputText().toUpperCase();
 
 		if (!input.equals(Console.KEY_YES))
 		{
@@ -318,10 +317,7 @@ class EnterMoves
 
 		this.game.setShipsOfPlayerHidden(new HashSet<Integer>());
 
-		if (this.game.isMoveEnteringOpen())
-		{
-			this.game.updateBoard(null, null, 0, playerIndex, 0);
-		}
+		this.game.updateBoard(null, null, 0, playerIndex, 0);
 
 		do
 		{
@@ -359,7 +355,7 @@ class EnterMoves
 				return true;
 			}
 
-			ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeys, true);
+			ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeys);
 			String input = consoleInput.getInputText().toUpperCase();
 
 			if (consoleInput.getLastKeyCode() == KeyEvent.VK_ESCAPE)
@@ -431,11 +427,9 @@ class EnterMoves
 				}
 			}
 
-			if (game.isMoveEnteringOpen())
-			{
-				this.game.updateBoard(null, null, 0, playerIndex, 0);
-				game.updatePlanetList(this.playerIndexNow, false);
-			}
+			this.game.updateBoard(null, null, 0, playerIndex, 0);
+			game.updatePlanetList(this.playerIndexNow, false);
+			
 		} while (!exit);
 
 		this.game.setShipsOfPlayerHidden(null);
@@ -478,7 +472,7 @@ class EnterMoves
 					this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" " + this.game.getPlayers()[this.playerIndexNow].getName(),
 					this.game.getPlayers()[this.playerIndexNow].getColorIndex());
 
-			ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeys, true);
+			ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeys);
 			String input = consoleInput.getInputText().toUpperCase();
 
 			if (consoleInput.getLastKeyCode() == KeyEvent.VK_ESCAPE)
@@ -524,7 +518,6 @@ class EnterMoves
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.StartPlanet(true), 
-					!game.isMoveEnteringOpen(), 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)
@@ -552,7 +545,6 @@ class EnterMoves
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.DestinationPlanet(true), 
-					!game.isMoveEnteringOpen(), 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)
@@ -584,7 +576,7 @@ class EnterMoves
 		{
 			this.game.getConsole().appendText(VegaResources.Count(true)+": ");
 
-			ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, !game.isMoveEnteringOpen(), true);
+			ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, true);
 
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{
@@ -758,7 +750,7 @@ class EnterMoves
 		{
 			this.game.getConsole().appendText(text + ": ");
 			
-			ConsoleInput input = this.game.getConsole().waitForTextEntered(7, new ArrayList<ConsoleKey>(), false, true);
+			ConsoleInput input = this.game.getConsole().waitForTextEntered(7, new ArrayList<ConsoleKey>(), true);
 			
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{
@@ -799,7 +791,7 @@ class EnterMoves
 		{
 			this.game.getConsole().appendText(VegaResources.FightSimulationCombatStrength(true) + ": ");
 			
-			ConsoleInput input = this.game.getConsole().waitForTextEntered(7, allowedKeys, false, true);
+			ConsoleInput input = this.game.getConsole().waitForTextEntered(7, allowedKeys, true);
 			
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{
@@ -841,7 +833,7 @@ class EnterMoves
 		this.game.getConsole().appendText(VegaResources.FinishEnterMovesQuestion(true));
 		this.game.getConsole().lineBreak();
 
-		String input = this.game.getConsole().waitForKeyPressedYesNo(false).getInputText().toUpperCase();
+		String input = this.game.getConsole().waitForKeyPressedYesNo().getInputText().toUpperCase();
 
 		if (!input.equals(Console.KEY_YES))
 		{
@@ -880,7 +872,7 @@ class EnterMoves
 								game.getPlayers()[playerIndex-1].getName() + " " + onOff));
 			}
 
-			ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys, false);
+			ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys);
 
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 				break;
@@ -923,14 +915,7 @@ class EnterMoves
 				this.game.getConsole().outInvalidInput();
 			else
 			{
-				if (this.game.isMoveEnteringOpen())
-				{
-					this.game.updateBoard(null, null, 0, playerIndexNow, 0);
-				}
-				else
-				{
-					this.game.updateBoard();
-				}
+				this.game.updateBoard(null, null, 0, playerIndexNow, 0);
 			}
 
 		} while (true);
@@ -948,7 +933,7 @@ class EnterMoves
 
 		this.game.getConsole().appendText(VegaResources.OpenPdfViewerQuestion(true) + " ");
 
-		ConsoleInput input = this.game.getConsole().waitForKeyPressedYesNo(false);
+		ConsoleInput input = this.game.getConsole().waitForKeyPressedYesNo();
 
 		if (input.getInputText().equals(Console.KEY_YES))
 		{
@@ -999,7 +984,6 @@ class EnterMoves
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.StartPlanet(true), 
-					!game.isMoveEnteringOpen(), 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)
@@ -1057,7 +1041,7 @@ class EnterMoves
 			{
 				this.game.getConsole().appendText(VegaResources.WhichType(true) + " ");
 
-				ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys, true);
+				ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys);
 
 				if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 				{
@@ -1119,7 +1103,6 @@ class EnterMoves
 		{
 			inputDestination = this.game.getPlanetInput(
 					VegaResources.DestinationSectorOrPlanet(true), 
-					!game.isMoveEnteringOpen(), 
 					PlanetInputStruct.ALLOWED_INPUT_SECTOR);
 
 			if (inputDestination == null)
@@ -1189,7 +1172,7 @@ class EnterMoves
 		{
 			this.game.getConsole().appendText(VegaResources.MissionOrTransfer(true) + " ");
 
-			ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys, true);
+			ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys);
 
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{
@@ -1223,7 +1206,6 @@ class EnterMoves
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.Planet(true), 
-					!game.isMoveEnteringOpen(), 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)
@@ -1246,12 +1228,9 @@ class EnterMoves
 		if (planetIndex < 0)
 			return;
 
-		if (game.isMoveEnteringOpen())
-		{
-			this.game.getConsole().setHeaderText(
-					this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" " + this.game.getPlayers()[this.playerIndexNow].getName() + " -> " + VegaResources.Planet(true, this.game.getPlanetNameFromIndex(planetIndex)),
-					this.game.getPlayers()[this.playerIndexNow].getColorIndex());
-		}
+		this.game.getConsole().setHeaderText(
+				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" " + this.game.getPlayers()[this.playerIndexNow].getName() + " -> " + VegaResources.Planet(true, this.game.getPlanetNameFromIndex(planetIndex)),
+				this.game.getPlayers()[this.playerIndexNow].getColorIndex());
 
 		new PlanetEditor(
 				this.game,
@@ -1332,7 +1311,7 @@ class EnterMoves
 						VegaResources.OtherKey(true),
 						VegaResources.TryAgain(true)));
 
-				ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeys, false);
+				ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeys);
 
 				if (consoleInput.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 				{
@@ -1409,7 +1388,6 @@ class EnterMoves
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.StartPlanet(true), 
-					!game.isMoveEnteringOpen(), 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)
@@ -1447,7 +1425,6 @@ class EnterMoves
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.DestinationPlanet(true), 
-					!game.isMoveEnteringOpen(), 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)
@@ -1505,7 +1482,7 @@ class EnterMoves
 						VegaResources.HowMuchMoney(true,
 								Integer.toString(Game.TRANSPORT_MONEY_MAX)) + " ");
 
-				ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, !game.isMoveEnteringOpen(), true);
+				ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, true);
 
 				if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 				{
@@ -1640,7 +1617,7 @@ class EnterMoves
 			{
 				this.game.getConsole().appendText(shipDisplayName + " ");
 
-				ConsoleInput input = this.game.getConsole().waitForTextEntered(Game.PLANET_NAME_LENGTH_MAX, allowedKeys, !game.isMoveEnteringOpen(), false);
+				ConsoleInput input = this.game.getConsole().waitForTextEntered(Game.PLANET_NAME_LENGTH_MAX, allowedKeys, false);
 
 				if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 				{
@@ -1686,10 +1663,7 @@ class EnterMoves
 
 			} while (true);
 
-			if (this.game.isMoveEnteringOpen())
-				this.game.updateBoard(null, null, 0, this.playerIndexNow, 0);
-			else
-				this.game.updateBoard();
+			this.game.updateBoard(null, null, 0, this.playerIndexNow, 0);
 
 			if (quitEnterMoves)
 				break;
@@ -1712,7 +1686,7 @@ class EnterMoves
 		{
 			this.game.getConsole().appendText(VegaResources.ThereAreNoMoves(true) + " ");
 
-			String input = this.game.getConsole().waitForKeyPressedYesNo(false).getInputText().toUpperCase();
+			String input = this.game.getConsole().waitForKeyPressedYesNo().getInputText().toUpperCase();
 			if (input.equals(Console.KEY_YES))
 			{
 				this.game.getConsole().lineBreak();
@@ -1734,7 +1708,7 @@ class EnterMoves
 
 			this.game.getConsole().appendText(VegaResources.UndoLastMoveQuestion(true)+" ");
 
-			String input = this.game.getConsole().waitForKeyPressedYesNo(false).getInputText().toUpperCase();
+			String input = this.game.getConsole().waitForKeyPressedYesNo().getInputText().toUpperCase();
 			undo = input.equals(Console.KEY_YES);
 		}
 

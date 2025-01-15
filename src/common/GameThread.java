@@ -59,11 +59,6 @@ public class GameThread extends Thread
 		return this.gameThreadEventListener.importMovesFromEmail();
 	}
 
-	boolean isMoveEnteringOpen()
-	{
-		return this.gameThreadEventListener.isMoveEnteringOpen();
-	}
-
 	boolean launchEmail(String recipient, String subject, String bodyText, EmailTransportBase obj)
 	{
 		return this.gameThreadEventListener.launchEmailClient(recipient, subject, bodyText, obj);

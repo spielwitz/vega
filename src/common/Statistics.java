@@ -57,7 +57,7 @@ class Statistics
 
 		do
 		{
-			ConsoleInput input = game.getConsole().waitForKeyPressed(allowedKeys, false);
+			ConsoleInput input = game.getConsole().waitForKeyPressed(allowedKeys);
 
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{

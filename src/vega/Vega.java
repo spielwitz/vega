@@ -716,19 +716,6 @@ public class Vega extends Frame // NO_UCD (use default)
 	}
 
 	@Override
-	public boolean isMoveEnteringOpen() 
-	{
-		if ((this.serverFunctions != null && this.serverFunctions.isServerEnabled() && !this.areClientsInactiveWhileEnterMoves()))
-		{
-			return false;
-		}
-		
-		return
-				(this.outputWindow != null && this.outputWindow.isVisible()) ||
-				(this.serverFunctions != null && this.serverFunctions.isServerEnabled() && this.areClientsInactiveWhileEnterMoves());
-	}
-
-	@Override
 	public boolean launchEmailClient(String recipient, String subject, String bodyText, EmailTransportBase obj)
 	{
 		return EmailToolkit.launchEmailClient(

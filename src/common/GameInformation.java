@@ -56,7 +56,7 @@ class GameInformation
 			allowedKeys.add(new ConsoleKey("3",VegaResources.Spies(true)));
 			allowedKeys.add(new ConsoleKey("4",VegaResources.Alliances(true)));
 
-			ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys, false);
+			ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys);
 
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{
@@ -179,7 +179,6 @@ class GameInformation
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.DisplayAllianceOnPlanet(true), 
-					false, 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)
@@ -338,7 +337,6 @@ class GameInformation
 
 			PlanetInputStruct input = this.game.getPlanetInput(
 					VegaResources.Planet(true), 
-					false, 
 					PlanetInputStruct.ALLOWED_INPUT_PLANET);
 
 			if (input == null)

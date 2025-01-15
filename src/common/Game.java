@@ -42,7 +42,7 @@ import com.google.gson.JsonObject;
 public class Game extends EmailTransportBase implements Serializable
 {
 	/// The current build
-	public static final String		BUILD = "0012";
+	public static final String		BUILD = "0013";
 	
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
@@ -860,7 +860,7 @@ public class Game extends EmailTransportBase implements Serializable
 			return planetIndex.intValue();
 	}
 	
-	PlanetInputStruct getPlanetInput(String label, boolean hidden, int allowedInput)
+	PlanetInputStruct getPlanetInput(String label, int allowedInput)
   	{
   		ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();			  		
   		
@@ -868,7 +868,7 @@ public class Game extends EmailTransportBase implements Serializable
   		{
 	  		this.console.appendText(label+": ");
 	
-			ConsoleInput input = this.console.waitForTextEntered(PLANET_NAME_LENGTH_MAX, allowedKeys, hidden, true);
+			ConsoleInput input = this.console.waitForTextEntered(PLANET_NAME_LENGTH_MAX, allowedKeys, true);
 	
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
 			{
@@ -1028,7 +1028,7 @@ public class Game extends EmailTransportBase implements Serializable
 			this.console.clear();
 			this.console.appendText(
 					VegaResources.AgreeWithGameBoardQuestion(true) + " ");
-			String input = this.console.waitForKeyPressedYesNo(false).getInputText().toUpperCase();
+			String input = this.console.waitForKeyPressedYesNo().getInputText().toUpperCase();
 			
 			if (input.equals(Console.KEY_YES))
 				break;
@@ -1045,13 +1045,6 @@ public class Game extends EmailTransportBase implements Serializable
 	boolean isGoToReplay()
 	{
 		return this.goToReplay;
-	}
-	
-	boolean isMoveEnteringOpen()
-	{
-		return this.soloPlayer ||
-			   this.isTutorial() ||
-			   this.gameThread.isMoveEnteringOpen();
 	}
 	
 	String mainMenuGetYearDisplayText()
@@ -1336,7 +1329,7 @@ public class Game extends EmailTransportBase implements Serializable
 			{
 				this.planetListContentAllShipsPageCounter--;
 				this.updatePlanetList(
-						this.isMoveEnteringOpen() ? this.getCurrentPlayerIndex() : Player.NEUTRAL, 
+						this.getCurrentPlayerIndex(), 
 						false);
 				return;
 			}
@@ -1344,7 +1337,7 @@ public class Game extends EmailTransportBase implements Serializable
 			{
 				this.planetListContentAllShipsPageCounter++;
 				this.updatePlanetList(
-						this.isMoveEnteringOpen() ? this.getCurrentPlayerIndex() : Player.NEUTRAL, 
+						this.getCurrentPlayerIndex(), 
 						false);
 				return;
 			}
@@ -1353,11 +1346,10 @@ public class Game extends EmailTransportBase implements Serializable
 		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT)
 		{
 			PlanetListContent[] contentTypes = PlanetListContent.values();
-			boolean isMoveEnteringOpen = this.isMoveEnteringOpen();
 			int currentPlayerIndex = this.getCurrentPlayerIndex();
 			
 			int maxIndex = 
-					!isMoveEnteringOpen || currentPlayerIndex == Player.NEUTRAL ?
+					currentPlayerIndex == Player.NEUTRAL ?
 							3 : contentTypes.length;
 			
 			if (keyCode == KeyEvent.VK_LEFT)
@@ -1373,7 +1365,7 @@ public class Game extends EmailTransportBase implements Serializable
 			this.planetListContentStateOrdinal = this.planetListContentStateOrdinal % maxIndex;
 			
 			this.updatePlanetList(
-					this.isMoveEnteringOpen() ? this.getCurrentPlayerIndex() : Player.NEUTRAL, 
+					this.getCurrentPlayerIndex(), 
 					false);
 		}		
 	}
@@ -1565,7 +1557,7 @@ public class Game extends EmailTransportBase implements Serializable
 	private void askFinalizeGame()
 	{
 		this.console.appendText(VegaResources.FinalizeGameQuestion(true) + " ");
-		String input = this.console.waitForKeyPressedYesNo(false).getInputText().toUpperCase();
+		String input = this.console.waitForKeyPressedYesNo().getInputText().toUpperCase();
 		
 		if (input.equals(Console.KEY_YES))
 			this.finalizeGame(false);
@@ -1723,7 +1715,7 @@ public class Game extends EmailTransportBase implements Serializable
 		
 		do
 		{
-			ConsoleInput consoleInput = this.console.waitForKeyPressed(allowedKeys, false);
+			ConsoleInput consoleInput = this.console.waitForKeyPressed(allowedKeys);
 			String input = consoleInput.getInputText().toUpperCase();
 			
 			if (consoleInput.getLastKeyCode() == KeyEvent.VK_ESCAPE)
@@ -1811,7 +1803,7 @@ public class Game extends EmailTransportBase implements Serializable
 			this.console.setLineColor(Colors.WHITE);
 			this.console.appendText(VegaResources.AddToHighScoreListQuestion(true) + " ");
 			
-			String input = this.console.waitForKeyPressedYesNo(false).getInputText().toUpperCase();
+			String input = this.console.waitForKeyPressedYesNo().getInputText().toUpperCase();
 			if (input.equals(Console.KEY_YES))
 			{
 				Highscores.getInstance().add(this.archive.get(this.year), players);
@@ -2081,7 +2073,7 @@ public class Game extends EmailTransportBase implements Serializable
 			if (!this.soloPlayer && this.year > 0 && !this.finalized)
 				allowedKeys.add(new ConsoleKey("-",VegaResources.Finalize(true)));
 			
-			ConsoleInput consoleInput = this.console.waitForKeyPressed(allowedKeys, false);
+			ConsoleInput consoleInput = this.console.waitForKeyPressed(allowedKeys);
 			
 			String input = consoleInput.getInputText().toUpperCase();
 			
@@ -2379,24 +2371,8 @@ public class Game extends EmailTransportBase implements Serializable
 				continue;
 			}
 			
-			Ship ship2 = null;
-			
-			if (!this.isMoveEnteringOpen() && ship.isStartedRecently())
-			{
-				if (ship.wasStoppedBefore())
-				{
-					ship2 = (Ship)CommonUtils.klon(ship);
-					ship2.setPlanetIndexDestination(ship2.getPlanetIndexStart());
-					ship2.setPositionDestination(ship2.getPositionStart());
-				}
-				else
-					continue;
-			}
-			else
-				ship2 = ship;
-			
-			ShipTravelTime travelTime = ship2.getTravelTimeRemaining();
-			travelTime.ship = ship2;
+			ShipTravelTime travelTime = ship.getTravelTimeRemaining();
+			travelTime.ship = ship;
 			travelTimes.add(travelTime);
 		}
 		

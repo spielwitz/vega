@@ -23,7 +23,6 @@ public interface IGameThreadEventListener extends EventListener
 	void checkMenuEnabled();
 	void endTutorial();
 	MovesTransportObject importMovesFromEmail();
-	boolean isMoveEnteringOpen();
 	boolean launchEmailClient(String recipient, String subject, String body, EmailTransportBase obj);
 	boolean openPdf(byte[] pdfBytes, String clientId);
 	void pause(int milliseconds);
