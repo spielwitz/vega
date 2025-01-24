@@ -85,7 +85,8 @@ public class Game extends EmailTransportBase implements Serializable
 	private static final int 		BLACK_HOLE_YEARS_OFF_MAX = 4;
 	private static final double 	BLACK_HOLE_MOVE_DISTANCE = 2;
 	static final double 			BLACK_HOLE_RANGE = 0.5; 
-	private static final int 		BLACK_HOLE_AND_NEUTRAL_FLEET_FIRST_YEAR = 7;
+	private static final int 		BLACK_HOLE_FIRST_YEAR = 7;
+	private static final int		NEUTRAL_FLEET_FIRST_YEAR = 9;
 	private static final int 		NEUTRAL_FLEET_YEAR_INTERVAL = 5;
 	
 	// Default values for a new game
@@ -1103,7 +1104,7 @@ public class Game extends EmailTransportBase implements Serializable
 	
 	void launchNeutralFleet()
 	{
-		if (this.year < BLACK_HOLE_AND_NEUTRAL_FLEET_FIRST_YEAR ||
+		if (this.year < NEUTRAL_FLEET_FIRST_YEAR ||
 			(this.year + 1) % NEUTRAL_FLEET_YEAR_INTERVAL != 0)
 		{
 			return;
@@ -1149,7 +1150,7 @@ public class Game extends EmailTransportBase implements Serializable
 	
 	Ship setBlackHoleDirection()
   	{
-		if (this.year < BLACK_HOLE_AND_NEUTRAL_FLEET_FIRST_YEAR)
+		if (this.year < BLACK_HOLE_FIRST_YEAR)
 			return null;
 		
 		Ship blackHole = null;

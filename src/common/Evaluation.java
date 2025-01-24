@@ -382,7 +382,7 @@ class Evaluation
 			{
 				boolean attack = true;
 				
-				for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
+				for (int playerIndex = Player.NEUTRAL; playerIndex < this.game.getPlayersCount(); playerIndex++)
 				{
 					if (planet.isPlayerInvolved(playerIndex) && ship.isPlayerInvolved(playerIndex))
 					{
