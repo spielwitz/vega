@@ -17,10 +17,6 @@
 package vega;
 
 import java.awt.Frame;
-import java.rmi.Remote;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,7 +41,7 @@ class VegaDisplayFunctions
 	{
 		this.serverEnabled = false;
 		this.myIpAddress = (myIpAddress == null) ? CommonUtils.getMyIPAddress() : myIpAddress;
-		System.setProperty("java.rmi.server.hostname",this.myIpAddress);
+		//System.setProperty("java.rmi.server.hostname",this.myIpAddress);
 		
 		int clientCode = CommonUtils.getRandomInteger(10000);
 		this.clientCode = ("0000"+Integer.toString(clientCode));
@@ -75,7 +71,7 @@ class VegaDisplayFunctions
 	public void setMyIpAddress(String myIpAddress)
 	{
 		this.myIpAddress = (myIpAddress == null) ? CommonUtils.getMyIPAddress() : myIpAddress;
-		System.setProperty("java.rmi.server.hostname",this.myIpAddress);
+		//System.setProperty("java.rmi.server.hostname",this.myIpAddress);
 	}
 		
 	String connectClient(
@@ -88,7 +84,7 @@ class VegaDisplayFunctions
 		if (clientCode.equals(this.clientCode))
 		{
 			ClientScreenDisplayContentUpdater updater = 
-					new ClientScreenDisplayContentUpdater(clientId, ip, clientName, inactiveWhileEnterMoves);
+					new ClientScreenDisplayContentUpdater(clientId, ip, clientName);
 			this.registeredClients.put(clientId, updater);
 			return "";
 		}
@@ -104,27 +100,6 @@ class VegaDisplayFunctions
 	boolean isClientRegistered(String clientId)
 	{
 		return this.registeredClients.containsKey(clientId);
-	}
-	
-	boolean openPdf(byte[] pdfBytes, String clientId)
-	{
-		ClientScreenDisplayContentUpdater c = this.registeredClients.get(clientId);
-		
-		if (c != null)
-		{
-			try {
-				IVegaDisplayMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(c.clientIp);
-				rmiServer = (IVegaDisplayMethods) registry.lookup( c.clientId );
-				return rmiServer.openPdf(pdfBytes);
-			}
-			catch (Exception e)
-			{
-				return false;
-			}
-		}
-		else
-			return false;
 	}
 	
 	boolean startServer(Remote parent)
@@ -196,19 +171,11 @@ class VegaDisplayFunctions
 	
 	void updateClients(
 			ScreenContent screenContent, 
-			ScreenContent screenContentCopy,
-			boolean inputEnabled)
+			ScreenContent screenContentCopy)
 	{
 		for (ClientScreenDisplayContentUpdater updater: this.registeredClients.values())
 		{
-			if (screenContentCopy != null && updater.inactiveWhileEnterMoves)
-			{
-				updater.setContent(screenContentCopy, false, false);
-			}
-			else
-			{
-				updater.setContent(screenContent, inputEnabled, !inputEnabled);
-			}
+			updater.setContent(screenContentCopy);
 			
 			try
 			{
@@ -217,36 +184,22 @@ class VegaDisplayFunctions
 			catch (Exception x) {}
 		}
 	}
-	
-	private void unbindRegistry(Registry registry)
-	{
-		try
-		{
-			registry.unbind(CommonUtils.RMI_REGISTRATION_NAME_SERVER);
-		}
-		catch (Exception x) {}
-	}
-	
+		
 	class ClientScreenDisplayContentUpdater implements Runnable
 	{
 		private String clientId;
 		private String clientIp;
 		private String clientName;
-		private boolean inactiveWhileEnterMoves;
 		private ScreenContent content;
-		private boolean inputEnabled;
-		private boolean showInputDisabled;
 		
 		private ClientScreenDisplayContentUpdater(
 				String clientId, 
 				String clientIp, 
-				String clientName,
-				boolean inactiveWhileEnterMoves)
+				String clientName)
 		{
 			this.clientId = clientId;
 			this.clientIp = clientIp;
 			this.clientName = clientName;
-			this.inactiveWhileEnterMoves = inactiveWhileEnterMoves;
 		}
 		
 		public String getClientId() {
@@ -261,14 +214,6 @@ class VegaDisplayFunctions
 			return clientName;
 		}
 
-		public boolean isInactiveWhileEnterMoves() {
-			return inactiveWhileEnterMoves;
-		}
-
-		public boolean isShowInputDisabled() {
-			return showInputDisabled;
-		}
-
 		@Override
 		public void run()
 		{
@@ -276,24 +221,16 @@ class VegaDisplayFunctions
 				IVegaDisplayMethods rmiServer;
 				Registry registry = LocateRegistry.getRegistry(this.clientIp);
 				rmiServer = (IVegaDisplayMethods) registry.lookup( this.clientId );
-				rmiServer.updateScreen(
-						this.content, 
-						this.inputEnabled,
-						this.showInputDisabled);
+				rmiServer.updateScreen(this.content);
 			}
 			catch (Exception e)
 			{
 			}
 		}
 
-		private void setContent(
-				ScreenContent content, 
-				boolean inputEnabled,
-				boolean showInputDisabled)
+		private void setContent(ScreenContent content)
 		{
 			this.content = content;
-			this.inputEnabled = inputEnabled;
-			this.showInputDisabled = showInputDisabled;
 		}
 	}
 }

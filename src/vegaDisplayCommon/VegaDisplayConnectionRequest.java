@@ -14,14 +14,27 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package commonUi;
+package vegaDisplayCommon;
 
-import common.ScreenContentClient;
-
-public interface IServerMethods
+public class VegaDisplayConnectionRequest
 {
-	public boolean rmiClientCheckRegistration(String clientId);
-	public String rmiClientConnectionRequest(String clientId, String release, String ip, String code, String clientName);
-	public void rmiClientLogoff(String clientId);
-	public ScreenContentClient rmiGetCurrentScreenDisplayContent(String clientId);
+	private String build;
+	private String userName;
+	
+	public VegaDisplayConnectionRequest(String build, String userName)
+	{
+		super();
+		this.build = build;
+		this.userName = userName;
+	}
+
+	public String getBuild()
+	{
+		return build;
+	}
+
+	public String getUserName()
+	{
+		return userName;
+	}
 }

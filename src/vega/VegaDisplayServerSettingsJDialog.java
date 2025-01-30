@@ -38,7 +38,7 @@ import uiBaseControls.Panel;
 import uiBaseControls.TextField;
 
 @SuppressWarnings("serial") 
-class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener, ICheckBoxListener
+class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener, ICheckBoxListener
 {
 	public String myIpAddress;
 	private Button butClose;
@@ -57,7 +57,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener, IChe
 	private VegaDisplayFunctions serverFunctions;
 	private TextField tfIpAddress;
 	
-	VegaDisplaySettingsJDialog(
+	VegaDisplayServerSettingsJDialog(
 			Vega parent,
 			String myIpAddress,
 			VegaDisplayFunctions serverFunctions)

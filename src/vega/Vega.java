@@ -37,7 +37,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.rmi.RemoteException;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -448,8 +447,8 @@ public class Vega extends Frame // NO_UCD (use default)
 			this.inputEnabled = false;
 			this.redrawScreen();
 			
-			VegaDisplaySettingsJDialog dlg = 
-					new VegaDisplaySettingsJDialog(
+			VegaDisplayServerSettingsJDialog dlg = 
+					new VegaDisplayServerSettingsJDialog(
 							this, 
 							this.config.getMyIpAddress(),
 							this.serverFunctions);
@@ -801,10 +800,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public boolean openPdf(byte[] pdfBytes, String clientId)
 	{
-		if (this.serverFunctions != null && this.serverFunctions.isServerEnabled())
-			return this.serverFunctions.openPdf(pdfBytes, clientId);
-		else
-			return false;
+		return false;
 	}
 
 	@Override
@@ -879,8 +875,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			String release, 
 			String ip,
 			String clientCode, 
-			String clientName) 
-					throws RemoteException
+			String clientName)
 	{
 		if (release.equals(Game.BUILD))
 			return this.serverFunctions.connectClient(
@@ -894,14 +889,13 @@ public class Vega extends Frame // NO_UCD (use default)
 	}
 	
 	@Override
-	public void rmiClientLogoff(String clientId) throws RemoteException
+	public void rmiClientLogoff(String clientId)
 	{
 		this.serverFunctions.disconnectClient(clientId);
 	}
 	
 	@Override
 	public ScreenContentClient rmiGetCurrentScreenDisplayContent(String clientId)
-			throws RemoteException
 	{
 		if (this.serverFunctions.isClientRegistered(clientId))
 		{
@@ -915,15 +909,6 @@ public class Vega extends Frame // NO_UCD (use default)
 			return null;
 	}
 
-	@Override
-	public void rmiKeyPressed(String clientId, String languageCode, int id, long when, int modifiers, int keyCode, char keyChart) throws RemoteException
-	{
-		KeyEvent event = new KeyEvent(this.paintPanel, id, when, modifiers, keyCode, keyChart);
-		
-		if (this.serverFunctions.isClientRegistered(clientId))
-			this.keyPressed(new KeyEventExtended(event, clientId, languageCode));
-	}
-	
 	@Override
 	public void saveGame(Game game, boolean autoSave)
 	{

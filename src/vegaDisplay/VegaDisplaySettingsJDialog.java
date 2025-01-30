@@ -23,10 +23,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.net.InetAddress;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 
 import common.Game;
 import common.VegaResources;
@@ -173,7 +169,7 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		else if (source == this.butConnect)
 		{
 			this.updateSettings();
-			System.setProperty("java.rmi.server.hostname",this.config.getMyIpAddress());
+			//System.setProperty("java.rmi.server.hostname",this.config.getMyIpAddress());
 			
 			String errorMsg = null;
 			

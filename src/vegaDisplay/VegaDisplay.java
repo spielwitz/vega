@@ -22,9 +22,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
@@ -201,30 +198,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public void hostKeyPressed(KeyEvent arg0, String languageCode)
-	{
-		if (this.connected)
-		{
-			try {
-				IServerMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-				rmiServer.rmiKeyPressed(
-						this.config.getClientId(), 
-						languageCode,
-						arg0.getID(), 
-						arg0.getWhen(), 
-						arg0.getModifiers(), 
-						arg0.getKeyCode(), 
-						arg0.getKeyChar());
-			}
-			catch (Exception e) {
-			}
-		}
-	}
-	
 	@Override
 	public void iconLabelClicked(IconLabel source)
 	{
@@ -243,19 +216,10 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	}
 
 	@Override
-	public boolean openPdf(byte[] pdfBytes) throws RemoteException
-	{
-		return PdfLauncher.showPdf(pdfBytes);
-	}
-	
-	@Override
 	public void updateScreen(
-			ScreenContent screenContent, 
-			boolean inputEnabled,
-			boolean showInputDisabled)
-			throws RemoteException
+			ScreenContent screenContent)
 	{
-		this.paintPanel.redraw(screenContent, inputEnabled, showInputDisabled);
+		this.paintPanel.redraw(screenContent, false, false);
 	}
 	
 	@Override
@@ -349,4 +313,7 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		else
 			this.paintPanel.redraw(null, false, true);
 	}
+
+	@Override
+	public void hostKeyPressed(KeyEvent arg0, String languageCode) {}
 }

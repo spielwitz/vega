@@ -16,13 +16,9 @@
 
 package commonUi;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
 import common.ScreenContent;
 
-public interface IVegaDisplayMethods extends Remote
+public interface IVegaDisplayMethods
 {
-	public boolean openPdf(byte[] pdfBytes) throws RemoteException;
-	public void updateScreen(ScreenContent content, boolean inputEnabled, boolean showInputDisabled) throws RemoteException;
+	public void updateScreen(ScreenContent content);
 }
