@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import common.CommonUtils;
 import common.VegaResources;
 import spielwitz.biDiServer.ClientConfiguration;
+import vegaDisplayCommon.DataTransferLib;
 
 class VegaConfiguration
 {
@@ -120,14 +121,20 @@ class VegaConfiguration
 		return config;
 	}
 	
+	private static File getFileName()
+	{
+		return Paths.get(CommonUtils.getHomeDir(), fileName).toFile();
+	}
 	private String 				directoryNameLast;
+	
+	private int					displayServerPort;
 	private ArrayList<String> 	emailAddresses;
 	
 	private String				emailSeparator;
 	private boolean				firstTimeStart;
-	
 	private String				locale;
 	private String				myIpAddress;
+	
 	private ServerCredentials	serverCredentials;
 	
 	private int					webserverPort;
@@ -137,6 +144,7 @@ class VegaConfiguration
 		this.emailAddresses = new ArrayList<String>();
 		this.serverCredentials = new ServerCredentials();
 		this.firstTimeStart = true;
+		this.displayServerPort = DataTransferLib.SERVER_PORT;
 	}
 	
 	ClientConfiguration getClientConfiguration()
@@ -153,15 +161,15 @@ class VegaConfiguration
 			return null;
 		}
 	}
-	
-	private static File getFileName()
-	{
-		return Paths.get(CommonUtils.getHomeDir(), fileName).toFile();
-	}
 
 	String getDirectoryNameLast()
 	{
 		return directoryNameLast;
+	}
+
+	int getDisplayServerPort()
+	{
+		return displayServerPort;
 	}
 
 	ArrayList<String> getEmailAddresses()
@@ -173,12 +181,10 @@ class VegaConfiguration
 			
 		return retval;
 	}
-
 	String getEmailSeparator()
 	{
 		return emailSeparator;
 	}
-
 	Messages getMessages()
 	{
 		if (this.serverCredentials == null) return null;
@@ -216,6 +222,12 @@ class VegaConfiguration
 	void setDirectoryNameLast(String directoryNameLast)
 	{
 		this.directoryNameLast = directoryNameLast;
+		this.writeToFile();
+	}
+
+	void setDisplayServerPort(int displayServerPort)
+	{
+		this.displayServerPort = displayServerPort;
 		this.writeToFile();
 	}
 

@@ -2704,7 +2704,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Web server [8J]
+	   * Webserver [8J]
 	   */
 	public static String WebServer(boolean symbol) {
 		return symbol ? "£8J£":messages.getString("WebServer_8J");

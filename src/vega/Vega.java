@@ -446,7 +446,8 @@ public class Vega extends Frame // NO_UCD (use default)
 			VegaDisplayServerSettingsJDialog dlg = 
 					new VegaDisplayServerSettingsJDialog(
 							this, 
-							this.config.getMyIpAddress());
+							this.config.getMyIpAddress(),
+							this.config.getDisplayServerPort());
 
 			dlg.setVisible(true);
 			

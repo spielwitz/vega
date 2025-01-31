@@ -36,12 +36,12 @@ import uiBaseControls.Label;
 import uiBaseControls.List;
 import uiBaseControls.Panel;
 import uiBaseControls.TextField;
-import vegaDisplayCommon.DataTransferLib;
 
 @SuppressWarnings("serial") 
 class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener, ICheckBoxListener
 {
 	public String myIpAddress;
+	public int serverPort;
 	private Button butClose;
 	private Button butGetIp;
 	
@@ -54,11 +54,13 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 	private Vega parent;
 	
 	private TextField tfIpAddress;
+	private TextField tfServerPort;
 	private TextField tfSecurityCode;
 	
 	VegaDisplayServerSettingsJDialog(
 			Vega parent,
-			String myIpAddress)
+			String myIpAddress,
+			int serverPort)
 	{
 		super (parent, VegaResources.Terminalserver(false), new BorderLayout());
 		
@@ -66,6 +68,7 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 				CommonUtils.getMyIPAddress() : myIpAddress;
 		
 		this.parent = parent;
+		this.serverPort = serverPort;
 		
 		Panel panBase = new Panel(new BorderLayout(10,10));
 
@@ -89,31 +92,32 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 				this);
 		panSettings.add(this.cbServerEnabled, cPanSettings);
 
-		cPanSettings.gridx = 0; cPanSettings.gridy = 1; cPanSettings.gridwidth = 3;
-//		this.cbInactiveWhileEnterMoves = new CheckBox(
-//				VegaResources.VegaDisplaysPassive(false), 
-//				this.inactiveWhileEnterMoves, 
-//				this);
-//		panSettings.add(this.cbInactiveWhileEnterMoves, cPanSettings);
-
-		cPanSettings.gridx = 0; cPanSettings.gridy = 2; cPanSettings.gridwidth = 1;
+		cPanSettings.gridx = 0; cPanSettings.gridy = 1; cPanSettings.gridwidth = 1;
 		panSettings.add(new Label(VegaResources.ServerIp(false)), cPanSettings);
 		
-		cPanSettings.gridx = 1; cPanSettings.gridy = 2; cPanSettings.gridwidth = 1;
+		cPanSettings.gridx = 1; cPanSettings.gridy = 1; cPanSettings.gridwidth = 1;
 		this.tfIpAddress = new TextField(18);
+		this.tfIpAddress.setEditable(false);
 		this.tfIpAddress.setText(this.myIpAddress);
 		panSettings.add(this.tfIpAddress, cPanSettings);
 		
-		cPanSettings.gridx = 2; cPanSettings.gridy = 2; cPanSettings.gridwidth = 1;
+		cPanSettings.gridx = 2; cPanSettings.gridy = 1; cPanSettings.gridwidth = 1;
 		this.butGetIp = new Button(VegaResources.GetIp(false) , this);
 		panSettings.add(this.butGetIp, cPanSettings);
+		
+		cPanSettings.gridx = 0; cPanSettings.gridy = 2; cPanSettings.gridwidth = 1;
+		panSettings.add(new Label(VegaResources.ServerPort(false)), cPanSettings);
+		
+		cPanSettings.gridx = 1; cPanSettings.gridy = 2; cPanSettings.gridwidth = 1;
+		this.tfServerPort = new TextField(Integer.toString(serverPort), "[0-9]*", 0, 5, null);
+		panSettings.add(this.tfServerPort, cPanSettings);
 		
 		cPanSettings.gridx = 0; cPanSettings.gridy = 3; cPanSettings.gridwidth = 1; 
 		panSettings.add(new Label(VegaResources.SecurityCode(false)), cPanSettings);
 		
 		cPanSettings.gridx = 1; cPanSettings.gridy = 3; cPanSettings.gridwidth = 1; 
 		this.tfSecurityCode = new TextField(parent.getVegaDisplaySecurityCode(), "", 0, -1, null);
-		tfSecurityCode.setEnabled(false);
+		tfSecurityCode.setEditable(false);
 		panSettings.add(tfSecurityCode, cPanSettings);
 		
 		panMain.add(panSettings, BorderLayout.NORTH);
@@ -194,7 +198,8 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 			if (this.cbServerEnabled.isSelected())
 			{
 				this.myIpAddress = this.tfIpAddress.getText();
-				this.parent.startVegaDisplayServer(DataTransferLib.SERVER_PORT, 2);
+				this.serverPort = Integer.parseInt(this.tfServerPort.getText());
+				this.parent.startVegaDisplayServer(this.serverPort, 2);
 			}
 			else
 			{
@@ -211,6 +216,7 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 	protected void close()
 	{
 		this.myIpAddress = this.tfIpAddress.getText();
+		this.serverPort = Integer.parseInt(this.tfServerPort.getText());
 		super.close();
 	}
 	

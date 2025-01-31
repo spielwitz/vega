@@ -149,15 +149,19 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 			
 			VegaDisplayClientStartResult result = this.parent.startDisplayClient(config);
 			
-			if (!result.isSuccess())
+			this.setCursor(Cursor.getDefaultCursor());
+			
+			if (result.isSuccess())
+			{
+				this.close();
+			}
+			else
 			{
 				MessageBox.showError(
 						this,
 						VegaResources.getString(result.getErrorMsg()),
 						VegaResources.Error(false));
 			}
-			
-			this.setCursor(Cursor.getDefaultCursor());
 			
 			this.updateConnectionStatus();
 		}
