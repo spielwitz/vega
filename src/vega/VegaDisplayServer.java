@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 
 import common.CommonUtils;
+import common.Game;
 import common.ScreenContent;
 import common.VegaResources;
 import vegaDisplayCommon.DataTransferLib;
@@ -89,10 +90,13 @@ class VegaDisplayServer extends Thread
 			    	continue;
 			    }
 			    
-			    if (!CommonUtils.areBuildsCompatible(connectionRequest.getBuild()))
+			    if (!CommonUtils.areBuildsCompatible(connectionRequest.getClientBuild()))
 			    {
 			    	VegaDisplayConnectionResponse connectionResponse = 
-			    			new VegaDisplayConnectionResponse(false, "Builds are not compatible");
+			    			new VegaDisplayConnectionResponse(
+			    					false, 
+			    					Game.BUILD,
+			    					VegaResources.ClientServerDifferentBuilds(true));
 			    	DataTransferLib.sendObjectAesEncrypted(
 			    			out, 
 			    			connectionResponse,
@@ -123,11 +127,11 @@ class VegaDisplayServer extends Thread
 			    
 			    if (maxConnectionsCountReached)
 			    {
-			    	// Reject connection, since we already have enough connections
 			    	VegaDisplayConnectionResponse connectionResponse = 
 			    			new VegaDisplayConnectionResponse(
 			    					false, 
-			    					"Maximum number of connections reached.");
+			    					Game.BUILD,
+			    					VegaResources.MaximumConnections(true));
 			    	
 			    	DataTransferLib.sendObjectAesEncrypted(out, connectionResponse, securityCode);
 			    	
@@ -140,7 +144,10 @@ class VegaDisplayServer extends Thread
 			    
 			    // Send a positive connection response
 			    VegaDisplayConnectionResponse connectionResponse = 
-		    			new VegaDisplayConnectionResponse(true, null);
+		    			new VegaDisplayConnectionResponse(
+		    					true,
+		    					Game.BUILD,
+		    					null);
 			    
 		    	DataTransferLib.sendObjectAesEncrypted(out, connectionResponse, securityCode);
 		    	
@@ -307,7 +314,7 @@ class VegaDisplayServer extends Thread
 						
 						if (!DataTransferLib.sendObjectAesEncrypted(
 								out, 
-								new VegaDisplayScreenContent(screenContent), // Send the screen contents
+								new VegaDisplayScreenContent(screenContent),
 								securityCode))
 						{
 							terminateThread = true;
@@ -353,7 +360,7 @@ class VegaDisplayServer extends Thread
 					
 					if (!DataTransferLib.sendObjectAesEncrypted(
 							out, 
-							new VegaDisplayScreenContent(true), // Try to send a keep-alive message to the client
+							new VegaDisplayScreenContent(true),
 							securityCode))
 					{
 						synchronized(syncObject)

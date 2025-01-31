@@ -19,19 +19,25 @@ package vegaDisplayCommon;
 public class VegaDisplayConnectionResponse
 {
 	private boolean success;
-	
+	private String serverBuild;
 	private String errorMessage;
 
-	public VegaDisplayConnectionResponse(boolean success, String errorMessage)
+	public VegaDisplayConnectionResponse(boolean success, String serverBuild, String errorMessage)
 	{
 		super();
 		this.success = success;
+		this.serverBuild = serverBuild;
 		this.errorMessage = errorMessage;
 	}
 
 	public boolean isSuccess()
 	{
 		return success;
+	}
+	
+	public String getServerBuild()
+	{
+		return serverBuild;
 	}
 
 	public String getErrorMessage()

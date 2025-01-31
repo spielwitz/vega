@@ -22,7 +22,9 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import common.CommonUtils;
 import common.Game;
+import common.VegaResources;
 import vegaDisplayCommon.DataTransferLib;
 import vegaDisplayCommon.VegaDisplayConnectionRequest;
 import vegaDisplayCommon.VegaDisplayConnectionResponse;
@@ -74,23 +76,30 @@ class VegaDisplayClient extends Thread
 				{
 					if (response.isSuccess())
 					{
-						VegaDisplayScreenContent screenContent = 
-								(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(
-										this.in, 
-										this.config.getClientCode(), 
-										VegaDisplayScreenContent.class);
-						
-						if (screenContent != null)
+						if (CommonUtils.areBuildsCompatible(response.getServerBuild()))
 						{
-							this.enabled = true;
-							this.parent.updateScreen(screenContent.getScreenContent());
+							VegaDisplayScreenContent screenContent = 
+									(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(
+											this.in, 
+											this.config.getClientCode(), 
+											VegaDisplayScreenContent.class);
 							
-							success = true;
-							this.start();
+							if (screenContent != null)
+							{
+								this.enabled = true;
+								this.parent.updateScreen(screenContent.getScreenContent());
+								
+								success = true;
+								this.start();
+							}
+							else
+							{
+								errorMsg = VegaResources.InitialScreenNotReceived(true);
+							}
 						}
 						else
 						{
-							errorMsg = "Initial screen contents could not be received.";
+							errorMsg = VegaResources.ClientServerDifferentBuilds(true);
 						}
 					}
 					else
@@ -100,12 +109,12 @@ class VegaDisplayClient extends Thread
 				}
 				else
 				{
-					errorMsg = "Connection request unsuccessful.";
+					errorMsg = VegaResources.ConnectionErrorSecurityCode(true);
 				}
 			}
 			else
 			{
-				errorMsg = "Connection request unsuccessful. Check the security code.";
+				errorMsg = VegaResources.ConnectionError(true);
 			}
 		}
 		catch (Exception e) 

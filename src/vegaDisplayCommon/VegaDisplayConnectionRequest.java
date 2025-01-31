@@ -18,19 +18,19 @@ package vegaDisplayCommon;
 
 public class VegaDisplayConnectionRequest
 {
-	private String build;
+	private String clientBuild;
 	private String userName;
 	
-	public VegaDisplayConnectionRequest(String build, String userName)
+	public VegaDisplayConnectionRequest(String clientBuild, String userName)
 	{
 		super();
-		this.build = build;
+		this.clientBuild = clientBuild;
 		this.userName = userName;
 	}
 
-	public String getBuild()
+	public String getClientBuild()
 	{
-		return build;
+		return clientBuild;
 	}
 
 	public String getUserName()
