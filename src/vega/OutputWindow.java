@@ -18,19 +18,16 @@ package vega;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import common.ScreenContent;
 import common.VegaResources;
-import commonUi.IHostComponentMethods;
 import commonUi.PanelScreenContent;
 
 @SuppressWarnings("serial")
 class OutputWindow extends Frame
 							implements 
-							IHostComponentMethods,
 							WindowListener
 {
 	private PanelScreenContent paintPanel;
@@ -44,21 +41,12 @@ class OutputWindow extends Frame
 		this.setLayout(new BorderLayout());
 		this.addWindowListener(this);
 		
-		this.paintPanel = new PanelScreenContent(this);
+		this.paintPanel = new PanelScreenContent(null);
 		this.add(this.paintPanel, BorderLayout.CENTER);
 		
 		this.setTitle(VegaResources.Vega(false));
 	}
 	
-	@Override
-	public void hostKeyPressed(KeyEvent arg0, String languageCode)
-	{
-	}
-
-	@Override
-	public void menuKeyPressed(){
-	}
-
 	@Override
 	public void windowActivated(WindowEvent e) {
 	}

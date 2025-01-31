@@ -35,18 +35,22 @@ import vegaDisplayCommon.VegaDisplayScreenContent;
 
 class VegaDisplayServer extends Thread
 {
-	private ServerSocket serverSocket;
-	private int port;
-	private int maxConnectionsCount;
-	private String securityCode;
 	private ArrayList<ClientThread> clientThreads;
+	private boolean enabled;
+	private int maxConnectionsCount;
+	private int port;
+	private String securityCode;
+	private ServerSocket serverSocket;
 	private Object threadLockObject = new Object();
+	private Vega parent;
 	
-	VegaDisplayServer(String securityCode, int port, int maxConnectionsCount)
+	VegaDisplayServer(Vega parent, int port, int maxConnectionsCount)
 	{
+		this.parent = parent;
 		this.port = port;
 		this.maxConnectionsCount = maxConnectionsCount;
-		this.securityCode = securityCode;
+		
+		this.securityCode = String.format("%04d", CommonUtils.getRandomInteger(10000));
 		
 		this.clientThreads = new ArrayList<ClientThread>();		
 	}
@@ -61,6 +65,8 @@ class VegaDisplayServer extends Thread
 		{
 			return;
 		}
+		
+		this.enabled = true;
 		
 		while (true)
 		{
@@ -139,10 +145,14 @@ class VegaDisplayServer extends Thread
 		    	DataTransferLib.sendObjectAesEncrypted(out, connectionResponse, securityCode);
 		    	
 		    	// Send the current screen content
-		    	// #########
-			    
-		    	// Start the thread
-			    serverThread.start();
+		    	if (DataTransferLib.sendObjectAesEncrypted(
+		    			out,
+		    			new VegaDisplayScreenContent(parent.getScreenContentForOutputWindow()),
+		    			securityCode))
+		    	{
+			    	// Start the thread
+				    serverThread.start();
+		    	}
 			}
 			catch (Exception x)
 			{
@@ -152,8 +162,8 @@ class VegaDisplayServer extends Thread
 		
 		this.closeServerSocket();
 	}
-		
-	public ArrayList<String> getRegisteredClients()
+	
+	ArrayList<String> getConnectedClients()
 	{
 		ArrayList<String> clientsInfo = new ArrayList<String>(); 
 		
@@ -181,25 +191,14 @@ class VegaDisplayServer extends Thread
 		return clientsInfo;
 	}
 	
-	void updateScreen(ScreenContent screenContent)
+	String getSecurityCode()
 	{
-		synchronized(this.threadLockObject)
-		{
-			for (ClientThread clientThread: this.clientThreads)
-			{
-				try
-				{
-					clientThread.queue.add(screenContent);
-					
-					synchronized(clientThread.syncObject)
-					{
-						clientThread.syncObject.terminateThread = false;
-						clientThread.syncObject.notify();
-					}
-				}
-				catch (Exception x) {}
-			}
-		}
+		return this.securityCode;
+	}
+		
+	boolean isEnabled()
+	{
+		return enabled;
 	}
 	
 	void shutdown()
@@ -221,11 +220,34 @@ class VegaDisplayServer extends Thread
 		this.interrupt();
 	}
 	
+	void updateScreen(ScreenContent screenContent)
+	{
+		synchronized(this.threadLockObject)
+		{
+			for (ClientThread clientThread: this.clientThreads)
+			{
+				try
+				{
+					clientThread.queue.add(screenContent);
+					
+					synchronized(clientThread.syncObject)
+					{
+						clientThread.syncObject.terminateThread = false;
+						clientThread.syncObject.notify();
+					}
+				}
+				catch (Exception x) {}
+			}
+		}
+	}
+	
 	private void closeServerSocket()
 	{
+		this.enabled = false;
+		
 		try
 		{
-		serverSocket.close();
+			serverSocket.close();
 		}
 		catch (Exception x)
 		{
@@ -235,14 +257,14 @@ class VegaDisplayServer extends Thread
 	// ---------------
 	private class ClientThread extends Thread
 	{
-		private Socket socket;
-		private String userName;
+		private ConnectionCheckThread connectionCheckThread;
 		private OutputStream out;
-		
-		private SyncObject syncObject = new SyncObject();
 		private Queue<ScreenContent> queue;
 		
-		private ConnectionCheckThread connectionCheckThread;
+		private Socket socket;
+		private SyncObject syncObject = new SyncObject();
+		
+		private String userName;
 		
 		ClientThread(Socket socket, OutputStream out, String userName)
 		{

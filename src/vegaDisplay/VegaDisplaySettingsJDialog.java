@@ -22,14 +22,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.net.InetAddress;
 
-import common.Game;
 import common.VegaResources;
-import common.CommonUtils;
-import commonUi.MessageBox;
-import commonUi.IServerMethods;
-import commonUi.IVegaDisplayMethods;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -43,16 +37,15 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 {
 	private Button butClose;
 	private Button butConnect;
-	private Button butGetMyIpAddress;
 	private VegaDisplayConfiguration config;
 	private Label labStatus;
 	private VegaDisplay parent;
 	private PasswordField tfClientCode;
-	private TextField tfMyIpAddress;
 
 	private TextField tfMyName;
 	
 	private TextField tfServerIpAddress;
+	private TextField tfServerPort;
 	
 	VegaDisplaySettingsJDialog(
 			VegaDisplay parent,
@@ -77,35 +70,20 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 		cPanServer.fill = GridBagConstraints.HORIZONTAL;
 		cPanServer.weightx = 0.5;
 		cPanServer.weighty = 0.5;
-		
-		cPanServer.gridx = 0; cPanServer.gridy = 0; 
-		panServer.add(new Label(VegaResources.MyIp(false)), cPanServer);
 
-		Panel panIpAddresses = new Panel(new GridBagLayout());
-		
-		GridBagConstraints cPanIpAddresses = new GridBagConstraints();
-		cPanIpAddresses.insets = new Insets(0, 5, 0, 5);
-		cPanIpAddresses.fill = GridBagConstraints.HORIZONTAL;
-		cPanIpAddresses.weightx = 0.5;
-		cPanIpAddresses.weighty = 0.5;
-		
-		cPanIpAddresses.gridx = 0; cPanIpAddresses.gridy = 0;
-		this.tfMyIpAddress = new TextField(this.config.getMyIpAddress(), null, 0, -1, null);
-		this.tfMyIpAddress.setColumns(18);
-		panIpAddresses.add(this.tfMyIpAddress, cPanIpAddresses);
-		
-		cPanIpAddresses.gridx = 1; cPanIpAddresses.gridy = 0;
-		this.butGetMyIpAddress = new Button(VegaResources.GetIp(false) , this);
-		panIpAddresses.add(this.butGetMyIpAddress, cPanIpAddresses);
-		
-		panServer.add(panIpAddresses);
-		
-		cPanServer.gridx = 0; cPanServer.gridy = 1;
+		cPanServer.gridx = 0; cPanServer.gridy = 0;
 		panServer.add(new Label(VegaResources.ServerIp(false)), cPanServer);
 		
-		cPanServer.gridx = 1; cPanServer.gridy = 1;
+		cPanServer.gridx = 1; cPanServer.gridy = 0;
 		this.tfServerIpAddress = new TextField(this.config.getServerIpAddress(), null, 0, -1, null);
 		panServer.add(this.tfServerIpAddress, cPanServer);
+
+		cPanServer.gridx = 0; cPanServer.gridy = 1; 
+		panServer.add(new Label(VegaResources.ServerPort(false)), cPanServer);
+
+		cPanServer.gridx = 1; cPanServer.gridy = 1;
+		this.tfServerPort = new TextField(Integer.toString(this.config.getServerPort()), "[0-9]*", 0, 5, null);
+		panServer.add(this.tfServerPort, cPanServer);
 		
 		cPanServer.gridx = 0; cPanServer.gridy = 2;
 		panServer.add(new Label(VegaResources.SecurityCode(false)), cPanServer);
@@ -162,66 +140,61 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 			
 			this.close();
 		}
-		else if (source == this.butGetMyIpAddress)
-		{
-			this.tfMyIpAddress.setText(CommonUtils.getMyIPAddress());
-		}
 		else if (source == this.butConnect)
 		{
 			this.updateSettings();
-			//System.setProperty("java.rmi.server.hostname",this.config.getMyIpAddress());
-			
-			String errorMsg = null;
 			
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			
-			try {
-				try {
-					LocateRegistry.createRegistry( Registry.REGISTRY_PORT    );
-				}
-				catch ( RemoteException e ) 
-				{}
-
-				if (parent.stub == null)
-				{
-					parent.stub = (IVegaDisplayMethods) UnicastRemoteObject.exportObject( parent, 0 );
-					Registry registry = LocateRegistry.getRegistry(this.config.getMyIpAddress());
-					registry.rebind( this.config.getClientId(), parent.stub );
-				}
-				
-				if (!InetAddress.getByName( this.config.getServerIpAddress() ).isReachable( 2000 ))
-					throw new Exception(
-							VegaResources.ServerNotReached(false,
-									this.config.getServerIpAddress()));
-				IServerMethods rmiServer;
-				Registry registryServer = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-				rmiServer = (IServerMethods) registryServer.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-				
-				errorMsg = rmiServer.rmiClientConnectionRequest(
-						this.config.getClientId(),
-						Game.BUILD,
-						this.config.getMyIpAddress(),
-						this.config.getClientCode(),
-						this.config.getMyName());
-				
-				if (errorMsg.length() > 0)
-					MessageBox.showError(
-							this,
-							VegaResources.getString(errorMsg),
-							VegaResources.Error(false));
-				else
-					this.parent.connected = true;
-			}
-			catch (Exception e) {
-				this.setCursor(Cursor.getDefaultCursor());
-				
-				MessageBox.showError(
-						this,
-						VegaResources.NoConnectionToServer(false, e.getMessage()),
-						VegaResources.Error(false));
-				
-				this.parent.connected = false;
-			}
+			this.parent.startDisplayClient(config);
+			
+//			try {
+//				try {
+//					LocateRegistry.createRegistry( Registry.REGISTRY_PORT    );
+//				}
+//				catch ( RemoteException e ) 
+//				{}
+//
+//				if (parent.stub == null)
+//				{
+//					parent.stub = (IVegaDisplayMethods) UnicastRemoteObject.exportObject( parent, 0 );
+//					Registry registry = LocateRegistry.getRegistry(this.config.getMyIpAddress());
+//					registry.rebind( this.config.getClientId(), parent.stub );
+//				}
+//				
+//				if (!InetAddress.getByName( this.config.getServerIpAddress() ).isReachable( 2000 ))
+//					throw new Exception(
+//							VegaResources.ServerNotReached(false,
+//									this.config.getServerIpAddress()));
+//				IServerMethods rmiServer;
+//				Registry registryServer = LocateRegistry.getRegistry(this.config.getServerIpAddress());
+//				rmiServer = (IServerMethods) registryServer.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
+//				
+//				errorMsg = rmiServer.rmiClientConnectionRequest(
+//						this.config.getClientId(),
+//						Game.BUILD,
+//						this.config.getMyIpAddress(),
+//						this.config.getClientCode(),
+//						this.config.getMyName());
+//				
+//				if (errorMsg.length() > 0)
+//					MessageBox.showError(
+//							this,
+//							VegaResources.getString(errorMsg),
+//							VegaResources.Error(false));
+//				else
+//					this.parent.connected = true;
+//			}
+//			catch (Exception e) {
+//				this.setCursor(Cursor.getDefaultCursor());
+//				
+//				MessageBox.showError(
+//						this,
+//						VegaResources.NoConnectionToServer(false, e.getMessage()),
+//						VegaResources.Error(false));
+//				
+//				this.parent.connected = false;
+//			}
 			
 			this.setCursor(Cursor.getDefaultCursor());
 			
@@ -237,44 +210,20 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 
 	private void updateConnectionStatus()
 	{
-		boolean authorized = false;
-		
-		String text = "";
-		
-		if (this.parent.connected)
+		if (this.parent.isDisplayClientEnabled())
 		{
-			try 
-			{
-				IServerMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-
-				authorized = rmiServer.rmiClientCheckRegistration(this.config.getClientId());
-			}
-			catch (Exception e)
-			{
-				text = VegaResources.ConnectionToServerNotEstablished(false);
-			}
-
-			if (text.length() == 0)
-			{
-				if (authorized)
-					text = VegaResources.ConnectedWithServer(false, this.config.getServerIpAddress()); 
-				else
-					text = VegaResources.VegaDisplayNotRegistered(false, this.config.getServerIpAddress()); 
-			}
+			this.labStatus.setText(VegaResources.ConnectedWithServer(false, this.config.getServerIpAddress()));
 		}
 		else
-			text = VegaResources.NotConnected(false);
-		
-		this.labStatus.setText(text);
+		{
+			this.labStatus.setText(VegaResources.NotConnected(false));
+		}
 	}
 	
 	private void updateSettings()
 	{
 		this.config.setClientCode(new String(this.tfClientCode.getPassword()));
 		this.config.setMyName(this.tfMyName.getText());
-		this.config.setMyIpAddress(this.tfMyIpAddress.getText());
 		this.config.setServerIpAddress(this.tfServerIpAddress.getText());
 	}
 }

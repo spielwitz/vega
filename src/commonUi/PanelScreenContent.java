@@ -44,7 +44,7 @@ public class PanelScreenContent extends Panel implements KeyListener
 	
 	public static final int		FONT_SIZE_SECTORS = 8;
 	public static final int		FONT_SIZE_MINES = 8;
-	private IHostComponentMethods parent;
+	private IPanelScreenContentCallback parent;
 		
 	private double factor;
 	private int xOff, yOff;
@@ -58,7 +58,7 @@ public class PanelScreenContent extends Panel implements KeyListener
 	private boolean inputEnabled;
 	private boolean showInputDisabled;
 	
-	public PanelScreenContent(IHostComponentMethods parent)
+	public PanelScreenContent(IPanelScreenContentCallback parent)
 	{
 		super();
 		
@@ -91,9 +91,9 @@ public class PanelScreenContent extends Panel implements KeyListener
 			arg0.getKeyCode() == KeyEvent.VK_ALT_GRAPH ||
 			arg0.getKeyCode() == KeyEvent.VK_CONTEXT_MENU)
 		{
-			this.parent.menuKeyPressed();
+			if (this.parent != null) this.parent.menuKeyPressed();
 		}
-		else if (this.inputEnabled)
+		else if (this.inputEnabled && this.parent != null)
 		{
 			this.parent.hostKeyPressed(arg0, VegaResources.getLocale());
 		}

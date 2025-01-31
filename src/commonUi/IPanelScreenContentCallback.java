@@ -14,14 +14,12 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>. **/
 
-package common;
+package commonUi;
 
-import java.io.Serializable;
+import java.awt.event.KeyEvent;
 
-@SuppressWarnings("serial")
-public class ScreenContentClient implements Serializable 
+public interface IPanelScreenContentCallback
 {
-	public ScreenContent screenContent;
-	public boolean inputEnabled;
-	public boolean showInputDisabled;
+	public void hostKeyPressed(KeyEvent arg0, String languageCode);
+	public void menuKeyPressed();
 }

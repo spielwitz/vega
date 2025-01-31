@@ -21,7 +21,6 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
@@ -29,16 +28,11 @@ import javax.swing.JPopupMenu;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 
-import common.PdfLauncher;
 import common.ScreenContent;
-import common.ScreenContentClient;
 import commonUi.MessageBox;
 import commonUi.MessageBoxResult;
 import commonUi.CommonUiUtils;
 import commonUi.FontHelper;
-import commonUi.IVegaDisplayMethods;
-import commonUi.IHostComponentMethods;
-import commonUi.IServerMethods;
 import commonUi.PanelScreenContent;
 import commonUi.LanguageSelectionJDialog;
 import commonUi.VegaAbout;
@@ -55,8 +49,6 @@ import common.CommonUtils;
 public class VegaDisplay extends Frame // NO_UCD (use default)
 	implements 
 		ActionListener,
-		IVegaDisplayMethods,
-		IHostComponentMethods,
 		IIconLabelListener
 {
 	static
@@ -76,21 +68,21 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	
 	boolean connected = false;
 	
-	private PanelScreenContent paintPanel;
-    private VegaDisplayConfiguration config;  
-    private JPopupMenu popupMenu;
-    
-    private JMenuItem menuConnectionSettings;
-    private JMenuItem menuQuit;
-    private JMenuItem menuHelp;
+	private VegaDisplayConfiguration config;
+    private VegaDisplayClient displayClient;  
+    private IconLabel labMenu;
     
     private JMenuItem menuAbout;
+    private JMenuItem menuConnectionSettings;
+    private JMenuItem menuHelp;
+    
+    private JMenuItem menuLanguage;
 
-	private JMenuItem menuLanguage;
+	private JMenuItem menuQuit;
 	
-	private IconLabel labMenu;
+	private PanelScreenContent paintPanel;
 	
-	IVegaDisplayMethods stub;
+	private JPopupMenu popupMenu;
 	
 	private VegaDisplay()
 	{
@@ -112,11 +104,8 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 			this.config.setFirstTimeStart(false);
 		}
 		
-		if (config.getMyIpAddress() == null || config.getMyIpAddress().equals(""))
-			config.setMyIpAddress(CommonUtils.getMyIPAddress());
-		
 		if (config.getServerIpAddress() == null || config.getServerIpAddress().equals(""))
-			config.setServerIpAddress(config.getMyIpAddress());
+			config.setServerIpAddress(CommonUtils.getMyIPAddress());
 		
 		Dimension dim = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		this.setBounds(0, 0, dim.width, dim.height);
@@ -132,7 +121,7 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		
 		this.add(toolbar, BorderLayout.WEST);
 		
-		this.paintPanel = new PanelScreenContent(this);
+		this.paintPanel = new PanelScreenContent(null);
 		this.add(this.paintPanel, BorderLayout.CENTER);
 		
 		this.setExtendedState(MAXIMIZED_BOTH);
@@ -166,8 +155,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 												true,
 												this.config);
 			dlg.setVisible(true);
-			
-			this.updateScreenDisplayContent();
 		}
 		else if (JMenuItem == this.menuHelp)
 		{
@@ -186,8 +173,6 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 				VegaResources.setLocale(dlg.languageCode);
 				
 				this.config.setLocale(dlg.languageCode);
-				
-				this.logoff();
 				
 				System.exit(0);
 			}
@@ -208,16 +193,20 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		}
 	}
 	
-	@Override
-	public void menuKeyPressed()
+	boolean isDisplayClientEnabled()
 	{
-		Dimension dim = this.labMenu.getSize();
-		this.popupMenu.show(this.labMenu, dim.width / 2, dim.height / 2);
+		return this.displayClient != null && this.displayClient.isEnabled();
+	}
+	
+	boolean startDisplayClient(VegaDisplayConfiguration config)
+	{
+		this.displayClient = new VegaDisplayClient(this, config);
+		this.displayClient.start();
+		
+		return this.displayClient.isEnabled();
 	}
 
-	@Override
-	public void updateScreen(
-			ScreenContent screenContent)
+	void updateScreen(ScreenContent screenContent)
 	{
 		this.paintPanel.redraw(screenContent, false, false);
 	}
@@ -232,7 +221,7 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 
 		if (result == MessageBoxResult.YES)
 		{
-			this.logoff();
+			this.stopDisplayClient();
 			return true;
 		}
 		else
@@ -240,7 +229,7 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 			return false;
 		}
 	}
-
+	
 	private JPopupMenu definePopupMenu()
 	{
 	    JPopupMenu popupMenu = new JPopupMenu ();
@@ -274,46 +263,17 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	    
 	    return popupMenu;
 	}
-
-	private void logoff()
-	{
-		if (!this.connected)
-			return;
-		
-		try {
-			IServerMethods rmiServer;
-			Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-			rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-			rmiServer.rmiClientLogoff(this.config.getClientId());
-		}
-		catch (Exception e) {}
-	}
-
-	private void updateScreenDisplayContent()
-	{
-		ScreenContentClient screenContentClient = null;
-		
-		if (this.connected)
-		{		
-			try {
-				IServerMethods rmiServer;
-				Registry registry = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-				rmiServer = (IServerMethods) registry.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-				screenContentClient = rmiServer.rmiGetCurrentScreenDisplayContent(this.config.getClientId());
-			}
-			catch (Exception e) {
-			}
-		}
 	
-		if (screenContentClient != null)
-			this.paintPanel.redraw(
-					screenContentClient.screenContent, 
-					screenContentClient.inputEnabled,
-					screenContentClient.showInputDisabled);
-		else
-			this.paintPanel.redraw(null, false, true);
+	private void stopDisplayClient()
+	{
+		if (this.displayClient == null) return;
+		
+		try
+		{
+		this.displayClient.interrupt();
+		}
+		catch (Exception x) {}
+		
+		this.displayClient = null;
 	}
-
-	@Override
-	public void hostKeyPressed(KeyEvent arg0, String languageCode) {}
 }

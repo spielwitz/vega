@@ -112,11 +112,7 @@ class VegaConfiguration
 		
 		if (properties.containsKey("webserverPort"))
 			config.webserverPort = Integer.parseInt(properties.getProperty("webserverPort"));
-		
-		if (properties.containsKey("clientInactiveWhileEnterMoves"))
-			config.clientsInactiveWhileEnterMoves = 
-				Boolean.parseBoolean(properties.getProperty("clientInactiveWhileEnterMoves"));
-		
+				
 		new File(PROPERTIES_FILE_NAME).delete();
 		
 		config.writeToFile();
@@ -124,7 +120,6 @@ class VegaConfiguration
 		return config;
 	}
 	
-	private boolean				clientsInactiveWhileEnterMoves;
 	private String 				directoryNameLast;
 	private ArrayList<String> 	emailAddresses;
 	
@@ -207,11 +202,6 @@ class VegaConfiguration
 		return webserverPort;
 	}
 
-	boolean isClientsInactiveWhileEnterMoves()
-	{
-		return clientsInactiveWhileEnterMoves;
-	}
-
 	boolean isFirstTimeStart()
 	{
 		return firstTimeStart;
@@ -221,12 +211,6 @@ class VegaConfiguration
 	{
 		return this.serverCredentials != null &&
 			   this.serverCredentials.connectionActive;
-	}
-
-	void setClientsInactiveWhileEnterMoves(boolean clientsInactiveWhileEnterMoves)
-	{
-		this.clientsInactiveWhileEnterMoves = clientsInactiveWhileEnterMoves;
-		this.writeToFile();
 	}
 
 	void setDirectoryNameLast(String directoryNameLast)

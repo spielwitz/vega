@@ -36,6 +36,7 @@ import uiBaseControls.Label;
 import uiBaseControls.List;
 import uiBaseControls.Panel;
 import uiBaseControls.TextField;
+import vegaDisplayCommon.DataTransferLib;
 
 @SuppressWarnings("serial") 
 class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener, ICheckBoxListener
@@ -46,30 +47,25 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 	
 	private Button butRefreshClients;
 	
-	private CheckBox cbInactiveWhileEnterMoves;
     private CheckBox cbServerEnabled;
-	private boolean inactiveWhileEnterMoves;
 	
 	private List listClients;
 	
 	private Vega parent;
 	
-	private VegaDisplayFunctions serverFunctions;
 	private TextField tfIpAddress;
+	private TextField tfSecurityCode;
 	
 	VegaDisplayServerSettingsJDialog(
 			Vega parent,
-			String myIpAddress,
-			VegaDisplayFunctions serverFunctions)
+			String myIpAddress)
 	{
 		super (parent, VegaResources.Terminalserver(false), new BorderLayout());
 		
 		this.myIpAddress = myIpAddress == null || myIpAddress.equals("") ?
-				serverFunctions.getMyIpAddress() : myIpAddress;
+				CommonUtils.getMyIPAddress() : myIpAddress;
 		
-		this.serverFunctions = serverFunctions;
 		this.parent = parent;
-		this.inactiveWhileEnterMoves = parent.areClientsInactiveWhileEnterMoves();
 		
 		Panel panBase = new Panel(new BorderLayout(10,10));
 
@@ -87,15 +83,18 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 		cPanSettings.weighty = 0.5;
 		
 		cPanSettings.gridx = 0; cPanSettings.gridy = 0; cPanSettings.gridwidth = 3;
-		this.cbServerEnabled = new CheckBox(VegaResources.ActivateServer(false), serverFunctions.isServerEnabled(), this);
+		this.cbServerEnabled = new CheckBox(
+				VegaResources.ActivateServer(false), 
+				parent.isVegaDisplayServerEnabled(), 
+				this);
 		panSettings.add(this.cbServerEnabled, cPanSettings);
 
 		cPanSettings.gridx = 0; cPanSettings.gridy = 1; cPanSettings.gridwidth = 3;
-		this.cbInactiveWhileEnterMoves = new CheckBox(
-				VegaResources.VegaDisplaysPassive(false), 
-				this.inactiveWhileEnterMoves, 
-				this);
-		panSettings.add(this.cbInactiveWhileEnterMoves, cPanSettings);
+//		this.cbInactiveWhileEnterMoves = new CheckBox(
+//				VegaResources.VegaDisplaysPassive(false), 
+//				this.inactiveWhileEnterMoves, 
+//				this);
+//		panSettings.add(this.cbInactiveWhileEnterMoves, cPanSettings);
 
 		cPanSettings.gridx = 0; cPanSettings.gridy = 2; cPanSettings.gridwidth = 1;
 		panSettings.add(new Label(VegaResources.ServerIp(false)), cPanSettings);
@@ -113,9 +112,9 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 		panSettings.add(new Label(VegaResources.SecurityCode(false)), cPanSettings);
 		
 		cPanSettings.gridx = 1; cPanSettings.gridy = 3; cPanSettings.gridwidth = 1; 
-		TextField tfClientCode = new TextField(serverFunctions.getClientCode(), "", 0, -1, null);
-		tfClientCode.setEnabled(false);
-		panSettings.add(tfClientCode, cPanSettings);
+		this.tfSecurityCode = new TextField(parent.getVegaDisplaySecurityCode(), "", 0, -1, null);
+		tfSecurityCode.setEnabled(false);
+		panSettings.add(tfSecurityCode, cPanSettings);
 		
 		panMain.add(panSettings, BorderLayout.NORTH);
 		
@@ -166,8 +165,6 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 		
 		this.pack();
 		this.setLocationRelativeTo(parent);
-		
-		this.setControlsEnabled();
 	}
 	
 	@Override
@@ -196,21 +193,18 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 			
 			if (this.cbServerEnabled.isSelected())
 			{
-				this.serverFunctions.setMyIpAddress(this.tfIpAddress.getText());
-				this.serverFunctions.startServer(this.parent);
+				this.myIpAddress = this.tfIpAddress.getText();
+				this.parent.startVegaDisplayServer(DataTransferLib.SERVER_PORT, 5);
 			}
 			else
 			{
-				this.serverFunctions.stopServer(this.parent);
+				this.parent.stopVegaDisplayServer();
 			}
 			
+			this.tfSecurityCode.setText(this.parent.getVegaDisplaySecurityCode());
+			this.updateClientList();
+			
 			this.setCursor(Cursor.getDefaultCursor());
-			this.setControlsEnabled();
-		}
-		else if (source == this.cbInactiveWhileEnterMoves)
-		{
-			this.inactiveWhileEnterMoves = this.cbInactiveWhileEnterMoves.isSelected();
-			this.parent.setClientsInactiveWhileEnterMoves(this.inactiveWhileEnterMoves);
 		}
 	}
 	
@@ -226,29 +220,9 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 		return true;
 	}
 
-	private void setControlsEnabled()
-	{
-		this.cbInactiveWhileEnterMoves.setEnabled(!this.cbServerEnabled.isSelected());
-	}
-
 	private void updateClientList()
 	{
-		ArrayList<String> clientNames = new ArrayList<String>(); 
-		
-		Object[] registeredClients = this.serverFunctions.getRegisteredClients();
-		
-		for (Object clientObj: registeredClients)
-		{
-			VegaDisplayFunctions.ClientScreenDisplayContentUpdater client =
-					(VegaDisplayFunctions.ClientScreenDisplayContentUpdater)clientObj;
-			
-			String name = client.getClientName().length() == 0 ?
-							VegaResources.Unknown(false) :
-							client.getClientName();
-			clientNames.add(name + " (" + client.getClientIp() + ")");
-		}
-		
-		this.listClients.refreshListModel(clientNames);
+		this.listClients.refreshListModel(parent.getVegaDisplayServerConnectedClients());
 
 	}
 }
