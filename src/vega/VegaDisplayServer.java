@@ -145,9 +145,11 @@ class VegaDisplayServer extends Thread
 		    	DataTransferLib.sendObjectAesEncrypted(out, connectionResponse, securityCode);
 		    	
 		    	// Send the current screen content
+		    	ScreenContent screenContent = parent.getInitialScreenContentForVegaDisplayClient();
+		    	
 		    	if (DataTransferLib.sendObjectAesEncrypted(
 		    			out,
-		    			new VegaDisplayScreenContent(parent.getScreenContentForOutputWindow()),
+		    			new VegaDisplayScreenContent(screenContent),
 		    			securityCode))
 		    	{
 			    	// Start the thread
@@ -343,7 +345,7 @@ class VegaDisplayServer extends Thread
 				do
 				{
 					try {
-						Thread.sleep(10000);
+						Thread.sleep(5000);
 					} catch (Exception e)
 					{
 						break;

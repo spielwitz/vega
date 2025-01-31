@@ -198,12 +198,10 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		return this.displayClient != null && this.displayClient.isEnabled();
 	}
 	
-	boolean startDisplayClient(VegaDisplayConfiguration config)
+	VegaDisplayClientStartResult startDisplayClient(VegaDisplayConfiguration config)
 	{
 		this.displayClient = new VegaDisplayClient(this, config);
-		this.displayClient.start();
-		
-		return this.displayClient.isEnabled();
+		return this.displayClient.init();
 	}
 
 	void updateScreen(ScreenContent screenContent)

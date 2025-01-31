@@ -194,7 +194,7 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 			if (this.cbServerEnabled.isSelected())
 			{
 				this.myIpAddress = this.tfIpAddress.getText();
-				this.parent.startVegaDisplayServer(DataTransferLib.SERVER_PORT, 5);
+				this.parent.startVegaDisplayServer(DataTransferLib.SERVER_PORT, 2);
 			}
 			else
 			{

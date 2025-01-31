@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import common.VegaResources;
+import commonUi.MessageBox;
 import uiBaseControls.Button;
 import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
@@ -146,55 +147,15 @@ class VegaDisplaySettingsJDialog extends Dialog implements IButtonListener
 			
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			
-			this.parent.startDisplayClient(config);
+			VegaDisplayClientStartResult result = this.parent.startDisplayClient(config);
 			
-//			try {
-//				try {
-//					LocateRegistry.createRegistry( Registry.REGISTRY_PORT    );
-//				}
-//				catch ( RemoteException e ) 
-//				{}
-//
-//				if (parent.stub == null)
-//				{
-//					parent.stub = (IVegaDisplayMethods) UnicastRemoteObject.exportObject( parent, 0 );
-//					Registry registry = LocateRegistry.getRegistry(this.config.getMyIpAddress());
-//					registry.rebind( this.config.getClientId(), parent.stub );
-//				}
-//				
-//				if (!InetAddress.getByName( this.config.getServerIpAddress() ).isReachable( 2000 ))
-//					throw new Exception(
-//							VegaResources.ServerNotReached(false,
-//									this.config.getServerIpAddress()));
-//				IServerMethods rmiServer;
-//				Registry registryServer = LocateRegistry.getRegistry(this.config.getServerIpAddress());
-//				rmiServer = (IServerMethods) registryServer.lookup( CommonUtils.RMI_REGISTRATION_NAME_SERVER );
-//				
-//				errorMsg = rmiServer.rmiClientConnectionRequest(
-//						this.config.getClientId(),
-//						Game.BUILD,
-//						this.config.getMyIpAddress(),
-//						this.config.getClientCode(),
-//						this.config.getMyName());
-//				
-//				if (errorMsg.length() > 0)
-//					MessageBox.showError(
-//							this,
-//							VegaResources.getString(errorMsg),
-//							VegaResources.Error(false));
-//				else
-//					this.parent.connected = true;
-//			}
-//			catch (Exception e) {
-//				this.setCursor(Cursor.getDefaultCursor());
-//				
-//				MessageBox.showError(
-//						this,
-//						VegaResources.NoConnectionToServer(false, e.getMessage()),
-//						VegaResources.Error(false));
-//				
-//				this.parent.connected = false;
-//			}
+			if (!result.isSuccess())
+			{
+				MessageBox.showError(
+						this,
+						VegaResources.getString(result.getErrorMsg()),
+						VegaResources.Error(false));
+			}
 			
 			this.setCursor(Cursor.getDefaultCursor());
 			

@@ -34,16 +34,20 @@ class VegaDisplayClient extends Thread
 	private boolean enabled;
 	private VegaDisplay parent;
 	
+	private Socket socket;
+	private DataInputStream in;
+		
 	VegaDisplayClient(VegaDisplay parent, VegaDisplayConfiguration config)
 	{
 		this.parent = parent;
 		this.config = config;
 	}
 	
-	public void run()
+	VegaDisplayClientStartResult init()
 	{
-		Socket socket = null;
 		OutputStream out = null;
+		String errorMsg = "";
+		boolean success = false;
 		
 		try {
 			socket = new Socket();
@@ -53,50 +57,92 @@ class VegaDisplayClient extends Thread
 			
 			out = socket.getOutputStream();
 			
-			boolean success = DataTransferLib.sendObjectAesEncrypted(
+			if (DataTransferLib.sendObjectAesEncrypted(
 					out, 
 					new VegaDisplayConnectionRequest(Game.BUILD, this.config.getMyName()), 
-					this.config.getClientCode());
-			
-			if (success)
+					this.config.getClientCode()))
 			{
-				DataInputStream in = new DataInputStream(socket.getInputStream());
+				this.in = new DataInputStream(socket.getInputStream());
 				
 				VegaDisplayConnectionResponse response = 
 						(VegaDisplayConnectionResponse)DataTransferLib.receiveObjectAesEncrypted(
-								in, 
+								this.in, 
 								this.config.getClientCode(),
 								VegaDisplayConnectionResponse.class);
 				
-				if (response != null && response.isSuccess())
+				if (response != null)
 				{
-					VegaDisplayScreenContent screenContent = 
-							(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(in, this.config.getClientCode(), VegaDisplayScreenContent.class);
-					
-					if (screenContent != null)
+					if (response.isSuccess())
 					{
-						this.enabled = true;
-						this.parent.updateScreen(screenContent.getScreenContent());
+						VegaDisplayScreenContent screenContent = 
+								(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(
+										this.in, 
+										this.config.getClientCode(), 
+										VegaDisplayScreenContent.class);
 						
-						while(true)
+						if (screenContent != null)
 						{
-							screenContent = 
-									(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(in, this.config.getClientCode(), VegaDisplayScreenContent.class);
-							if (screenContent == null) break;
-							if (screenContent.isKeepAlive()) continue;
-							
+							this.enabled = true;
 							this.parent.updateScreen(screenContent.getScreenContent());
+							
+							success = true;
+							this.start();
+						}
+						else
+						{
+							errorMsg = "Initial screen contents could not be received.";
 						}
 					}
+					else
+					{
+						errorMsg = response.getErrorMessage();
+					}
 				}
+				else
+				{
+					errorMsg = "Connection request unsuccessful.";
+				}
+			}
+			else
+			{
+				errorMsg = "Connection request unsuccessful. Check the security code.";
 			}
 		}
 		catch (Exception e) 
 		{
+			success = false;
+			errorMsg = e.getMessage();
+		}
+		
+		if (!success)
+		{
+			this.enabled = false;
+	
+			try
+			{
+				socket.close();
+			} catch (IOException e)
+			{
+			}
+		}
+
+		return new VegaDisplayClientStartResult(success, errorMsg);
+	}
+	
+	public void run()
+	{
+		while(true)
+		{
+			VegaDisplayScreenContent screenContent = 
+					(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(in, this.config.getClientCode(), VegaDisplayScreenContent.class);
+			if (screenContent == null) break;
+			if (screenContent.isKeepAlive()) continue;
+			
+			this.parent.updateScreen(screenContent.getScreenContent());
 		}
 		
 		this.enabled = false;
-
+		
 		try
 		{
 			socket.close();

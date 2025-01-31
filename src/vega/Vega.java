@@ -973,15 +973,16 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		if (this.isVegaDisplayServerEnabled())
 		{
-			this.displayServer.updateScreen(getScreenContentForOutputWindow());
+			ScreenContent screenContent = getScreenContentForOutputWindow();
+			if (screenContent == null) screenContent = event.getScreenContent();
+			this.displayServer.updateScreen(screenContent);
 		}
 
 		if (this.outputWindow != null && this.outputWindow.isVisible())
 		{
 			ScreenContent screenContent = getScreenContentForOutputWindow();
-			
-			this.outputWindow.redraw(
-					screenContent != null ? screenContent : event.getScreenContent());
+			if (screenContent == null) screenContent = event.getScreenContent();
+			this.outputWindow.redraw(screenContent);
 		}
 
 		this.paintPanel.redraw(event.getScreenContent(), this.inputEnabled, false);
@@ -1066,6 +1067,20 @@ public class Vega extends Frame // NO_UCD (use default)
 		if (this.t != null && this.t.getGame() != null)
 		{
 			return this.t.getGame().getScreenContentWhileMovesEntered();
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	ScreenContent getInitialScreenContentForVegaDisplayClient()
+	{
+		if (this.t != null && this.t.getGame() != null)
+		{
+			ScreenContent screenContent = this.t.getGame().getScreenContentWhileMovesEntered();
+			if (screenContent == null) screenContent = this.paintPanel.getScreenContent();
+			return screenContent;
 		}
 		else
 		{
