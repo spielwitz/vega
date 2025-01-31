@@ -31,31 +31,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.google.gson.Gson;
 
-/**
- * A library for enocding and decoding messages.
- * @author spielwitz
- *
- */
-public class CryptoLib 
+public class DataTransferLib 
 {
+	private static final Gson serializer = new Gson();
 	private static final String STRING_ENCODING = "UTF-8"; 
 
-	public static <T> Object receiveObject(
-			DataInputStream in,
-			Class<T> expectedClass)
-	{
-		try
-		{
-			byte[] bytes = receiveCompressedByteArray(in);
-			String json = new String(bytes, STRING_ENCODING);
-			return new Gson().fromJson(json, expectedClass);
-		}
-		catch (Exception x)
-		{
-			return null;
-		}
-	}
-	
 	public static <T> Object receiveObjectAesEncrypted(
 			DataInputStream in,
 			String password,
@@ -63,9 +43,22 @@ public class CryptoLib
 	{
 		try
 		{
-			byte[] bytesEncrypted = receiveCompressedByteArray(in);
-			String json = new String(aesDecrypt(bytesEncrypted, password.getBytes(STRING_ENCODING)), STRING_ENCODING);
-			return new Gson().fromJson(json, expectedClass);
+			byte[] lengthBytes = new byte[4];
+		    in.readFully(lengthBytes);
+		    
+		    int length = DataTransferLib.convertByteArrayToInt(lengthBytes);
+		    
+		    byte[] bytesEncrypted = new byte[length];
+		    in.readFully(bytesEncrypted);
+		    
+		    String json = new String(
+		    		decompress(
+		    				aesDecrypt(
+		    						bytesEncrypted, 
+		    						password.getBytes(STRING_ENCODING))), 
+		    		STRING_ENCODING);
+		    
+			return serializer.fromJson(json, expectedClass);
 		}
 		catch (Exception x)
 		{
@@ -73,31 +66,24 @@ public class CryptoLib
 		}
 	}
 	
-	public static boolean sendObject(
-			OutputStream out,
-			Object request)
-	{
-		try
-		{
-			String json = new Gson().toJson(request);
-			sendCompressedByteArray(out, json.getBytes(STRING_ENCODING));
-			return true;
-		}
-		catch (Exception x)
-		{
-			return false;
-		}
-	}
-	
 	public static boolean sendObjectAesEncrypted(
 			OutputStream out,
-			Object request,
+			Object object,
 			String password)
 	{
 		try
 		{
-			String json = new Gson().toJson(request);
-			sendCompressedByteArray(out, aesEncrypt(json.getBytes(STRING_ENCODING), password.getBytes(STRING_ENCODING)));
+			byte[] bytesStringEncrypted = aesEncrypt(
+					compress(
+							serializer.toJson(object)
+							.getBytes(STRING_ENCODING)), 
+					password.getBytes(STRING_ENCODING));
+			
+			byte[] byteStringLength = DataTransferLib.convertIntToByteArray(bytesStringEncrypted.length);
+	
+			out.write(byteStringLength);
+			out.write(bytesStringEncrypted);
+			
 			return true;
 		}
 		catch (Exception x)
@@ -187,31 +173,5 @@ public class CryptoLib
 			return null;
 		}
 		return out.toByteArray();
-	}
-
-	private static byte[] receiveCompressedByteArray(
-			DataInputStream in) throws Exception
-	{
-		byte[] lengthBytes = new byte[4];
-	    in.readFully(lengthBytes);
-	    
-	    int length = CryptoLib.convertByteArrayToInt(lengthBytes);
-	    
-	    byte[] bytesStringCompressed = new byte[length];
-	    in.readFully(bytesStringCompressed);
-	    
-	    return decompress(bytesStringCompressed);
-	}
-	
-	private static void sendCompressedByteArray(
-			OutputStream out,
-			byte[] bytesString) throws Exception
-	{
-		byte[] bytesStringCompressed = compress(bytesString);
-		
-		byte[] byteStringLength = CryptoLib.convertIntToByteArray(bytesStringCompressed.length);
-
-		out.write(byteStringLength);
-		out.write(bytesStringCompressed);
 	}
 }

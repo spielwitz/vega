@@ -27,7 +27,7 @@ import java.util.Queue;
 
 import common.CommonUtils;
 import common.ScreenContent;
-import vegaDisplayCommon.CryptoLib;
+import vegaDisplayCommon.DataTransferLib;
 import vegaDisplayCommon.VegaDisplayConnectionRequest;
 import vegaDisplayCommon.VegaDisplayConnectionResponse;
 import vegaDisplayCommon.VegaDisplayScreenContent;
@@ -37,13 +37,16 @@ class VegaDisplayServer extends Thread
 	private ServerSocket serverSocket;
 	private int port;
 	private int maxConnectionsCount;
+	private String securityCode;
 	private ArrayList<ServerThread> clientThreads;
 	private Object threadLockObject = new Object();
 	
-	VegaDisplayServer(int port, int maxConnectionsCount)
+	VegaDisplayServer(String securityCode, int port, int maxConnectionsCount)
 	{
 		this.port = port;
 		this.maxConnectionsCount = maxConnectionsCount;
+		this.securityCode = securityCode;
+		
 		this.clientThreads = new ArrayList<ServerThread>();		
 	}
 	
@@ -64,12 +67,14 @@ class VegaDisplayServer extends Thread
 			{
 			    Socket clientSocket = this.serverSocket.accept();
 			    
-			    // The connection request is AES-encrypted with the security code
 			    DataInputStream in = new DataInputStream(clientSocket.getInputStream());
 			    OutputStream out = clientSocket.getOutputStream();
 			    
 			    VegaDisplayConnectionRequest connectionRequest = 
-			    		(VegaDisplayConnectionRequest)CryptoLib.receiveObjectAesEncrypted(in, "123", VegaDisplayConnectionRequest.class);
+			    		(VegaDisplayConnectionRequest)DataTransferLib.receiveObjectAesEncrypted(
+			    				in, 
+			    				this.securityCode, 
+			    				VegaDisplayConnectionRequest.class);
 			    
 			    if (connectionRequest == null)
 			    {
@@ -81,7 +86,10 @@ class VegaDisplayServer extends Thread
 			    {
 			    	VegaDisplayConnectionResponse connectionResponse = 
 			    			new VegaDisplayConnectionResponse(false, "Builds are not compatible");
-			    	CryptoLib.sendObject(out, connectionResponse);
+			    	DataTransferLib.sendObjectAesEncrypted(
+			    			out, 
+			    			connectionResponse,
+			    			securityCode);
 			    	
 			    	clientSocket.close();
 			    	continue;
@@ -100,7 +108,7 @@ class VegaDisplayServer extends Thread
 				    	serverThread = this.new ServerThread(
 								clientSocket,
 								out,
-								"Michael");
+								connectionRequest.getUserName());
 				    	
 				    	this.clientThreads.add(serverThread);
 			    	}
@@ -111,7 +119,7 @@ class VegaDisplayServer extends Thread
 			    	// Reject connection, since we already have enough connections
 			    	VegaDisplayConnectionResponse connectionResponse = 
 			    			new VegaDisplayConnectionResponse(false, "Too many connections");
-			    	CryptoLib.sendObject(out, connectionResponse);
+			    	DataTransferLib.sendObjectAesEncrypted(out, connectionResponse, securityCode);
 			    	
 			    	clientSocket.close();
 			    	continue;
@@ -124,7 +132,10 @@ class VegaDisplayServer extends Thread
 			    VegaDisplayConnectionResponse connectionResponse = 
 		    			new VegaDisplayConnectionResponse(true, null);
 			    
-		    	CryptoLib.sendObject(out, connectionResponse);
+		    	DataTransferLib.sendObjectAesEncrypted(out, connectionResponse, securityCode);
+		    	
+		    	// Send the current screen content
+		    	// #########
 			    
 		    	// Start the thread
 			    serverThread.start();
@@ -232,9 +243,10 @@ class VegaDisplayServer extends Thread
 					{
 						ScreenContent screenContent = this.queue.remove();
 						
-						if (!CryptoLib.sendObject(
+						if (!DataTransferLib.sendObjectAesEncrypted(
 								out, 
-								new VegaDisplayScreenContent(screenContent)))
+								new VegaDisplayScreenContent(screenContent),
+								securityCode))
 						{
 							terminateThread = true;
 							break;

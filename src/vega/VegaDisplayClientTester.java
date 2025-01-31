@@ -8,7 +8,7 @@ import java.net.Socket;
 
 import common.Game;
 import common.ScreenContent;
-import vegaDisplayCommon.CryptoLib;
+import vegaDisplayCommon.DataTransferLib;
 import vegaDisplayCommon.VegaDisplayConnectionRequest;
 import vegaDisplayCommon.VegaDisplayConnectionResponse;
 
@@ -19,6 +19,7 @@ public class VegaDisplayClientTester
 	{
 		Socket kkSocket = null;
 		OutputStream out = null;
+		String securityCode = "1234";
 		
 		try {
 			kkSocket = new Socket();
@@ -28,22 +29,36 @@ public class VegaDisplayClientTester
 			
 			out = kkSocket.getOutputStream();
 			
-			CryptoLib.sendObjectAesEncrypted(
+			boolean success = DataTransferLib.sendObjectAesEncrypted(
 					out, 
 					new VegaDisplayConnectionRequest(Game.BUILD, "Michael"), 
-					"123");
+					securityCode);
 			
-			DataInputStream in = new DataInputStream(kkSocket.getInputStream());
-			
-			VegaDisplayConnectionResponse response = (VegaDisplayConnectionResponse)CryptoLib.receiveObject(in, VegaDisplayConnectionResponse.class);
-			System.out.println(response);
-			
-			while(true)
+			if (success)
 			{
-				ScreenContent screenContent = (ScreenContent) CryptoLib.receiveObject(in, ScreenContent.class);
-				if (screenContent == null) break;
-				System.out.println("Client received: " + screenContent);
-				Thread.sleep(5000);
+				DataInputStream in = new DataInputStream(kkSocket.getInputStream());
+				
+				VegaDisplayConnectionResponse response = 
+						(VegaDisplayConnectionResponse)DataTransferLib.receiveObjectAesEncrypted(
+								in, 
+								securityCode,
+								VegaDisplayConnectionResponse.class);
+				System.out.println(response);
+				
+				if (response != null && response.isSuccess())
+				{
+					// Receive the current screen content
+					// ##################
+					
+					while(true)
+					{
+						ScreenContent screenContent = 
+								(ScreenContent)DataTransferLib.receiveObjectAesEncrypted(in, securityCode, ScreenContent.class);
+						if (screenContent == null) break;
+						System.out.println("Client received: " + screenContent);
+						Thread.sleep(5000);
+					}
+				}
 			}
 		}
 		catch (Exception e) 
