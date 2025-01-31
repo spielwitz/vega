@@ -21,15 +21,27 @@ import common.ScreenContent;
 public class VegaDisplayScreenContent
 {
 	private ScreenContent screenContent;
+	private boolean keepAlive;
 
 	public VegaDisplayScreenContent(ScreenContent screenContent)
 	{
-		super();
 		this.screenContent = screenContent;
+		this.keepAlive = false;
+	}
+	
+	public VegaDisplayScreenContent(boolean keepAlive)
+	{
+		this.screenContent = null;
+		this.keepAlive = true;
 	}
 
 	public ScreenContent getScreenContent()
 	{
 		return screenContent;
+	}
+	
+	public boolean isKeepAlive()
+	{
+		return keepAlive;
 	}
 }

@@ -33,6 +33,8 @@ import com.google.gson.Gson;
 
 public class DataTransferLib 
 {
+	public static final int SERVER_PORT = 56085;
+	
 	private static final Gson serializer = new Gson();
 	private static final String STRING_ENCODING = "UTF-8"; 
 

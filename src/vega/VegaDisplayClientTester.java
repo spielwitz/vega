@@ -7,10 +7,10 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import common.Game;
-import common.ScreenContent;
 import vegaDisplayCommon.DataTransferLib;
 import vegaDisplayCommon.VegaDisplayConnectionRequest;
 import vegaDisplayCommon.VegaDisplayConnectionResponse;
+import vegaDisplayCommon.VegaDisplayScreenContent;
 
 public class VegaDisplayClientTester
 {
@@ -47,16 +47,20 @@ public class VegaDisplayClientTester
 				
 				if (response != null && response.isSuccess())
 				{
-					// Receive the current screen content
-					// ##################
-					
 					while(true)
 					{
-						ScreenContent screenContent = 
-								(ScreenContent)DataTransferLib.receiveObjectAesEncrypted(in, securityCode, ScreenContent.class);
+						VegaDisplayScreenContent screenContent = 
+								(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(in, securityCode, VegaDisplayScreenContent.class);
 						if (screenContent == null) break;
-						System.out.println("Client received: " + screenContent);
-						Thread.sleep(5000);
+						
+						if (screenContent.isKeepAlive())
+						{
+							System.out.println("Client: Keep-alive signal received");
+						}
+						else
+						{
+							System.out.println("Client: Screen content received: " + screenContent.getScreenContent());
+						}
 					}
 				}
 			}

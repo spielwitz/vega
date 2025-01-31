@@ -18,6 +18,8 @@ public class VegaDisplayServerTester
 		
 		server.updateScreen(screenContent);
 		System.out.println("Sent");
+		
+		server.shutdown();
 	}
 
 }

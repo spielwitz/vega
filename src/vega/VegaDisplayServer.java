@@ -27,6 +27,7 @@ import java.util.Queue;
 
 import common.CommonUtils;
 import common.ScreenContent;
+import common.VegaResources;
 import vegaDisplayCommon.DataTransferLib;
 import vegaDisplayCommon.VegaDisplayConnectionRequest;
 import vegaDisplayCommon.VegaDisplayConnectionResponse;
@@ -38,7 +39,7 @@ class VegaDisplayServer extends Thread
 	private int port;
 	private int maxConnectionsCount;
 	private String securityCode;
-	private ArrayList<ServerThread> clientThreads;
+	private ArrayList<ClientThread> clientThreads;
 	private Object threadLockObject = new Object();
 	
 	VegaDisplayServer(String securityCode, int port, int maxConnectionsCount)
@@ -47,7 +48,7 @@ class VegaDisplayServer extends Thread
 		this.maxConnectionsCount = maxConnectionsCount;
 		this.securityCode = securityCode;
 		
-		this.clientThreads = new ArrayList<ServerThread>();		
+		this.clientThreads = new ArrayList<ClientThread>();		
 	}
 	
 	public void run()
@@ -96,7 +97,7 @@ class VegaDisplayServer extends Thread
 			    }
 			    
 			    boolean maxConnectionsCountReached = false;
-			    ServerThread serverThread = null;
+			    ClientThread serverThread = null;
 			    
 			    synchronized(this.threadLockObject)
 			    {
@@ -105,7 +106,7 @@ class VegaDisplayServer extends Thread
 			    	if (!maxConnectionsCountReached)
 			    	{
 			    		// Create a separate thread for every connection
-				    	serverThread = this.new ServerThread(
+				    	serverThread = this.new ClientThread(
 								clientSocket,
 								out,
 								connectionRequest.getUserName());
@@ -118,14 +119,17 @@ class VegaDisplayServer extends Thread
 			    {
 			    	// Reject connection, since we already have enough connections
 			    	VegaDisplayConnectionResponse connectionResponse = 
-			    			new VegaDisplayConnectionResponse(false, "Too many connections");
+			    			new VegaDisplayConnectionResponse(
+			    					false, 
+			    					"Maximum number of connections reached.");
+			    	
 			    	DataTransferLib.sendObjectAesEncrypted(out, connectionResponse, securityCode);
 			    	
 			    	clientSocket.close();
 			    	continue;
 			    }
 			    
-			    // Make it a long-polling socket
+			    // Make the socket a long-polling socket
 			    clientSocket.setSoTimeout(0);
 			    
 			    // Send a positive connection response
@@ -149,16 +153,39 @@ class VegaDisplayServer extends Thread
 		this.closeServerSocket();
 	}
 		
-	void getConnectedClients()
+	public ArrayList<String> getRegisteredClients()
 	{
+		ArrayList<String> clientsInfo = new ArrayList<String>(); 
 		
+		synchronized(this.threadLockObject)
+		{
+			for (ClientThread clientThread: this.clientThreads)
+			{
+				if (clientThread.socket == null) continue;
+				
+				StringBuilder sb = new StringBuilder();
+				
+				sb.append(
+						clientThread.userName.length() == 0 ?
+								VegaResources.Unknown(false) :
+								clientThread.userName);
+				
+				sb.append(" (");
+				sb.append(clientThread.socket.getInetAddress().toString());
+				sb.append(")");
+				
+				clientsInfo.add(sb.toString());
+			}
+		}
+		
+		return clientsInfo;
 	}
 	
 	void updateScreen(ScreenContent screenContent)
 	{
 		synchronized(this.threadLockObject)
 		{
-			for (ServerThread clientThread: this.clientThreads)
+			for (ClientThread clientThread: this.clientThreads)
 			{
 				try
 				{
@@ -166,6 +193,7 @@ class VegaDisplayServer extends Thread
 					
 					synchronized(clientThread.syncObject)
 					{
+						clientThread.syncObject.terminateThread = false;
 						clientThread.syncObject.notify();
 					}
 				}
@@ -180,9 +208,13 @@ class VegaDisplayServer extends Thread
 		
 		synchronized(this.threadLockObject)
 		{
-			for (ServerThread clientThread: this.clientThreads)
+			for (ClientThread clientThread: this.clientThreads)
 			{
-				clientThread.interrupt();
+				synchronized(clientThread.syncObject)
+				{
+					clientThread.syncObject.terminateThread = true;
+					clientThread.syncObject.notify();
+				}
 			}
 		}
 		
@@ -201,30 +233,34 @@ class VegaDisplayServer extends Thread
 	}
 	
 	// ---------------
-	private class ServerThread extends Thread
+	private class ClientThread extends Thread
 	{
 		private Socket socket;
 		private String userName;
 		private OutputStream out;
 		
-		private Object syncObject = new Object();
+		private SyncObject syncObject = new SyncObject();
 		private Queue<ScreenContent> queue;
 		
-		ServerThread(Socket socket, OutputStream out, String userName)
+		private ConnectionCheckThread connectionCheckThread;
+		
+		ClientThread(Socket socket, OutputStream out, String userName)
 		{
 			this.socket = socket;
 			this.out = out;
 			this.userName = userName;
 			
 			this.queue = new LinkedList<ScreenContent>();
+			this.connectionCheckThread = new ConnectionCheckThread();
 		}
 		
 		public void run()
 		{
-			while (true)
+			this.connectionCheckThread.start();
+			boolean terminateThread = false;
+			
+			while (!terminateThread)
 			{
-				boolean terminateThread = false;
-				
 				synchronized(syncObject)
 				{
 					try
@@ -237,7 +273,9 @@ class VegaDisplayServer extends Thread
 					}
 				}
 				
-				while(true)
+				terminateThread = syncObject.terminateThread;
+				
+				while(!terminateThread)
 				{
 					try
 					{
@@ -245,7 +283,7 @@ class VegaDisplayServer extends Thread
 						
 						if (!DataTransferLib.sendObjectAesEncrypted(
 								out, 
-								new VegaDisplayScreenContent(screenContent),
+								new VegaDisplayScreenContent(screenContent), // Send the screen contents
 								securityCode))
 						{
 							terminateThread = true;
@@ -257,21 +295,60 @@ class VegaDisplayServer extends Thread
 						break;
 					}
 				}
-				
-				if (terminateThread) break;
 			}
 			
 			try
 			{
 				this.socket.close();
-			} catch (Exception e)
+			} catch (Exception e) {}
+			
+			try
 			{
+				this.connectionCheckThread.interrupt();
 			}
+			catch (Exception e) {}
 			
 			synchronized(threadLockObject)
 			{
 				clientThreads.remove(this);
 			}
 		}
+		
+		private class ConnectionCheckThread extends Thread
+		{
+			public void run()
+			{
+				do
+				{
+					try {
+						Thread.sleep(10000);
+					} catch (Exception e)
+					{
+						break;
+					}
+					
+					if (!DataTransferLib.sendObjectAesEncrypted(
+							out, 
+							new VegaDisplayScreenContent(true), // Try to send a keep-alive message to the client
+							securityCode))
+					{
+						synchronized(syncObject)
+						{
+							syncObject.terminateThread = true;
+							syncObject.notify();
+						}
+						
+						break;
+					}					
+				} while (true);
+			}
+		}
+	}
+	
+	// ----------------------------
+		
+	private class SyncObject
+	{
+		boolean terminateThread;
 	}
 }
