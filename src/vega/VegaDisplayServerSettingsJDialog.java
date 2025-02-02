@@ -199,7 +199,7 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 			{
 				this.myIpAddress = this.tfIpAddress.getText();
 				this.serverPort = Integer.parseInt(this.tfServerPort.getText());
-				this.parent.startVegaDisplayServer(this.serverPort, 2);
+				this.parent.startVegaDisplayServer(this.serverPort);
 			}
 			else
 			{

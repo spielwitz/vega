@@ -38,18 +38,18 @@ class VegaDisplayServer extends Thread
 {
 	private ArrayList<ClientThread> clientThreads;
 	private boolean enabled;
-	private int maxConnectionsCount;
 	private int port;
 	private String securityCode;
 	private ServerSocket serverSocket;
 	private Object threadLockObject = new Object();
 	private Vega parent;
 	
-	VegaDisplayServer(Vega parent, int port, int maxConnectionsCount)
+	private static final int MAX_CONNECTIONS_COUNT = 5;
+	
+	VegaDisplayServer(Vega parent, int port)
 	{
 		this.parent = parent;
 		this.port = port;
-		this.maxConnectionsCount = maxConnectionsCount;
 		
 		this.securityCode = String.format("%04d", CommonUtils.getRandomInteger(10000));
 		
@@ -111,7 +111,7 @@ class VegaDisplayServer extends Thread
 			    
 			    synchronized(this.threadLockObject)
 			    {
-			    	maxConnectionsCountReached = this.clientThreads.size() >= this.maxConnectionsCount;
+			    	maxConnectionsCountReached = this.clientThreads.size() >= MAX_CONNECTIONS_COUNT;
 			    	
 			    	if (!maxConnectionsCountReached)
 			    	{

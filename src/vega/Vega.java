@@ -1130,9 +1130,9 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 	}
 	
-	void startVegaDisplayServer(int port, int maxConnectionsCount)
+	void startVegaDisplayServer(int port)
 	{
-		this.displayServer = new VegaDisplayServer(this, port, maxConnectionsCount);
+		this.displayServer = new VegaDisplayServer(this, port);
 		this.displayServer.start();
 	}
 
