@@ -322,6 +322,7 @@ public class VegaResources
 		symbolDict.put("7Z","UserNotParticipating_7Z");
 		symbolDict.put("80","UserUpdated_80");
 		symbolDict.put("81","Users_81");
+		symbolDict.put("83","ConnectedToDisplayServer_83");
 		symbolDict.put("84","VegaDisplayServer_84");
 		symbolDict.put("85","VegaDisplay_85");
 		symbolDict.put("86","VegaDisplaysPassive_86");
@@ -1626,7 +1627,7 @@ public class VegaResources
 	}
 
 	/**
-	   * >>> A player is entering his moves. Input is disabled. <<< [43]
+	   * >>> A player is entering his moves. <<< [43]
 	   */
 	public static String PlayerEnteringMovesInputDisabled(boolean symbol) {
 		return symbol ? "£43£":messages.getString("PlayerEnteringMovesInputDisabled_43");
@@ -2596,6 +2597,13 @@ public class VegaResources
 	   */
 	public static String Users(boolean symbol) {
 		return symbol ? "£81£":messages.getString("Users_81");
+	}
+
+	/**
+	   * Connected with VEGA Display server {0} [83]
+	   */
+	public static String ConnectedToDisplayServer(boolean symbol, String arg0) {
+		return symbol ? "£83§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedToDisplayServer_83"), arg0);
 	}
 
 	/**

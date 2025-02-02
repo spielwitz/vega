@@ -34,15 +34,47 @@ class VegaDisplayClient extends Thread
 {
 	private VegaDisplayConfiguration config;
 	private boolean enabled;
-	private VegaDisplay parent;
-	
-	private Socket socket;
 	private DataInputStream in;
+	
+	private VegaDisplay parent;
+	private Socket socket;
 		
 	VegaDisplayClient(VegaDisplay parent, VegaDisplayConfiguration config)
 	{
 		this.parent = parent;
 		this.config = config;
+	}
+	
+	public void run()
+	{
+		while(true)
+		{
+			VegaDisplayScreenContent screenContent = 
+					(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(in, this.config.getClientCode(), VegaDisplayScreenContent.class);
+			if (screenContent == null) break;
+			if (screenContent.isKeepAlive()) continue;
+			
+			this.parent.updateScreen(screenContent.getScreenContent());
+		}
+		
+		this.enabled = false;
+		
+		try
+		{
+			socket.close();
+		} catch (IOException e)
+		{
+		}
+	}
+	
+	String getServerIpAddress()
+	{
+		return this.config.getServerIpAddress();
+	}
+	
+	int getServerPort()
+	{
+		return this.config.getServerPort();
 	}
 	
 	VegaDisplayClientStartResult init()
@@ -136,28 +168,6 @@ class VegaDisplayClient extends Thread
 		}
 
 		return new VegaDisplayClientStartResult(success, errorMsg);
-	}
-	
-	public void run()
-	{
-		while(true)
-		{
-			VegaDisplayScreenContent screenContent = 
-					(VegaDisplayScreenContent)DataTransferLib.receiveObjectAesEncrypted(in, this.config.getClientCode(), VegaDisplayScreenContent.class);
-			if (screenContent == null) break;
-			if (screenContent.isKeepAlive()) continue;
-			
-			this.parent.updateScreen(screenContent.getScreenContent());
-		}
-		
-		this.enabled = false;
-		
-		try
-		{
-			socket.close();
-		} catch (IOException e)
-		{
-		}
 	}
 	
 	boolean isEnabled()

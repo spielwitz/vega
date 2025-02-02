@@ -69,7 +69,12 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	boolean connected = false;
 	
 	private VegaDisplayConfiguration config;
-    private VegaDisplayClient displayClient;  
+    private ConnectionCheckThread connectionCheckThread;
+    private VegaDisplayClient displayClient;
+    
+    private ImageIcon iconConnected;
+    private ImageIcon iconDisconnected;
+    private IconLabel labConnectionStatus;
     private IconLabel labMenu;
     
     private JMenuItem menuAbout;
@@ -89,6 +94,8 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		super(VegaResources.VegaDisplay(false), new BorderLayout());
 		
 		ImageIcon iconMenu = new ImageIcon (ClassLoader.getSystemResource("ic_menu.png"));
+	    this.iconConnected = new ImageIcon (ClassLoader.getSystemResource("connected.png"));
+		this.iconDisconnected = new ImageIcon (ClassLoader.getSystemResource("disconnected.png"));
 		
 		this.config = VegaDisplayConfiguration.get();
 		
@@ -119,6 +126,15 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		
 		Toolbar toolbar = new Toolbar(this.labMenu);
 		
+		this.labConnectionStatus = new IconLabel(
+				new ImageIcon[] {
+						this.iconDisconnected,
+						this.iconConnected
+						},
+				this);
+		
+		toolbar.addIconLabel(this.labConnectionStatus, 2);
+		
 		this.add(toolbar, BorderLayout.WEST);
 		
 		this.paintPanel = new PanelScreenContent(null);
@@ -127,6 +143,9 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setVisible(true);
 		this.paintPanel.requestFocusInWindow();
+		
+		this.connectionCheckThread = new ConnectionCheckThread();
+		this.connectionCheckThread.start();
 		
 		ActionEvent e = new ActionEvent(
 				this.menuConnectionSettings, 
@@ -149,12 +168,7 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		}
 		else if (JMenuItem == this.menuConnectionSettings)
 		{
-			VegaDisplaySettingsJDialog dlg = new VegaDisplaySettingsJDialog(
-												this, 
-												VegaResources.ConnectionSettings(false),
-												true,
-												this.config);
-			dlg.setVisible(true);
+			this.openDisplaySettings();
 		}
 		else if (JMenuItem == this.menuHelp)
 		{
@@ -190,6 +204,10 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		{
 			Dimension dim = this.labMenu.getSize();
 			this.popupMenu.show(this.labMenu, dim.width / 2, dim.height / 2);
+		}
+		else if (source == this.labConnectionStatus)
+		{
+			this.openDisplaySettings();
 		}
 	}
 	
@@ -262,16 +280,71 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	    return popupMenu;
 	}
 	
+	private void openDisplaySettings()
+	{
+		VegaDisplaySettingsJDialog dlg = new VegaDisplaySettingsJDialog(
+				this, 
+				VegaResources.ConnectionSettings(false),
+				true,
+				this.config);
+		dlg.setVisible(true);
+	}
+	
 	private void stopDisplayClient()
 	{
 		if (this.displayClient == null) return;
 		
+		if (this.connectionCheckThread != null)
+		{
+			try
+			{
+				this.connectionCheckThread.interrupt();
+			}
+			catch (Exception x) {}
+		}
+		
 		try
 		{
-		this.displayClient.interrupt();
+			this.displayClient.interrupt();
 		}
 		catch (Exception x) {}
 		
 		this.displayClient = null;
+	}
+	
+	// ------------------
+	
+	private class ConnectionCheckThread extends Thread
+	{
+		public void run()
+		{
+			do
+			{
+				boolean connected = isDisplayClientEnabled(); 
+					
+				if (connected)
+				{
+					labConnectionStatus.setIconIndex(1);
+					labConnectionStatus.setToolTipText(
+							VegaResources.ConnectedToDisplayServer(
+									false, 
+									displayClient.getServerIpAddress()+":"+displayClient.getServerPort()));
+					
+				}
+				else
+				{
+					labConnectionStatus.setIconIndex(0);
+					labConnectionStatus.setToolTipText(VegaResources.NotConnected(false));
+				}
+
+				try {
+					Thread.sleep(1000);
+				} catch (Exception e)
+				{
+					break;
+				}
+				
+			} while (true);
+		}
 	}
 }
