@@ -32,10 +32,21 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CommonUtils
 {
-	public final static String	RMI_REGISTRATION_NAME_SERVER = "Vega";
 	private static Object cloneLock = new Object();
 	
 	private final static String	DATA_FOLDER = "data"; 
+	
+	public static boolean areBuildsCompatible(String otherBuild)
+	{
+		if (otherBuild == null || otherBuild.compareTo(Game.BUILD_COMPATIBLE) < 0)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
 	
 	public static int[] distributeLoss(int[] originalCounts, int lossCount, int indexPreferred)
 	{

@@ -77,7 +77,7 @@ class DistanceMatrix
 
 		this.game.getConsole().appendText(VegaResources.OpenPdfViewerQuestion(true) + " ");
 
-		ConsoleInput input = this.game.getConsole().waitForKeyPressedYesNo(false);
+		ConsoleInput input = this.game.getConsole().waitForKeyPressedYesNo();
 
 		if (input.getInputText().equals(Console.KEY_YES))
 		{

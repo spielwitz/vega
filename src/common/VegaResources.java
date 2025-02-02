@@ -121,7 +121,7 @@ public class VegaResources
 		symbolDict.put("2A","MovesOfEmailPlayersNotYetImported_2A");
 		symbolDict.put("2B","MovesSuccessfullyImported_2B");
 		symbolDict.put("2C","MovesTransmittedToServer_2C");
-		symbolDict.put("2D","MyIp_2D");
+		symbolDict.put("2D","InitialScreenNotReceived_2D");
 		symbolDict.put("2E","MyName_2E");
 		symbolDict.put("2F","NameOfGame_2F");
 		symbolDict.put("2G","Name_2G");
@@ -137,7 +137,7 @@ public class VegaResources
 		symbolDict.put("2Q","Next_2Q");
 		symbolDict.put("2R","NoAllianceOnPlanet_2R");
 		symbolDict.put("2S","NoAlliance_2S");
-		symbolDict.put("2T","NoConnectionToServer_2T");
+		symbolDict.put("2T","ConnectionErrorSecurityCode_2T");
 		symbolDict.put("2U","Credentials_2U");
 		symbolDict.put("2V","NoPlanetsWithAlliances_2V");
 		symbolDict.put("2W","NoSpaceships_2W");
@@ -217,7 +217,7 @@ public class VegaResources
 		symbolDict.put("50","SaveLogFileError_50");
 		symbolDict.put("51","SaveLogFile_51");
 		symbolDict.put("52","UnsavedChanges_52");
-		symbolDict.put("53","SecurityCodeInvalid_53");
+		symbolDict.put("53","MaximumConnections_53");
 		symbolDict.put("54","SecurityCode_54");
 		symbolDict.put("55","Select_55");
 		symbolDict.put("56","SellPrice_56");
@@ -231,7 +231,6 @@ public class VegaResources
 		symbolDict.put("5E","ServerCredentialsNotEntered_5E");
 		symbolDict.put("5F","ServerIp_5F");
 		symbolDict.put("5G","ServerLogEmpty_5G");
-		symbolDict.put("5H","ServerNotReached_5H");
 		symbolDict.put("5I","ServerPort_5I");
 		symbolDict.put("5J","ServerSetupAborted_5J");
 		symbolDict.put("5K","ServerShutdownSuccessfully_5K");
@@ -256,7 +255,7 @@ public class VegaResources
 		symbolDict.put("63","Statistics_63");
 		symbolDict.put("64","SubmitChangesToServer_64");
 		symbolDict.put("65","Success_65");
-		symbolDict.put("66","Terminalserver_66");
+		symbolDict.put("66","DisplayServer_66");
 		symbolDict.put("67","TerminateAlliance_67");
 		symbolDict.put("68","TextFile_68");
 		symbolDict.put("69","ThereAreNoMoves_69");
@@ -323,11 +322,9 @@ public class VegaResources
 		symbolDict.put("7Z","UserNotParticipating_7Z");
 		symbolDict.put("80","UserUpdated_80");
 		symbolDict.put("81","Users_81");
-		symbolDict.put("82","VegaDisplayNotRegistered_82");
-		symbolDict.put("83","VegaDisplayServerActive_83");
+		symbolDict.put("83","ConnectedToDisplayServer_83");
 		symbolDict.put("84","VegaDisplayServer_84");
 		symbolDict.put("85","VegaDisplay_85");
-		symbolDict.put("86","VegaDisplaysPassive_86");
 		symbolDict.put("87","VegaLanguage_87");
 		symbolDict.put("88","ConnectAsPlayerWithCredentials_88");
 		symbolDict.put("89","VegaServerSetupWelcome_89");
@@ -1195,10 +1192,10 @@ public class VegaResources
 	}
 
 	/**
-	   * My IP address [2D]
+	   * The initial contents could not be transmitted. [2D]
 	   */
-	public static String MyIp(boolean symbol) {
-		return symbol ? "£2D£":messages.getString("MyIp_2D");
+	public static String InitialScreenNotReceived(boolean symbol) {
+		return symbol ? "£2D£":messages.getString("InitialScreenNotReceived_2D");
 	}
 
 	/**
@@ -1307,10 +1304,10 @@ public class VegaResources
 	}
 
 	/**
-	   * No connection to server {0} [2T]
+	   * Connection error. Check the security code. [2T]
 	   */
-	public static String NoConnectionToServer(boolean symbol, String arg0) {
-		return symbol ? "£2T§"+arg0+"£":MessageFormat.format(messages.getString("NoConnectionToServer_2T"), arg0);
+	public static String ConnectionErrorSecurityCode(boolean symbol) {
+		return symbol ? "£2T£":messages.getString("ConnectionErrorSecurityCode_2T");
 	}
 
 	/**
@@ -1629,7 +1626,7 @@ public class VegaResources
 	}
 
 	/**
-	   * >>> A player is entering his moves. Input is disabled. <<< [43]
+	   * >>> A player is entering his moves. <<< [43]
 	   */
 	public static String PlayerEnteringMovesInputDisabled(boolean symbol) {
 		return symbol ? "£43£":messages.getString("PlayerEnteringMovesInputDisabled_43");
@@ -1867,10 +1864,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Invalid security code. [53]
+	   * Maximum number of connections reached. [53]
 	   */
-	public static String SecurityCodeInvalid(boolean symbol) {
-		return symbol ? "£53£":messages.getString("SecurityCodeInvalid_53");
+	public static String MaximumConnections(boolean symbol) {
+		return symbol ? "£53£":messages.getString("MaximumConnections_53");
 	}
 
 	/**
@@ -1962,13 +1959,6 @@ public class VegaResources
 	   */
 	public static String ServerLogEmpty(boolean symbol) {
 		return symbol ? "£5G£":messages.getString("ServerLogEmpty_5G");
-	}
-
-	/**
-	   * Server {0} cannot be reached [5H]
-	   */
-	public static String ServerNotReached(boolean symbol, String arg0) {
-		return symbol ? "£5H§"+arg0+"£":MessageFormat.format(messages.getString("ServerNotReached_5H"), arg0);
 	}
 
 	/**
@@ -2142,8 +2132,8 @@ public class VegaResources
 	/**
 	   * VEGA Display server [66]
 	   */
-	public static String Terminalserver(boolean symbol) {
-		return symbol ? "£66£":messages.getString("Terminalserver_66");
+	public static String DisplayServer(boolean symbol) {
+		return symbol ? "£66£":messages.getString("DisplayServer_66");
 	}
 
 	/**
@@ -2609,17 +2599,10 @@ public class VegaResources
 	}
 
 	/**
-	   * VEGA Display has not been registered at server {0} [82]
+	   * Connected with VEGA Display server {0} [83]
 	   */
-	public static String VegaDisplayNotRegistered(boolean symbol, String arg0) {
-		return symbol ? "£82§"+arg0+"£":MessageFormat.format(messages.getString("VegaDisplayNotRegistered_82"), arg0);
-	}
-
-	/**
-	   * VEGA Display server is active [83]
-	   */
-	public static String VegaDisplayServerActive(boolean symbol) {
-		return symbol ? "£83£":messages.getString("VegaDisplayServerActive_83");
+	public static String ConnectedToDisplayServer(boolean symbol, String arg0) {
+		return symbol ? "£83§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedToDisplayServer_83"), arg0);
 	}
 
 	/**
@@ -2634,13 +2617,6 @@ public class VegaResources
 	   */
 	public static String VegaDisplay(boolean symbol) {
 		return symbol ? "£85£":messages.getString("VegaDisplay_85");
-	}
-
-	/**
-	   * VEGA Displays passive while moves are being entered [86]
-	   */
-	public static String VegaDisplaysPassive(boolean symbol) {
-		return symbol ? "£86£":messages.getString("VegaDisplaysPassive_86");
 	}
 
 	/**
@@ -2728,7 +2704,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Web server [8J]
+	   * Webserver [8J]
 	   */
 	public static String WebServer(boolean symbol) {
 		return symbol ? "£8J£":messages.getString("WebServer_8J");
@@ -3344,7 +3320,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Client and server are using different VEGA builds [B0]
+	   * Client and server are using incompatible VEGA builds. [B0]
 	   */
 	public static String ClientServerDifferentBuilds(boolean symbol) {
 		return symbol ? "£B0£":messages.getString("ClientServerDifferentBuilds_B0");

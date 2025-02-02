@@ -37,7 +37,7 @@ public class ScreenContent implements Serializable
 	private boolean s;
 	private int g;
 	
-	ScreenContent()
+	public ScreenContent()
 	{
 		this.m = MODE_BOARD;
 	}

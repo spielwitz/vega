@@ -22,7 +22,6 @@ import java.util.ArrayList;
 class Console
 {
 	static final int TEXT_LINES_COUNT_MAX = 5;
-	private static final char HIDDEN_CHAR = '-';
 	static final String KEY_YES = "1";
 	private String[] textLines;
 	private byte[] lineColors;
@@ -159,16 +158,15 @@ class Console
 		if (this.isBackground())
 			this.allowedKeys.add(new ConsoleKey("ESC", VegaResources.Cancel(true)));
 		
-		this.keyInput(1, false, true, "");
+		this.keyInput(1, true, "");
 	}
 	
 	@SuppressWarnings("unchecked") 
 	ConsoleInput waitForKeyPressed(
-			ArrayList<ConsoleKey> allowedKeys, 
-			boolean hidden)
+			ArrayList<ConsoleKey> allowedKeys)
 	{
 		this.allowedKeys = (ArrayList<ConsoleKey>)CommonUtils.klon(allowedKeys);
-		return this.keyInput(1, hidden, false, "");
+		return this.keyInput(1, false, "");
 	}
 	
 	
@@ -179,7 +177,7 @@ class Console
 		this.allowedKeys.add(new ConsoleKey("ESC", VegaResources.AbortReplay(true)));
 		this.allowedKeys.add(new ConsoleKey(VegaResources.OtherKey(true), VegaResources.NextEvent(true)));
 		
-		this.keyInput(1, false, true, "");
+		this.keyInput(1, true, "");
 	}
 	
 	ReplayKeyPressed waitForKeyPressedReplay()
@@ -194,27 +192,25 @@ class Console
 			return ReplayKeyPressed.NEXT;
 	}
 	
-	ConsoleInput waitForKeyPressedYesNo(
-			boolean hidden)
+	ConsoleInput waitForKeyPressedYesNo()
 	{
 		this.allowedKeys = new ArrayList<ConsoleKey>();
 		
 		this.allowedKeys.add(new ConsoleKey(KEY_YES, VegaResources.Yes(true)));
 		this.allowedKeys.add(new ConsoleKey(VegaResources.OtherKey(true), VegaResources.No(true)));
 		
-		return this.keyInput(1, hidden, false, "");
+		return this.keyInput(1, false, "");
 	}
 	
 	ConsoleInput waitForTextEntered(
 			int textLengthMax,
 			ArrayList<ConsoleKey> allowedKeys,
-			boolean hidden,
 			boolean appendStandardKeys)
 	{
-		return this.waitForTextEntered(textLengthMax, allowedKeys, hidden, appendStandardKeys, "");
+		return this.waitForTextEntered(textLengthMax, allowedKeys, appendStandardKeys, "");
 	}
 	
-	private ConsoleInput keyInput(int textLengthMax, boolean hidden, boolean noDisplay, String presetText)
+	private ConsoleInput keyInput(int textLengthMax, boolean noDisplay, String presetText)
 	{
 		if (!noDisplay)
 			this.appendText(">" + presetText);
@@ -325,10 +321,7 @@ class Console
 					
 					if (!noDisplay)
 					{
-						if (hidden)
-							this.textLines[this.outputLine] = this.textLines[this.outputLine] + HIDDEN_CHAR;
-						else
-							this.textLines[this.outputLine] = this.textLines[this.outputLine] + c;
+						this.textLines[this.outputLine] = this.textLines[this.outputLine] + c;
 					}
 					
 					inputText.append(c);
@@ -373,7 +366,6 @@ class Console
 	private ConsoleInput waitForTextEntered(
 			int textLengthMax,
 			ArrayList<ConsoleKey> allowedKeys,
-			boolean hidden,
 			boolean appendStandardKeys,
 			String presetText)
 	{
@@ -382,7 +374,7 @@ class Console
 		if (appendStandardKeys)
 			this.allowedKeys.add(new ConsoleKey("ESC",VegaResources.Cancel(true)));
 
-		return this.keyInput(textLengthMax, hidden, false, presetText);
+		return this.keyInput(textLengthMax, false, presetText);
 	}
 
 	enum ConsoleModus

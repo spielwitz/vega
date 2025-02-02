@@ -86,7 +86,7 @@ public final class QrCode {
 	 * @throws DataTooLongException if the data fails to fit in the
 	 * largest version QR Code at the ECL, which means it is too long
 	 */
-	public static QrCode encodeBinary(byte[] data, Ecc ecl) {
+	public static QrCode encodeBinary(byte[] data, Ecc ecl) { // NO_UCD (use default)
 		Objects.requireNonNull(data);
 		Objects.requireNonNull(ecl);
 		QrSegment seg = QrSegment.makeBytes(data);
@@ -217,7 +217,7 @@ public final class QrCode {
 	/** The index of the mask pattern used in this QR Code, which is between 0 and 7 (inclusive).
 	 * <p>Even if a QR Code is created with automatic masking requested (mask =
 	 * &#x2212;1), the resulting object still has a mask value between 0 and 7. */
-	public final int mask;
+	public final int mask; // NO_UCD (use default)
 	
 	// Private grids of modules/pixels, with dimensions of size*size:
 	
@@ -319,7 +319,7 @@ public final class QrCode {
 	 * @return a string representing this QR Code as an SVG XML document
 	 * @throws IllegalArgumentException if the border is negative
 	 */
-	public String toSvgString(int border) {
+	public String toSvgString(int border) { // NO_UCD (use default)
 		if (border < 0)
 			throw new IllegalArgumentException("Border must be non-negative");
 		long brd = border;

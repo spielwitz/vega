@@ -25,12 +25,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.UUID;
 
 import com.google.gson.Gson;
 
 import common.CommonUtils;
 import common.VegaResources;
+import vegaDisplayCommon.DataTransferLib;
 
 class VegaDisplayConfiguration
 {
@@ -58,12 +58,12 @@ class VegaDisplayConfiguration
 			}
 		}
 		
-		config.clientId = UUID.randomUUID().toString();
-		
         if (config.clientCode == null)
         	config.clientCode = "";
         if (config.myName == null)
         	config.myName = "";
+        if (config.serverPort == 0)
+        	config.serverPort = DataTransferLib.SERVER_PORT;
 		
 		if (config.locale != null)
 			VegaResources.setLocale(config.locale);
@@ -93,8 +93,6 @@ class VegaDisplayConfiguration
 		
 		if (properties.containsKey("serverIpAddress"))
 			config.serverIpAddress = properties.getProperty("serverIpAddress");
-		if (properties.containsKey("myIpAddress"))
-			config.myIpAddress = properties.getProperty("myIpAddress");
 		if (properties.containsKey("myName"))
 			config.myName = properties.getProperty("myName");
 		if (properties.containsKey("language"))
@@ -113,35 +111,29 @@ class VegaDisplayConfiguration
 	}
 	
 	private String				serverIpAddress;
-	private String				myIpAddress;
+	private int					serverPort;
 	
 	private String				myName;
 	private String				locale;
 	
 	private boolean				firstTimeStart;
 	
-	private transient String	clientId;
-	
 	private transient String	clientCode;
 	
 	VegaDisplayConfiguration()
 	{
 		this.firstTimeStart = true;
+		this.serverPort = DataTransferLib.SERVER_PORT;
 	}
 	
 	String getClientCode()
 	{
 		return clientCode;
 	}
-
-	String getClientId()
+	
+	int getServerPort()
 	{
-		return clientId;
-	}
-
-	String getMyIpAddress()
-	{
-		return myIpAddress;
+		return serverPort;
 	}
 
 	String getMyName()
@@ -173,12 +165,6 @@ class VegaDisplayConfiguration
 	void setLocale(String locale)
 	{
 		this.locale = locale;
-		this.writeToFile();
-	}
-
-	void setMyIpAddress(String myIpAddress)
-	{
-		this.myIpAddress = myIpAddress;
 		this.writeToFile();
 	}
 
