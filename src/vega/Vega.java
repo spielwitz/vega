@@ -452,6 +452,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			dlg.setVisible(true);
 			
 			this.config.setMyIpAddress(dlg.myIpAddress);
+			this.config.setDisplayServerPort(dlg.serverPort);
 			
 			this.updateTitle();
 			
@@ -1331,7 +1332,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	    this.menuServerSettings.addActionListener(this);
 	    menuSettings.add(this.menuServerSettings);
 	    
-	    this.menuServer = new JMenuItem(VegaResources.Terminalserver(false));
+	    this.menuServer = new JMenuItem(VegaResources.DisplayServer(false));
 	    this.menuServer.addActionListener(this);
 	    menuSettings.add(this.menuServer);
 	    

@@ -255,7 +255,7 @@ public class VegaResources
 		symbolDict.put("63","Statistics_63");
 		symbolDict.put("64","SubmitChangesToServer_64");
 		symbolDict.put("65","Success_65");
-		symbolDict.put("66","Terminalserver_66");
+		symbolDict.put("66","DisplayServer_66");
 		symbolDict.put("67","TerminateAlliance_67");
 		symbolDict.put("68","TextFile_68");
 		symbolDict.put("69","ThereAreNoMoves_69");
@@ -325,7 +325,6 @@ public class VegaResources
 		symbolDict.put("83","ConnectedToDisplayServer_83");
 		symbolDict.put("84","VegaDisplayServer_84");
 		symbolDict.put("85","VegaDisplay_85");
-		symbolDict.put("86","VegaDisplaysPassive_86");
 		symbolDict.put("87","VegaLanguage_87");
 		symbolDict.put("88","ConnectAsPlayerWithCredentials_88");
 		symbolDict.put("89","VegaServerSetupWelcome_89");
@@ -2133,8 +2132,8 @@ public class VegaResources
 	/**
 	   * VEGA Display server [66]
 	   */
-	public static String Terminalserver(boolean symbol) {
-		return symbol ? "£66£":messages.getString("Terminalserver_66");
+	public static String DisplayServer(boolean symbol) {
+		return symbol ? "£66£":messages.getString("DisplayServer_66");
 	}
 
 	/**
@@ -2618,13 +2617,6 @@ public class VegaResources
 	   */
 	public static String VegaDisplay(boolean symbol) {
 		return symbol ? "£85£":messages.getString("VegaDisplay_85");
-	}
-
-	/**
-	   * VEGA Displays passive while moves are being entered [86]
-	   */
-	public static String VegaDisplaysPassive(boolean symbol) {
-		return symbol ? "£86£":messages.getString("VegaDisplaysPassive_86");
 	}
 
 	/**

@@ -59,7 +59,7 @@ import spielwitz.biDiServer.ServerException;
 import spielwitz.biDiServer.Tuple;
 import spielwitz.biDiServer.User;
 
-public class VegaServer extends Server
+public class VegaServer extends Server // NO_UCD (use default)
 {
 	private static ServerConfiguration serverConfig;
 	private final static File fileServerCredentials = 

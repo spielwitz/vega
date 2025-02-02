@@ -62,7 +62,7 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 			String myIpAddress,
 			int serverPort)
 	{
-		super (parent, VegaResources.Terminalserver(false), new BorderLayout());
+		super (parent, VegaResources.DisplayServer(false), new BorderLayout());
 		
 		this.myIpAddress = myIpAddress == null || myIpAddress.equals("") ?
 				CommonUtils.getMyIPAddress() : myIpAddress;
@@ -76,7 +76,7 @@ class VegaDisplayServerSettingsJDialog extends Dialog implements IButtonListener
 		Panel panMain = new Panel(new BorderLayout(20,10));
 		
 		// ---------------
-		Panel panSettings = new Panel(VegaResources.Terminalserver(false), new GridBagLayout());
+		Panel panSettings = new Panel(VegaResources.DisplayServer(false), new GridBagLayout());
 		
 		GridBagConstraints cPanSettings = new GridBagConstraints();
 		
