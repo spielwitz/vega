@@ -33,6 +33,7 @@ public class TextArea extends JScrollPane
 		this.textArea = new JTextArea(text);
 		
 		this.textArea.setLineWrap(true);
+		this.textArea.setWrapStyleWord(true);
 		
 		this.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED;
 		this.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER;
