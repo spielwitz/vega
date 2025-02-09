@@ -93,6 +93,7 @@ class ServerGamesJDialog extends Dialog
 	private Label			labUpdateLast;
 	private Label			labYear;
 	private List			listGames;
+	private MenuItem		menuItemEvaluateYear;
 	private MenuItem		menuItemGameDelete;
 	private MenuItem		menuItemGameFinalize;
 	private PanelPlayer[]	pansPlayer;
@@ -196,11 +197,13 @@ class ServerGamesJDialog extends Dialog
 		panWestButtons.add(this.butGameLoad, cPanWest);
 		
 		cPanWest.gridx = 0; cPanWest.gridy = 2;
+		this.menuItemEvaluateYear = new MenuItem(VegaResources.EvaluateYear(false), this);
 		this.menuItemGameFinalize = new MenuItem(VegaResources.FinalizeGame(false), this);
 		this.menuItemGameDelete = new MenuItem(VegaResources.DeleteGame(false), this);
 		this.butGameHostActions = new Button(
 				VegaResources.GameHostActions(false),
 				new MenuItem[] {
+						this.menuItemEvaluateYear,
 						this.menuItemGameFinalize, 
 						this.menuItemGameDelete});
 		
@@ -402,7 +405,11 @@ class ServerGamesJDialog extends Dialog
 		else if (source == this.menuItemGameFinalize)
 		{
 			this.finalizeGame(this.listGames.getSelectedValue());
-		}		
+		}
+		else if (source == this.menuItemEvaluateYear)
+		{
+			this.evaluateYear(this.listGames.getSelectedValue());
+		}	
 	}
 	
 	@Override
@@ -524,7 +531,37 @@ class ServerGamesJDialog extends Dialog
 		}
 	}
 
-	// ========================
+	private void evaluateYear(String gameId)
+	{
+		MessageBoxResult dialogResult = MessageBox.showYesNo(
+				this,
+			    VegaResources.EvaluateYearQuestion(
+			    		false, 
+			    		Integer.toString(this.gameInfoByName.get(gameId).year + 1), 
+			    		gameId),
+			    VegaResources.Evaluation(false));
+		
+		if (dialogResult != MessageBoxResult.YES)
+			return;
+		
+		Vega.showWaitCursor(this);
+		ResponseInfo info = this.client.evaluateYear(gameId);
+		Vega.showDefaultCursor(this);
+		
+		if (info.isSuccess())
+		{
+			MessageBox.showInformation(
+					this, 
+					VegaResources.GameFinalizedSuccessfully(false, gameId), 
+					VegaResources.Evaluation(false));
+			
+			this.close();
+		}
+		else
+		{
+			Vega.showServerError(this, info);
+		}
+	}
 	
 	private void finalizeGame(String gameId)
 	{
@@ -615,9 +652,6 @@ class ServerGamesJDialog extends Dialog
 
 		return planets;
 	}
-	
-	
-	// ============
 	
 	private void newGame(boolean playersCountChanged)
 	{
@@ -731,6 +765,7 @@ class ServerGamesJDialog extends Dialog
 			boolean isGameHost = this.gameInfo.players[0].getName().equals(client.getConfig().getUserId());
 			
 			this.butGameHostActions.setEnabled(isGameHost);
+			this.menuItemEvaluateYear.setEnabled(isGameHost && !gameInfo.finalized);
 			this.menuItemGameFinalize.setEnabled(isGameHost && !gameInfo.finalized);
 			this.butGameLoad.setEnabled(true);
 			this.butGameSubmit.setEnabled(false);

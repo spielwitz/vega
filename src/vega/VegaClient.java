@@ -27,6 +27,7 @@ import commonServer.PayloadNotificationMessage;
 import commonServer.PayloadNotificationNewEvaluation;
 import commonServer.PayloadRequestMessageDeleteGame;
 import commonServer.PayloadRequestMessageDeleteUserFromHighscores;
+import commonServer.PayloadRequestMessageEvaluateYear;
 import commonServer.PayloadRequestMessageFinalizeGame;
 import commonServer.PayloadRequestMessageGetGame;
 import commonServer.PayloadRequestMessageGetGamesAndUsers;
@@ -139,6 +140,14 @@ class VegaClient extends Client
 		synchronized(this.getLockObject(gameId))
 		{
 			return this.sendCustomRequestMessage(new PayloadRequestMessageFinalizeGame(gameId)).getResponseInfo();
+		}
+	}
+	
+	ResponseInfo evaluateYear(String gameId)
+	{
+		synchronized(this.getLockObject(gameId))
+		{
+			return this.sendCustomRequestMessage(new PayloadRequestMessageEvaluateYear(gameId)).getResponseInfo();
 		}
 	}
 	

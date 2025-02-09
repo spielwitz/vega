@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FB
+		// Last used symbolic key: FE
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -576,6 +576,9 @@ public class VegaResources
 		symbolDict.put("F9","FightSimulationCombatStrength_F9");
 		symbolDict.put("FA","BuySellCombatStrength_FA");
 		symbolDict.put("FB","GameHostActions_FB");
+		symbolDict.put("FC","EvaluateYearQuestion_FC");
+		symbolDict.put("FD","EvaluateYearSuccess_FD");
+		symbolDict.put("FE","EvaluateYear_FE");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4375,5 +4378,26 @@ public class VegaResources
 	   */
 	public static String GameHostActions(boolean symbol) {
 		return symbol ? "£FB£":messages.getString("GameHostActions_FB");
+	}
+
+	/**
+	   * Do you want to start the evaluation of year {0} for the game {1}? [FC]
+	   */
+	public static String EvaluateYearQuestion(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£FC§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("EvaluateYearQuestion_FC"), arg0, arg1);
+	}
+
+	/**
+	   * The year's evaluation for the game {0} was performed successfully. [FD]
+	   */
+	public static String EvaluateYearSuccess(boolean symbol, String arg0) {
+		return symbol ? "£FD§"+arg0+"£":MessageFormat.format(messages.getString("EvaluateYearSuccess_FD"), arg0);
+	}
+
+	/**
+	   * Start year evaluation [FE]
+	   */
+	public static String EvaluateYear(boolean symbol) {
+		return symbol ? "£FE£":messages.getString("EvaluateYear_FE");
 	}
 }
