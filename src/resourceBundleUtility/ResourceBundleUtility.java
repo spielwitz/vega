@@ -112,13 +112,23 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 		sb.append("\t\t\t\t\tfor (int i = 1; i < parts.length; i++)\n");
 		sb.append("\t\t\t\t\t\targs[i-1] = parts[i];\n");
 		
-		sb.append("\t\t\t\t\t\tsb.append(MessageFormat.format(messages.getString(symbolDict.get(parts[0])) ,args));\n");
+		sb.append("\t\t\t\t\t\tsb.append(format(messages.getString(symbolDict.get(parts[0])) ,args));\n");
 		sb.append("\t\t\t}}\n");
 		sb.append("\t\t\tpos = endPos + 1;\n");
 		sb.append("\t\t} while (true);\n");
 		sb.append("\t\treturn sb.toString();\n");
 		sb.append("\t}\n");
 	}
+	
+	private static void createFormatMethod(StringBuilder sb)
+	{
+		sb.append("\tprivate static String format(String text, Object[] args) {\n");
+		sb.append("\t\tfor (int i = 0; i < args.length; i++)\n");
+		sb.append("\t\t\ttext = text.replace(\"{\"+i+\"}\", args[i].toString());\n");
+		sb.append("\t\treturn text;\n");
+		sb.append("\t}\n");
+	}
+	
 	private Properties properties;
 	
 	private String propertiesFile = "";
@@ -406,7 +416,6 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 		if (this.outputPackageName.length() > 0)
 			sb.append("package "+this.outputPackageName+";\n\n");
 		sb.append("import java.util.Hashtable;\n");
-		sb.append("import java.text.MessageFormat;\n");
 		sb.append("import java.util.Locale;\n");
 		sb.append("import java.util.ResourceBundle;\n\n");
 		
@@ -501,6 +510,7 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 		sb.append("\t}\n");
 		
 		createConvertSymbolStringMethod(sb);
+		createFormatMethod(sb);
 				
 		for (String symbol: symbolList)
 		{
@@ -565,19 +575,18 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 			sb.append("messages.getString(\""+key+"\")");
 		else
 		{
-			sb.append("MessageFormat.format(");
+			sb.append("format(");
 			
-			sb.append("messages.getString(\""+key+"\")");
+			sb.append("messages.getString(\""+key+"\"), new Object[]{");
 			
 			for (int i = 0; i < numArgs; i++)
 			{
-				sb.append(", arg" + i);
+				if (i > 0) sb.append(",");
+				sb.append("arg" + i);
 			}
 			
-			sb.append(")");
+			sb.append("})");
 		}
-			
-		
 		
 		return sb.toString();
 	}

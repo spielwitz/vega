@@ -1,7 +1,6 @@
 package common;
 
 import java.util.Hashtable;
-import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -600,11 +599,16 @@ public class VegaResources
 					Object[] args = new Object[parts.length - 1];
 					for (int i = 1; i < parts.length; i++)
 						args[i-1] = parts[i];
-						sb.append(MessageFormat.format(messages.getString(symbolDict.get(parts[0])) ,args));
+						sb.append(format(messages.getString(symbolDict.get(parts[0])) ,args));
 			}}
 			pos = endPos + 1;
 		} while (true);
 		return sb.toString();
+	}
+	private static String format(String text, Object[] args) {
+		for (int i = 0; i < args.length; i++)
+			text = text.replace("{"+i+"}", args[i].toString());
+		return text;
 	}
 
 	/**
@@ -632,7 +636,7 @@ public class VegaResources
 	   * How many $ (max. {0})? [03]
 	   */
 	public static String HowMuchMoney(boolean symbol, String arg0) {
-		return symbol ? "£03§"+arg0+"£":MessageFormat.format(messages.getString("HowMuchMoney_03"), arg0);
+		return symbol ? "£03§"+arg0+"£":format(messages.getString("HowMuchMoney_03"), new Object[]{arg0});
 	}
 
 	/**
@@ -653,7 +657,7 @@ public class VegaResources
 	   * $ production/year (+{0}) [06]
 	   */
 	public static String IncreaseMoneyProduction(boolean symbol, String arg0) {
-		return symbol ? "£06§"+arg0+"£":MessageFormat.format(messages.getString("IncreaseMoneyProduction_06"), arg0);
+		return symbol ? "£06§"+arg0+"£":format(messages.getString("IncreaseMoneyProduction_06"), new Object[]{arg0});
 	}
 
 	/**
@@ -695,7 +699,7 @@ public class VegaResources
 	   * Last activity: {0} [0D]
 	   */
 	public static String LastActivity(boolean symbol, String arg0) {
-		return symbol ? "£0D§"+arg0+"£":MessageFormat.format(messages.getString("LastActivity_0D"), arg0);
+		return symbol ? "£0D§"+arg0+"£":format(messages.getString("LastActivity_0D"), new Object[]{arg0});
 	}
 
 	/**
@@ -793,7 +797,7 @@ public class VegaResources
 	   * Max: {0} (year {1}) [0R]
 	   */
 	public static String MaxInYear(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£0R§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("MaxInYear_0R"), arg0, arg1);
+		return symbol ? "£0R§"+arg0+"§"+arg1+"£":format(messages.getString("MaxInYear_0R"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -814,7 +818,7 @@ public class VegaResources
 	   * {0}: Message from sector {1}: [0U]
 	   */
 	public static String MessageFromSector(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£0U§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("MessageFromSector_0U"), arg0, arg1);
+		return symbol ? "£0U§"+arg0+"§"+arg1+"£":format(messages.getString("MessageFromSector_0U"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -835,7 +839,7 @@ public class VegaResources
 	   * {0} character(s) left [0X]
 	   */
 	public static String MessengerCharactersLeft(boolean symbol, String arg0) {
-		return symbol ? "£0X§"+arg0+"£":MessageFormat.format(messages.getString("MessengerCharactersLeft_0X"), arg0);
+		return symbol ? "£0X§"+arg0+"£":format(messages.getString("MessengerCharactersLeft_0X"), new Object[]{arg0});
 	}
 
 	/**
@@ -856,7 +860,7 @@ public class VegaResources
 	   * 1 minesweeper crashed on planet {0}. [10]
 	   */
 	public static String MinesweeperCrashed(boolean symbol, String arg0) {
-		return symbol ? "£10§"+arg0+"£":MessageFormat.format(messages.getString("MinesweeperCrashed_10"), arg0);
+		return symbol ? "£10§"+arg0+"£":format(messages.getString("MinesweeperCrashed_10"), new Object[]{arg0});
 	}
 
 	/**
@@ -905,14 +909,14 @@ public class VegaResources
 	   * {0} $ [17]
 	   */
 	public static String MoneyFreight(boolean symbol, String arg0) {
-		return symbol ? "£17§"+arg0+"£":MessageFormat.format(messages.getString("MoneyFreight_17"), arg0);
+		return symbol ? "£17§"+arg0+"£":format(messages.getString("MoneyFreight_17"), new Object[]{arg0});
 	}
 
 	/**
 	   * $ prod. in year {0} [18]
 	   */
 	public static String MoneyProductionInYear(boolean symbol, String arg0) {
-		return symbol ? "£18§"+arg0+"£":MessageFormat.format(messages.getString("MoneyProductionInYear_18"), arg0);
+		return symbol ? "£18§"+arg0+"£":format(messages.getString("MoneyProductionInYear_18"), new Object[]{arg0});
 	}
 
 	/**
@@ -933,14 +937,14 @@ public class VegaResources
 	   * The loaded data require a newer<br>VEGA build. The minimum required build is <br>{0}, your VEGA build is<br>{1}.<br><br>Please download the newest build from <br>{2}. [1B]
 	   */
 	public static String MinBuild(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£1B§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("MinBuild_1B"), arg0, arg1, arg2);
+		return symbol ? "£1B§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("MinBuild_1B"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * Min: {0} (year {1}) [1C]
 	   */
 	public static String MinInYear(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£1C§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("MinInYear_1C"), arg0, arg1);
+		return symbol ? "£1C§"+arg0+"§"+arg1+"£":format(messages.getString("MinInYear_1C"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -1031,14 +1035,14 @@ public class VegaResources
 	   * Mine field of strength {0} was swept. [1P]
 	   */
 	public static String MineFieldSwept(boolean symbol, String arg0) {
-		return symbol ? "£1P§"+arg0+"£":MessageFormat.format(messages.getString("MineFieldSwept_1P"), arg0);
+		return symbol ? "£1P§"+arg0+"£":format(messages.getString("MineFieldSwept_1P"), new Object[]{arg0});
 	}
 
 	/**
 	   * {0}: Mine was planted. [1Q]
 	   */
 	public static String MinePlanted(boolean symbol, String arg0) {
-		return symbol ? "£1Q§"+arg0+"£":MessageFormat.format(messages.getString("MinePlanted_1Q"), arg0);
+		return symbol ? "£1Q§"+arg0+"£":format(messages.getString("MinePlanted_1Q"), new Object[]{arg0});
 	}
 
 	/**
@@ -1080,14 +1084,14 @@ public class VegaResources
 	   * 1 minelayer arrived on planet {0}. [1W]
 	   */
 	public static String MinelayerArrived(boolean symbol, String arg0) {
-		return symbol ? "£1W§"+arg0+"£":MessageFormat.format(messages.getString("MinelayerArrived_1W"), arg0);
+		return symbol ? "£1W§"+arg0+"£":format(messages.getString("MinelayerArrived_1W"), new Object[]{arg0});
 	}
 
 	/**
 	   * 1 minelayer crashed on planet {0}. [1X]
 	   */
 	public static String MinelayerCrashed(boolean symbol, String arg0) {
-		return symbol ? "£1X§"+arg0+"£":MessageFormat.format(messages.getString("MinelayerCrashed_1X"), arg0);
+		return symbol ? "£1X§"+arg0+"£":format(messages.getString("MinelayerCrashed_1X"), new Object[]{arg0});
 	}
 
 	/**
@@ -1101,7 +1105,7 @@ public class VegaResources
 	   * 1 minesweeper arrived on planet {0}. [1Z]
 	   */
 	public static String MinesweeperArrived(boolean symbol, String arg0) {
-		return symbol ? "£1Z§"+arg0+"£":MessageFormat.format(messages.getString("MinesweeperArrived_1Z"), arg0);
+		return symbol ? "£1Z§"+arg0+"£":format(messages.getString("MinesweeperArrived_1Z"), new Object[]{arg0});
 	}
 
 	/**
@@ -1185,7 +1189,7 @@ public class VegaResources
 	   * Moves of {0} successfully imported. [2B]
 	   */
 	public static String MovesSuccessfullyImported(boolean symbol, String arg0) {
-		return symbol ? "£2B§"+arg0+"£":MessageFormat.format(messages.getString("MovesSuccessfullyImported_2B"), arg0);
+		return symbol ? "£2B§"+arg0+"£":format(messages.getString("MovesSuccessfullyImported_2B"), new Object[]{arg0});
 	}
 
 	/**
@@ -1269,7 +1273,7 @@ public class VegaResources
 	   * Hi {0},\n\nwelcome to VEGA! Your new user [{1}] on server {2}:{3} (build {4}) has been created and only needs to be activated.\n\nPlease proceed as follows:\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select "Settings > VEGA server settings -> Credentials -> + -> Inactive user from the clipboard".\n\n3. Insert the contents of the clipboard into the text field and enter the password that you agreed on with your server administrator. Prss "OK".\n\n4. Activate the user with the button "Activate".\n\n5. Select your user from the drop-down list next to "Connect as player with the credentials" and set the checkbox.\n\n6. Close the dialog by pressing "OK".\n\nYour user is now active.\n\nEnjoy VEGA!\nYour server administrator [2N]
 	   */
 	public static String NewUserEmailBody(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4) {
-		return symbol ? "£2N§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":MessageFormat.format(messages.getString("NewUserEmailBody_2N"), arg0, arg1, arg2, arg3, arg4);
+		return symbol ? "£2N§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":format(messages.getString("NewUserEmailBody_2N"), new Object[]{arg0,arg1,arg2,arg3,arg4});
 	}
 
 	/**
@@ -1297,7 +1301,7 @@ public class VegaResources
 	   * There is no alliance on planet {0}. [2R]
 	   */
 	public static String NoAllianceOnPlanet(boolean symbol, String arg0) {
-		return symbol ? "£2R§"+arg0+"£":MessageFormat.format(messages.getString("NoAllianceOnPlanet_2R"), arg0);
+		return symbol ? "£2R§"+arg0+"£":format(messages.getString("NoAllianceOnPlanet_2R"), new Object[]{arg0});
 	}
 
 	/**
@@ -1381,7 +1385,7 @@ public class VegaResources
 	   * The browser cannot be opened:\n{0} [33]
 	   */
 	public static String OpenBrowserError(boolean symbol, String arg0) {
-		return symbol ? "£33§"+arg0+"£":MessageFormat.format(messages.getString("OpenBrowserError_33"), arg0);
+		return symbol ? "£33§"+arg0+"£":format(messages.getString("OpenBrowserError_33"), new Object[]{arg0});
 	}
 
 	/**
@@ -1416,7 +1420,7 @@ public class VegaResources
 	   * Page {0} [38]
 	   */
 	public static String Page(boolean symbol, String arg0) {
-		return symbol ? "£38§"+arg0+"£":MessageFormat.format(messages.getString("Page_38"), arg0);
+		return symbol ? "£38§"+arg0+"£":format(messages.getString("Page_38"), new Object[]{arg0});
 	}
 
 	/**
@@ -1444,56 +1448,56 @@ public class VegaResources
 	   * 1 patrol arrived on planet {0}. [3C]
 	   */
 	public static String PatrolArrived(boolean symbol, String arg0) {
-		return symbol ? "£3C§"+arg0+"£":MessageFormat.format(messages.getString("PatrolArrived_3C"), arg0);
+		return symbol ? "£3C§"+arg0+"£":format(messages.getString("PatrolArrived_3C"), new Object[]{arg0});
 	}
 
 	/**
 	   * {0}: You captured {1} battleship(s) with destination {2} from {3}. [3D]
 	   */
 	public static String PatrolCapturedBattleships(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
-		return symbol ? "£3D§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":MessageFormat.format(messages.getString("PatrolCapturedBattleships_3D"), arg0, arg1, arg2, arg3);
+		return symbol ? "£3D§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":format(messages.getString("PatrolCapturedBattleships_3D"), new Object[]{arg0,arg1,arg2,arg3});
 	}
 
 	/**
 	   * {0}: You captured a minelayer with destination {1} from {2}. [3E]
 	   */
 	public static String PatrolCapturedMinelayer(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3E§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("PatrolCapturedMinelayer_3E"), arg0, arg1, arg2);
+		return symbol ? "£3E§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedMinelayer_3E"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * {0}: You captured a minesweeper with destination {1} from {2}. [3F]
 	   */
 	public static String PatrolCapturedMinesweeper(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3F§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("PatrolCapturedMinesweeper_3F"), arg0, arg1, arg2);
+		return symbol ? "£3F§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedMinesweeper_3F"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * {0}: You captured a patrol with destination {1} from {2}. [3G]
 	   */
 	public static String PatrolCapturedPatrol(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3G§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("PatrolCapturedPatrol_3G"), arg0, arg1, arg2);
+		return symbol ? "£3G§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedPatrol_3G"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * {0}: You captured a spy with destination {1} from {2}. [3H]
 	   */
 	public static String PatrolCapturedSpy(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3H§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("PatrolCapturedSpy_3H"), arg0, arg1, arg2);
+		return symbol ? "£3H§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedSpy_3H"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * {0}: You captured a transporter with destination {1} from {2}. [3I]
 	   */
 	public static String PatrolCapturedTransporter(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3I§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("PatrolCapturedTransporter_3I"), arg0, arg1, arg2);
+		return symbol ? "£3I§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedTransporter_3I"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * 1 patrol crashed on planet {0}. [3J]
 	   */
 	public static String PatrolCrashed(boolean symbol, String arg0) {
-		return symbol ? "£3J§"+arg0+"£":MessageFormat.format(messages.getString("PatrolCrashed_3J"), arg0);
+		return symbol ? "£3J§"+arg0+"£":format(messages.getString("PatrolCrashed_3J"), new Object[]{arg0});
 	}
 
 	/**
@@ -1563,14 +1567,14 @@ public class VegaResources
 	   * {0} has conquered the planet! [3T]
 	   */
 	public static String PlanetConquered(boolean symbol, String arg0) {
-		return symbol ? "£3T§"+arg0+"£":MessageFormat.format(messages.getString("PlanetConquered_3T"), arg0);
+		return symbol ? "£3T§"+arg0+"£":format(messages.getString("PlanetConquered_3T"), new Object[]{arg0});
 	}
 
 	/**
 	   * Planet {0} is being attacked [3U]
 	   */
 	public static String PlanetIsAttacked(boolean symbol, String arg0) {
-		return symbol ? "£3U§"+arg0+"£":MessageFormat.format(messages.getString("PlanetIsAttacked_3U"), arg0);
+		return symbol ? "£3U§"+arg0+"£":format(messages.getString("PlanetIsAttacked_3U"), new Object[]{arg0});
 	}
 
 	/**
@@ -1591,7 +1595,7 @@ public class VegaResources
 	   * Planet {0} [3X]
 	   */
 	public static String Planet(boolean symbol, String arg0) {
-		return symbol ? "£3X§"+arg0+"£":MessageFormat.format(messages.getString("Planet_3X"), arg0);
+		return symbol ? "£3X§"+arg0+"£":format(messages.getString("Planet_3X"), new Object[]{arg0});
 	}
 
 	/**
@@ -1605,7 +1609,7 @@ public class VegaResources
 	   * Planets in year {0} [3Z]
 	   */
 	public static String PlanetsInYear(boolean symbol, String arg0) {
-		return symbol ? "£3Z§"+arg0+"£":MessageFormat.format(messages.getString("PlanetsInYear_3Z"), arg0);
+		return symbol ? "£3Z§"+arg0+"£":format(messages.getString("PlanetsInYear_3Z"), new Object[]{arg0});
 	}
 
 	/**
@@ -1626,7 +1630,7 @@ public class VegaResources
 	   * Player {0} capitulated. [42]
 	   */
 	public static String PlayerCapitulated(boolean symbol, String arg0) {
-		return symbol ? "£42§"+arg0+"£":MessageFormat.format(messages.getString("PlayerCapitulated_42"), arg0);
+		return symbol ? "£42§"+arg0+"£":format(messages.getString("PlayerCapitulated_42"), new Object[]{arg0});
 	}
 
 	/**
@@ -1640,7 +1644,7 @@ public class VegaResources
 	   * Well, {0}. The game is over! [44]
 	   */
 	public static String PlayerGameOver(boolean symbol, String arg0) {
-		return symbol ? "£44§"+arg0+"£":MessageFormat.format(messages.getString("PlayerGameOver_44"), arg0);
+		return symbol ? "£44§"+arg0+"£":format(messages.getString("PlayerGameOver_44"), new Object[]{arg0});
 	}
 
 	/**
@@ -1654,7 +1658,7 @@ public class VegaResources
 	   * Players are waiting for me ({0}) [47]
 	   */
 	public static String PlayersAreWaiting(boolean symbol, String arg0) {
-		return symbol ? "£47§"+arg0+"£":MessageFormat.format(messages.getString("PlayersAreWaiting_47"), arg0);
+		return symbol ? "£47§"+arg0+"£":format(messages.getString("PlayersAreWaiting_47"), new Object[]{arg0});
 	}
 
 	/**
@@ -1675,14 +1679,14 @@ public class VegaResources
 	   * {0} points [4A]
 	   */
 	public static String Points2(boolean symbol, String arg0) {
-		return symbol ? "£4A§"+arg0+"£":MessageFormat.format(messages.getString("Points2_4A"), arg0);
+		return symbol ? "£4A§"+arg0+"£":format(messages.getString("Points2_4A"), new Object[]{arg0});
 	}
 
 	/**
 	   * Points in year {0} [4B]
 	   */
 	public static String PointsInYear(boolean symbol, String arg0) {
-		return symbol ? "£4B§"+arg0+"£":MessageFormat.format(messages.getString("PointsInYear_4B"), arg0);
+		return symbol ? "£4B§"+arg0+"£":format(messages.getString("PointsInYear_4B"), new Object[]{arg0});
 	}
 
 	/**
@@ -1703,7 +1707,7 @@ public class VegaResources
 	   * Do you really want to publish the new game [{0}] on the server? [4E]
 	   */
 	public static String PublishGameQuestion(boolean symbol, String arg0) {
-		return symbol ? "£4E§"+arg0+"£":MessageFormat.format(messages.getString("PublishGameQuestion_4E"), arg0);
+		return symbol ? "£4E§"+arg0+"£":format(messages.getString("PublishGameQuestion_4E"), new Object[]{arg0});
 	}
 
 	/**
@@ -1766,7 +1770,7 @@ public class VegaResources
 	   * {1}/{0}/{2} {3}:{4} [4O]
 	   */
 	public static String ReleaseFormatted(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4) {
-		return symbol ? "£4O§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":MessageFormat.format(messages.getString("ReleaseFormatted_4O"), arg0, arg1, arg2, arg3, arg4);
+		return symbol ? "£4O§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"£":format(messages.getString("ReleaseFormatted_4O"), new Object[]{arg0,arg1,arg2,arg3,arg4});
 	}
 
 	/**
@@ -1787,7 +1791,7 @@ public class VegaResources
 	   * Do you really want to update user [{0}]? BE CAREFUL: You will also renew the user credentials, so that the user needs to be activated again! [4R]
 	   */
 	public static String RenewUserCredentialsQuestion(boolean symbol, String arg0) {
-		return symbol ? "£4R§"+arg0+"£":MessageFormat.format(messages.getString("RenewUserCredentialsQuestion_4R"), arg0);
+		return symbol ? "£4R§"+arg0+"£":format(messages.getString("RenewUserCredentialsQuestion_4R"), new Object[]{arg0});
 	}
 
 	/**
@@ -1808,7 +1812,7 @@ public class VegaResources
 	   * Replay of the evaluation of year {0} [4U]
 	   */
 	public static String ReplayOfEvaluationOfYear(boolean symbol, String arg0) {
-		return symbol ? "£4U§"+arg0+"£":MessageFormat.format(messages.getString("ReplayOfEvaluationOfYear_4U"), arg0);
+		return symbol ? "£4U§"+arg0+"£":format(messages.getString("ReplayOfEvaluationOfYear_4U"), new Object[]{arg0});
 	}
 
 	/**
@@ -1850,7 +1854,7 @@ public class VegaResources
 	   * Error when saving the log file:\n\n{0} [50]
 	   */
 	public static String SaveLogFileError(boolean symbol, String arg0) {
-		return symbol ? "£50§"+arg0+"£":MessageFormat.format(messages.getString("SaveLogFileError_50"), arg0);
+		return symbol ? "£50§"+arg0+"£":format(messages.getString("SaveLogFileError_50"), new Object[]{arg0});
 	}
 
 	/**
@@ -1906,7 +1910,7 @@ public class VegaResources
 	   * The user [{0}] was successfully created on the server. How do you like to send the activation data to the user? [58]
 	   */
 	public static String SendActivationDataQuestion(boolean symbol, String arg0) {
-		return symbol ? "£58§"+arg0+"£":MessageFormat.format(messages.getString("SendActivationDataQuestion_58"), arg0);
+		return symbol ? "£58§"+arg0+"£":format(messages.getString("SendActivationDataQuestion_58"), new Object[]{arg0});
 	}
 
 	/**
@@ -2046,21 +2050,21 @@ public class VegaResources
 	   * 1 spy arrived on planet {0}. [5T]
 	   */
 	public static String SpyArrived(boolean symbol, String arg0) {
-		return symbol ? "£5T§"+arg0+"£":MessageFormat.format(messages.getString("SpyArrived_5T"), arg0);
+		return symbol ? "£5T§"+arg0+"£":format(messages.getString("SpyArrived_5T"), new Object[]{arg0});
 	}
 
 	/**
 	   * 1 spy crashed on planet {0}. [5U]
 	   */
 	public static String SpyCrashed(boolean symbol, String arg0) {
-		return symbol ? "£5U§"+arg0+"£":MessageFormat.format(messages.getString("SpyCrashed_5U"), arg0);
+		return symbol ? "£5U§"+arg0+"£":format(messages.getString("SpyCrashed_5U"), new Object[]{arg0});
 	}
 
 	/**
 	   * {0} dropped a spy on planet {1}. [5V]
 	   */
 	public static String SpyDropped(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£5V§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("SpyDropped_5V"), arg0, arg1);
+		return symbol ? "£5V§"+arg0+"§"+arg1+"£":format(messages.getString("SpyDropped_5V"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -2109,7 +2113,7 @@ public class VegaResources
 	   * Start: {0} [62]
 	   */
 	public static String Start(boolean symbol, String arg0) {
-		return symbol ? "£62§"+arg0+"£":MessageFormat.format(messages.getString("Start_62"), arg0);
+		return symbol ? "£62§"+arg0+"£":format(messages.getString("Start_62"), new Object[]{arg0});
 	}
 
 	/**
@@ -2186,7 +2190,7 @@ public class VegaResources
 	   * To which planet do you want to transfer {0} battleship(s)? [6D]
 	   */
 	public static String ToWhichPlanetBattleships(boolean symbol, String arg0) {
-		return symbol ? "£6D§"+arg0+"£":MessageFormat.format(messages.getString("ToWhichPlanetBattleships_6D"), arg0);
+		return symbol ? "£6D§"+arg0+"£":format(messages.getString("ToWhichPlanetBattleships_6D"), new Object[]{arg0});
 	}
 
 	/**
@@ -2256,14 +2260,14 @@ public class VegaResources
 	   * 1 transporter arrived on planet {0}. [6N]
 	   */
 	public static String TransporterArrived(boolean symbol, String arg0) {
-		return symbol ? "£6N§"+arg0+"£":MessageFormat.format(messages.getString("TransporterArrived_6N"), arg0);
+		return symbol ? "£6N§"+arg0+"£":format(messages.getString("TransporterArrived_6N"), new Object[]{arg0});
 	}
 
 	/**
 	   * 1 transporter crashed on planet {0}. [6O]
 	   */
 	public static String TransporterCrashed(boolean symbol, String arg0) {
-		return symbol ? "£6O§"+arg0+"£":MessageFormat.format(messages.getString("TransporterCrashed_6O"), arg0);
+		return symbol ? "£6O§"+arg0+"£":format(messages.getString("TransporterCrashed_6O"), new Object[]{arg0});
 	}
 
 	/**
@@ -2501,7 +2505,7 @@ public class VegaResources
 	   * Tutorial - Step {0} of {1} [7M]
 	   */
 	public static String TutorialTitle(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£7M§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("TutorialTitle_7M"), arg0, arg1);
+		return symbol ? "£7M§"+arg0+"§"+arg1+"£":format(messages.getString("TutorialTitle_7M"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -2543,7 +2547,7 @@ public class VegaResources
 	   * Do you really want to update user [{0}]? [7S]
 	   */
 	public static String UpdateUserQuestion(boolean symbol, String arg0) {
-		return symbol ? "£7S§"+arg0+"£":MessageFormat.format(messages.getString("UpdateUserQuestion_7S"), arg0);
+		return symbol ? "£7S§"+arg0+"£":format(messages.getString("UpdateUserQuestion_7S"), new Object[]{arg0});
 	}
 
 	/**
@@ -2557,7 +2561,7 @@ public class VegaResources
 	   * The user [{0}] was successfully deleted from the server. [7V]
 	   */
 	public static String UserDeleted(boolean symbol, String arg0) {
-		return symbol ? "£7V§"+arg0+"£":MessageFormat.format(messages.getString("UserDeleted_7V"), arg0);
+		return symbol ? "£7V§"+arg0+"£":format(messages.getString("UserDeleted_7V"), new Object[]{arg0});
 	}
 
 	/**
@@ -2571,28 +2575,28 @@ public class VegaResources
 	   * The user name [{0}] is invalid.\nThe length of a user name must be between {1} and {2} characters.\nIt must only contain the characters a-z, A-Z, and 0-9. [7X]
 	   */
 	public static String UserNameInvalid(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£7X§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("UserNameInvalid_7X"), arg0, arg1, arg2);
+		return symbol ? "£7X§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("UserNameInvalid_7X"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * The user ID [{0}] does not exist on the server. [7Y]
 	   */
 	public static String UserNotExists(boolean symbol, String arg0) {
-		return symbol ? "£7Y§"+arg0+"£":MessageFormat.format(messages.getString("UserNotExists_7Y"), arg0);
+		return symbol ? "£7Y§"+arg0+"£":format(messages.getString("UserNotExists_7Y"), new Object[]{arg0});
 	}
 
 	/**
 	   * The user [{0}] does not participate in this game. [7Z]
 	   */
 	public static String UserNotParticipating(boolean symbol, String arg0) {
-		return symbol ? "£7Z§"+arg0+"£":MessageFormat.format(messages.getString("UserNotParticipating_7Z"), arg0);
+		return symbol ? "£7Z§"+arg0+"£":format(messages.getString("UserNotParticipating_7Z"), new Object[]{arg0});
 	}
 
 	/**
 	   * The user [{0}] was updated successfully on the server. [80]
 	   */
 	public static String UserUpdated(boolean symbol, String arg0) {
-		return symbol ? "£80§"+arg0+"£":MessageFormat.format(messages.getString("UserUpdated_80"), arg0);
+		return symbol ? "£80§"+arg0+"£":format(messages.getString("UserUpdated_80"), new Object[]{arg0});
 	}
 
 	/**
@@ -2606,7 +2610,7 @@ public class VegaResources
 	   * Connected with VEGA Display server {0} [83]
 	   */
 	public static String ConnectedToDisplayServer(boolean symbol, String arg0) {
-		return symbol ? "£83§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedToDisplayServer_83"), arg0);
+		return symbol ? "£83§"+arg0+"£":format(messages.getString("ConnectedToDisplayServer_83"), new Object[]{arg0});
 	}
 
 	/**
@@ -2648,7 +2652,7 @@ public class VegaResources
 	   * [VEGA] server user {0} [8A]
 	   */
 	public static String VegaServer(boolean symbol, String arg0) {
-		return symbol ? "£8A§"+arg0+"£":MessageFormat.format(messages.getString("VegaServer_8A"), arg0);
+		return symbol ? "£8A§"+arg0+"£":format(messages.getString("VegaServer_8A"), new Object[]{arg0});
 	}
 
 	/**
@@ -2676,7 +2680,7 @@ public class VegaResources
 	   * I am waiting for other players ({0}) [8E]
 	   */
 	public static String WaitingForOtherPlayers(boolean symbol, String arg0) {
-		return symbol ? "£8E§"+arg0+"£":MessageFormat.format(messages.getString("WaitingForOtherPlayers_8E"), arg0);
+		return symbol ? "£8E§"+arg0+"£":format(messages.getString("WaitingForOtherPlayers_8E"), new Object[]{arg0});
 	}
 
 	/**
@@ -2697,14 +2701,14 @@ public class VegaResources
 	   * Inventory {0} [8H]
 	   */
 	public static String WebServerInventory(boolean symbol, String arg0) {
-		return symbol ? "£8H§"+arg0+"£":MessageFormat.format(messages.getString("WebServerInventory_8H"), arg0);
+		return symbol ? "£8H§"+arg0+"£":format(messages.getString("WebServerInventory_8H"), new Object[]{arg0});
 	}
 
 	/**
 	   * Resource {0} not found on VEGA Web server. [8I]
 	   */
 	public static String WebServerResourceNotFound(boolean symbol, String arg0) {
-		return symbol ? "£8I§"+arg0+"£":MessageFormat.format(messages.getString("WebServerResourceNotFound_8I"), arg0);
+		return symbol ? "£8I§"+arg0+"£":format(messages.getString("WebServerResourceNotFound_8I"), new Object[]{arg0});
 	}
 
 	/**
@@ -2753,28 +2757,28 @@ public class VegaResources
 	   * Y{0}-D{1} [8P]
 	   */
 	public static String YearDayShort(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£8P§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("YearDayShort_8P"), arg0, arg1);
+		return symbol ? "£8P§"+arg0+"§"+arg1+"£":format(messages.getString("YearDayShort_8P"), new Object[]{arg0,arg1});
 	}
 
 	/**
 	   * Year {0}, day {1} [8Q]
 	   */
 	public static String YearDay(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£8Q§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("YearDay_8Q"), arg0, arg1);
+		return symbol ? "£8Q§"+arg0+"§"+arg1+"£":format(messages.getString("YearDay_8Q"), new Object[]{arg0,arg1});
 	}
 
 	/**
 	   * Year {0}, end of the year [8R]
 	   */
 	public static String YearEndOfYear(boolean symbol, String arg0) {
-		return symbol ? "£8R§"+arg0+"£":MessageFormat.format(messages.getString("YearEndOfYear_8R"), arg0);
+		return symbol ? "£8R§"+arg0+"£":format(messages.getString("YearEndOfYear_8R"), new Object[]{arg0});
 	}
 
 	/**
 	   * Y{0}-End [8S]
 	   */
 	public static String YearEndShort(boolean symbol, String arg0) {
-		return symbol ? "£8S§"+arg0+"£":MessageFormat.format(messages.getString("YearEndShort_8S"), arg0);
+		return symbol ? "£8S§"+arg0+"£":format(messages.getString("YearEndShort_8S"), new Object[]{arg0});
 	}
 
 	/**
@@ -2788,21 +2792,21 @@ public class VegaResources
 	   * Year {0} of {1} [8U]
 	   */
 	public static String YearOf(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£8U§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("YearOf_8U"), arg0, arg1);
+		return symbol ? "£8U§"+arg0+"§"+arg1+"£":format(messages.getString("YearOf_8U"), new Object[]{arg0,arg1});
 	}
 
 	/**
 	   * Year {0} of [8V]
 	   */
 	public static String YearOf(boolean symbol, String arg0) {
-		return symbol ? "£8V§"+arg0+"£":MessageFormat.format(messages.getString("YearOf_8V"), arg0);
+		return symbol ? "£8V§"+arg0+"£":format(messages.getString("YearOf_8V"), new Object[]{arg0});
 	}
 
 	/**
 	   * Year {0} [8W]
 	   */
 	public static String Year(boolean symbol, String arg0) {
-		return symbol ? "£8W§"+arg0+"£":MessageFormat.format(messages.getString("Year_8W"), arg0);
+		return symbol ? "£8W§"+arg0+"£":format(messages.getString("Year_8W"), new Object[]{arg0});
 	}
 
 	/**
@@ -2823,7 +2827,7 @@ public class VegaResources
 	   * You are not the host of game {0}. [8Z]
 	   */
 	public static String YouAreNotGameHost(boolean symbol, String arg0) {
-		return symbol ? "£8Z§"+arg0+"£":MessageFormat.format(messages.getString("YouAreNotGameHost_8Z"), arg0);
+		return symbol ? "£8Z§"+arg0+"£":format(messages.getString("YouAreNotGameHost_8Z"), new Object[]{arg0});
 	}
 
 	/**
@@ -2837,7 +2841,7 @@ public class VegaResources
 	   * You cannot start more than {0} battleship(s). [91]
 	   */
 	public static String YouCannotStartMoreBattleships(boolean symbol, String arg0) {
-		return symbol ? "£91§"+arg0+"£":MessageFormat.format(messages.getString("YouCannotStartMoreBattleships_91"), arg0);
+		return symbol ? "£91§"+arg0+"£":format(messages.getString("YouCannotStartMoreBattleships_91"), new Object[]{arg0});
 	}
 
 	/**
@@ -2893,7 +2897,7 @@ public class VegaResources
 	   * Action not possible: {0} [99]
 	   */
 	public static String ActionNotPossible(boolean symbol, String arg0) {
-		return symbol ? "£99§"+arg0+"£":MessageFormat.format(messages.getString("ActionNotPossible_99"), arg0);
+		return symbol ? "£99§"+arg0+"£":format(messages.getString("ActionNotPossible_99"), new Object[]{arg0});
 	}
 
 	/**
@@ -3026,7 +3030,7 @@ public class VegaResources
 	   * Alliance structure on planet {0} [9S]
 	   */
 	public static String AllianceStructureOnPlanet(boolean symbol, String arg0) {
-		return symbol ? "£9S§"+arg0+"£":MessageFormat.format(messages.getString("AllianceStructureOnPlanet_9S"), arg0);
+		return symbol ? "£9S§"+arg0+"£":format(messages.getString("AllianceStructureOnPlanet_9S"), new Object[]{arg0});
 	}
 
 	/**
@@ -3054,7 +3058,7 @@ public class VegaResources
 	   * Allied:{0} [9W]
 	   */
 	public static String Allied(boolean symbol, String arg0) {
-		return symbol ? "£9W§"+arg0+"£":MessageFormat.format(messages.getString("Allied_9W"), arg0);
+		return symbol ? "£9W§"+arg0+"£":format(messages.getString("Allied_9W"), new Object[]{arg0});
 	}
 
 	/**
@@ -3138,42 +3142,42 @@ public class VegaResources
 	   * {0} battleship(s) arrived on planet {1}. [A9]
 	   */
 	public static String BattleshipsArrivedAtPlanet(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£A9§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("BattleshipsArrivedAtPlanet_A9"), arg0, arg1);
+		return symbol ? "£A9§"+arg0+"§"+arg1+"£":format(messages.getString("BattleshipsArrivedAtPlanet_A9"), new Object[]{arg0,arg1});
 	}
 
 	/**
 	   * Battleships in year {0} [AA]
 	   */
 	public static String BattleshipsInYear(boolean symbol, String arg0) {
-		return symbol ? "£AA§"+arg0+"£":MessageFormat.format(messages.getString("BattleshipsInYear_AA"), arg0);
+		return symbol ? "£AA§"+arg0+"£":format(messages.getString("BattleshipsInYear_AA"), new Object[]{arg0});
 	}
 
 	/**
 	   * {0}: {1} battleship(s) killed by a mine. The mine was destroyed. [AB]
 	   */
 	public static String BattleshipsKilledByMine2(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£AB§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("BattleshipsKilledByMine2_AB"), arg0, arg1);
+		return symbol ? "£AB§"+arg0+"§"+arg1+"£":format(messages.getString("BattleshipsKilledByMine2_AB"), new Object[]{arg0,arg1});
 	}
 
 	/**
 	   * {0}: {1} battleship(s) destroyed by a mine. [AC]
 	   */
 	public static String BattleshipsKilledByMine(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£AC§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("BattleshipsKilledByMine_AC"), arg0, arg1);
+		return symbol ? "£AC§"+arg0+"§"+arg1+"£":format(messages.getString("BattleshipsKilledByMine_AC"), new Object[]{arg0,arg1});
 	}
 
 	/**
 	   * {1}: {0} battleship(s) have to leave planet {2}, because the alliance was terminated. [AD]
 	   */
 	public static String BattleshipsMustLeavePlanet(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£AD§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("BattleshipsMustLeavePlanet_AD"), arg0, arg1, arg2);
+		return symbol ? "£AD§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("BattleshipsMustLeavePlanet_AD"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * {0}: Battleships cannot be launched from planet {1}. [AE]
 	   */
 	public static String BattleshipsNotLaunchedFromPlanet(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£AE§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("BattleshipsNotLaunchedFromPlanet_AE"), arg0, arg1);
+		return symbol ? "£AE§"+arg0+"§"+arg1+"£":format(messages.getString("BattleshipsNotLaunchedFromPlanet_AE"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -3208,7 +3212,7 @@ public class VegaResources
 	   * The Black Hole destroyed {0} battleships. [AJ]
 	   */
 	public static String BlackHoleDestroyedBattleships(boolean symbol, String arg0) {
-		return symbol ? "£AJ§"+arg0+"£":MessageFormat.format(messages.getString("BlackHoleDestroyedBattleships_AJ"), arg0);
+		return symbol ? "£AJ§"+arg0+"£":format(messages.getString("BlackHoleDestroyedBattleships_AJ"), new Object[]{arg0});
 	}
 
 	/**
@@ -3222,7 +3226,7 @@ public class VegaResources
 	   * The Black Hole swept a mine field of strength {0}. [AL]
 	   */
 	public static String BlackHoleMines(boolean symbol, String arg0) {
-		return symbol ? "£AL§"+arg0+"£":MessageFormat.format(messages.getString("BlackHoleMines_AL"), arg0);
+		return symbol ? "£AL§"+arg0+"£":format(messages.getString("BlackHoleMines_AL"), new Object[]{arg0});
 	}
 
 	/**
@@ -3271,7 +3275,7 @@ public class VegaResources
 	   * Defensive battleships (+{0}/-{1}) [AS]
 	   */
 	public static String BuySellDefensiveBattleships(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£AS§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("BuySellDefensiveBattleships_AS"), arg0, arg1);
+		return symbol ? "£AS§"+arg0+"§"+arg1+"£":format(messages.getString("BuySellDefensiveBattleships_AS"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -3299,7 +3303,7 @@ public class VegaResources
 	   * Do you really want to change the log level of the server to "{0}"? [AW]
 	   */
 	public static String ChangeLogLevelQuestion(boolean symbol, String arg0) {
-		return symbol ? "£AW§"+arg0+"£":MessageFormat.format(messages.getString("ChangeLogLevelQuestion_AW"), arg0);
+		return symbol ? "£AW§"+arg0+"£":format(messages.getString("ChangeLogLevelQuestion_AW"), new Object[]{arg0});
 	}
 
 	/**
@@ -3334,14 +3338,14 @@ public class VegaResources
 	   * Data could not be interpreted. Check the following:\n\n1. Is the data coming from a VEGA e-mail?\n2. Is the password correct?\n3. Did you use an e-mail from a wrong context?\n4. Is you VEGA build ({0}) compatible with the build of the sender (see e-mail)?\n\u0009\u0009\u0009\u0009\u0009\u0009 [B1]
 	   */
 	public static String ClipboardImportErrorPassword(boolean symbol, String arg0) {
-		return symbol ? "£B1§"+arg0+"£":MessageFormat.format(messages.getString("ClipboardImportErrorPassword_B1"), arg0);
+		return symbol ? "£B1§"+arg0+"£":format(messages.getString("ClipboardImportErrorPassword_B1"), new Object[]{arg0});
 	}
 
 	/**
 	   * Data could not be interpreted. Check the following:\n\n1. Is the data coming from a VEGA e-mail?\n2. Did you use an e-mail from a wrong context?\n3. Your VEGA build ({0}) and the build of the sender (see e-mail) are too different.\n\u0009\u0009\u0009\u0009\u0009\u0009 [B2]
 	   */
 	public static String ClipboardImportError(boolean symbol, String arg0) {
-		return symbol ? "£B2§"+arg0+"£":MessageFormat.format(messages.getString("ClipboardImportError_B2"), arg0);
+		return symbol ? "£B2§"+arg0+"£":format(messages.getString("ClipboardImportError_B2"), new Object[]{arg0});
 	}
 
 	/**
@@ -3390,14 +3394,14 @@ public class VegaResources
 	   * Connected with server {0} [B9]
 	   */
 	public static String ConnectedWithServer(boolean symbol, String arg0) {
-		return symbol ? "£B9§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedWithServer_B9"), arg0);
+		return symbol ? "£B9§"+arg0+"£":format(messages.getString("ConnectedWithServer_B9"), new Object[]{arg0});
 	}
 
 	/**
 	   * Connected as {0} [BA]
 	   */
 	public static String ConnectedWithVegaServer(boolean symbol, String arg0) {
-		return symbol ? "£BA§"+arg0+"£":MessageFormat.format(messages.getString("ConnectedWithVegaServer_BA"), arg0);
+		return symbol ? "£BA§"+arg0+"£":format(messages.getString("ConnectedWithVegaServer_BA"), new Object[]{arg0});
 	}
 
 	/**
@@ -3481,7 +3485,7 @@ public class VegaResources
 	   * Do you really want to create user [{0}]? [BM]
 	   */
 	public static String CreateUserQuestion(boolean symbol, String arg0) {
-		return symbol ? "£BM§"+arg0+"£":MessageFormat.format(messages.getString("CreateUserQuestion_BM"), arg0);
+		return symbol ? "£BM§"+arg0+"£":format(messages.getString("CreateUserQuestion_BM"), new Object[]{arg0});
 	}
 
 	/**
@@ -3495,14 +3499,14 @@ public class VegaResources
 	   * {1}/{0}/{2} [BO]
 	   */
 	public static String DateFormatted(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£BO§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("DateFormatted_BO"), arg0, arg1, arg2);
+		return symbol ? "£BO§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("DateFormatted_BO"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * Day {0} of {1} [BP]
 	   */
 	public static String DayOf(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£BP§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("DayOf_BP"), arg0, arg1);
+		return symbol ? "£BP§"+arg0+"§"+arg1+"£":format(messages.getString("DayOf_BP"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -3530,7 +3534,7 @@ public class VegaResources
 	   * Do you really want to delete the game {0} from the server? [BT]
 	   */
 	public static String DeleteGameQuestion(boolean symbol, String arg0) {
-		return symbol ? "£BT§"+arg0+"£":MessageFormat.format(messages.getString("DeleteGameQuestion_BT"), arg0);
+		return symbol ? "£BT§"+arg0+"£":format(messages.getString("DeleteGameQuestion_BT"), new Object[]{arg0});
 	}
 
 	/**
@@ -3544,7 +3548,7 @@ public class VegaResources
 	   * Do you really want to delete user [{0}] from the server? This action cannot be made undone! [BV]
 	   */
 	public static String DeleteUserQuestion(boolean symbol, String arg0) {
-		return symbol ? "£BV§"+arg0+"£":MessageFormat.format(messages.getString("DeleteUserQuestion_BV"), arg0);
+		return symbol ? "£BV§"+arg0+"£":format(messages.getString("DeleteUserQuestion_BV"), new Object[]{arg0});
 	}
 
 	/**
@@ -3628,7 +3632,7 @@ public class VegaResources
 	   * The name {0} is assigned to more than one player. [C7]
 	   */
 	public static String DuplicatePlayers(boolean symbol, String arg0) {
-		return symbol ? "£C7§"+arg0+"£":MessageFormat.format(messages.getString("DuplicatePlayers_C7"), arg0);
+		return symbol ? "£C7§"+arg0+"£":format(messages.getString("DuplicatePlayers_C7"), new Object[]{arg0});
 	}
 
 	/**
@@ -3649,7 +3653,7 @@ public class VegaResources
 	   * The e-mail address of player [{0}] is invalid. [CA]
 	   */
 	public static String EmailAddressInvalid(boolean symbol, String arg0) {
-		return symbol ? "£CA§"+arg0+"£":MessageFormat.format(messages.getString("EmailAddressInvalid_CA"), arg0);
+		return symbol ? "£CA§"+arg0+"£":format(messages.getString("EmailAddressInvalid_CA"), new Object[]{arg0});
 	}
 
 	/**
@@ -3677,21 +3681,21 @@ public class VegaResources
 	   * Hello,\n\nwelcome to VEGA! {0} invited you to the game {1} on server {2}:{3}.\n\nHave fun!\nYour game host [CE]
 	   */
 	public static String EmailBodyInvitation(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
-		return symbol ? "£CE§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":MessageFormat.format(messages.getString("EmailBodyInvitation_CE"), arg0, arg1, arg2, arg3);
+		return symbol ? "£CE§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":format(messages.getString("EmailBodyInvitation_CE"), new Object[]{arg0,arg1,arg2,arg3});
 	}
 
 	/**
 	   * Game: {0}\nYear: {1}\nMoves of: {2}\nBuild: {3}\n\nDear game host,\n\nhere are the moves of {4}. Please proceed as follows:\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA. Load the local game {5}.vega\n\n3. Go to the main menu. Select "E-mail actions > Import moves of a player".\n\n4. Press the button "Insert" to insert the contents of the clipboard into the text field.\n\n5. Press the button "OK". [CF]
 	   */
 	public static String EmailGameEmailBodyMoves(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4, String arg5) {
-		return symbol ? "£CF§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"§"+arg5+"£":MessageFormat.format(messages.getString("EmailGameEmailBodyMoves_CF"), arg0, arg1, arg2, arg3, arg4, arg5);
+		return symbol ? "£CF§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"§"+arg5+"£":format(messages.getString("EmailGameEmailBodyMoves_CF"), new Object[]{arg0,arg1,arg2,arg3,arg4,arg5});
 	}
 
 	/**
 	   * Game: {0}\nYear: {1}\nBuild: {2}\n\nHi {3},\n\nthe game has been evaluated. Please proceed with entering your moves.\n\n1. Select this whole e-mail text (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select  "Import e-mail game from clipboard" in the menu list.\n\n3. Press the button "Insert" to copy the contents of the clipboard into the text field.\n\n4. Press the button "OK".\n\nNow enter your moves. When you are finished, an e-mail opens automatically in your e-mail client. This e-mail contains your moves and the address of the game host. Please send it without changes.\n\nThanks!\nYou game host [CG]
 	   */
 	public static String EmailGameEmailBody(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
-		return symbol ? "£CG§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":MessageFormat.format(messages.getString("EmailGameEmailBody_CG"), arg0, arg1, arg2, arg3);
+		return symbol ? "£CG§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":format(messages.getString("EmailGameEmailBody_CG"), new Object[]{arg0,arg1,arg2,arg3});
 	}
 
 	/**
@@ -3712,7 +3716,7 @@ public class VegaResources
 	   * E-mail client cannot be opened:\n{0} [CJ]
 	   */
 	public static String EmailOpenError(boolean symbol, String arg0) {
-		return symbol ? "£CJ§"+arg0+"£":MessageFormat.format(messages.getString("EmailOpenError_CJ"), arg0);
+		return symbol ? "£CJ§"+arg0+"£":format(messages.getString("EmailOpenError_CJ"), new Object[]{arg0});
 	}
 
 	/**
@@ -3726,14 +3730,14 @@ public class VegaResources
 	   * [VEGA] {0} invited you to the new game {1} [CL]
 	   */
 	public static String EmailSubjectInvitation(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£CL§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("EmailSubjectInvitation_CL"), arg0, arg1);
+		return symbol ? "£CL§"+arg0+"§"+arg1+"£":format(messages.getString("EmailSubjectInvitation_CL"), new Object[]{arg0,arg1});
 	}
 
 	/**
 	   * [VEGA] Your new user [{0}] [CM]
 	   */
 	public static String EmailSubjectNewUser(boolean symbol, String arg0) {
-		return symbol ? "£CM§"+arg0+"£":MessageFormat.format(messages.getString("EmailSubjectNewUser_CM"), arg0);
+		return symbol ? "£CM§"+arg0+"£":format(messages.getString("EmailSubjectNewUser_CM"), new Object[]{arg0});
 	}
 
 	/**
@@ -3754,7 +3758,7 @@ public class VegaResources
 	   * {0} e-mails were created in your standard e-mail client. [CP]
 	   */
 	public static String EmailsWereCreated(boolean symbol, String arg0) {
-		return symbol ? "£CP§"+arg0+"£":MessageFormat.format(messages.getString("EmailsWereCreated_CP"), arg0);
+		return symbol ? "£CP§"+arg0+"£":format(messages.getString("EmailsWereCreated_CP"), new Object[]{arg0});
 	}
 
 	/**
@@ -3852,7 +3856,7 @@ public class VegaResources
 	   * The file {0}\ndoes not contain valid credentials. [D6]
 	   */
 	public static String FileContainsInvalidCredentials(boolean symbol, String arg0) {
-		return symbol ? "£D6§"+arg0+"£":MessageFormat.format(messages.getString("FileContainsInvalidCredentials_D6"), arg0);
+		return symbol ? "£D6§"+arg0+"£":format(messages.getString("FileContainsInvalidCredentials_D6"), new Object[]{arg0});
 	}
 
 	/**
@@ -3887,7 +3891,7 @@ public class VegaResources
 	   * Do you really want to finalize the game {0} immediately? All moves from the playes will get lost. [DC]
 	   */
 	public static String FinalizeGameQuestion(boolean symbol, String arg0) {
-		return symbol ? "£DC§"+arg0+"£":MessageFormat.format(messages.getString("FinalizeGameQuestion_DC"), arg0);
+		return symbol ? "£DC§"+arg0+"£":format(messages.getString("FinalizeGameQuestion_DC"), new Object[]{arg0});
 	}
 
 	/**
@@ -3908,7 +3912,7 @@ public class VegaResources
 	   * Finalized game in year {0} [DF]
 	   */
 	public static String FinalizedGameInYear(boolean symbol, String arg0) {
-		return symbol ? "£DF§"+arg0+"£":MessageFormat.format(messages.getString("FinalizedGameInYear_DF"), arg0);
+		return symbol ? "£DF§"+arg0+"£":format(messages.getString("FinalizedGameInYear_DF"), new Object[]{arg0});
 	}
 
 	/**
@@ -3922,7 +3926,7 @@ public class VegaResources
 	   * Position {0}: [DH]
 	   */
 	public static String FinalizedGamePosition(boolean symbol, String arg0) {
-		return symbol ? "£DH§"+arg0+"£":MessageFormat.format(messages.getString("FinalizedGamePosition_DH"), arg0);
+		return symbol ? "£DH§"+arg0+"£":format(messages.getString("FinalizedGamePosition_DH"), new Object[]{arg0});
 	}
 
 	/**
@@ -3936,7 +3940,7 @@ public class VegaResources
 	   * Finalized games ({0}) [DJ]
 	   */
 	public static String FinalizedGames(boolean symbol, String arg0) {
-		return symbol ? "£DJ§"+arg0+"£":MessageFormat.format(messages.getString("FinalizedGames_DJ"), arg0);
+		return symbol ? "£DJ§"+arg0+"£":format(messages.getString("FinalizedGames_DJ"), new Object[]{arg0});
 	}
 
 	/**
@@ -3985,28 +3989,28 @@ public class VegaResources
 	   * The new game [{0}] was created on the server. You may send an invitation e-mail to the other players after closing this message. [DQ]
 	   */
 	public static String GameCreatedSendMail(boolean symbol, String arg0) {
-		return symbol ? "£DQ§"+arg0+"£":MessageFormat.format(messages.getString("GameCreatedSendMail_DQ"), arg0);
+		return symbol ? "£DQ§"+arg0+"£":format(messages.getString("GameCreatedSendMail_DQ"), new Object[]{arg0});
 	}
 
 	/**
 	   * The new game [{0}] was created on the server. [DR]
 	   */
 	public static String GameCreated(boolean symbol, String arg0) {
-		return symbol ? "£DR§"+arg0+"£":MessageFormat.format(messages.getString("GameCreated_DR"), arg0);
+		return symbol ? "£DR§"+arg0+"£":format(messages.getString("GameCreated_DR"), new Object[]{arg0});
 	}
 
 	/**
 	   * Game {0} was deleted successfully. [DS]
 	   */
 	public static String GameDeletedSuccessfully(boolean symbol, String arg0) {
-		return symbol ? "£DS§"+arg0+"£":MessageFormat.format(messages.getString("GameDeletedSuccessfully_DS"), arg0);
+		return symbol ? "£DS§"+arg0+"£":format(messages.getString("GameDeletedSuccessfully_DS"), new Object[]{arg0});
 	}
 
 	/**
 	   * Game {0} was finalized successfully. [DT]
 	   */
 	public static String GameFinalizedSuccessfully(boolean symbol, String arg0) {
-		return symbol ? "£DT§"+arg0+"£":MessageFormat.format(messages.getString("GameFinalizedSuccessfully_DT"), arg0);
+		return symbol ? "£DT§"+arg0+"£":format(messages.getString("GameFinalizedSuccessfully_DT"), new Object[]{arg0});
 	}
 
 	/**
@@ -4034,14 +4038,14 @@ public class VegaResources
 	   * The game name [{0}] ist invalid.\nThe length of a game name must be between {1} and {2} characters.\nIt must only contain the characters a-z, A-Z, and 0-9. [DX]
 	   */
 	public static String GameNameInvalid(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£DX§"+arg0+"§"+arg1+"§"+arg2+"£":MessageFormat.format(messages.getString("GameNameInvalid_DX"), arg0, arg1, arg2);
+		return symbol ? "£DX§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("GameNameInvalid_DX"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
 	   * The game [{0}] does not exist! [DY]
 	   */
 	public static String GameNotExists(boolean symbol, String arg0) {
-		return symbol ? "£DY§"+arg0+"£":MessageFormat.format(messages.getString("GameNotExists_DY"), arg0);
+		return symbol ? "£DY§"+arg0+"£":format(messages.getString("GameNotExists_DY"), new Object[]{arg0});
 	}
 
 	/**
@@ -4076,7 +4080,7 @@ public class VegaResources
 	   * Games on the VEGA server (user {0}) [E3]
 	   */
 	public static String GamesOnVegaServer(boolean symbol, String arg0) {
-		return symbol ? "£E3§"+arg0+"£":MessageFormat.format(messages.getString("GamesOnVegaServer_E3"), arg0);
+		return symbol ? "£E3§"+arg0+"£":format(messages.getString("GamesOnVegaServer_E3"), new Object[]{arg0});
 	}
 
 	/**
@@ -4132,7 +4136,7 @@ public class VegaResources
 	   * {0} bytes [EB]
 	   */
 	public static String Bytes(boolean symbol, String arg0) {
-		return symbol ? "£EB§"+arg0+"£":MessageFormat.format(messages.getString("Bytes_EB"), arg0);
+		return symbol ? "£EB§"+arg0+"£":format(messages.getString("Bytes_EB"), new Object[]{arg0});
 	}
 
 	/**
@@ -4167,7 +4171,7 @@ public class VegaResources
 	   * Do you really want to delete the credentials of user [{0}]? [EG]
 	   */
 	public static String DeleteCredentialsAYS(boolean symbol, String arg0) {
-		return symbol ? "£EG§"+arg0+"£":MessageFormat.format(messages.getString("DeleteCredentialsAYS_EG"), arg0);
+		return symbol ? "£EG§"+arg0+"£":format(messages.getString("DeleteCredentialsAYS_EG"), new Object[]{arg0});
 	}
 
 	/**
@@ -4244,7 +4248,7 @@ public class VegaResources
 	   * The new password must have at least {0} characters. [ER]
 	   */
 	public static String PasswordLength(boolean symbol, String arg0) {
-		return symbol ? "£ER§"+arg0+"£":MessageFormat.format(messages.getString("PasswordLength_ER"), arg0);
+		return symbol ? "£ER§"+arg0+"£":format(messages.getString("PasswordLength_ER"), new Object[]{arg0});
 	}
 
 	/**
@@ -4272,7 +4276,7 @@ public class VegaResources
 	   * The admin credentials for the server were saved in the file\n\n{0}\n\nStart VEGA and import the credentials under Settings > VEGA server settings >\nCredentials > + > Active user from a file. After that, you should delete\nthe credentials file for security reasons. [EV]
 	   */
 	public static String ServerAdminCredentialsCreated(boolean symbol, String arg0) {
-		return symbol ? "£EV§"+arg0+"£":MessageFormat.format(messages.getString("ServerAdminCredentialsCreated_EV"), arg0);
+		return symbol ? "£EV§"+arg0+"£":format(messages.getString("ServerAdminCredentialsCreated_EV"), new Object[]{arg0});
 	}
 
 	/**
@@ -4307,21 +4311,21 @@ public class VegaResources
 	   * Hi {0},\n\nwelcome to VEGA! Your new user [{1}] on server {2}:{3} (build {4}) has been created and only needs to be activated.\n\nPlease proceed as follows:\n\n1. Select this whole text of this file (for example, with ctrl + A), and copy it to the clipboard of your computer (for example, with ctrl + C).\n\n2. Start VEGA and select "Settings > VEGA server settings -> Credentials -> + -> Inactive user from the clipboard".\n\n3. Insert the contents of the clipboard into the text field and enter the password that you agreed on with your server administrator. Prss "OK".\n\n4. Activate the user with the button "Activate".\n\n5. Select your user from the drop-down list next to "Connect as player with the credentials" and set the checkbox.\n\n6. Close the dialog by pressing "OK".\n\nYour user is now active.\n\nEnjoy VEGA!\nYour server administrator\n\n{5} [F0]
 	   */
 	public static String CredentialsTextFileInstructions(boolean symbol, String arg0, String arg1, String arg2, String arg3, String arg4, String arg5) {
-		return symbol ? "£F0§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"§"+arg5+"£":MessageFormat.format(messages.getString("CredentialsTextFileInstructions_F0"), arg0, arg1, arg2, arg3, arg4, arg5);
+		return symbol ? "£F0§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"§"+arg4+"§"+arg5+"£":format(messages.getString("CredentialsTextFileInstructions_F0"), new Object[]{arg0,arg1,arg2,arg3,arg4,arg5});
 	}
 
 	/**
 	   * Attacker: {0} [{1}] -> {2} [{3}] [F1]
 	   */
 	public static String FightAttacker(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
-		return symbol ? "£F1§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":MessageFormat.format(messages.getString("FightAttacker_F1"), arg0, arg1, arg2, arg3);
+		return symbol ? "£F1§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":format(messages.getString("FightAttacker_F1"), new Object[]{arg0,arg1,arg2,arg3});
 	}
 
 	/**
 	   * Defender: {0} [{1}] -> {2} [{3}] [F2]
 	   */
 	public static String FightDefender(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
-		return symbol ? "£F2§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":MessageFormat.format(messages.getString("FightDefender_F2"), arg0, arg1, arg2, arg3);
+		return symbol ? "£F2§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":format(messages.getString("FightDefender_F2"), new Object[]{arg0,arg1,arg2,arg3});
 	}
 
 	/**
@@ -4356,7 +4360,7 @@ public class VegaResources
 	   * Error when opening the game manual file {0}.\n\n{1} [F8]
 	   */
 	public static String VegaHelpError(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£F8§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("VegaHelpError_F8"), arg0, arg1);
+		return symbol ? "£F8§"+arg0+"§"+arg1+"£":format(messages.getString("VegaHelpError_F8"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -4370,7 +4374,7 @@ public class VegaResources
 	   * Combat strength (+{0}%) [FA]
 	   */
 	public static String BuySellCombatStrength(boolean symbol, String arg0) {
-		return symbol ? "£FA§"+arg0+"£":MessageFormat.format(messages.getString("BuySellCombatStrength_FA"), arg0);
+		return symbol ? "£FA§"+arg0+"£":format(messages.getString("BuySellCombatStrength_FA"), new Object[]{arg0});
 	}
 
 	/**
@@ -4384,14 +4388,14 @@ public class VegaResources
 	   * Do you want to start the evaluation of year {0} for the game {1}? [FC]
 	   */
 	public static String EvaluateYearQuestion(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£FC§"+arg0+"§"+arg1+"£":MessageFormat.format(messages.getString("EvaluateYearQuestion_FC"), arg0, arg1);
+		return symbol ? "£FC§"+arg0+"§"+arg1+"£":format(messages.getString("EvaluateYearQuestion_FC"), new Object[]{arg0,arg1});
 	}
 
 	/**
 	   * The year's evaluation for the game {0} was performed successfully. [FD]
 	   */
 	public static String EvaluateYearSuccess(boolean symbol, String arg0) {
-		return symbol ? "£FD§"+arg0+"£":MessageFormat.format(messages.getString("EvaluateYearSuccess_FD"), arg0);
+		return symbol ? "£FD§"+arg0+"£":format(messages.getString("EvaluateYearSuccess_FD"), new Object[]{arg0});
 	}
 
 	/**
