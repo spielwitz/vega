@@ -93,14 +93,14 @@ class ServerGamesJDialog extends Dialog
 	private Label			labUpdateLast;
 	private Label			labYear;
 	private List			listGames;
+	private MenuItem		menuItemGameDelete;
+	private MenuItem		menuItemGameFinalize;
 	private PanelPlayer[]	pansPlayer;
 	private Vega							parent;
 	private RadioButton 	rbGamesFinalized;
+	
 	private RadioButton 	rbGamesWaitingForMe;
 	private RadioButton 	rbGamesWaitingForOthers;
-	
-	private MenuItem		menuItemGameDelete;
-	private MenuItem		menuItemGameFinalize;
 	
 	private TextField 		tfGameName;
 	
@@ -393,6 +393,19 @@ class ServerGamesJDialog extends Dialog
 	}
 	
 	@Override
+	public void menuItemSelected(MenuItem source)
+	{
+		if (source == this.menuItemGameDelete)
+		{
+			this.deleteGame(this.listGames.getSelectedValue());
+		}
+		else if (source == this.menuItemGameFinalize)
+		{
+			this.finalizeGame(this.listGames.getSelectedValue());
+		}		
+	}
+	
+	@Override
 	public void radioButtonSelected(RadioButton source)
 	{
 		ArrayList<String> gameNames = this.gamesByCategory.get(source);
@@ -410,13 +423,13 @@ class ServerGamesJDialog extends Dialog
 			this.showGameData(null);
 		}
 	}
-	
+
 	@Override
 	public int[] sortListItems(ArrayList<ListItem> listItems)
 	{
 		return null;
 	}
-
+	
 	@Override
 	protected boolean confirmClose()
 	{
@@ -510,6 +523,8 @@ class ServerGamesJDialog extends Dialog
 			this.pansPlayer[playerIndex].cbEnterMovesFinished.setEnabled(false);
 		}
 	}
+
+	// ========================
 	
 	private void finalizeGame(String gameId)
 	{
@@ -539,8 +554,6 @@ class ServerGamesJDialog extends Dialog
 			Vega.showServerError(this, info);
 		}
 	}
-
-	// ========================
 	
 	private RadioButton getGamesByCategory(String currentGameId)
 	{
@@ -590,24 +603,6 @@ class ServerGamesJDialog extends Dialog
 		Collections.sort(this.gamesByCategory.get(this.rbGamesWaitingForOthers));
 		
 		return rbCurrentGame;
-	}
-	
-	private void updateRadioButtonLabels()
-	{
-		this.rbGamesWaitingForMe.setText(
-				VegaResources.PlayersAreWaiting(
-						false, 
-						Integer.toString(this.gamesByCategory.get(this.rbGamesWaitingForMe).size())));
-		
-		this.rbGamesWaitingForOthers.setText(
-				VegaResources.WaitingForOtherPlayers(
-						false, 
-						Integer.toString(this.gamesByCategory.get(this.rbGamesWaitingForOthers).size())));
-		
-		this.rbGamesFinalized.setText(
-				VegaResources.FinalizedGames(
-						false, 
-						Integer.toString(this.gamesByCategory.get(this.rbGamesFinalized).size())));
 	}
 	
 	private String[] getPlanetComboBoxValues(int playersCount)
@@ -923,6 +918,24 @@ class ServerGamesJDialog extends Dialog
 		}
 	}
 	
+	private void updateRadioButtonLabels()
+	{
+		this.rbGamesWaitingForMe.setText(
+				VegaResources.PlayersAreWaiting(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesWaitingForMe).size())));
+		
+		this.rbGamesWaitingForOthers.setText(
+				VegaResources.WaitingForOtherPlayers(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesWaitingForOthers).size())));
+		
+		this.rbGamesFinalized.setText(
+				VegaResources.FinalizedGames(
+						false, 
+						Integer.toString(this.gamesByCategory.get(this.rbGamesFinalized).size())));
+	}
+
 	private class BoardDisplay extends JPanel
 	{
 		private static final int PIXEL_PER_SECTOR = 13;
@@ -1019,18 +1032,5 @@ class ServerGamesJDialog extends Dialog
 			this.cbEnterMovesFinished = new CheckBox("", false, null);
 			this.add(cbEnterMovesFinished);
 		}
-	}
-
-	@Override
-	public void menuItemSelected(MenuItem source)
-	{
-		if (source == this.menuItemGameDelete)
-		{
-			this.deleteGame(this.listGames.getSelectedValue());
-		}
-		else if (source == this.menuItemGameFinalize)
-		{
-			this.finalizeGame(this.listGames.getSelectedValue());
-		}		
 	}
 }
