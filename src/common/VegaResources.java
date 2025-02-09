@@ -36,7 +36,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FA
+		// Last used symbolic key: FB
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -575,6 +575,7 @@ public class VegaResources
 		symbolDict.put("F8","VegaHelpError_F8");
 		symbolDict.put("F9","FightSimulationCombatStrength_F9");
 		symbolDict.put("FA","BuySellCombatStrength_FA");
+		symbolDict.put("FB","GameHostActions_FB");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4367,5 +4368,12 @@ public class VegaResources
 	   */
 	public static String BuySellCombatStrength(boolean symbol, String arg0) {
 		return symbol ? "£FA§"+arg0+"£":MessageFormat.format(messages.getString("BuySellCombatStrength_FA"), arg0);
+	}
+
+	/**
+	   * Game host actions [FB]
+	   */
+	public static String GameHostActions(boolean symbol) {
+		return symbol ? "£FB£":messages.getString("GameHostActions_FB");
 	}
 }

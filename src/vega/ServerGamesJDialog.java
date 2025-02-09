@@ -53,10 +53,12 @@ import uiBaseControls.Dialog;
 import uiBaseControls.IButtonListener;
 import uiBaseControls.IComboBoxListener;
 import uiBaseControls.IListListener;
+import uiBaseControls.IMenuItemListener;
 import uiBaseControls.IRadioButtonListener;
 import uiBaseControls.Label;
 import uiBaseControls.List;
 import uiBaseControls.ListItem;
+import uiBaseControls.MenuItem;
 import uiBaseControls.Panel;
 import uiBaseControls.RadioButton;
 import uiBaseControls.TextField;
@@ -66,19 +68,19 @@ class ServerGamesJDialog extends Dialog
 					implements  IButtonListener,
 								IListListener,
 								IRadioButtonListener,
+								IMenuItemListener,
 								IComboBoxListener,
 								IColorChooserCallback
 {
 	Game gameLoaded;
 	private BoardDisplay 	board;
-	private Button 			butGameDelete;
-	private Button 			butGameFinalize;
+	private Button			butGameHostActions;
 	private Button			butGameLoad;
 	private Button			butGameNew;
 	private Button			butGameNewBoard;
 	
 	private Button			butGameSubmit;
-	private VegaClient						client;
+	private VegaClient		client;
 	private ComboBox 		comboPlanets;
 	private ComboBox 		comboPlayers;
 	private ComboBox 		comboYearLast;
@@ -96,6 +98,9 @@ class ServerGamesJDialog extends Dialog
 	private RadioButton 	rbGamesFinalized;
 	private RadioButton 	rbGamesWaitingForMe;
 	private RadioButton 	rbGamesWaitingForOthers;
+	
+	private MenuItem		menuItemGameDelete;
+	private MenuItem		menuItemGameFinalize;
 	
 	private TextField 		tfGameName;
 	
@@ -191,12 +196,15 @@ class ServerGamesJDialog extends Dialog
 		panWestButtons.add(this.butGameLoad, cPanWest);
 		
 		cPanWest.gridx = 0; cPanWest.gridy = 2;
-		this.butGameFinalize = new Button(VegaResources.FinalizeGame(false), this);
-		panWestButtons.add(this.butGameFinalize, cPanWest);
+		this.menuItemGameFinalize = new MenuItem(VegaResources.FinalizeGame(false), this);
+		this.menuItemGameDelete = new MenuItem(VegaResources.DeleteGame(false), this);
+		this.butGameHostActions = new Button(
+				VegaResources.GameHostActions(false),
+				new MenuItem[] {
+						this.menuItemGameFinalize, 
+						this.menuItemGameDelete});
 		
-		cPanWest.gridx = 0; cPanWest.gridy = 3;
-		this.butGameDelete = new Button(VegaResources.DeleteGame(false), this);
-		panWestButtons.add(this.butGameDelete, cPanWest);
+		panWestButtons.add(this.butGameHostActions, cPanWest);
 		
 		panWest.add(panWestButtons, BorderLayout.SOUTH);
 		
@@ -337,14 +345,6 @@ class ServerGamesJDialog extends Dialog
 		{
 			this.submitGame();
 		}
-		else if (source == this.butGameDelete)
-		{
-			this.deleteGame(this.listGames.getSelectedValue());
-		}
-		else if (source == this.butGameFinalize)
-		{
-			this.finalizeGame(this.listGames.getSelectedValue());
-		}
 	}
 
 	@Override
@@ -483,8 +483,7 @@ class ServerGamesJDialog extends Dialog
 		this.labDateStart.setText(" ");
 		
 		this.butGameNew.setEnabled(false);
-		this.butGameDelete.setEnabled(false);
-		this.butGameFinalize.setEnabled(false);
+		this.butGameHostActions.setEnabled(false);
 		this.butGameLoad.setEnabled(false);
 		this.butGameSubmit.setEnabled(true);
 		this.butGameNewBoard.setEnabled(true);
@@ -736,8 +735,8 @@ class ServerGamesJDialog extends Dialog
 			
 			boolean isGameHost = this.gameInfo.players[0].getName().equals(client.getConfig().getUserId());
 			
-			this.butGameDelete.setEnabled(isGameHost);
-			this.butGameFinalize.setEnabled(isGameHost && !gameInfo.finalized);
+			this.butGameHostActions.setEnabled(isGameHost);
+			this.menuItemGameFinalize.setEnabled(isGameHost && !gameInfo.finalized);
 			this.butGameLoad.setEnabled(true);
 			this.butGameSubmit.setEnabled(false);
 		}
@@ -751,8 +750,7 @@ class ServerGamesJDialog extends Dialog
 			this.labDateStart.setText(" ");
 			this.labUpdateLast.setText(" ");
 			
-			this.butGameDelete.setEnabled(false);
-			this.butGameFinalize.setEnabled(false);
+			this.butGameHostActions.setEnabled(false);
 			this.butGameLoad.setEnabled(false);
 			this.butGameSubmit.setEnabled(false);
 		}
@@ -1021,5 +1019,18 @@ class ServerGamesJDialog extends Dialog
 			this.cbEnterMovesFinished = new CheckBox("", false, null);
 			this.add(cbEnterMovesFinished);
 		}
+	}
+
+	@Override
+	public void menuItemSelected(MenuItem source)
+	{
+		if (source == this.menuItemGameDelete)
+		{
+			this.deleteGame(this.listGames.getSelectedValue());
+		}
+		else if (source == this.menuItemGameFinalize)
+		{
+			this.finalizeGame(this.listGames.getSelectedValue());
+		}		
 	}
 }

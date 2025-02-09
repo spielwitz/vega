@@ -18,19 +18,15 @@ package uiBaseControls;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-import javax.swing.JButton;
-import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
 
 @SuppressWarnings("serial")
-public class Button extends JButton implements ActionListener
+public class MenuItem extends JMenuItem implements ActionListener
 {
-	private IButtonListener callback;
-	private JPopupMenu popup;
+	private IMenuItemListener callback;
 	
-	public Button(String text, IButtonListener callback)
+	public MenuItem(String text, IMenuItemListener callback)
 	{
 		super(text);
 		
@@ -41,28 +37,11 @@ public class Button extends JButton implements ActionListener
 			this.addActionListener(this);
 		}
 	}
-	
-	public Button(String text, MenuItem[] popupMenuItems)
-	{
-		super(text);
-		
-		this.popup = new JPopupMenu();
-		
-		for (MenuItem popupMenuItem: popupMenuItems)
-		{
-			this.popup.add(popupMenuItem);
-		}
-		
-		this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-            	if (isEnabled()) popup.show(e.getComponent(), e.getX(), e.getY());
-            }
-        });
-	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		this.callback.buttonClicked(this);
+		this.callback.menuItemSelected(this);
 	}
+
 }
