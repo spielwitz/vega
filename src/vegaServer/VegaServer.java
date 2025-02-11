@@ -461,6 +461,8 @@ public class VegaServer extends Server // NO_UCD (use default)
 						dataSet.setPayloadObject(game);
 						this.setDataSet(dataSet);
 						
+						this.notifyNewEvaluation(game);
+						
 						return new Tuple<ResponseInfo, Object>(
 								new ResponseInfo(true),
 								null);
@@ -585,6 +587,23 @@ public class VegaServer extends Server // NO_UCD (use default)
 		}
 	}
 	
+	private void notifyNewEvaluation(Game game)
+	{
+		ArrayList<String> recipients = new ArrayList<String>();
+		
+		for (Player player: game.getPlayers())
+		{
+			recipients.add(player.getName());
+		}
+		
+		this.pushNotification(
+				game.getPlayers()[0].getName(), 
+				new PayloadRequestMessagePushNotification(
+						recipients,
+						new PayloadNotificationNewEvaluation(
+								game.getName())));
+	}
+	
 	private Tuple<ResponseInfo, Object> postMoves(String userId, PayloadRequestPostMoves payloadRequest)
 	{
 		synchronized(this.getLockObject(payloadRequest.getGameId()))
@@ -625,19 +644,7 @@ public class VegaServer extends Server // NO_UCD (use default)
 						
 						if (allPlayersHaveEnteredMoves)
 						{
-							ArrayList<String> recipients = new ArrayList<String>();
-							
-							for (Player player: game.getPlayers())
-							{
-								recipients.add(player.getName());
-							}
-							
-							this.pushNotification(
-									game.getPlayers()[0].getName(), 
-									new PayloadRequestMessagePushNotification(
-											recipients,
-											new PayloadNotificationNewEvaluation(
-													game.getName())));
+							this.notifyNewEvaluation(game);
 						}
 
 						return new Tuple<ResponseInfo, Object>(
