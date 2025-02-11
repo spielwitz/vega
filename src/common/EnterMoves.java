@@ -456,6 +456,8 @@ class EnterMoves
 		allowedKeys.add(new ConsoleKey("ESC",VegaResources.Back(true)));
 		allowedKeys.add(new ConsoleKey("-",VegaResources.Capitulate(true)));
 		
+		allowedKeys.add(new ConsoleKey("5",VegaResources.Replay(true)));
+		
 		if (this.game.getYear() > 0)
 			allowedKeys.add(new ConsoleKey("6",VegaResources.Statistics(true)));
 		
@@ -480,6 +482,8 @@ class EnterMoves
 				this.game.getConsole().clear();
 				exit = true;
 			}
+			else if (input.equals("5"))
+				new Replay(this.game);
 			else if (input.equals("6") && this.game.getYear() > 0)
 				new Statistics(this.game, false);
 			else if (input.equals("7"))
@@ -1684,6 +1688,13 @@ class EnterMoves
 
 		if (moves.size() == 0)
 		{
+			if (this.game.isSoloPlayer())
+			{
+				this.game.getConsole().appendText(VegaResources.ThereAreNoMoves2(true));
+				this.game.getConsole().lineBreak();
+				return false;
+			}
+			
 			this.game.getConsole().appendText(VegaResources.ThereAreNoMoves(true) + " ");
 
 			String input = this.game.getConsole().waitForKeyPressedYesNo().getInputText().toUpperCase();

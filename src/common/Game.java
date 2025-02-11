@@ -780,6 +780,7 @@ public class Game extends EmailTransportBase implements Serializable
 				(ScreenContent)CommonUtils.klon(this.screenContent);
 		
 		ScreenContentConsole cons = this.screenContentWhileMovesEntered.getConsole();
+		if (cons == null) return;
 		
 		String[] textLines = cons.getTextLines();
 		textLines[Console.TEXT_LINES_COUNT_MAX - 1] = 
@@ -1962,7 +1963,14 @@ public class Game extends EmailTransportBase implements Serializable
 			this.gameStartOfYear = (Game)CommonUtils.klon(this);
 			this.gameStartOfYear.screenContent = (ScreenContent)CommonUtils.klon(this.screenContent);
 			
-			this.mainMenu();
+			if (this.isSoloPlayer())
+			{
+				this.mainMenuSoloPlayer(); // This branch will never return to here
+			}
+			else
+			{
+				this.mainMenuMultiPlayer();
+			}
 			
 			this.console.setBackground(true);
 			new Evaluation(this);
@@ -1976,7 +1984,7 @@ public class Game extends EmailTransportBase implements Serializable
 		} while (true);
 	}
 	
-	private void mainMenu()
+	private void mainMenuMultiPlayer()
 	{
 		if (this.isTutorial())
 		{
@@ -2003,16 +2011,6 @@ public class Game extends EmailTransportBase implements Serializable
 			if (this.finalized)
 			{
 				readyForEvaluation = false;
-			}
-			else if (this.isSoloPlayer())
-			{
-				readyForEvaluation = false;
-				int soloPlayerIndex = this.getCurrentPlayerIndex();
-				
-				if (!this.moves.containsKey(soloPlayerIndex))
-				{
-					playersAllowedToEnterMoves.add(soloPlayerIndex);
-				}
 			}
 			else
 			{
@@ -2044,24 +2042,17 @@ public class Game extends EmailTransportBase implements Serializable
 			
 			if (!playersAllowedToEnterMoves.isEmpty())
 			{
-				if (this.isSoloPlayer())
+				for (int i = 0; i < playersAllowedToEnterMoves.size(); i++)
 				{
-					allowedKeys.add(new ConsoleKey("TAB",VegaResources.EnterMoves(true)));
-				}
-				else
-				{
-					for (int i = 0; i < playersAllowedToEnterMoves.size(); i++)
-					{
-						int playerIndex = playersAllowedToEnterMoves.get(i);
-						
-						allowedKeys.add(
-								new ConsoleKey(
-										Integer.toString(playerIndex + 1), 
-										this.players[playerIndex].getName()));
-					}
+					int playerIndex = playersAllowedToEnterMoves.get(i);
 					
-					allowedKeys.add(new ConsoleKey("TAB",VegaResources.Random(true)));
+					allowedKeys.add(
+							new ConsoleKey(
+									Integer.toString(playerIndex + 1), 
+									this.players[playerIndex].getName()));
 				}
+				
+				allowedKeys.add(new ConsoleKey("TAB",VegaResources.Random(true)));
 			}
 			else if (readyForEvaluation)
 			{
@@ -2185,6 +2176,16 @@ public class Game extends EmailTransportBase implements Serializable
 			}
 		}   while (true);
 		
+	}
+	
+	private void mainMenuSoloPlayer()
+	{
+		if (this.goToReplay)
+		{
+			new Replay(this);
+		}
+		
+		new EnterMoves(this, this.getCurrentPlayerIndex());
 	}
  		
 	private void performAwardCeremony()

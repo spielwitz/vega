@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FE
+		// Last used symbolic key: FF
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -578,6 +578,7 @@ public class VegaResources
 		symbolDict.put("FC","EvaluateYearQuestion_FC");
 		symbolDict.put("FD","EvaluateYearSuccess_FD");
 		symbolDict.put("FE","EvaluateYear_FE");
+		symbolDict.put("FF","ThereAreNoMoves2_FF");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4403,5 +4404,12 @@ public class VegaResources
 	   */
 	public static String EvaluateYear(boolean symbol) {
 		return symbol ? "£FE£":messages.getString("EvaluateYear_FE");
+	}
+
+	/**
+	   * There are no moves. [FF]
+	   */
+	public static String ThereAreNoMoves2(boolean symbol) {
+		return symbol ? "£FF£":messages.getString("ThereAreNoMoves2_FF");
 	}
 }
