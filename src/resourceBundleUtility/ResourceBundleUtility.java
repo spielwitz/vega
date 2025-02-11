@@ -123,9 +123,20 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 	private static void createFormatMethod(StringBuilder sb)
 	{
 		sb.append("\tprivate static String format(String text, Object[] args) {\n");
+		sb.append("\t\tStringBuilder sb = new StringBuilder(text);\n");
 		sb.append("\t\tfor (int i = 0; i < args.length; i++)\n");
-		sb.append("\t\t\ttext = text.replace(\"{\"+i+\"}\", args[i].toString());\n");
-		sb.append("\t\treturn text;\n");
+		sb.append("\t\t{\n");
+		sb.append("\t\t\tStringBuilder sbArg = new StringBuilder(\"{\");\n");
+		sb.append("\t\t\tsbArg.append(i);\n");
+		sb.append("\t\t\tsbArg.append(\"}\");\n");
+		sb.append("\t\t\twhile (true)\n");
+		sb.append("\t\t\t{\n");
+		sb.append("\t\t\t\tint pos = sb.indexOf(sbArg.toString());\n");
+		sb.append("\t\t\t\tif (pos < 0) break;\n");
+		sb.append("\t\t\t\tsb.replace(pos, pos + sbArg.length(), args[i].toString());\n");
+		sb.append("\t\t\t}\n");
+		sb.append("\t\t}\n");
+		sb.append("\t\treturn sb.toString();\n");
 		sb.append("\t}\n");
 	}
 	
@@ -524,7 +535,7 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 			sb.append("\t   * "+text+" ["+symbol+"]\n");
 			sb.append("\t   */\n");
 			sb.append("\tpublic static String "+keyShort+this.getArgs(numArgs)+" {\n");
-			sb.append("\t\treturn symbol ? "+this.getSymbolMethode(symbol, numArgs)+":"+this.getLangMethode(key, numArgs)+";\n");
+			sb.append("\t\treturn symbol ? "+this.getSymbolMethode(symbol, numArgs)+":"+this.getLangMethod(key, numArgs)+";\n");
 			sb.append("\t}\n");			
 		}
 		
@@ -567,7 +578,7 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 		return sb.toString();
 	}
 	
-	private String getLangMethode(String key, int numArgs)
+	private String getLangMethod(String key, int numArgs)
 	{
 		StringBuilder sb = new StringBuilder();
 		

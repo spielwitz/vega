@@ -606,9 +606,20 @@ public class VegaResources
 		return sb.toString();
 	}
 	private static String format(String text, Object[] args) {
+		StringBuilder sb = new StringBuilder(text);
 		for (int i = 0; i < args.length; i++)
-			text = text.replace("{"+i+"}", args[i].toString());
-		return text;
+		{
+			StringBuilder sbArg = new StringBuilder("{");
+			sbArg.append(i);
+			sbArg.append("}");
+			while (true)
+			{
+				int pos = sb.indexOf(sbArg.toString());
+				if (pos < 0) break;
+				sb.replace(pos, pos + sbArg.length(), args[i].toString());
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
