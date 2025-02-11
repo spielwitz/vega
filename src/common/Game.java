@@ -1963,7 +1963,7 @@ public class Game extends EmailTransportBase implements Serializable
 			this.gameStartOfYear = (Game)CommonUtils.klon(this);
 			this.gameStartOfYear.screenContent = (ScreenContent)CommonUtils.klon(this.screenContent);
 			
-			if (this.isSoloPlayer())
+			if (this.isSoloPlayer() && !this.isFinalized())
 			{
 				this.mainMenuSoloPlayer(); // This branch will never return to here
 			}
