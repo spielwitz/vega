@@ -190,7 +190,6 @@ class DistanceMatrix
 		}
 		
 		table.cells.add("");
-		//table.colAlignRight[0] = true;
 	}
 
 	private ArrayList<ScreenContentBoardPlanet> getBoard()

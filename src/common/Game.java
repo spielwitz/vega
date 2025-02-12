@@ -890,7 +890,9 @@ public class Game extends EmailTransportBase implements Serializable
 				
 				if (positionDestination != null)
 				{
-					return new PlanetInputStruct(positionDestination, this.getPlanetIndexFromName(input.getInputText()));
+					return new PlanetInputStruct(
+							this.getPlanetIndexFromName(input.getInputText()),
+							positionDestination);
 				}
 			}
 			
@@ -900,7 +902,9 @@ public class Game extends EmailTransportBase implements Serializable
 				
 				if (planetIndexDestination != Planet.NO_PLANET)
 				{
-					return new PlanetInputStruct(planetIndexDestination);
+					return new PlanetInputStruct(
+							planetIndexDestination,
+							this.planets[planetIndexDestination].getPosition());
 				}
 			}
 			

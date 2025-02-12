@@ -19,6 +19,7 @@ package common;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -308,7 +309,14 @@ class EnterMoves
 			planetIndexDestination = input.planetIndex;
 
 			if (planetIndexStart != planetIndexDestination)
+			{
+				this.showArrivalDate(
+						ShipType.BATTLESHIPS, 
+						false, 
+						this.game.getPlanets()[planetIndexStart].getPosition(), 
+						this.game.getPlanets()[planetIndexDestination].getPosition());
 				break;
+			}
 			else
 			{
 				this.game.getConsole().appendText(VegaResources.ThisIsTheStartPlanet(true));
@@ -323,7 +331,6 @@ class EnterMoves
 		allowedKeys = new ArrayList<ConsoleKey>();
 
 		allowedKeys.add(new ConsoleKey("+",VegaResources.AllBattleships(true)));
-		allowedKeys.add(new ConsoleKey("-",VegaResources.Info(true)));
 
 		do
 		{
@@ -353,30 +360,6 @@ class EnterMoves
 				countMaxTemp = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS);
 			else
 				countMaxTemp = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS, this.playerIndexNow);
-
-			if (inputText.equals("-"))
-			{
-				this.game.getConsole().appendText(
-						VegaResources.YouCannotStartMoreBattleships(
-								true, 
-								Integer.toString((countMaxTemp))) + " ");
-
-				ShipTravelTime travelTime = Ship.getTravelTime(
-						ShipType.BATTLESHIPS, 
-						false, 
-						this.game.getPlanets()[planetIndexStart].getPosition(), 
-						this.game.getPlanets()[planetIndexDestination].getPosition());
-
-				this.game.getConsole().appendText(
-						VegaResources.Arrival2(true));
-
-				travelTime.year += this.game.getYear();
-				this.game.getConsole().appendText(
-						travelTime.toOutputString(true));
-
-				this.game.getConsole().waitForKeyPressed();
-				continue;
-			}
 
 			if (inputText.equals("+"))
 				countTemp = countMaxTemp;
@@ -1147,7 +1130,9 @@ class EnterMoves
 		do
 		{
 			inputDestination = this.game.getPlanetInput(
-					VegaResources.DestinationSectorOrPlanet(true), 
+					transfer ?
+							VegaResources.DestinationPlanet(true) :
+							VegaResources.DestinationSectorOrPlanet(true), 
 					PlanetInputStruct.ALLOWED_INPUT_SECTOR);
 
 			if (inputDestination == null)
@@ -1169,6 +1154,12 @@ class EnterMoves
 				this.game.getConsole().lineBreak();
 				continue;
 			}
+			
+			this.showArrivalDate(
+					type, 
+					transfer, 
+					this.game.getPlanets()[planetIndexStart].getPosition(), 
+					inputDestination.sector);
 
 			break;
 		} while (true);
@@ -1456,6 +1447,12 @@ class EnterMoves
 				this.game.getConsole().lineBreak();
 				continue;
 			}
+			
+			this.showArrivalDate(
+					type, 
+					transfer, 
+					this.game.getPlanets()[planetIndexStart].getPosition(), 
+					input.sector);
 
 			break;
 
@@ -1479,7 +1476,6 @@ class EnterMoves
 					true,
 					null,
 					0);
-
 		}
 		else if (type == ShipType.TRANSPORT)
 		{
@@ -1665,6 +1661,12 @@ class EnterMoves
 						ship.setStopped(false);
 						ship.setWasStoppedBefore();
 						ship.setStartedRecently(true);
+						
+						this.showArrivalDate(
+								ship.getType(), 
+								true, 
+								ship.getPositionStart(), 
+								ship.getPositionDestination());
 							
 						break;
 					}
@@ -1758,5 +1760,36 @@ class EnterMoves
 			this.game.getConsole().outAbort();
 
 		return false;
+	}
+	
+	private void showArrivalDate(
+			ShipType type, 
+			boolean transfer, 
+			Point posStart, 
+			Point posDest)
+	{
+		double distance = posStart.distance(posDest);
+		String[] localeStrings = VegaResources.getLocale().split("-");
+		Locale locale = new Locale(localeStrings[0], localeStrings[1]);
+		
+		String distanceString = String.format(
+					locale,
+					"%.3f", 
+					distance);
+		
+		this.game.getConsole().appendText(VegaResources.Distance(true, distanceString) + ", ");
+		
+		ShipTravelTime travelTime = Ship.getTravelTime(
+				type, 
+				transfer, 
+				posStart, 
+				posDest);
+
+		this.game.getConsole().appendText(VegaResources.Arrival2(true));
+
+		travelTime.year += this.game.getYear();
+		this.game.getConsole().appendText(travelTime.toOutputString(true));
+		
+		this.game.getConsole().lineBreak();
 	}
 }

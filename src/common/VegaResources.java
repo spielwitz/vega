@@ -354,7 +354,7 @@ public class VegaResources
 		symbolDict.put("8Y","Yes_8Y");
 		symbolDict.put("8Z","YouAreNotGameHost_8Z");
 		symbolDict.put("90","YouAreNotOwnerOfPlanet_90");
-		symbolDict.put("91","YouCannotStartMoreBattleships_91");
+		symbolDict.put("91","Distance_91");
 		symbolDict.put("92","YouCannotTransportThisAmountOfMoney_92");
 		symbolDict.put("93","YouHaveNoPlanets_93");
 		symbolDict.put("94","AbortReplay_94");
@@ -2849,10 +2849,10 @@ public class VegaResources
 	}
 
 	/**
-	   * You cannot start more than {0} battleship(s). [91]
+	   * Distance: {0} ly [91]
 	   */
-	public static String YouCannotStartMoreBattleships(boolean symbol, String arg0) {
-		return symbol ? "£91§"+arg0+"£":format(messages.getString("YouCannotStartMoreBattleships_91"), new Object[]{arg0});
+	public static String Distance(boolean symbol, String arg0) {
+		return symbol ? "£91§"+arg0+"£":format(messages.getString("Distance_91"), new Object[]{arg0});
 	}
 
 	/**
