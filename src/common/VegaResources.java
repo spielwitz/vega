@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FE
+		// Last used symbolic key: FO
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -113,7 +113,6 @@ public class VegaResources
 		symbolDict.put("23","MoneySupply_23");
 		symbolDict.put("24","Money_24");
 		symbolDict.put("25","More_25");
-		symbolDict.put("26","MoveEntered_26");
 		symbolDict.put("27","MovesDoNotBelongToThisYear_27");
 		symbolDict.put("28","MovesNotImported_28");
 		symbolDict.put("29","MovesNotTransmittedToServer_29");
@@ -576,8 +575,16 @@ public class VegaResources
 		symbolDict.put("FA","BuySellCombatStrength_FA");
 		symbolDict.put("FB","GameHostActions_FB");
 		symbolDict.put("FC","EvaluateYearQuestion_FC");
-		symbolDict.put("FD","EvaluateYearSuccess_FD");
 		symbolDict.put("FE","EvaluateYear_FE");
+		symbolDict.put("FF","BattleshipsLaunched_FF");
+		symbolDict.put("FG","SpyLaunched_FG");
+		symbolDict.put("FH","TransporterLaunched_FH");
+		symbolDict.put("FI","PatrolLaunched_FI");
+		symbolDict.put("FJ","MinesweeperLaunched_FJ");
+		symbolDict.put("FK","MinelayerLaunched_FK");
+		symbolDict.put("FL","AllianceChanged_FL");
+		symbolDict.put("FN","CapitulationRegistered_FN");
+		symbolDict.put("FO","PlanetChanged_FO");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -1159,13 +1166,6 @@ public class VegaResources
 	   */
 	public static String More(boolean symbol) {
 		return symbol ? "£25£":messages.getString("More_25");
-	}
-
-	/**
-	   * +++ Move entered +++ [26]
-	   */
-	public static String MoveEntered(boolean symbol) {
-		return symbol ? "£26£":messages.getString("MoveEntered_26");
 	}
 
 	/**
@@ -4403,16 +4403,72 @@ public class VegaResources
 	}
 
 	/**
-	   * The year's evaluation for the game {0} was performed successfully. [FD]
-	   */
-	public static String EvaluateYearSuccess(boolean symbol, String arg0) {
-		return symbol ? "£FD§"+arg0+"£":format(messages.getString("EvaluateYearSuccess_FD"), new Object[]{arg0});
-	}
-
-	/**
 	   * Start year evaluation [FE]
 	   */
 	public static String EvaluateYear(boolean symbol) {
 		return symbol ? "£FE£":messages.getString("EvaluateYear_FE");
+	}
+
+	/**
+	   * +++ {0} battleship(s) launched +++ [FF]
+	   */
+	public static String BattleshipsLaunched(boolean symbol, String arg0) {
+		return symbol ? "£FF§"+arg0+"£":format(messages.getString("BattleshipsLaunched_FF"), new Object[]{arg0});
+	}
+
+	/**
+	   * +++ Spy launched +++ [FG]
+	   */
+	public static String SpyLaunched(boolean symbol) {
+		return symbol ? "£FG£":messages.getString("SpyLaunched_FG");
+	}
+
+	/**
+	   * +++ Transporter (${0}) launched +++ [FH]
+	   */
+	public static String TransporterLaunched(boolean symbol, String arg0) {
+		return symbol ? "£FH§"+arg0+"£":format(messages.getString("TransporterLaunched_FH"), new Object[]{arg0});
+	}
+
+	/**
+	   * +++ Patrol launched +++ [FI]
+	   */
+	public static String PatrolLaunched(boolean symbol) {
+		return symbol ? "£FI£":messages.getString("PatrolLaunched_FI");
+	}
+
+	/**
+	   * +++ Minesweeper launched +++ [FJ]
+	   */
+	public static String MinesweeperLaunched(boolean symbol) {
+		return symbol ? "£FJ£":messages.getString("MinesweeperLaunched_FJ");
+	}
+
+	/**
+	   * +++ Mineslayer ({0}) launched +++ [FK]
+	   */
+	public static String MinelayerLaunched(boolean symbol, String arg0) {
+		return symbol ? "£FK§"+arg0+"£":format(messages.getString("MinelayerLaunched_FK"), new Object[]{arg0});
+	}
+
+	/**
+	   * +++ Alliance changed +++ [FL]
+	   */
+	public static String AllianceChanged(boolean symbol) {
+		return symbol ? "£FL£":messages.getString("AllianceChanged_FL");
+	}
+
+	/**
+	   * +++ Capitulation registered +++ [FN]
+	   */
+	public static String CapitulationRegistered(boolean symbol) {
+		return symbol ? "£FN£":messages.getString("CapitulationRegistered_FN");
+	}
+
+	/**
+	   * +++ Planet changed +++ [FO]
+	   */
+	public static String PlanetChanged(boolean symbol) {
+		return symbol ? "£FO£":messages.getString("PlanetChanged_FO");
 	}
 }

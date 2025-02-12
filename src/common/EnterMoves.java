@@ -248,8 +248,7 @@ class EnterMoves
 			this.game.getMoves().get(this.playerIndexNow).add(
 					new Move(planetIndex, allianceChanges));
 
-			this.game.getConsole().appendText(
-					VegaResources.MoveEntered(true));
+			this.game.getConsole().appendText(VegaResources.AllianceChanged(true));
 			this.game.getConsole().lineBreak();
 
 			break;
@@ -422,7 +421,8 @@ class EnterMoves
 						ship,
 						planetCopy));
 
-		this.game.getConsole().appendText(VegaResources.MoveEntered(true));
+		this.game.getConsole().appendText(
+				VegaResources.BattleshipsLaunched(true, Integer.toString(count)));
 		this.game.getConsole().lineBreak();
 	}
 
@@ -474,7 +474,7 @@ class EnterMoves
 
 		this.capitulated = true;
 
-		this.game.getConsole().appendText(VegaResources.MoveEntered(true));
+		this.game.getConsole().appendText(VegaResources.CapitulationRegistered(true));
 		this.game.getConsole().lineBreak();
 	}
 
@@ -1192,7 +1192,30 @@ class EnterMoves
 						ship,
 						planetCopy));
 
-		this.game.getConsole().appendText(VegaResources.MoveEntered(true));
+		switch(type)
+		{
+			case PATROL:
+				this.game.getConsole().appendText(VegaResources.PatrolLaunched(true));
+				break;
+			case MINESWEEPER:
+				this.game.getConsole().appendText(VegaResources.MinesweeperLaunched(true));
+				break;
+			case MINE50:
+				this.game.getConsole().appendText(VegaResources.MinelayerLaunched(true, "50"));
+				break;
+			case MINE100:
+				this.game.getConsole().appendText(VegaResources.MinelayerLaunched(true, "100"));
+				break;
+			case MINE250:
+				this.game.getConsole().appendText(VegaResources.MinelayerLaunched(true, "250"));
+				break;
+			case MINE500:
+				this.game.getConsole().appendText(VegaResources.MinelayerLaunched(true, "500"));
+				break;
+			default:
+				break;
+		}
+		
 		this.game.getConsole().lineBreak();
 	}
 
@@ -1555,7 +1578,19 @@ class EnterMoves
 						ship,
 						planetCopy));
 
-		this.game.getConsole().appendText(VegaResources.MoveEntered(true));
+		switch (type)
+		{
+			case SPY:
+				this.game.getConsole().appendText(VegaResources.SpyLaunched(true));
+				break;
+			case TRANSPORT:
+				this.game.getConsole().appendText(
+						VegaResources.TransporterLaunched(true, Integer.toString(ship.getCount())));
+				break;
+			default:
+				break;
+		}
+		
 		this.game.getConsole().lineBreak();
 	}
 
