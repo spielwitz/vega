@@ -112,13 +112,34 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 		sb.append("\t\t\t\t\tfor (int i = 1; i < parts.length; i++)\n");
 		sb.append("\t\t\t\t\t\targs[i-1] = parts[i];\n");
 		
-		sb.append("\t\t\t\t\t\tsb.append(MessageFormat.format(messages.getString(symbolDict.get(parts[0])) ,args));\n");
+		sb.append("\t\t\t\t\t\tsb.append(format(messages.getString(symbolDict.get(parts[0])) ,args));\n");
 		sb.append("\t\t\t}}\n");
 		sb.append("\t\t\tpos = endPos + 1;\n");
 		sb.append("\t\t} while (true);\n");
 		sb.append("\t\treturn sb.toString();\n");
 		sb.append("\t}\n");
 	}
+	
+	private static void createFormatMethod(StringBuilder sb)
+	{
+		sb.append("\tprivate static String format(String text, Object[] args) {\n");
+		sb.append("\t\tStringBuilder sb = new StringBuilder(text);\n");
+		sb.append("\t\tfor (int i = 0; i < args.length; i++)\n");
+		sb.append("\t\t{\n");
+		sb.append("\t\t\tStringBuilder sbArg = new StringBuilder(\"{\");\n");
+		sb.append("\t\t\tsbArg.append(i);\n");
+		sb.append("\t\t\tsbArg.append(\"}\");\n");
+		sb.append("\t\t\twhile (true)\n");
+		sb.append("\t\t\t{\n");
+		sb.append("\t\t\t\tint pos = sb.indexOf(sbArg.toString());\n");
+		sb.append("\t\t\t\tif (pos < 0) break;\n");
+		sb.append("\t\t\t\tsb.replace(pos, pos + sbArg.length(), args[i].toString());\n");
+		sb.append("\t\t\t}\n");
+		sb.append("\t\t}\n");
+		sb.append("\t\treturn sb.toString();\n");
+		sb.append("\t}\n");
+	}
+	
 	private Properties properties;
 	
 	private String propertiesFile = "";
@@ -406,7 +427,6 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 		if (this.outputPackageName.length() > 0)
 			sb.append("package "+this.outputPackageName+";\n\n");
 		sb.append("import java.util.Hashtable;\n");
-		sb.append("import java.text.MessageFormat;\n");
 		sb.append("import java.util.Locale;\n");
 		sb.append("import java.util.ResourceBundle;\n\n");
 		
@@ -501,6 +521,7 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 		sb.append("\t}\n");
 		
 		createConvertSymbolStringMethod(sb);
+		createFormatMethod(sb);
 				
 		for (String symbol: symbolList)
 		{
@@ -514,7 +535,7 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 			sb.append("\t   * "+text+" ["+symbol+"]\n");
 			sb.append("\t   */\n");
 			sb.append("\tpublic static String "+keyShort+this.getArgs(numArgs)+" {\n");
-			sb.append("\t\treturn symbol ? "+this.getSymbolMethode(symbol, numArgs)+":"+this.getLangMethode(key, numArgs)+";\n");
+			sb.append("\t\treturn symbol ? "+this.getSymbolMethode(symbol, numArgs)+":"+this.getLangMethod(key, numArgs)+";\n");
 			sb.append("\t}\n");			
 		}
 		
@@ -557,7 +578,7 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 		return sb.toString();
 	}
 	
-	private String getLangMethode(String key, int numArgs)
+	private String getLangMethod(String key, int numArgs)
 	{
 		StringBuilder sb = new StringBuilder();
 		
@@ -565,19 +586,18 @@ public class ResourceBundleUtility extends Frame // NO_UCD (unused code)
 			sb.append("messages.getString(\""+key+"\")");
 		else
 		{
-			sb.append("MessageFormat.format(");
+			sb.append("format(");
 			
-			sb.append("messages.getString(\""+key+"\")");
+			sb.append("messages.getString(\""+key+"\"), new Object[]{");
 			
 			for (int i = 0; i < numArgs; i++)
 			{
-				sb.append(", arg" + i);
+				if (i > 0) sb.append(",");
+				sb.append("arg" + i);
 			}
 			
-			sb.append(")");
+			sb.append("})");
 		}
-			
-		
 		
 		return sb.toString();
 	}

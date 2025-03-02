@@ -24,14 +24,20 @@ class PlanetInputStruct
 	int planetIndex = Planet.NO_PLANET;
 	Point sector = null;
 	
-	PlanetInputStruct(int planetIndex)
+	PlanetInputStruct(int planetIndex, Point sector)
 	{
+		this.sector = sector;
 		this.planetIndex = planetIndex;
 	}
 	
-	PlanetInputStruct(Point position, int planetIndex)
-	{
-		this.sector = position;
-		this.planetIndex = planetIndex;
-	}
+//	PlanetInputStruct(int planetIndex)
+//	{
+//		this.planetIndex = planetIndex;
+//	}
+//	
+//	PlanetInputStruct(Point position, int planetIndex)
+//	{
+//		this.sector = position;
+//		this.planetIndex = planetIndex;
+//	}
 }

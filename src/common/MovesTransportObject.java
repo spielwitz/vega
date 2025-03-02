@@ -27,7 +27,14 @@ public class MovesTransportObject extends EmailTransportBase implements Serializ
 	private String buildRequired;
 	private ArrayList<Move> moves;
 	
-	MovesTransportObject(UUID playerReferenceCode, String buildRequired, ArrayList<Move> moves)
+	public MovesTransportObject(UUID playerReferenceCode)
+	{
+		this.playerReferenceCode = playerReferenceCode;
+		this.moves = new ArrayList<Move>();
+		this.buildRequired = Game.BUILD;
+	}
+	
+	public MovesTransportObject(UUID playerReferenceCode, String buildRequired, ArrayList<Move> moves)
 	{
 		this.playerReferenceCode = playerReferenceCode;
 		this.moves = moves;

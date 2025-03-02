@@ -143,7 +143,7 @@ class PlanetEditor
 			moves.add(new Move(planetIndex, game.getPlanets()[planetIndex], planet));
 			game.getPlanets()[planetIndex] = planet;
 
-			game.getConsole().appendText(VegaResources.MoveEntered(true));
+			game.getConsole().appendText(VegaResources.PlanetChanged(true));
 		}
 		else
 			game.getConsole().appendText(VegaResources.ActionCancelled(true));

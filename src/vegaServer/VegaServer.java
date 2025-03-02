@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.UUID;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,12 +33,14 @@ import common.Game;
 import common.GameInfo;
 import common.Highscores;
 import common.Migrator;
+import common.MovesTransportObject;
 import common.Player;
 import common.VegaResources;
 import commonServer.ClientServerConstants;
 import commonServer.PayloadNotificationNewEvaluation;
 import commonServer.PayloadRequestMessageDeleteGame;
 import commonServer.PayloadRequestMessageDeleteUserFromHighscores;
+import commonServer.PayloadRequestMessageEvaluateYear;
 import commonServer.PayloadRequestMessageFinalizeGame;
 import commonServer.PayloadRequestMessageGetGame;
 import commonServer.PayloadRequestMessageGetGamesAndUsers;
@@ -61,18 +64,18 @@ import spielwitz.biDiServer.User;
 
 public class VegaServer extends Server // NO_UCD (use default)
 {
-	private static ServerConfiguration serverConfig;
 	private final static File fileServerCredentials = 
 			Paths.get(
 					CommonUtils.getHomeDir(),
 					Server.FOLDER_NAME_ROOT,
 					"ServerConfig.json").
-			toFile(); 
+			toFile();
+	private static final LogLevel SERVER_DEFAULT_LOGLEVEL = LogLevel.Information; 
 	
 	private static final String SERVER_HOSTNAME = "localhost"; 
 	
-	private static final LogLevel SERVER_DEFAULT_LOGLEVEL = LogLevel.Information;
 	private static final int SERVER_PORT = 56084;
+	private static ServerConfiguration serverConfig;
 	
 	public static void main(String[] args)
 	{
@@ -266,6 +269,10 @@ public class VegaServer extends Server // NO_UCD (use default)
 		{
 			return this.getGame(userId, (PayloadRequestMessageGetGame)payloadRequest);
 		}
+		else if (payloadRequest.getClass() == PayloadRequestMessageEvaluateYear.class)
+		{
+			return this.evaluateYear(userId, (PayloadRequestMessageEvaluateYear)payloadRequest);
+		}
 		else if (payloadRequest.getClass() == PayloadRequestMessageDeleteGame.class)
 		{
 			return this.deleteGame(userId, (PayloadRequestMessageDeleteGame)payloadRequest);
@@ -352,6 +359,74 @@ public class VegaServer extends Server // NO_UCD (use default)
 				null);
 	}
 	
+	private Tuple<ResponseInfo, Object> evaluateYear(String userId, PayloadRequestMessageEvaluateYear payloadRequest)
+	{
+		synchronized(this.getLockObject(payloadRequest.getGameId()))
+		{
+			DataSet dataSet = this.getDataSet(payloadRequest.getGameId());
+			
+			if (dataSet == null)
+			{
+				return new Tuple<ResponseInfo, Object>(
+						new ResponseInfo(
+								false,
+								VegaResources.GameNotExists(true, payloadRequest.getGameId())),
+						null);
+			}
+			else
+			{
+				Game game = (Game) dataSet.getPayloadObject();
+				
+				if (game.isFinalized())
+				{
+					return new Tuple<ResponseInfo, Object>(
+							new ResponseInfo(
+									false,
+									VegaResources.GameHasBeenFinalized(true)),
+							null);
+				}
+				else
+				{
+					if (userId.equals(game.getPlayers()[0].getName()))
+					{
+						Tuple<ResponseInfo, Object> postMovesResponse = null;
+						
+						Hashtable<String,UUID> playersNotEnteredMoves = game.getPlayersMovesNotEntered();
+						
+						for (String userNotEnteredMoves: playersNotEnteredMoves.keySet())
+						{
+							postMovesResponse = this.postMoves(
+									userNotEnteredMoves, 
+									new PayloadRequestPostMoves(
+											game.getName(),
+											new MovesTransportObject(
+													playersNotEnteredMoves.get(userNotEnteredMoves))));
+							
+							if (!postMovesResponse.getE1().isSuccess())
+							{
+								return new Tuple<ResponseInfo, Object>(
+										postMovesResponse.getE1(),
+										null);
+							}
+						}
+						
+						return new Tuple<ResponseInfo, Object>(
+								new ResponseInfo(true),
+								null);
+					}
+					else
+					{
+						return new Tuple<ResponseInfo, Object>(
+								new ResponseInfo(
+										false,
+										VegaResources.YouAreNotGameHost(true, payloadRequest.getGameId())),
+								null);
+					}
+				}
+			}
+		}
+	}
+	
 	private Tuple<ResponseInfo, Object> finalizeGame(String userId, PayloadRequestMessageFinalizeGame payloadRequest)
 	{
 		synchronized(this.getLockObject(payloadRequest.getGameId()))
@@ -385,6 +460,8 @@ public class VegaServer extends Server // NO_UCD (use default)
 						game.finalizeGameServer();
 						dataSet.setPayloadObject(game);
 						this.setDataSet(dataSet);
+						
+						this.notifyNewEvaluation(game);
 						
 						return new Tuple<ResponseInfo, Object>(
 								new ResponseInfo(true),
@@ -510,6 +587,23 @@ public class VegaServer extends Server // NO_UCD (use default)
 		}
 	}
 	
+	private void notifyNewEvaluation(Game game)
+	{
+		ArrayList<String> recipients = new ArrayList<String>();
+		
+		for (Player player: game.getPlayers())
+		{
+			recipients.add(player.getName());
+		}
+		
+		this.pushNotification(
+				game.getPlayers()[0].getName(), 
+				new PayloadRequestMessagePushNotification(
+						recipients,
+						new PayloadNotificationNewEvaluation(
+								game.getName())));
+	}
+	
 	private Tuple<ResponseInfo, Object> postMoves(String userId, PayloadRequestPostMoves payloadRequest)
 	{
 		synchronized(this.getLockObject(payloadRequest.getGameId()))
@@ -550,19 +644,7 @@ public class VegaServer extends Server // NO_UCD (use default)
 						
 						if (allPlayersHaveEnteredMoves)
 						{
-							ArrayList<String> recipients = new ArrayList<String>();
-							
-							for (Player player: game.getPlayers())
-							{
-								recipients.add(player.getName());
-							}
-							
-							this.pushNotification(
-									game.getPlayers()[0].getName(), 
-									new PayloadRequestMessagePushNotification(
-											recipients,
-											new PayloadNotificationNewEvaluation(
-													game.getName())));
+							this.notifyNewEvaluation(game);
 						}
 
 						return new Tuple<ResponseInfo, Object>(

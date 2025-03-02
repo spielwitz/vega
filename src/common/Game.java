@@ -41,58 +41,58 @@ import com.google.gson.JsonObject;
 @SuppressWarnings("serial")
 public class Game extends EmailTransportBase implements Serializable
 {
-	/// The current build
-	public static final String		BUILD = "0013";
+	// Game board dimensions 
+	public static final int 		BOARD_MAX_X = 20;
 	
+	public static final int 		BOARD_MAX_Y = 18;
+
+	/// The current build
+	public static final String		BUILD = "0014";
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0013";
-
-	// Game board dimensions 
-	public static final int 		BOARD_MAX_X = 20;
-	public static final int 		BOARD_MAX_Y = 18;
+	public static final String 		BUILD_COMPATIBLE = "0014";
 	
-	static final int 				DAYS_OF_YEAR_COUNT = 365;
+	public static final int 		GAME_NAME_LENGTH_MAX = 18;
+	public static final int 		GAME_NAME_LENGTH_MIN = 3;
+	public static final int 		PLANETS_COUNT_MAX = 42;
+	// Default values for a new game
+	public static final int 		PLAYERS_COUNT_DEFAULT = 6;
 	public static final int 		PLAYERS_COUNT_MAX = 6;
 	public static final int 		PLAYERS_COUNT_MIN = 2;
-	public static final int 		PLANETS_COUNT_MAX = 42;
-	static final int				DEFENSIVE_BATTLESHIPS_BUY_SELL = 450;
-	static final int				DEFENSIVE_BATTLESHIPSS_COUNT_MAX = 900;
-	static final int 				DEFENSIVE_BATTLESHIPS_COUNT_INITIAL_PLAYERS = 450;
-	static final int 				MONEY_PRODUCTION_PURCHASE = 5;
-	static final int 				TRANSPORT_MONEY_MAX = 30;
-	static final int 				BATTLESHIPS_COUNT_INITIAL_PLAYERS = 350;
+	public static final String[] 	YEARS = { "15", "20", "30", "40", "50", "75", "100", "150", "200", "500", "999" };
+	public static final int 		YEARS_COUNT_MAX_DEFAULT = 50;
 	static final int 				BATTLESHIPS_COUNT_INITIAL_NEUTRAL_MAX = 10;
-	static final int 				MONEY_PRODUCTION_INITIAL_PLAYERS = 10;
-	static final int 				MONEY_SUPPLY_INITIAL_PLAYERS = 30;
-	static final int 				MONEY_SUPPLY_INITIAL_NEUTRAL_MAX = 5;
+	static final int 				BATTLESHIPS_COUNT_INITIAL_PLAYERS = 350;
+	static final double 			BLACK_HOLE_RANGE = 0.5;
+	static final int 				DAYS_OF_YEAR_COUNT = 365;
+	static final int				DEFENSIVE_BATTLESHIPS_BUY_SELL = 450;
+	static final int 				DEFENSIVE_BATTLESHIPS_COUNT_INITIAL_PLAYERS = 450;
+	static final int				DEFENSIVE_BATTLESHIPSS_COUNT_MAX = 900;
 	static final int 				MONEY_PRODUCTION_INITIAL_NEUTRAL = 10;
 	static final int 				MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA = 5;
 	static final int 				MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W1 = 15;
 	static final int 				MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W2 = 200;
+	static final int 				MONEY_PRODUCTION_INITIAL_PLAYERS = 10;
 	static final int 				MONEY_PRODUCTION_MAX = 100;
 	static final int				MONEY_PRODUCTION_NEARBY_PLANETS = 25;
-	static final int 				PLANET_NAME_LENGTH_MAX = 2;
-	public static final int 		GAME_NAME_LENGTH_MIN = 3;
-	public static final int 		GAME_NAME_LENGTH_MAX = 18;
-	static final double 			PATROL_RADAR_RANGE = 1.5;
+	static final int 				MONEY_PRODUCTION_PURCHASE = 5;
+	static final int 				MONEY_SUPPLY_INITIAL_NEUTRAL_MAX = 5;
+	static final int 				MONEY_SUPPLY_INITIAL_PLAYERS = 30;
+	
 	static final int 				PATROL_CAPUTURES_BATTLESHIPS_COUNT_MAX = 5;
+	static final double 			PATROL_RADAR_RANGE = 1.5;
+	static final int 				PLANET_NAME_LENGTH_MAX = 2;
+	static final int 				TRANSPORT_MONEY_MAX = 30;
+	private static final int 		BLACK_HOLE_FIRST_YEAR = 7;
+	private static final double 	BLACK_HOLE_MOVE_DISTANCE = 2; 
+	private static final int 		BLACK_HOLE_YEARS_OFF_MAX = 4;
+	private static final int 		BLACK_HOLE_YEARS_OFF_MIN = 1;
+	private static final int 		BLACK_HOLE_YEARS_ON_MAX = 9;
 	
 	private static final int 		BLACK_HOLE_YEARS_ON_MIN = 2;
-	private static final int 		BLACK_HOLE_YEARS_ON_MAX = 9;
-	private static final int 		BLACK_HOLE_YEARS_OFF_MIN = 1;
-	private static final int 		BLACK_HOLE_YEARS_OFF_MAX = 4;
-	private static final double 	BLACK_HOLE_MOVE_DISTANCE = 2;
-	static final double 			BLACK_HOLE_RANGE = 0.5; 
-	private static final int 		BLACK_HOLE_FIRST_YEAR = 7;
 	private static final int		NEUTRAL_FLEET_FIRST_YEAR = 9;
 	private static final int 		NEUTRAL_FLEET_YEAR_INTERVAL = 5;
-	
-	// Default values for a new game
-	public static final int 		PLAYERS_COUNT_DEFAULT = 6;
-	public static final String[] 	YEARS = { "15", "20", "30", "40", "50", "75", "100", "150", "200", "500", "999" };
-	public static final int 		YEARS_COUNT_MAX_DEFAULT = 50;
 	
 	public static Game create(HashSet<GameOptions> options,
 			Player[] players,
@@ -165,68 +165,68 @@ public class Game extends EmailTransportBase implements Serializable
 			   Character.toString((char)(65+(CommonUtils.round(pt.getX()))));
 		
 	}
-	private String buildRequired;
+	private Hashtable<Integer,Archive> archive;
 			  
-	private UUID id;
-	private String name;
-	private long dateStart;
-	private long dateUpdate;
-	private HashSet<GameOptions> options;
-	private int yearMax;
-	private int year;
-	private int playersCount;
-	
-	private int planetsCount;
-	
+	private int boardHeight;
+	private int boardWidth;
 	private int boardXOffset;
 	private int boardYOffset;
-	
-	private int boardWidth;
-	
-	private int boardHeight;
-	private Planet[] planets;
-	private Player[] players;
-	private ArrayList<Ship> ships;
-	private Hashtable<Integer,ArrayList<Move>> moves;
-	
-	private UUID[] playerReferenceCodes;
-	private Hashtable<ShipType, Integer> editorPrices;
-	private Hashtable<String,Mine> mines;
-	private String emailAddressGameHost;
-	
-	private boolean finalized;
-	private Hashtable<Integer,Archive> archive;
-	private ArrayList<ScreenContent> replayLast;
-	private Tutorial tutorial;
-	private int yearBlackHoleSwap;
-	
-	transient private boolean soloPlayer;
-	transient private boolean initial;
-	
-	transient private boolean enableParameterChange; 
-	transient private int planetListContentStateOrdinal = 0;
-	
-	transient private int planetListContentAllShipsPageCounter = 0;
+	private String buildRequired;
 	transient private Console console;
-	
-	transient private ScreenContent screenContent;
-	transient private Game gameStartOfYear;
-	transient private GameThread gameThread;
-	transient private Hashtable<Integer,String> mapPlanetIndexToName;
-	transient private Hashtable<String,Integer> mapPlanetNameToIndex;
-	transient private Hashtable<String,Integer> planetsByPosition;
-	transient private int[] planetIndicesSorted;
-	transient private boolean goToReplay;
-
-	transient private int	  playerIndexEnteringMoves = Player.NEUTRAL;
-	
-	transient private HashSet<Integer> shipsOfPlayerHidden;
-	
-	transient private ScreenContent screenContentWhileMovesEntered;
+	private long dateStart;
+	private long dateUpdate;
 	
 	transient private ShipTravelTime[][] distanceMatrix;
 	
 	transient private int[][] distanceMatrixYears;
+	private Hashtable<ShipType, Integer> editorPrices;
+	
+	private String emailAddressGameHost;
+	
+	transient private boolean enableParameterChange;
+	private boolean finalized;
+	transient private Game gameStartOfYear;
+	transient private GameThread gameThread;
+	transient private boolean goToReplay;
+	
+	private UUID id;
+	transient private boolean initial;
+	transient private Hashtable<Integer,String> mapPlanetIndexToName;
+	transient private Hashtable<String,Integer> mapPlanetNameToIndex;
+	
+	private Hashtable<String,Mine> mines;
+	private Hashtable<Integer,ArrayList<Move>> moves;
+	private String name;
+	private HashSet<GameOptions> options;
+	transient private int[] planetIndicesSorted;
+	
+	transient private int planetListContentAllShipsPageCounter = 0;
+	transient private int planetListContentStateOrdinal = 0;
+	
+	private Planet[] planets; 
+	transient private Hashtable<String,Integer> planetsByPosition;
+	
+	private int planetsCount;
+	transient private int	  playerIndexEnteringMoves = Player.NEUTRAL;
+	
+	private UUID[] playerReferenceCodes;
+	private Player[] players;
+	private int playersCount;
+	private ArrayList<ScreenContent> replayLast;
+	transient private ScreenContent screenContent;
+	transient private ScreenContent screenContentWhileMovesEntered;
+	private ArrayList<Ship> ships;
+	transient private HashSet<Integer> shipsOfPlayerHidden;
+
+	transient private boolean soloPlayer;
+	
+	private Tutorial tutorial;
+	
+	private int year;
+	
+	private int yearBlackHoleSwap;
+	
+	private int yearMax;
 	
 	@SuppressWarnings("unchecked")
 	public Game(HashSet<GameOptions> options,
@@ -464,6 +464,21 @@ public class Game extends EmailTransportBase implements Serializable
 		return this.playersCount;
 	}
 	
+	public Hashtable<String,UUID> getPlayersMovesNotEntered()
+	{
+		Hashtable<String,UUID> playerInfos = new Hashtable<String,UUID>();
+		
+		for (int playerIndex = 0; playerIndex < this.playersCount; playerIndex++)
+  		{
+  			if (!this.moves.containsKey(playerIndex))
+  			{
+  				playerInfos.put(this.players[playerIndex].getName(), this.playerReferenceCodes[playerIndex]);
+  			}
+  		}
+		
+		return playerInfos;
+	}
+	
 	public ScreenContent getScreenContentStartOfYear()
 	{
 		if (this.gameStartOfYear == null || this.gameStartOfYear.screenContent == null)
@@ -672,17 +687,8 @@ public class Game extends EmailTransportBase implements Serializable
 	
 	public boolean startEvaluationServer()
   	{
-  		boolean allPlayersHaveEnteredMoves = true;
-  		
-  		for (int playerIndex = 0; playerIndex < this.playersCount; playerIndex++)
-  		{
-  			if (!this.moves.containsKey(playerIndex))
-  			{
-  				allPlayersHaveEnteredMoves = false;
-  				break;
-  			}
-  		}
-  		
+		boolean allPlayersHaveEnteredMoves = this.getPlayersMovesNotEntered().size() == 0;
+		
   		if (allPlayersHaveEnteredMoves)
   		{
   			this.console = new Console(this, true);
@@ -774,6 +780,7 @@ public class Game extends EmailTransportBase implements Serializable
 				(ScreenContent)CommonUtils.klon(this.screenContent);
 		
 		ScreenContentConsole cons = this.screenContentWhileMovesEntered.getConsole();
+		if (cons == null) return;
 		
 		String[] textLines = cons.getTextLines();
 		textLines[Console.TEXT_LINES_COUNT_MAX - 1] = 
@@ -883,7 +890,9 @@ public class Game extends EmailTransportBase implements Serializable
 				
 				if (positionDestination != null)
 				{
-					return new PlanetInputStruct(positionDestination, this.getPlanetIndexFromName(input.getInputText()));
+					return new PlanetInputStruct(
+							this.getPlanetIndexFromName(input.getInputText()),
+							positionDestination);
 				}
 			}
 			
@@ -893,7 +902,9 @@ public class Game extends EmailTransportBase implements Serializable
 				
 				if (planetIndexDestination != Planet.NO_PLANET)
 				{
-					return new PlanetInputStruct(planetIndexDestination);
+					return new PlanetInputStruct(
+							planetIndexDestination,
+							this.planets[planetIndexDestination].getPosition());
 				}
 			}
 			
@@ -1048,60 +1059,6 @@ public class Game extends EmailTransportBase implements Serializable
 		return this.goToReplay;
 	}
 	
-	String mainMenuGetYearDisplayText()
-	{
-		if (this.finalized)
-		{
-			return VegaResources.FinalizedGameInYear(true, Integer.toString(this.year+1));
-		}
-		else
-		{
-			return VegaResources.YearOf(
-						true, 
-						Integer.toString(this.year+1), 
-						Integer.toString(this.yearMax));
-		}
-	}
-	
-	void pause(int milliseconds)
-	{
-		if (!this.console.isBackground())
-			this.gameThread.pause(milliseconds);
-	}
-		
-	void printAllianceInfo(int planetIndex)
-	{
-		Planet planet = this.planets[planetIndex];
-		
-		int counter = 0;
-		StringBuilder sb = new StringBuilder();
-		for (int playerIndex = 0; playerIndex < this.playersCount; playerIndex++)
-		{
-			if (!planet.isAllianceMember(playerIndex))
-				continue;
-			
-			if (counter >= 3)
-			{
-				this.console.appendText(sb.toString());
-				this.console.lineBreak();
-				sb = new StringBuilder();
-				counter = 0;
-			}
-			
-			if (sb.length() > 0)
-				sb.append(", ");
-			
-			sb.append(this.players[playerIndex].getName());
-			sb.append(" (");
-			sb.append(planet.getShipsCount(ShipType.BATTLESHIPS, playerIndex));
-			sb.append(" "+VegaResources.Battleships(true)+")");
-				
-			counter++; 							
-		}
-		
-		this.console.appendText(sb.toString());
-	}
-	
 	void launchNeutralFleet()
 	{
 		if (this.year < NEUTRAL_FLEET_FIRST_YEAR ||
@@ -1146,6 +1103,60 @@ public class Game extends EmailTransportBase implements Serializable
 						Player.NEUTRAL,
 						false,
 						null));
+	}
+	
+	String mainMenuGetYearDisplayText()
+	{
+		if (this.finalized)
+		{
+			return VegaResources.FinalizedGameInYear(true, Integer.toString(this.year+1));
+		}
+		else
+		{
+			return VegaResources.YearOf(
+						true, 
+						Integer.toString(this.year+1), 
+						Integer.toString(this.yearMax));
+		}
+	}
+		
+	void pause(int milliseconds)
+	{
+		if (!this.console.isBackground())
+			this.gameThread.pause(milliseconds);
+	}
+	
+	void printAllianceInfo(int planetIndex)
+	{
+		Planet planet = this.planets[planetIndex];
+		
+		int counter = 0;
+		StringBuilder sb = new StringBuilder();
+		for (int playerIndex = 0; playerIndex < this.playersCount; playerIndex++)
+		{
+			if (!planet.isAllianceMember(playerIndex))
+				continue;
+			
+			if (counter >= 3)
+			{
+				this.console.appendText(sb.toString());
+				this.console.lineBreak();
+				sb = new StringBuilder();
+				counter = 0;
+			}
+			
+			if (sb.length() > 0)
+				sb.append(", ");
+			
+			sb.append(this.players[playerIndex].getName());
+			sb.append(" (");
+			sb.append(planet.getShipsCount(ShipType.BATTLESHIPS, playerIndex));
+			sb.append(" "+VegaResources.Battleships(true)+")");
+				
+			counter++; 							
+		}
+		
+		this.console.appendText(sb.toString());
 	}
 	
 	Ship setBlackHoleDirection()
@@ -1694,16 +1705,7 @@ public class Game extends EmailTransportBase implements Serializable
 		this.calculateScores();	
 	}
   	
-  	private int getRandomProductionOfNeutralPlanet()
-  	{
-  		int moneyProduction = CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL) + 1;
-		if (CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W2) < MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W1)
-			moneyProduction += (CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA)+1);
-		
-		return moneyProduction;
-  	}
-  	
-	private void emailMenu()
+  	private void emailMenu()
 	{
 		this.console.setHeaderText(
 			this.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" -> "+VegaResources.EmailActions(true), Colors.NEUTRAL);
@@ -1793,7 +1795,7 @@ public class Game extends EmailTransportBase implements Serializable
 		} while (true);
 	}
   	
-  	private void finalizeGame(boolean background)
+	private void finalizeGame(boolean background)
 	{
 		this.finalized = true;
 		
@@ -1934,6 +1936,15 @@ public class Game extends EmailTransportBase implements Serializable
 		else
 			return null;
 	}
+  	
+  	private int getRandomProductionOfNeutralPlanet()
+  	{
+  		int moneyProduction = CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL) + 1;
+		if (CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W2) < MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA_W1)
+			moneyProduction += (CommonUtils.getRandomInteger(MONEY_PRODUCTION_INITIAL_NEUTRAL_EXTRA)+1);
+		
+		return moneyProduction;
+  	}
   			
 	private void mainLoop()
 	{
@@ -1956,7 +1967,14 @@ public class Game extends EmailTransportBase implements Serializable
 			this.gameStartOfYear = (Game)CommonUtils.klon(this);
 			this.gameStartOfYear.screenContent = (ScreenContent)CommonUtils.klon(this.screenContent);
 			
-			this.mainMenu();
+			if (this.isSoloPlayer() && !this.isFinalized())
+			{
+				this.mainMenuSoloPlayer(); // This branch will never return to here
+			}
+			else
+			{
+				this.mainMenuMultiPlayer();
+			}
 			
 			this.console.setBackground(true);
 			new Evaluation(this);
@@ -1970,7 +1988,7 @@ public class Game extends EmailTransportBase implements Serializable
 		} while (true);
 	}
 	
-	private void mainMenu()
+	private void mainMenuMultiPlayer()
 	{
 		if (this.isTutorial())
 		{
@@ -1997,16 +2015,6 @@ public class Game extends EmailTransportBase implements Serializable
 			if (this.finalized)
 			{
 				readyForEvaluation = false;
-			}
-			else if (this.isSoloPlayer())
-			{
-				readyForEvaluation = false;
-				int soloPlayerIndex = this.getCurrentPlayerIndex();
-				
-				if (!this.moves.containsKey(soloPlayerIndex))
-				{
-					playersAllowedToEnterMoves.add(soloPlayerIndex);
-				}
 			}
 			else
 			{
@@ -2038,24 +2046,17 @@ public class Game extends EmailTransportBase implements Serializable
 			
 			if (!playersAllowedToEnterMoves.isEmpty())
 			{
-				if (this.isSoloPlayer())
+				for (int i = 0; i < playersAllowedToEnterMoves.size(); i++)
 				{
-					allowedKeys.add(new ConsoleKey("TAB",VegaResources.EnterMoves(true)));
-				}
-				else
-				{
-					for (int i = 0; i < playersAllowedToEnterMoves.size(); i++)
-					{
-						int playerIndex = playersAllowedToEnterMoves.get(i);
-						
-						allowedKeys.add(
-								new ConsoleKey(
-										Integer.toString(playerIndex + 1), 
-										this.players[playerIndex].getName()));
-					}
+					int playerIndex = playersAllowedToEnterMoves.get(i);
 					
-					allowedKeys.add(new ConsoleKey("TAB",VegaResources.Random(true)));
+					allowedKeys.add(
+							new ConsoleKey(
+									Integer.toString(playerIndex + 1), 
+									this.players[playerIndex].getName()));
 				}
+				
+				allowedKeys.add(new ConsoleKey("TAB",VegaResources.Random(true)));
 			}
 			else if (readyForEvaluation)
 			{
@@ -2179,6 +2180,16 @@ public class Game extends EmailTransportBase implements Serializable
 			}
 		}   while (true);
 		
+	}
+	
+	private void mainMenuSoloPlayer()
+	{
+		if (this.goToReplay)
+		{
+			new Replay(this);
+		}
+		
+		new EnterMoves(this, this.getCurrentPlayerIndex());
 	}
  		
 	private void performAwardCeremony()

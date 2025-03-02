@@ -22,8 +22,6 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -44,7 +42,6 @@ import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -84,18 +81,20 @@ import spielwitz.biDiServer.Tuple;
 import spielwitz.biDiServer.User;
 import uiBaseControls.Frame;
 import uiBaseControls.IIconLabelListener;
+import uiBaseControls.IMenuItemListener;
 import uiBaseControls.IconLabel;
 import uiBaseControls.LookAndFeel;
+import uiBaseControls.MenuItem;
 
 @SuppressWarnings("serial") 
 public class Vega extends Frame // NO_UCD (use default)
 	implements 
 		IGameThreadEventListener, 
-		ActionListener,
 		MouseListener,
 		IPanelScreenContentCallback,
 		IIconLabelListener,
 		IVegaClientCallback,
+		IMenuItemListener,
 		IMessengerCallback
 {
 	static final String DEMO_GAME1 = "tutorial/Demo1.VEG";
@@ -167,32 +166,32 @@ public class Vega extends Frame // NO_UCD (use default)
     private IconLabel labGames;
     private IconLabel labMenu;
     private IconLabel labMessages;
-    private JMenuItem menuAbout;
+    private MenuItem menuAbout;
     
-    private JMenuItem menuDemoGame1;
-    private JMenuItem menuDemoGame2;
+    private MenuItem menuDemoGame1;
+    private MenuItem menuDemoGame2;
     
-    private JMenuItem menuEmailClipboard;
+    private MenuItem menuEmailClipboard;
     
-    private JMenuItem menuEmailSend;
-    private JMenuItem menuHelp;
+    private MenuItem menuEmailSend;
+    private MenuItem menuHelp;
 	
-	private JMenuItem menuHighscore;
-	private JMenuItem menuLanguage;
-	private JMenuItem menuLoad;
-	private JMenuItem menuNewGame;
-	private JMenuItem menuOutputWindow;
-	private JMenuItem menuParameters;
-	private JMenuItem menuQuit;
+	private MenuItem menuHighscore;
+	private MenuItem menuLanguage;
+	private MenuItem menuLoad;
+	private MenuItem menuNewGame;
+	private MenuItem menuOutputWindow;
+	private MenuItem menuParameters;
+	private MenuItem menuQuit;
 	
-	private JMenuItem menuSave;
-	private JMenuItem menuServer;
-	private JMenuItem menuServerGames;
-	private JMenuItem menuServerHighscores;
-	private JMenuItem menuServerSettings;
+	private MenuItem menuSave;
+	private MenuItem menuServer;
+	private MenuItem menuServerGames;
+	private MenuItem menuServerHighscores;
+	private MenuItem menuServerSettings;
 
-	private JMenuItem menuTutorial;
-	private JMenuItem menuWebserver;
+	private MenuItem menuTutorial;
+	private MenuItem menuWebserver;
 	private Messages messages;
 	private MessengerJDialog messenger;
 	private OutputWindow outputWindow;
@@ -291,281 +290,6 @@ public class Vega extends Frame // NO_UCD (use default)
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-		JMenuItem JMenuItem = (JMenuItem)e.getSource();
-		
-		if (JMenuItem == this.menuLoad)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			Game game = this.loadGame();
-			if (game != null)
-			{
-				this.stopTutorial();
-				this.setNewGame(game, false);
-			}
-						
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuEmailClipboard)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			ClipboardImportJDialog<Game> dlg = 
-					new ClipboardImportJDialog<Game>(this, Game.class, false);
-			
-			dlg.setVisible(true);
-			
-			if (dlg.dlgResult == MessageBoxResult.OK)
-			{
-				Game game = (Game)dlg.obj;
-				
-				if (game != null)
-				{
-					if (!RequiredBuildChecker.doCheck(this, game.getBuildRequired()))
-						game = null;
-				}
-				
-				if (game != null)
-				{
-					this.stopTutorial();
-					this.setNewGame(game, true);
-				}
-			}
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuNewGame)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			ArrayList<String> emailAddresses = this.config.getEmailAddresses();
-			
-			GameParametersJDialog dlg = 
-					new GameParametersJDialog(
-							this,
-							GameParametersDialogMode.NEW_GAME,
-							this.gameLastRawData,
-							emailAddresses);
-			
-			dlg.setVisible(true);
-			this.config.setEmailAddresses(emailAddresses);
-			
-			if (!dlg.isAbort())
-			{
-				Object[] playersArray = dlg.getPlayers().toArray();
-				Player[] players =  Arrays.copyOf(playersArray,playersArray.length,Player[].class);
-
-				Game game = new Game(
-						dlg.getOptions(), 
-						players, 
-						dlg.getPlanetsCount(),
-						dlg.getEmailGameHost(), 
-						dlg.getYearMax());
-				this.gameLastRawData = (Game)CommonUtils.klon(game);
-				this.fileNameLast = "";
-				this.stopTutorial();
-				this.setNewGame(game, false);
-			}
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuParameters && this.t != null)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			Game game = this.t.getGame();
-			
-			ArrayList<String> emailAddresses = this.config.getEmailAddresses();
-			
-			GameParametersJDialog dlg = new GameParametersJDialog(
-					this, 
-					game.isSoloPlayer() ?
-							GameParametersDialogMode.EMAIL_BASED_GAME :
-							game.isFinalized() ?
-									GameParametersDialogMode.FINALIZED_GAME :
-									GameParametersDialogMode.ACTIVE_GAME,
-					(Game)CommonUtils.klon(game),
-					emailAddresses);
-			
-			dlg.setVisible(true);
-			this.config.setEmailAddresses(emailAddresses);
-			
-			if (!dlg.isAbort())
-				game.changeParameters(dlg.getOptions(), dlg.getYearMax(), dlg.getEmailGameHost(), dlg.getPlayers());
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuEmailSend && this.t != null)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			Game game = this.t.getGame();
-			
-			EmailCreatorJDialog dlg = new EmailCreatorJDialog(
-					this, 
-					game.getPlayers(),
-					game.getEmailAddressGameHost(),
-					this.config.getEmailSeparator(),
-					"[VEGA] " + game.getName(),
-					"");
-			
-			dlg.setVisible(true);
-			
-			if (dlg.launched)
-			{
-				this.config.setEmailSeparator(dlg.separatorPreset);
-			}
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuSave && this.t != null)
-		{
-			this.saveGame(this.t.getGame(), false);
-		}
-		else if (JMenuItem == this.menuQuit)
-		{
-			this.close();
-		}
-		else if (JMenuItem == this.menuServer)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			VegaDisplayServerSettingsJDialog dlg = 
-					new VegaDisplayServerSettingsJDialog(
-							this, 
-							this.config.getMyIpAddress(),
-							this.config.getDisplayServerPort());
-
-			dlg.setVisible(true);
-			
-			this.config.setMyIpAddress(dlg.myIpAddress);
-			this.config.setDisplayServerPort(dlg.serverPort);
-			
-			this.updateTitle();
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuServerSettings)
-		{
-			this.openServerSettingsDialog();
-		}
-		else if (JMenuItem == this.menuServerGames)
-		{
-			this.openServerGamesDialog();
-		}
-		else if (JMenuItem == this.menuServerHighscores)
-		{
-			this.showServerHighscores();
-		}
-		else if (JMenuItem == this.menuWebserver)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			WebServerConfigJDialog dlg = 
-					new WebServerConfigJDialog(
-							this, 
-							this.config.getMyIpAddress(), 
-							this.config.getWebserverPort() == 0 ?
-									WebServer.PORT :
-									this.config.getWebserverPort());
-			
-			dlg.setVisible(true);
-			
-			if (this.webserver != null)
-			{
-				this.config.setMyIpAddress(dlg.ipAddress);
-				this.config.setWebserverPort(dlg.port);
-			}
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-
-		}
-		else if (JMenuItem == this.menuHighscore)
-		{
-			this.showHighscoreDialog(Highscores.getInstance());
-		}
-		else if (JMenuItem == this.menuHelp)
-		{
-			CommonUiUtils.showManual(this);
-		}
-		else if (JMenuItem == this.menuLanguage)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-			
-			LanguageSelectionJDialog dlg = new LanguageSelectionJDialog(
-					this, 
-					VegaResources.getLocale(),
-					true);
-			dlg.setVisible(true);
-			
-			if (dlg.ok)
-			{
-				VegaResources.setLocale(dlg.languageCode);
-				
-				this.config.setLocale(dlg.languageCode);
-				
-				System.exit(0);
-			}
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuAbout)
-		{
-			this.inputEnabled = false;
-			this.redrawScreen();
-
-			VegaAbout.show(this);
-			
-			this.inputEnabled = true;
-			this.redrawScreen();
-		}
-		else if (JMenuItem == this.menuOutputWindow)
-		{
-			if (this.outputWindow == null || !this.outputWindow.isVisible())
-			{
-				Point windowLocation = this.getLocation();
-				Dimension windowSize = this.getSize();
-				
-				this.outputWindow = new OutputWindow(windowLocation.x + 20, windowLocation.y + 20, windowSize.width/2, windowSize.height/2);
-				this.outputWindow.setVisible(true);
-				this.redrawScreen();
-			}
-		}
-		else if (JMenuItem == this.menuTutorial)
-		{
-			this.loadTutorial();
-		}
-		else if (JMenuItem == this.menuDemoGame1)
-		{
-			this.loadDemoGame(DEMO_GAME1);
-		}
-		else if (JMenuItem == this.menuDemoGame2)
-		{
-			this.loadDemoGame(DEMO_GAME2);
-		}
-		
-		this.setMenuEnabled();
-	}
-	
-	@Override
 	public void addRecipientsString(String recipientsString)
 	{
 		synchronized(this.messages)
@@ -576,12 +300,12 @@ public class Vega extends Frame // NO_UCD (use default)
 			}
 		}
 	}
-
+	
 	@Override
 	public void checkMenuEnabled() {
 		this.setMenuEnabled();
 	}
-	
+
 	@Override
 	public void endTutorial()
 	{
@@ -591,13 +315,13 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 		this.stopTutorial();
 	}
-
+	
 	@Override
 	public String getClientUserIdForMessenger()
 	{
 		return this.messages.getUserId();
 	}
-	
+
 	@Override
 	public ArrayList<Message> getMessagesByRecipientsString(String recipientsString)
 	{
@@ -615,7 +339,7 @@ public class Vega extends Frame // NO_UCD (use default)
 		else
 			return null;
 	}
-
+	
 	@Override
 	public ArrayList<User> getUsersForMessenger()
 	{
@@ -681,7 +405,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			}
 		}
 	}
-	
+
 	@Override
 	public MovesTransportObject importMovesFromEmail()
 	{
@@ -710,7 +434,7 @@ public class Vega extends Frame // NO_UCD (use default)
 
 		return movesTransportObject;
 	}
-
+	
 	@Override
 	public boolean launchEmailClient(String recipient, String subject, String bodyText, EmailTransportBase obj)
 	{
@@ -721,6 +445,279 @@ public class Vega extends Frame // NO_UCD (use default)
 				bodyText, 
 				null, 
 				obj);
+	}
+
+	@Override
+	public void menuItemSelected(MenuItem source)
+	{
+		if (source == this.menuLoad)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+			
+			Game game = this.loadGame();
+			if (game != null)
+			{
+				this.stopTutorial();
+				this.setNewGame(game, false);
+			}
+						
+			this.inputEnabled = true;
+			this.redrawScreen();
+		}
+		else if (source == this.menuEmailClipboard)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+			
+			ClipboardImportJDialog<Game> dlg = 
+					new ClipboardImportJDialog<Game>(this, Game.class, false);
+			
+			dlg.setVisible(true);
+			
+			if (dlg.dlgResult == MessageBoxResult.OK)
+			{
+				Game game = (Game)dlg.obj;
+				
+				if (game != null)
+				{
+					if (!RequiredBuildChecker.doCheck(this, game.getBuildRequired()))
+						game = null;
+				}
+				
+				if (game != null)
+				{
+					this.stopTutorial();
+					this.setNewGame(game, true);
+				}
+			}
+			
+			this.inputEnabled = true;
+			this.redrawScreen();
+		}
+		else if (source == this.menuNewGame)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+			
+			ArrayList<String> emailAddresses = this.config.getEmailAddresses();
+			
+			GameParametersJDialog dlg = 
+					new GameParametersJDialog(
+							this,
+							GameParametersDialogMode.NEW_GAME,
+							this.gameLastRawData,
+							emailAddresses);
+			
+			dlg.setVisible(true);
+			this.config.setEmailAddresses(emailAddresses);
+			
+			if (!dlg.isAbort())
+			{
+				Object[] playersArray = dlg.getPlayers().toArray();
+				Player[] players =  Arrays.copyOf(playersArray,playersArray.length,Player[].class);
+
+				Game game = new Game(
+						dlg.getOptions(), 
+						players, 
+						dlg.getPlanetsCount(),
+						dlg.getEmailGameHost(), 
+						dlg.getYearMax());
+				this.gameLastRawData = (Game)CommonUtils.klon(game);
+				this.fileNameLast = "";
+				this.stopTutorial();
+				this.setNewGame(game, false);
+			}
+			
+			this.inputEnabled = true;
+			this.redrawScreen();
+		}
+		else if (source == this.menuParameters && this.t != null)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+			
+			Game game = this.t.getGame();
+			
+			ArrayList<String> emailAddresses = this.config.getEmailAddresses();
+			
+			GameParametersJDialog dlg = new GameParametersJDialog(
+					this, 
+					game.isSoloPlayer() ?
+							GameParametersDialogMode.EMAIL_BASED_GAME :
+							game.isFinalized() ?
+									GameParametersDialogMode.FINALIZED_GAME :
+									GameParametersDialogMode.ACTIVE_GAME,
+					(Game)CommonUtils.klon(game),
+					emailAddresses);
+			
+			dlg.setVisible(true);
+			this.config.setEmailAddresses(emailAddresses);
+			
+			if (!dlg.isAbort())
+				game.changeParameters(dlg.getOptions(), dlg.getYearMax(), dlg.getEmailGameHost(), dlg.getPlayers());
+			
+			this.inputEnabled = true;
+			this.redrawScreen();
+		}
+		else if (source == this.menuEmailSend && this.t != null)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+			
+			Game game = this.t.getGame();
+			
+			EmailCreatorJDialog dlg = new EmailCreatorJDialog(
+					this, 
+					game.getPlayers(),
+					game.getEmailAddressGameHost(),
+					this.config.getEmailSeparator(),
+					"[VEGA] " + game.getName(),
+					"");
+			
+			dlg.setVisible(true);
+			
+			if (dlg.launched)
+			{
+				this.config.setEmailSeparator(dlg.separatorPreset);
+			}
+			
+			this.inputEnabled = true;
+			this.redrawScreen();
+		}
+		else if (source == this.menuSave && this.t != null)
+		{
+			this.saveGame(this.t.getGame(), false);
+		}
+		else if (source == this.menuQuit)
+		{
+			this.close();
+		}
+		else if (source == this.menuServer)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+			
+			VegaDisplayServerSettingsJDialog dlg = 
+					new VegaDisplayServerSettingsJDialog(
+							this, 
+							this.config.getMyIpAddress(),
+							this.config.getDisplayServerPort());
+
+			dlg.setVisible(true);
+			
+			this.config.setMyIpAddress(dlg.myIpAddress);
+			this.config.setDisplayServerPort(dlg.serverPort);
+			
+			this.updateTitle();
+			
+			this.inputEnabled = true;
+			this.redrawScreen();
+		}
+		else if (source == this.menuServerSettings)
+		{
+			this.openServerSettingsDialog();
+		}
+		else if (source == this.menuServerGames)
+		{
+			this.openServerGamesDialog();
+		}
+		else if (source == this.menuServerHighscores)
+		{
+			this.showServerHighscores();
+		}
+		else if (source == this.menuWebserver)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+			
+			WebServerConfigJDialog dlg = 
+					new WebServerConfigJDialog(
+							this, 
+							this.config.getMyIpAddress(), 
+							this.config.getWebserverPort() == 0 ?
+									WebServer.PORT :
+									this.config.getWebserverPort());
+			
+			dlg.setVisible(true);
+			
+			if (this.webserver != null)
+			{
+				this.config.setMyIpAddress(dlg.ipAddress);
+				this.config.setWebserverPort(dlg.port);
+			}
+			
+			this.inputEnabled = true;
+			this.redrawScreen();
+
+		}
+		else if (source == this.menuHighscore)
+		{
+			this.showHighscoreDialog(Highscores.getInstance());
+		}
+		else if (source == this.menuHelp)
+		{
+			CommonUiUtils.showManual(this);
+		}
+		else if (source == this.menuLanguage)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+			
+			LanguageSelectionJDialog dlg = new LanguageSelectionJDialog(
+					this, 
+					VegaResources.getLocale(),
+					true);
+			dlg.setVisible(true);
+			
+			if (dlg.ok)
+			{
+				VegaResources.setLocale(dlg.languageCode);
+				
+				this.config.setLocale(dlg.languageCode);
+				
+				System.exit(0);
+			}
+			
+			this.inputEnabled = true;
+			this.redrawScreen();
+		}
+		else if (source == this.menuAbout)
+		{
+			this.inputEnabled = false;
+			this.redrawScreen();
+
+			VegaAbout.show(this);
+			
+			this.inputEnabled = true;
+			this.redrawScreen();
+		}
+		else if (source == this.menuOutputWindow)
+		{
+			if (this.outputWindow == null || !this.outputWindow.isVisible())
+			{
+				Point windowLocation = this.getLocation();
+				Dimension windowSize = this.getSize();
+				
+				this.outputWindow = new OutputWindow(windowLocation.x + 20, windowLocation.y + 20, windowSize.width/2, windowSize.height/2);
+				this.outputWindow.setVisible(true);
+				this.redrawScreen();
+			}
+		}
+		else if (source == this.menuTutorial)
+		{
+			this.loadTutorial();
+		}
+		else if (source == this.menuDemoGame1)
+		{
+			this.loadDemoGame(DEMO_GAME1);
+		}
+		else if (source == this.menuDemoGame2)
+		{
+			this.loadDemoGame(DEMO_GAME2);
+		}
+		
+		this.setMenuEnabled();
 	}
 	
 	@Override
@@ -1052,6 +1049,20 @@ public class Vega extends Frame // NO_UCD (use default)
 		}
 	}
 	
+	ScreenContent getInitialScreenContentForVegaDisplayClient()
+	{
+		if (this.t != null && this.t.getGame() != null)
+		{
+			ScreenContent screenContent = this.t.getGame().getScreenContentWhileMovesEntered();
+			if (screenContent == null) screenContent = this.paintPanel.getScreenContent();
+			return screenContent;
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
 	byte[] getInventoryPdfBytes(int playerCode)
 	{
 		if (this.t != null && this.t.getGame() != null)
@@ -1069,20 +1080,6 @@ public class Vega extends Frame // NO_UCD (use default)
 		if (this.t != null && this.t.getGame() != null)
 		{
 			return this.t.getGame().getScreenContentWhileMovesEntered();
-		}
-		else
-		{
-			return null;
-		}
-	}
-	
-	ScreenContent getInitialScreenContentForVegaDisplayClient()
-	{
-		if (this.t != null && this.t.getGame() != null)
-		{
-			ScreenContent screenContent = this.t.getGame().getScreenContentWhileMovesEntered();
-			if (screenContent == null) screenContent = this.paintPanel.getScreenContent();
-			return screenContent;
 		}
 		else
 		{
@@ -1241,107 +1238,87 @@ public class Vega extends Frame // NO_UCD (use default)
 	{
 		JPopupMenu popupMenu = new JPopupMenu ();
 		
-	    this.menuAbout = new JMenuItem (VegaResources.AboutVega(false));
-	    this.menuAbout.addActionListener(this);
+	    this.menuAbout = new MenuItem (VegaResources.AboutVega(false), this);
 	    popupMenu.add (this.menuAbout);	    
 		
 	    if (Desktop.isDesktopSupported())
 	    {
-		    this.menuHelp = new JMenuItem (VegaResources.Manual(false));
-		    this.menuHelp.addActionListener(this);
+		    this.menuHelp = new MenuItem (VegaResources.Manual(false), this);
 		    popupMenu.add (this.menuHelp);
 	    }
 	    
 	    JMenu menuDemoGames = new JMenu (VegaResources.TutorialAndDemoGames(false));
 	    
-	    this.menuTutorial = new JMenuItem(VegaResources.StartTutorial(false));
-	    this.menuTutorial.addActionListener(this);
+	    this.menuTutorial = new MenuItem(VegaResources.StartTutorial(false), this);
 	    menuDemoGames.add(this.menuTutorial);
 	    
-	    this.menuDemoGame1 = new JMenuItem(VegaResources.LoadDemoGame1(false));
-	    this.menuDemoGame1.addActionListener(this);
+	    this.menuDemoGame1 = new MenuItem(VegaResources.LoadDemoGame1(false), this);
 	    menuDemoGames.add(this.menuDemoGame1);
 	    
-	    this.menuDemoGame2 = new JMenuItem(VegaResources.LoadDemoGame2(false));
-	    this.menuDemoGame2.addActionListener(this);
+	    this.menuDemoGame2 = new MenuItem(VegaResources.LoadDemoGame2(false), this);
 	    menuDemoGames.add(this.menuDemoGame2);
 	    
 	    popupMenu.add(menuDemoGames);
 	    
 	    popupMenu.addSeparator();
 	    
-	    this.menuNewGame = new JMenuItem (VegaResources.NewLocalGame(false));
-	    this.menuNewGame.addActionListener(this);
+	    this.menuNewGame = new MenuItem (VegaResources.NewLocalGame(false), this);
 	    popupMenu.add(this.menuNewGame);
 	    
-	    this.menuLoad = new JMenuItem (VegaResources.LoadLocalGame(false));
-	    this.menuLoad.addActionListener(this);
+	    this.menuLoad = new MenuItem (VegaResources.LoadLocalGame(false), this);
 	    popupMenu.add (menuLoad);
 	    
-	    this.menuSave = new JMenuItem (VegaResources.SaveLocalGameAs(false));
-	    this.menuSave.addActionListener(this);
+	    this.menuSave = new MenuItem (VegaResources.SaveLocalGameAs(false), this);
 	    popupMenu.add (menuSave);
 	    
-	    this.menuHighscore = new JMenuItem(VegaResources.LocalHighScoreList(false));
-	    this.menuHighscore.addActionListener(this);
+	    this.menuHighscore = new MenuItem(VegaResources.LocalHighScoreList(false), this);
 	    popupMenu.add(this.menuHighscore);
 
 	    popupMenu.addSeparator();
 	    
-	    this.menuEmailClipboard = new JMenuItem (VegaResources.ImportGameFromClipboard(false));
-	    this.menuEmailClipboard.addActionListener(this);
+	    this.menuEmailClipboard = new MenuItem (VegaResources.ImportGameFromClipboard(false), this);
 	    popupMenu.add (menuEmailClipboard);
 	    
 	    popupMenu.addSeparator();
 
-	    this.menuServerGames = new JMenuItem(VegaResources.GamesOnServer(false));
-	    this.menuServerGames.addActionListener(this);
+	    this.menuServerGames = new MenuItem(VegaResources.GamesOnServer(false), this);
 	    popupMenu.add(this.menuServerGames);
 	    
-	    this.menuServerHighscores = new JMenuItem(VegaResources.HighScoreListOnServer(false));
-	    this.menuServerHighscores.addActionListener(this);
+	    this.menuServerHighscores = new MenuItem(VegaResources.HighScoreListOnServer(false), this);
 	    popupMenu.add(this.menuServerHighscores);
 	    
 	    popupMenu.addSeparator();
 	    
-	    this.menuEmailSend = new JMenuItem(VegaResources.WriteEmail(false));
-	    this.menuEmailSend.addActionListener(this);
+	    this.menuEmailSend = new MenuItem(VegaResources.WriteEmail(false), this);
 	    popupMenu.add(this.menuEmailSend);
 	    
-	    this.menuParameters = new JMenuItem (VegaResources.GameParameters(false));
-	    this.menuParameters.addActionListener(this);
+	    this.menuParameters = new MenuItem (VegaResources.GameParameters(false), this);
 	    popupMenu.add (this.menuParameters);
 	    
-	    this.menuOutputWindow = new JMenuItem(VegaResources.OpenOutputWindow(false));
-	    this.menuOutputWindow.addActionListener(this);
+	    this.menuOutputWindow = new MenuItem(VegaResources.OpenOutputWindow(false), this);
 	    popupMenu.add(this.menuOutputWindow);
 	    
-	    this.menuWebserver = new JMenuItem(VegaResources.WebServer(false));
-	    this.menuWebserver.addActionListener(this);
+	    this.menuWebserver = new MenuItem(VegaResources.WebServer(false), this);
 	    popupMenu.add(this.menuWebserver);
 	    
 	    popupMenu.addSeparator();
 	    
 	    JMenu menuSettings = new JMenu (VegaResources.Settings(false));
 	    
-	    this.menuLanguage = new JMenuItem(VegaResources.Language(false));
-	    this.menuLanguage.addActionListener(this);
+	    this.menuLanguage = new MenuItem(VegaResources.Language(false), this);
 	    menuSettings.add(this.menuLanguage);
 	    
-	    this.menuServerSettings = new JMenuItem(VegaResources.ServerSettings(false));
-	    this.menuServerSettings.addActionListener(this);
+	    this.menuServerSettings = new MenuItem(VegaResources.ServerSettings(false), this);
 	    menuSettings.add(this.menuServerSettings);
 	    
-	    this.menuServer = new JMenuItem(VegaResources.DisplayServer(false));
-	    this.menuServer.addActionListener(this);
+	    this.menuServer = new MenuItem(VegaResources.DisplayServer(false), this);
 	    menuSettings.add(this.menuServer);
 	    
 	    popupMenu.add(menuSettings);
 	    
 	    popupMenu.addSeparator();
 	    
-	    this.menuQuit = new JMenuItem (VegaResources.QuitVega(false));
-	    this.menuQuit.addActionListener(this);
+	    this.menuQuit = new MenuItem (VegaResources.QuitVega(false), this);
 	    popupMenu.add (this.menuQuit);
 	    
 	    return popupMenu;

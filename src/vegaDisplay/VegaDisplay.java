@@ -19,11 +19,8 @@ package vegaDisplay;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -40,15 +37,17 @@ import commonUi.Toolbar;
 import commonUi.UiConstants;
 import uiBaseControls.Frame;
 import uiBaseControls.IIconLabelListener;
+import uiBaseControls.IMenuItemListener;
 import uiBaseControls.IconLabel;
 import uiBaseControls.LookAndFeel;
+import uiBaseControls.MenuItem;
 import common.VegaResources;
 import common.CommonUtils;
 
 @SuppressWarnings("serial") 
 public class VegaDisplay extends Frame // NO_UCD (use default)
 	implements 
-		ActionListener,
+		IMenuItemListener,
 		IIconLabelListener
 {
 	static
@@ -77,13 +76,13 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
     private IconLabel labConnectionStatus;
     private IconLabel labMenu;
     
-    private JMenuItem menuAbout;
-    private JMenuItem menuConnectionSettings;
-    private JMenuItem menuHelp;
+    private MenuItem menuAbout;
+    private MenuItem menuConnectionSettings;
+    private MenuItem menuHelp;
     
-    private JMenuItem menuLanguage;
+    private MenuItem menuLanguage;
 
-	private JMenuItem menuQuit;
+	private MenuItem menuQuit;
 	
 	private PanelScreenContent paintPanel;
 	
@@ -147,34 +146,39 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 		this.connectionCheckThread = new ConnectionCheckThread();
 		this.connectionCheckThread.start();
 		
-		ActionEvent e = new ActionEvent(
-				this.menuConnectionSettings, 
-				ActionEvent.ACTION_PERFORMED,
-				"Connection settings", 
-				System.currentTimeMillis(), 
-				0);
-		
-		this.actionPerformed(e);
+		this.menuItemSelected(this.menuConnectionSettings);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e)
+	public void iconLabelClicked(IconLabel source)
 	{
-		JMenuItem JMenuItem = (JMenuItem)e.getSource();
-		
-		if (JMenuItem == this.menuQuit)
+		if (source == this.labMenu)
 		{
-			this.close();
+			Dimension dim = this.labMenu.getSize();
+			this.popupMenu.show(this.labMenu, dim.width / 2, dim.height / 2);
 		}
-		else if (JMenuItem == this.menuConnectionSettings)
+		else if (source == this.labConnectionStatus)
 		{
 			this.openDisplaySettings();
 		}
-		else if (JMenuItem == this.menuHelp)
+	}
+
+	@Override
+	public void menuItemSelected(MenuItem source)
+	{
+		if (source == this.menuQuit)
+		{
+			this.close();
+		}
+		else if (source == this.menuConnectionSettings)
+		{
+			this.openDisplaySettings();
+		}
+		else if (source == this.menuHelp)
 		{
 			CommonUiUtils.showManual(this);
 		}
-		else if (JMenuItem == this.menuLanguage)
+		else if (source == this.menuLanguage)
 		{
 			LanguageSelectionJDialog dlg = new LanguageSelectionJDialog(
 					this, 
@@ -191,23 +195,9 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 				System.exit(0);
 			}
 		}
-		else if (JMenuItem == this.menuAbout)
+		else if (source == this.menuAbout)
 		{
 			VegaAbout.show(this);
-		}
-	}
-
-	@Override
-	public void iconLabelClicked(IconLabel source)
-	{
-		if (source == this.labMenu)
-		{
-			Dimension dim = this.labMenu.getSize();
-			this.popupMenu.show(this.labMenu, dim.width / 2, dim.height / 2);
-		}
-		else if (source == this.labConnectionStatus)
-		{
-			this.openDisplaySettings();
 		}
 	}
 	
@@ -250,31 +240,26 @@ public class VegaDisplay extends Frame // NO_UCD (use default)
 	{
 	    JPopupMenu popupMenu = new JPopupMenu ();
 
-	    this.menuAbout = new JMenuItem (VegaResources.AboutVega(false));
-	    this.menuAbout.addActionListener(this);
+	    this.menuAbout = new MenuItem (VegaResources.AboutVega(false), this);
 	    popupMenu.add (this.menuAbout);
 	    
 	    if (Desktop.isDesktopSupported())
 	    {
-		    this.menuHelp = new JMenuItem (VegaResources.Manual(false));
-		    this.menuHelp.addActionListener(this);
+		    this.menuHelp = new MenuItem (VegaResources.Manual(false), this);
 		    popupMenu.add (this.menuHelp);
 	    }
 	    
 	    popupMenu.addSeparator();
 	    
-	    this.menuConnectionSettings = new JMenuItem(VegaResources.ConnectionSettings(false));
-	    this.menuConnectionSettings.addActionListener(this);
+	    this.menuConnectionSettings = new MenuItem(VegaResources.ConnectionSettings(false), this);
 	    popupMenu.add(this.menuConnectionSettings);
 	    
-	    this.menuLanguage = new JMenuItem(VegaResources.Language(false));
-	    this.menuLanguage.addActionListener(this);
+	    this.menuLanguage = new MenuItem(VegaResources.Language(false), this);
 	    popupMenu.add(this.menuLanguage);
 	    
 	    popupMenu.addSeparator();
 	    
-	    this.menuQuit = new JMenuItem (VegaResources.QuitVegaDisplay(false));
-	    this.menuQuit.addActionListener(this);
+	    this.menuQuit = new MenuItem (VegaResources.QuitVegaDisplay(false), this);
 	    popupMenu.add (this.menuQuit);
 	    
 	    return popupMenu;
