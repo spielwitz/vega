@@ -327,8 +327,6 @@ class Evaluation
 		if (planetIndex != Planet.NO_PLANET)
 			planet = this.game.getPlanets()[planetIndex];
 		
-		String shipOwnerName = ship.getOwnerName(this.game); 
-				
 		if (planet == null)
 		{
 			switch (ship.getType())
@@ -443,7 +441,6 @@ class Evaluation
 							this.game.getConsole().appendText(
 								VegaResources.SpyDropped(
 										true,
-										shipOwnerName,
 										planetName));
 						}
 						break;
@@ -522,7 +519,7 @@ class Evaluation
 		{
 			this.game.getMines().remove(sector.getString());
 			
-			this.printDayEvent(day, ship.getOwnerName(game));
+			this.printDayEvent(day, null);
 			
 			this.game.getConsole().appendText(
 					VegaResources.BlackHoleMines(
@@ -568,7 +565,6 @@ class Evaluation
 				this.printDayEvent(day, ship.getOwnerName(game));
 				this.game.getConsole().appendText (
 						VegaResources.MessageFromSector(true,
-								ship.getOwnerName(this.game),
 								Game.getSectorNameFromPositionStatic(
 										new Point(mine.getPositionX(), mine.getPositionY())
 										)));

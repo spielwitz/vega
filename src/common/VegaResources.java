@@ -829,10 +829,10 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: Message from sector {1}: [0U]
+	   * Message from sector {0}: [0U]
 	   */
-	public static String MessageFromSector(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£0U§"+arg0+"§"+arg1+"£":format(messages.getString("MessageFromSector_0U"), new Object[]{arg0,arg1});
+	public static String MessageFromSector(boolean symbol, String arg0) {
+		return symbol ? "£0U§"+arg0+"£":format(messages.getString("MessageFromSector_0U"), new Object[]{arg0});
 	}
 
 	/**
@@ -2040,10 +2040,10 @@ public class VegaResources
 	}
 
 	/**
-	   * {0} dropped a spy on planet {1}. [5V]
+	   * You dropped a spy on planet {0}. [5V]
 	   */
-	public static String SpyDropped(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£5V§"+arg0+"§"+arg1+"£":format(messages.getString("SpyDropped_5V"), new Object[]{arg0,arg1});
+	public static String SpyDropped(boolean symbol, String arg0) {
+		return symbol ? "£5V§"+arg0+"£":format(messages.getString("SpyDropped_5V"), new Object[]{arg0});
 	}
 
 	/**
