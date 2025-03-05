@@ -374,7 +374,7 @@ class Evaluation
 		else
 		{
 			String planetName = this.game.getPlanetNameFromIndex(planetIndex);
-			this.game.getConsole().setLineColor(planet.getOwnerColorIndex(this.game));
+			this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
 			
 			this.printDayEvent(day);
 
@@ -408,10 +408,7 @@ class Evaluation
 			}
 			else
 			{
-				boolean crash = planet.getOwner() != ship.getOwner();
-				
-				if (!crash)
-					planet.incrementShipsCount(ship.getType(), 1);
+				planet.incrementShipsCount(ship.getType(), 1);
 				
 				switch (ship.getType())
 				{
@@ -419,10 +416,6 @@ class Evaluation
 						if (ship.isTransfer())
 						{
 							this.game.getConsole().appendText(
-									crash ?
-											VegaResources.SpyCrashed(
-													true,
-													planetName) :
 											VegaResources.SpyArrived(
 													true,
 													planetName));
@@ -430,9 +423,7 @@ class Evaluation
 						else
 						{
 							planet.setRadioStation(ship.getOwner());
-							
-							if (!crash)
-								planet.incrementShipsCount(ship.getType(), -1);
+							planet.incrementShipsCount(ship.getType(), -1);
 							
 							this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
 							
@@ -446,11 +437,7 @@ class Evaluation
 						
 					case PATROL:
 						this.game.getConsole().appendText(
-								crash ?
-										VegaResources.PatrolCrashed(
-												true, 
-												planetName) :
-										VegaResources.PatrolArrived(
+								VegaResources.PatrolArrived(
 												true, 
 												planetName));
 						break;
@@ -459,36 +446,43 @@ class Evaluation
 						planet.addToMoneySupply(ship.getCount());
 						
 						this.game.getConsole().appendText(
-								crash ?
-									VegaResources.TransporterCrashed(
-											true, 
-											planetName) :
-									VegaResources.TransporterArrived(
+								VegaResources.TransporterArrived(
 											true, 
 											planetName));
 						break;
 						
 					case MINE50:
+						this.game.getConsole().appendText(
+								VegaResources.MinelayerArrived(
+												true, 
+												planetName,
+												"50"));
+						break;
 					case MINE100:
+						this.game.getConsole().appendText(
+								VegaResources.MinelayerArrived(
+												true, 
+												planetName,
+												"100"));
+						break;
 					case MINE250:
+						this.game.getConsole().appendText(
+								VegaResources.MinelayerArrived(
+												true, 
+												planetName,
+												"250"));
+						break;
 					case MINE500:
 						this.game.getConsole().appendText(
-								crash ?
-										VegaResources.MinelayerCrashed(
+								VegaResources.MinelayerArrived(
 												true, 
-												planetName) :
-										VegaResources.MinelayerArrived(
-												true, 
-												planetName));
+												planetName,
+												"500"));
 						break;
 						
 					case MINESWEEPER:
 						this.game.getConsole().appendText(
-								crash ?
-										VegaResources.MinesweeperCrashed(
-												true,
-												planetName) :
-										VegaResources.MinesweeperArrived(
+								VegaResources.MinesweeperArrived(
 												true,
 												planetName));
 						break;

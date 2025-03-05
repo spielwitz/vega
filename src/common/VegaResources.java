@@ -71,7 +71,6 @@ public class VegaResources
 		symbolDict.put("0X","MessengerCharactersLeft_0X");
 		symbolDict.put("0Y","MessengerRecipients_0Y");
 		symbolDict.put("0Z","MessengerSend_0Z");
-		symbolDict.put("10","MinesweeperCrashed_10");
 		symbolDict.put("11","MinesweeperShort_11");
 		symbolDict.put("12","MinesweeperTransfer_12");
 		symbolDict.put("13","Minesweeper_13");
@@ -104,7 +103,6 @@ public class VegaResources
 		symbolDict.put("1U","Minelayer500_1U");
 		symbolDict.put("1V","Minelayer50_1V");
 		symbolDict.put("1W","MinelayerArrived_1W");
-		symbolDict.put("1X","MinelayerCrashed_1X");
 		symbolDict.put("1Y","MinenraeumerPlural_1Y");
 		symbolDict.put("1Z","MinesweeperArrived_1Z");
 		symbolDict.put("20","MoneyProductionShort_20");
@@ -161,7 +159,6 @@ public class VegaResources
 		symbolDict.put("3G","PatrolCapturedPatrol_3G");
 		symbolDict.put("3H","PatrolCapturedSpy_3H");
 		symbolDict.put("3I","PatrolCapturedTransporter_3I");
-		symbolDict.put("3J","PatrolCrashed_3J");
 		symbolDict.put("3K","PatrolShort_3K");
 		symbolDict.put("3L","PatrolTransfer_3L");
 		symbolDict.put("3M","Patrol_3M");
@@ -241,7 +238,6 @@ public class VegaResources
 		symbolDict.put("5R","Spaceships_5R");
 		symbolDict.put("5S","Spies_5S");
 		symbolDict.put("5T","SpyArrived_5T");
-		symbolDict.put("5U","SpyCrashed_5U");
 		symbolDict.put("5V","SpyDropped_5V");
 		symbolDict.put("5W","SpyShort_5W");
 		symbolDict.put("5X","SpyTransfer_5X");
@@ -271,7 +267,6 @@ public class VegaResources
 		symbolDict.put("6L","ToWhichPlanetTransporter_6L");
 		symbolDict.put("6M","Transfer_6M");
 		symbolDict.put("6N","TransporterArrived_6N");
-		symbolDict.put("6O","TransporterCrashed_6O");
 		symbolDict.put("6P","TransporterPlural_6P");
 		symbolDict.put("6Q","TransporterShort_6Q");
 		symbolDict.put("6R","Transporter_6R");
@@ -875,13 +870,6 @@ public class VegaResources
 	}
 
 	/**
-	   * 1 minesweeper crashed on planet {0}. [10]
-	   */
-	public static String MinesweeperCrashed(boolean symbol, String arg0) {
-		return symbol ? "£10§"+arg0+"£":format(messages.getString("MinesweeperCrashed_10"), new Object[]{arg0});
-	}
-
-	/**
 	   * Msw [11]
 	   */
 	public static String MinesweeperShort(boolean symbol) {
@@ -1099,17 +1087,10 @@ public class VegaResources
 	}
 
 	/**
-	   * 1 minelayer arrived on planet {0}. [1W]
+	   * 1 minelayer ({0}) arrived on planet {1}. [1W]
 	   */
-	public static String MinelayerArrived(boolean symbol, String arg0) {
-		return symbol ? "£1W§"+arg0+"£":format(messages.getString("MinelayerArrived_1W"), new Object[]{arg0});
-	}
-
-	/**
-	   * 1 minelayer crashed on planet {0}. [1X]
-	   */
-	public static String MinelayerCrashed(boolean symbol, String arg0) {
-		return symbol ? "£1X§"+arg0+"£":format(messages.getString("MinelayerCrashed_1X"), new Object[]{arg0});
+	public static String MinelayerArrived(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£1W§"+arg0+"§"+arg1+"£":format(messages.getString("MinelayerArrived_1W"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -1502,13 +1483,6 @@ public class VegaResources
 	   */
 	public static String PatrolCapturedTransporter(boolean symbol, String arg0, String arg1, String arg2) {
 		return symbol ? "£3I§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedTransporter_3I"), new Object[]{arg0,arg1,arg2});
-	}
-
-	/**
-	   * 1 patrol crashed on planet {0}. [3J]
-	   */
-	public static String PatrolCrashed(boolean symbol, String arg0) {
-		return symbol ? "£3J§"+arg0+"£":format(messages.getString("PatrolCrashed_3J"), new Object[]{arg0});
 	}
 
 	/**
@@ -2065,13 +2039,6 @@ public class VegaResources
 	}
 
 	/**
-	   * 1 spy crashed on planet {0}. [5U]
-	   */
-	public static String SpyCrashed(boolean symbol, String arg0) {
-		return symbol ? "£5U§"+arg0+"£":format(messages.getString("SpyCrashed_5U"), new Object[]{arg0});
-	}
-
-	/**
 	   * {0} dropped a spy on planet {1}. [5V]
 	   */
 	public static String SpyDropped(boolean symbol, String arg0, String arg1) {
@@ -2272,13 +2239,6 @@ public class VegaResources
 	   */
 	public static String TransporterArrived(boolean symbol, String arg0) {
 		return symbol ? "£6N§"+arg0+"£":format(messages.getString("TransporterArrived_6N"), new Object[]{arg0});
-	}
-
-	/**
-	   * 1 transporter crashed on planet {0}. [6O]
-	   */
-	public static String TransporterCrashed(boolean symbol, String arg0) {
-		return symbol ? "£6O§"+arg0+"£":format(messages.getString("TransporterCrashed_6O"), new Object[]{arg0});
 	}
 
 	/**
