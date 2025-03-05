@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FO
+		// Last used symbolic key: FP
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -580,6 +580,7 @@ public class VegaResources
 		symbolDict.put("FL","AllianceChanged_FL");
 		symbolDict.put("FN","CapitulationRegistered_FN");
 		symbolDict.put("FO","PlanetChanged_FO");
+		symbolDict.put("FP","EventLineStart_FP");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -1045,7 +1046,7 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: Mine was planted. [1Q]
+	   * Mine ({0}) was planted. [1Q]
 	   */
 	public static String MinePlanted(boolean symbol, String arg0) {
 		return symbol ? "£1Q§"+arg0+"£":format(messages.getString("MinePlanted_1Q"), new Object[]{arg0});
@@ -1444,45 +1445,45 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: You captured {1} battleship(s) with destination {2} from {3}. [3D]
+	   * You captured {0} battleship(s) with destination {1} from {2}. [3D]
 	   */
-	public static String PatrolCapturedBattleships(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
-		return symbol ? "£3D§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":format(messages.getString("PatrolCapturedBattleships_3D"), new Object[]{arg0,arg1,arg2,arg3});
+	public static String PatrolCapturedBattleships(boolean symbol, String arg0, String arg1, String arg2) {
+		return symbol ? "£3D§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedBattleships_3D"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
-	   * {0}: You captured a minelayer with destination {1} from {2}. [3E]
+	   * You captured a minelayer ({0}) with destination {1} from {2}. [3E]
 	   */
 	public static String PatrolCapturedMinelayer(boolean symbol, String arg0, String arg1, String arg2) {
 		return symbol ? "£3E§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedMinelayer_3E"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
-	   * {0}: You captured a minesweeper with destination {1} from {2}. [3F]
+	   * You captured a minesweeper with destination {0} from {1}. [3F]
 	   */
-	public static String PatrolCapturedMinesweeper(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3F§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedMinesweeper_3F"), new Object[]{arg0,arg1,arg2});
+	public static String PatrolCapturedMinesweeper(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£3F§"+arg0+"§"+arg1+"£":format(messages.getString("PatrolCapturedMinesweeper_3F"), new Object[]{arg0,arg1});
 	}
 
 	/**
-	   * {0}: You captured a patrol with destination {1} from {2}. [3G]
+	   * You captured a patrol with destination {0} from {1}. [3G]
 	   */
-	public static String PatrolCapturedPatrol(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3G§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedPatrol_3G"), new Object[]{arg0,arg1,arg2});
+	public static String PatrolCapturedPatrol(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£3G§"+arg0+"§"+arg1+"£":format(messages.getString("PatrolCapturedPatrol_3G"), new Object[]{arg0,arg1});
 	}
 
 	/**
-	   * {0}: You captured a spy with destination {1} from {2}. [3H]
+	   * You captured a spy with destination {0} from {1}. [3H]
 	   */
-	public static String PatrolCapturedSpy(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3H§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedSpy_3H"), new Object[]{arg0,arg1,arg2});
+	public static String PatrolCapturedSpy(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£3H§"+arg0+"§"+arg1+"£":format(messages.getString("PatrolCapturedSpy_3H"), new Object[]{arg0,arg1});
 	}
 
 	/**
-	   * {0}: You captured a transporter with destination {1} from {2}. [3I]
+	   * You captured a transporter with destination {0} from {1}. [3I]
 	   */
-	public static String PatrolCapturedTransporter(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3I§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedTransporter_3I"), new Object[]{arg0,arg1,arg2});
+	public static String PatrolCapturedTransporter(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£3I§"+arg0+"§"+arg1+"£":format(messages.getString("PatrolCapturedTransporter_3I"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -1556,7 +1557,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Planet {0} is being attacked [3U]
+	   * Planet {0} is under attack! [3U]
 	   */
 	public static String PlanetIsAttacked(boolean symbol, String arg0) {
 		return symbol ? "£3U§"+arg0+"£":format(messages.getString("PlanetIsAttacked_3U"), new Object[]{arg0});
@@ -3124,17 +3125,17 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: {1} battleship(s) killed by a mine. The mine was destroyed. [AB]
+	   * {0} battleship(s) killed by a mine. The mine was destroyed. [AB]
 	   */
-	public static String BattleshipsKilledByMine2(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£AB§"+arg0+"§"+arg1+"£":format(messages.getString("BattleshipsKilledByMine2_AB"), new Object[]{arg0,arg1});
+	public static String BattleshipsKilledByMine2(boolean symbol, String arg0) {
+		return symbol ? "£AB§"+arg0+"£":format(messages.getString("BattleshipsKilledByMine2_AB"), new Object[]{arg0});
 	}
 
 	/**
-	   * {0}: {1} battleship(s) destroyed by a mine. [AC]
+	   * {0} battleship(s) destroyed by a mine. [AC]
 	   */
-	public static String BattleshipsKilledByMine(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£AC§"+arg0+"§"+arg1+"£":format(messages.getString("BattleshipsKilledByMine_AC"), new Object[]{arg0,arg1});
+	public static String BattleshipsKilledByMine(boolean symbol, String arg0) {
+		return symbol ? "£AC§"+arg0+"£":format(messages.getString("BattleshipsKilledByMine_AC"), new Object[]{arg0});
 	}
 
 	/**
@@ -3187,10 +3188,10 @@ public class VegaResources
 	}
 
 	/**
-	   * The Black Hole destroyed 1 minelayer. [AK]
+	   * The Black Hole destroyed 1 minelayer ({0}). [AK]
 	   */
-	public static String BlackHoleMine(boolean symbol) {
-		return symbol ? "£AK£":messages.getString("BlackHoleMine_AK");
+	public static String BlackHoleMine(boolean symbol, String arg0) {
+		return symbol ? "£AK§"+arg0+"£":format(messages.getString("BlackHoleMine_AK"), new Object[]{arg0});
 	}
 
 	/**
@@ -4430,5 +4431,12 @@ public class VegaResources
 	   */
 	public static String PlanetChanged(boolean symbol) {
 		return symbol ? "£FO£":messages.getString("PlanetChanged_FO");
+	}
+
+	/**
+	   * [{0}] [FP]
+	   */
+	public static String EventLineStart(boolean symbol, String arg0) {
+		return symbol ? "£FP§"+arg0+"£":format(messages.getString("EventLineStart_FP"), new Object[]{arg0});
 	}
 }
