@@ -1557,7 +1557,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Planet {0} is under attack! [3U]
+	   * Planet {0} is being attacked! [3U]
 	   */
 	public static String PlanetIsAttacked(boolean symbol, String arg0) {
 		return symbol ? "£3U§"+arg0+"£":format(messages.getString("PlanetIsAttacked_3U"), new Object[]{arg0});

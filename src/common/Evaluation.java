@@ -388,7 +388,10 @@ class Evaluation
 				
 				if (attack)
 				{
-					this.game.getConsole().setLineColor(planet.getOwnerColorIndex(this.game));
+					this.game.getConsole().setLineColor(
+							planet.getOwner() == Player.NEUTRAL ?
+									Colors.WHITE :
+									planet.getOwnerColorIndex(this.game));
 					
 					String planetOwnerName =
 							planet.getOwner() == Player.NEUTRAL ?
