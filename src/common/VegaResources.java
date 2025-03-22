@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FO
+		// Last used symbolic key: FP
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -71,7 +71,6 @@ public class VegaResources
 		symbolDict.put("0X","MessengerCharactersLeft_0X");
 		symbolDict.put("0Y","MessengerRecipients_0Y");
 		symbolDict.put("0Z","MessengerSend_0Z");
-		symbolDict.put("10","MinesweeperCrashed_10");
 		symbolDict.put("11","MinesweeperShort_11");
 		symbolDict.put("12","MinesweeperTransfer_12");
 		symbolDict.put("13","Minesweeper_13");
@@ -104,7 +103,6 @@ public class VegaResources
 		symbolDict.put("1U","Minelayer500_1U");
 		symbolDict.put("1V","Minelayer50_1V");
 		symbolDict.put("1W","MinelayerArrived_1W");
-		symbolDict.put("1X","MinelayerCrashed_1X");
 		symbolDict.put("1Y","MinenraeumerPlural_1Y");
 		symbolDict.put("1Z","MinesweeperArrived_1Z");
 		symbolDict.put("20","MoneyProductionShort_20");
@@ -161,7 +159,6 @@ public class VegaResources
 		symbolDict.put("3G","PatrolCapturedPatrol_3G");
 		symbolDict.put("3H","PatrolCapturedSpy_3H");
 		symbolDict.put("3I","PatrolCapturedTransporter_3I");
-		symbolDict.put("3J","PatrolCrashed_3J");
 		symbolDict.put("3K","PatrolShort_3K");
 		symbolDict.put("3L","PatrolTransfer_3L");
 		symbolDict.put("3M","Patrol_3M");
@@ -241,7 +238,6 @@ public class VegaResources
 		symbolDict.put("5R","Spaceships_5R");
 		symbolDict.put("5S","Spies_5S");
 		symbolDict.put("5T","SpyArrived_5T");
-		symbolDict.put("5U","SpyCrashed_5U");
 		symbolDict.put("5V","SpyDropped_5V");
 		symbolDict.put("5W","SpyShort_5W");
 		symbolDict.put("5X","SpyTransfer_5X");
@@ -271,7 +267,6 @@ public class VegaResources
 		symbolDict.put("6L","ToWhichPlanetTransporter_6L");
 		symbolDict.put("6M","Transfer_6M");
 		symbolDict.put("6N","TransporterArrived_6N");
-		symbolDict.put("6O","TransporterCrashed_6O");
 		symbolDict.put("6P","TransporterPlural_6P");
 		symbolDict.put("6Q","TransporterShort_6Q");
 		symbolDict.put("6R","Transporter_6R");
@@ -585,6 +580,7 @@ public class VegaResources
 		symbolDict.put("FL","AllianceChanged_FL");
 		symbolDict.put("FN","CapitulationRegistered_FN");
 		symbolDict.put("FO","PlanetChanged_FO");
+		symbolDict.put("FP","EventLineStart_FP");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -833,10 +829,10 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: Message from sector {1}: [0U]
+	   * Message from sector {0}: [0U]
 	   */
-	public static String MessageFromSector(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£0U§"+arg0+"§"+arg1+"£":format(messages.getString("MessageFromSector_0U"), new Object[]{arg0,arg1});
+	public static String MessageFromSector(boolean symbol, String arg0) {
+		return symbol ? "£0U§"+arg0+"£":format(messages.getString("MessageFromSector_0U"), new Object[]{arg0});
 	}
 
 	/**
@@ -872,13 +868,6 @@ public class VegaResources
 	   */
 	public static String MessengerSend(boolean symbol) {
 		return symbol ? "£0Z£":messages.getString("MessengerSend_0Z");
-	}
-
-	/**
-	   * 1 minesweeper crashed on planet {0}. [10]
-	   */
-	public static String MinesweeperCrashed(boolean symbol, String arg0) {
-		return symbol ? "£10§"+arg0+"£":format(messages.getString("MinesweeperCrashed_10"), new Object[]{arg0});
 	}
 
 	/**
@@ -1057,7 +1046,7 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: Mine was planted. [1Q]
+	   * Mine ({0}) was planted. [1Q]
 	   */
 	public static String MinePlanted(boolean symbol, String arg0) {
 		return symbol ? "£1Q§"+arg0+"£":format(messages.getString("MinePlanted_1Q"), new Object[]{arg0});
@@ -1099,17 +1088,10 @@ public class VegaResources
 	}
 
 	/**
-	   * 1 minelayer arrived on planet {0}. [1W]
+	   * 1 minelayer ({0}) arrived on planet {1}. [1W]
 	   */
-	public static String MinelayerArrived(boolean symbol, String arg0) {
-		return symbol ? "£1W§"+arg0+"£":format(messages.getString("MinelayerArrived_1W"), new Object[]{arg0});
-	}
-
-	/**
-	   * 1 minelayer crashed on planet {0}. [1X]
-	   */
-	public static String MinelayerCrashed(boolean symbol, String arg0) {
-		return symbol ? "£1X§"+arg0+"£":format(messages.getString("MinelayerCrashed_1X"), new Object[]{arg0});
+	public static String MinelayerArrived(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£1W§"+arg0+"§"+arg1+"£":format(messages.getString("MinelayerArrived_1W"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -1463,52 +1445,45 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: You captured {1} battleship(s) with destination {2} from {3}. [3D]
+	   * You captured {0} battleship(s) with destination {1} from {2}. [3D]
 	   */
-	public static String PatrolCapturedBattleships(boolean symbol, String arg0, String arg1, String arg2, String arg3) {
-		return symbol ? "£3D§"+arg0+"§"+arg1+"§"+arg2+"§"+arg3+"£":format(messages.getString("PatrolCapturedBattleships_3D"), new Object[]{arg0,arg1,arg2,arg3});
+	public static String PatrolCapturedBattleships(boolean symbol, String arg0, String arg1, String arg2) {
+		return symbol ? "£3D§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedBattleships_3D"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
-	   * {0}: You captured a minelayer with destination {1} from {2}. [3E]
+	   * You captured a minelayer ({0}) with destination {1} from {2}. [3E]
 	   */
 	public static String PatrolCapturedMinelayer(boolean symbol, String arg0, String arg1, String arg2) {
 		return symbol ? "£3E§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedMinelayer_3E"), new Object[]{arg0,arg1,arg2});
 	}
 
 	/**
-	   * {0}: You captured a minesweeper with destination {1} from {2}. [3F]
+	   * You captured a minesweeper with destination {0} from {1}. [3F]
 	   */
-	public static String PatrolCapturedMinesweeper(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3F§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedMinesweeper_3F"), new Object[]{arg0,arg1,arg2});
+	public static String PatrolCapturedMinesweeper(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£3F§"+arg0+"§"+arg1+"£":format(messages.getString("PatrolCapturedMinesweeper_3F"), new Object[]{arg0,arg1});
 	}
 
 	/**
-	   * {0}: You captured a patrol with destination {1} from {2}. [3G]
+	   * You captured a patrol with destination {0} from {1}. [3G]
 	   */
-	public static String PatrolCapturedPatrol(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3G§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedPatrol_3G"), new Object[]{arg0,arg1,arg2});
+	public static String PatrolCapturedPatrol(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£3G§"+arg0+"§"+arg1+"£":format(messages.getString("PatrolCapturedPatrol_3G"), new Object[]{arg0,arg1});
 	}
 
 	/**
-	   * {0}: You captured a spy with destination {1} from {2}. [3H]
+	   * You captured a spy with destination {0} from {1}. [3H]
 	   */
-	public static String PatrolCapturedSpy(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3H§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedSpy_3H"), new Object[]{arg0,arg1,arg2});
+	public static String PatrolCapturedSpy(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£3H§"+arg0+"§"+arg1+"£":format(messages.getString("PatrolCapturedSpy_3H"), new Object[]{arg0,arg1});
 	}
 
 	/**
-	   * {0}: You captured a transporter with destination {1} from {2}. [3I]
+	   * You captured a transporter with destination {0} from {1}. [3I]
 	   */
-	public static String PatrolCapturedTransporter(boolean symbol, String arg0, String arg1, String arg2) {
-		return symbol ? "£3I§"+arg0+"§"+arg1+"§"+arg2+"£":format(messages.getString("PatrolCapturedTransporter_3I"), new Object[]{arg0,arg1,arg2});
-	}
-
-	/**
-	   * 1 patrol crashed on planet {0}. [3J]
-	   */
-	public static String PatrolCrashed(boolean symbol, String arg0) {
-		return symbol ? "£3J§"+arg0+"£":format(messages.getString("PatrolCrashed_3J"), new Object[]{arg0});
+	public static String PatrolCapturedTransporter(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£3I§"+arg0+"§"+arg1+"£":format(messages.getString("PatrolCapturedTransporter_3I"), new Object[]{arg0,arg1});
 	}
 
 	/**
@@ -1582,7 +1557,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Planet {0} is being attacked [3U]
+	   * Planet {0} is being attacked! [3U]
 	   */
 	public static String PlanetIsAttacked(boolean symbol, String arg0) {
 		return symbol ? "£3U§"+arg0+"£":format(messages.getString("PlanetIsAttacked_3U"), new Object[]{arg0});
@@ -2065,17 +2040,10 @@ public class VegaResources
 	}
 
 	/**
-	   * 1 spy crashed on planet {0}. [5U]
+	   * You dropped a spy on planet {0}. [5V]
 	   */
-	public static String SpyCrashed(boolean symbol, String arg0) {
-		return symbol ? "£5U§"+arg0+"£":format(messages.getString("SpyCrashed_5U"), new Object[]{arg0});
-	}
-
-	/**
-	   * {0} dropped a spy on planet {1}. [5V]
-	   */
-	public static String SpyDropped(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£5V§"+arg0+"§"+arg1+"£":format(messages.getString("SpyDropped_5V"), new Object[]{arg0,arg1});
+	public static String SpyDropped(boolean symbol, String arg0) {
+		return symbol ? "£5V§"+arg0+"£":format(messages.getString("SpyDropped_5V"), new Object[]{arg0});
 	}
 
 	/**
@@ -2275,13 +2243,6 @@ public class VegaResources
 	}
 
 	/**
-	   * 1 transporter crashed on planet {0}. [6O]
-	   */
-	public static String TransporterCrashed(boolean symbol, String arg0) {
-		return symbol ? "£6O§"+arg0+"£":format(messages.getString("TransporterCrashed_6O"), new Object[]{arg0});
-	}
-
-	/**
 	   * Transporters [6P]
 	   */
 	public static String TransporterPlural(boolean symbol) {
@@ -2464,7 +2425,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Buy a patrol]\n\nA patrol flies to a planet or any sector. It moves at 1 ly/year and captures enemy spies, transporters, minelayers, minesweepers, transferred patrols and battleship fleets with five ships or less within a radius of 1.5 ly. Captured ships do not move any further for the rest of the evaluation. You must select a new target planet for the captured ships in the following year.\n\nIf two enemy patrols meet in action, a fight ensues. The patrol that captures the other at a smaller angle to the direction of flight wins. If a patrol reaches a foreign planet, it is lost. If the target of the patrol is a sector, the patrol flies back to its starting planet and also observes on the way back. You can transfer patrols to another planet. They fly at 2 LY/year, but do not observe any ships.\n\nYou can recognize patrols by the symbol ![img=tutorial/iconPatrol12x12.png].\n\nThere are now enough $ on the planet ![color=3|JM] to buy a patrol.\n\n![color=1|Task]: ![italic;color=1|Open the planet editor of the planet JM and buy a patrol. Then exit the planet editor again with the ENTER key.] [7F]
+	   * ![size=1.5;color=1;bold|Buy a patrol]\n\nA patrol flies to a planet or any sector. It moves at 1 ly/year and captures enemy spies, transporters, minelayers, minesweepers, transferred patrols and battleship fleets with five ships or less within a radius of 1.5 ly. Captured ships do not move any further for the rest of the evaluation. You must select a new target planet for the captured ships in the following year.\n\nIf two enemy patrols meet in action, a fight ensues. The patrol that captures the other at a smaller angle to the direction of flight wins. If the target of the patrol is a sector, the patrol flies back to its starting planet and also observes on the way back. You can transfer patrols to another planet. They fly at 2 LY/year, but do not observe any ships.\n\nYou can recognize patrols by the symbol ![img=tutorial/iconPatrol12x12.png].\n\nThere are now enough $ on the planet ![color=3|JM] to buy a patrol.\n\n![color=1|Task]: ![italic;color=1|Open the planet editor of the planet JM and buy a patrol. Then exit the planet editor again with the ENTER key.] [7F]
 	   */
 	public static String TutorialText15(boolean symbol) {
 		return symbol ? "£7F£":messages.getString("TutorialText15_7F");
@@ -3164,17 +3125,17 @@ public class VegaResources
 	}
 
 	/**
-	   * {0}: {1} battleship(s) killed by a mine. The mine was destroyed. [AB]
+	   * {0} battleship(s) killed by a mine. The mine was destroyed. [AB]
 	   */
-	public static String BattleshipsKilledByMine2(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£AB§"+arg0+"§"+arg1+"£":format(messages.getString("BattleshipsKilledByMine2_AB"), new Object[]{arg0,arg1});
+	public static String BattleshipsKilledByMine2(boolean symbol, String arg0) {
+		return symbol ? "£AB§"+arg0+"£":format(messages.getString("BattleshipsKilledByMine2_AB"), new Object[]{arg0});
 	}
 
 	/**
-	   * {0}: {1} battleship(s) destroyed by a mine. [AC]
+	   * {0} battleship(s) destroyed by a mine. [AC]
 	   */
-	public static String BattleshipsKilledByMine(boolean symbol, String arg0, String arg1) {
-		return symbol ? "£AC§"+arg0+"§"+arg1+"£":format(messages.getString("BattleshipsKilledByMine_AC"), new Object[]{arg0,arg1});
+	public static String BattleshipsKilledByMine(boolean symbol, String arg0) {
+		return symbol ? "£AC§"+arg0+"£":format(messages.getString("BattleshipsKilledByMine_AC"), new Object[]{arg0});
 	}
 
 	/**
@@ -3227,10 +3188,10 @@ public class VegaResources
 	}
 
 	/**
-	   * The Black Hole destroyed 1 minelayer. [AK]
+	   * The Black Hole destroyed 1 minelayer ({0}). [AK]
 	   */
-	public static String BlackHoleMine(boolean symbol) {
-		return symbol ? "£AK£":messages.getString("BlackHoleMine_AK");
+	public static String BlackHoleMine(boolean symbol, String arg0) {
+		return symbol ? "£AK§"+arg0+"£":format(messages.getString("BlackHoleMine_AK"), new Object[]{arg0});
 	}
 
 	/**
@@ -4470,5 +4431,12 @@ public class VegaResources
 	   */
 	public static String PlanetChanged(boolean symbol) {
 		return symbol ? "£FO£":messages.getString("PlanetChanged_FO");
+	}
+
+	/**
+	   * [{0}] [FP]
+	   */
+	public static String EventLineStart(boolean symbol, String arg0) {
+		return symbol ? "£FP§"+arg0+"£":format(messages.getString("EventLineStart_FP"), new Object[]{arg0});
 	}
 }

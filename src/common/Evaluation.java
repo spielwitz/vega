@@ -130,7 +130,7 @@ class Evaluation
 				Colors.NEUTRAL);
 
 		this.game.getConsole().clear();
-		this.printDayBeginOfYear();
+		this.printDayBeginOfYear(null);
 		this.game.getConsole().appendText(
 				VegaResources.EvaluationBegins(true));
 		this.waitForKeyPressed();
@@ -198,7 +198,7 @@ class Evaluation
 		this.checkIfPlayerIsDead();
 
 		this.game.getConsole().setLineColor(Colors.WHITE);
-		this.printDayEndOfYear();
+		this.printDayEndOfYear(null);
 
 		this.game.getConsole().appendText(
 				VegaResources.PlanetsProducing(true));
@@ -285,7 +285,7 @@ class Evaluation
 					case MINE500:
 						this.game.getConsole().setLineColor(Colors.WHITE);
 						this.game.getConsole().appendText(
-								VegaResources.BlackHoleMine(true));
+								VegaResources.BlackHoleMine(true, CommonUtils.getMineStrength(ship.getType())));
 						break;
 						
 					case MINESWEEPER:
@@ -327,8 +327,6 @@ class Evaluation
 		if (planetIndex != Planet.NO_PLANET)
 			planet = this.game.getPlanets()[planetIndex];
 		
-		String shipOwnerName = ship.getOwnerName(this.game); 
-				
 		if (planet == null)
 		{
 			switch (ship.getType())
@@ -350,11 +348,11 @@ class Evaluation
 							day);
 
 					this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-					
+					this.printDayEvent(day, ship.getOwnerName(game));
 					this.game.getConsole().appendText(
 							VegaResources.MinePlanted(
 									true, 
-									shipOwnerName));
+									CommonUtils.getMineStrength(ship.getType())));
 					this.waitForKeyPressed();
 					ship.setToBeDeleted();
 
@@ -374,9 +372,6 @@ class Evaluation
 		else
 		{
 			String planetName = this.game.getPlanetNameFromIndex(planetIndex);
-			this.game.getConsole().setLineColor(planet.getOwnerColorIndex(this.game));
-			
-			this.printDayEvent(day);
 
 			if (ship.getType() == ShipType.BATTLESHIPS)
 			{
@@ -392,9 +387,25 @@ class Evaluation
 				}
 				
 				if (attack)
+				{
+					this.game.getConsole().setLineColor(
+							planet.getOwner() == Player.NEUTRAL ?
+									Colors.WHITE :
+									planet.getOwnerColorIndex(this.game));
+					
+					String planetOwnerName =
+							planet.getOwner() == Player.NEUTRAL ?
+									null :
+									game.getPlayers()[planet.getOwner()].getName();
+					
+					this.printDayEvent(day, planetOwnerName);
 					this.battleshipsAttack(planet, ship, planetIndex, day);
+				}
 				else
 				{
+					this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+					this.printDayEvent(day, ship.getOwnerName(game));
+					
 					planet.mergeBattleships(this.game.getPlayersCount(), ship);
 
 					this.game.getConsole().appendText(
@@ -408,10 +419,10 @@ class Evaluation
 			}
 			else
 			{
-				boolean crash = planet.getOwner() != ship.getOwner();
+				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+				this.printDayEvent(day, ship.getOwnerName(game));
 				
-				if (!crash)
-					planet.incrementShipsCount(ship.getType(), 1);
+				planet.incrementShipsCount(ship.getType(), 1);
 				
 				switch (ship.getType())
 				{
@@ -419,10 +430,6 @@ class Evaluation
 						if (ship.isTransfer())
 						{
 							this.game.getConsole().appendText(
-									crash ?
-											VegaResources.SpyCrashed(
-													true,
-													planetName) :
 											VegaResources.SpyArrived(
 													true,
 													planetName));
@@ -430,27 +437,20 @@ class Evaluation
 						else
 						{
 							planet.setRadioStation(ship.getOwner());
-							
-							if (!crash)
-								planet.incrementShipsCount(ship.getType(), -1);
+							planet.incrementShipsCount(ship.getType(), -1);
 							
 							this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
 							
 							this.game.getConsole().appendText(
 								VegaResources.SpyDropped(
 										true,
-										shipOwnerName,
 										planetName));
 						}
 						break;
 						
 					case PATROL:
 						this.game.getConsole().appendText(
-								crash ?
-										VegaResources.PatrolCrashed(
-												true, 
-												planetName) :
-										VegaResources.PatrolArrived(
+								VegaResources.PatrolArrived(
 												true, 
 												planetName));
 						break;
@@ -459,11 +459,7 @@ class Evaluation
 						planet.addToMoneySupply(ship.getCount());
 						
 						this.game.getConsole().appendText(
-								crash ?
-									VegaResources.TransporterCrashed(
-											true, 
-											planetName) :
-									VegaResources.TransporterArrived(
+								VegaResources.TransporterArrived(
 											true, 
 											planetName));
 						break;
@@ -473,22 +469,15 @@ class Evaluation
 					case MINE250:
 					case MINE500:
 						this.game.getConsole().appendText(
-								crash ?
-										VegaResources.MinelayerCrashed(
+								VegaResources.MinelayerArrived(
 												true, 
-												planetName) :
-										VegaResources.MinelayerArrived(
-												true, 
-												planetName));
+												planetName,
+												CommonUtils.getMineStrength(ship.getType())));
 						break;
 						
 					case MINESWEEPER:
 						this.game.getConsole().appendText(
-								crash ?
-										VegaResources.MinesweeperCrashed(
-												true,
-												planetName) :
-										VegaResources.MinesweeperArrived(
+								VegaResources.MinesweeperArrived(
 												true,
 												planetName));
 						break;
@@ -533,7 +522,7 @@ class Evaluation
 		{
 			this.game.getMines().remove(sector.getString());
 			
-			this.printDayEvent(day);
+			this.printDayEvent(day, null);
 			
 			this.game.getConsole().appendText(
 					VegaResources.BlackHoleMines(
@@ -542,19 +531,17 @@ class Evaluation
 		}
 		else
 		{
-			String playerName = ship.getOwnerName(this.game);
 			this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
 	
 			if (ship.getType() == ShipType.BATTLESHIPS)
 			{
-				this.printDayEvent(day);
+				this.printDayEvent(day, ship.getOwnerName(game));
 	
 				if (ship.getCount() >= mine.getStrength())
 				{
 					this.game.getConsole().appendText(
 							VegaResources.BattleshipsKilledByMine2(
 									true,
-									playerName,
 									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
 	
 					ship.subtractBattleships(mine.getStrength(), ship.getOwner());
@@ -569,7 +556,6 @@ class Evaluation
 					this.game.getConsole().appendText(
 							VegaResources.BattleshipsKilledByMine(
 									true, 
-									playerName,
 									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
 	
 					deleteShip = true;
@@ -579,10 +565,9 @@ class Evaluation
 			}
 			else if (ship.getType() == ShipType.MINESWEEPER)
 			{
-				this.printDayEvent(day);
+				this.printDayEvent(day, ship.getOwnerName(game));
 				this.game.getConsole().appendText (
 						VegaResources.MessageFromSector(true,
-								ship.getOwnerName(this.game),
 								Game.getSectorNameFromPositionStatic(
 										new Point(mine.getPositionX(), mine.getPositionY())
 										)));
@@ -647,7 +632,7 @@ class Evaluation
 			this.game.getPlayers()[playerIndex].setDead(true);
 
 			this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
-			this.printDayEndOfYear();
+			this.printDayEndOfYear(null);
 			this.game.getConsole().appendText(
 					VegaResources.PlayerGameOver(
 							true, 
@@ -822,12 +807,11 @@ class Evaluation
 		Ship patrol = swapObjects ? otherShip1 : patrol1;
 		Ship otherShip = swapObjects ? patrol1 : otherShip1;
 
-		this.printDayEvent(day);			
+		this.printDayEvent(day, patrol.getOwnerName(game));			
 		this.game.getConsole().setLineColor(patrol.getOwnerColorIndex(this.game));
 
 		Point otherShipPosition = otherShip.getPositionOnDay(day);
 
-		String patrolOwnerName = patrol.getOwnerName(this.game);
 		String otherShipOwnerName = otherShip.getOwnerName(this.game);
 		String otherShipDestinationName = this.game.getSectorNameFromPosition(otherShip.getPositionDestination());
 
@@ -844,38 +828,34 @@ class Evaluation
 			this.game.getConsole().appendText(
 					VegaResources.PatrolCapturedSpy(
 							true, 
-							patrolOwnerName, 
 							otherShipDestinationName, 
 							otherShipOwnerName));
 		else if (otherShip.getType() == ShipType.TRANSPORT)
 			this.game.getConsole().appendText(
 					VegaResources.PatrolCapturedTransporter(
 							true, 
-							patrolOwnerName, 
 							otherShipDestinationName, 
 							otherShipOwnerName));
 		else if (otherShip.getType() == ShipType.MINESWEEPER)
 			this.game.getConsole().appendText(
 					VegaResources.PatrolCapturedMinesweeper(
 							true, 
-							patrolOwnerName, 
 							otherShipDestinationName, 
 							otherShipOwnerName));
-		else if (otherShip.getType() == ShipType.MINE50 || 
+		else if (otherShip.getType() == ShipType.MINE50 ||
 				otherShip.getType() == ShipType.MINE100 ||
 				otherShip.getType() == ShipType.MINE250 ||
 				otherShip.getType() == ShipType.MINE500)
 			this.game.getConsole().appendText(
 					VegaResources.PatrolCapturedMinelayer(
 							true, 
-							patrolOwnerName, 
+							CommonUtils.getMineStrength(otherShip.getType()), 
 							otherShipDestinationName, 
 							otherShipOwnerName));
 		else if (otherShip.getType() == ShipType.PATROL)
 			this.game.getConsole().appendText(
 					VegaResources.PatrolCapturedPatrol(
 							true, 
-							patrolOwnerName, 
 							otherShipDestinationName, 
 							otherShipOwnerName));
 		else if (otherShip.getType() == ShipType.BATTLESHIPS)
@@ -883,7 +863,6 @@ class Evaluation
 			this.game.getConsole().appendText(
 					VegaResources.PatrolCapturedBattleships(
 							true, 
-							patrolOwnerName, 
 							Integer.toString(otherShip.getCount()), 
 							otherShipDestinationName, 
 							otherShipOwnerName));
@@ -964,16 +943,7 @@ class Evaluation
 		if (this.game.getMines() == null)
 			this.game.setMines(new Hashtable<String,Mine>());
 
-		int strength = 0;
-
-		if (obj.getType() == ShipType.MINE50)
-			strength = 50;
-		else if (obj.getType() == ShipType.MINE100)
-			strength = 100;
-		else if (obj.getType() == ShipType.MINE250)
-			strength = 250;
-		else
-			strength = 500;
+		int strength = Integer.parseInt(CommonUtils.getMineStrength(obj.getType()));
 
 		String positionString = obj.getPositionDestination().getString();
 		Mine mine = this.game.getMines().get(positionString);
@@ -986,28 +956,41 @@ class Evaluation
 			mine.addToStrength(strength);
 	}
 
-	private void printDayBeginOfYear()
+	private void printDayBeginOfYear(String playerName)
 	{
-		this.game.getConsole().appendText(">>> ");
+		this.printDayEventLineStart(playerName);
 		this.game.getConsole().enableEvaluationProgressBar(true);
 	}
 
-	private void printDayEndOfYear()
+	private void printDayEndOfYear(String playerName)
 	{
-		this.game.getConsole().appendText(">>> ");
+		this.printDayEventLineStart(playerName);
 		this.game.getConsole().setEvaluationProgressBarDay(Game.DAYS_OF_YEAR_COUNT);
 	}
 
-	private void printDayEvent(int day)
+	private void printDayEvent(int day, String playerName)
 	{
 		if (day < 1)
-			printDayBeginOfYear();
+			printDayBeginOfYear(playerName);
 		else if (day >= Game.DAYS_OF_YEAR_COUNT)
-			printDayEndOfYear();
+			printDayEndOfYear(playerName);
 		else
 		{		
-			this.game.getConsole().appendText(">>> ");
+			this.printDayEventLineStart(playerName);
 			this.game.getConsole().setEvaluationProgressBarDay(day);
+		}
+	}
+	
+	private void printDayEventLineStart(String playerName)
+	{
+		if (playerName != null)
+		{
+			this.game.getConsole().appendText(
+					VegaResources.EventLineStart(true, playerName) + " ");
+		}
+		else
+		{
+			this.game.getConsole().appendText(">>> ");
 		}
 	}
 
@@ -1199,7 +1182,7 @@ class Evaluation
 		{
 			capitulationShip.setToBeDeleted();
 			
-			this.printDayEvent(0);
+			this.printDayEvent(0, null);
 
 			this.game.getConsole().setLineColor(capitulationShip.getOwnerColorIndex(this.game));
 			this.game.getConsole().appendText(

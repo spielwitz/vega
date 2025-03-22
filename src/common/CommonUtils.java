@@ -361,4 +361,21 @@ public class CommonUtils
 
 		return retval;
 	}
+	
+	static String getMineStrength(ShipType type)
+	{
+		switch (type)
+		{
+			case MINE50:
+				return "50";
+			case MINE100:
+				return "100";
+			case MINE250:
+				return "250";
+			case MINE500:
+				return "500";
+			default:
+				return "";
+		}
+	}
 }
