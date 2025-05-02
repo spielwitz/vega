@@ -47,7 +47,7 @@ public class Game extends EmailTransportBase implements Serializable
 	public static final int 		BOARD_MAX_Y = 18;
 
 	/// The current build
-	public static final String		BUILD = "0015";
+	public static final String		BUILD = "0016";
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
