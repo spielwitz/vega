@@ -317,9 +317,17 @@ class GameParametersJDialog extends Dialog implements IButtonListener, IComboBox
 		if (source == this.comboPlayers)
 		{
 			this.playersCount = Integer.parseInt((String)this.comboPlayers.getSelectedItem());
-			this.comboPlanets.setItems(this.getPlanetComboBoxValues(this.playersCount));
-			this.comboPlanets.setSelectedIndex(0);
 			
+			int planetCountSelected = Integer.parseInt((String)this.comboPlanets.getSelectedItem());
+			String[] planetComboBoxValues = this.getPlanetComboBoxValues(this.playersCount);
+			int minPlanetCount = Integer.parseInt(planetComboBoxValues[0]);
+			this.comboPlanets.setItems(planetComboBoxValues);
+			
+			if (planetCountSelected < minPlanetCount)
+				this.comboPlanets.setSelectedIndex(0);
+			else
+				this.comboPlanets.setSelectedItem(Integer.toString(planetCountSelected));
+						
 			this.setControlsEnabled();
 			this.pack();
 		}
