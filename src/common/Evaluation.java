@@ -332,9 +332,39 @@ class Evaluation
 			switch (ship.getType())
 			{
 				case PATROL:
-				case MINESWEEPER:
 					this.addScreenSnapshotToReplay(day);
 					ship.setToBeTurned();
+					
+					break;
+					
+				case MINESWEEPER:
+					Mine mine = this.game.getMines().get(ship.getPositionDestination().getString());
+					
+					if (mine != null)
+					{
+						this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+						
+						this.game.updateBoard(
+								this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
+								day);
+						this.printDayEvent(day, ship.getOwnerName(game));
+						this.game.getConsole().appendText (
+								VegaResources.MessageFromSector(true,
+										Game.getSectorNameFromPositionStatic(
+												new Point(mine.getPositionX(), mine.getPositionY())
+												)));
+						this.game.getConsole().appendText (
+								VegaResources.MineFieldSwept(
+										true,
+										Integer.toString(mine.getStrength())));
+
+						this.game.getMines().remove(ship.getPositionDestination().getString());
+						this.waitForKeyPressed();
+					}
+					
+					this.addScreenSnapshotToReplay(day);
+					ship.setToBeTurned();
+					
 					break;
 					
 				case MINE50:
@@ -562,23 +592,6 @@ class Evaluation
 	
 					mine.setStrength(mine.getStrength() - ship.getCount());
 				}
-			}
-			else if (ship.getType() == ShipType.MINESWEEPER)
-			{
-				this.printDayEvent(day, ship.getOwnerName(game));
-				this.game.getConsole().appendText (
-						VegaResources.MessageFromSector(true,
-								Game.getSectorNameFromPositionStatic(
-										new Point(mine.getPositionX(), mine.getPositionY())
-										)));
-				this.game.getConsole().lineBreak();
-				this.game.getConsole().appendText (
-						VegaResources.MineFieldSwept(
-								true,
-								Integer.toString(mine.getStrength())));
-	
-	
-				this.game.getMines().remove(sector.getString());
 			}
 			else
 				return;
