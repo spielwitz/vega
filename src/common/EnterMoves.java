@@ -86,8 +86,9 @@ class EnterMoves
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.Planet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.Planet(true),
+					true,
+					false);
 
 			if (input == null)
 			{
@@ -270,8 +271,7 @@ class EnterMoves
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.StartPlanet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.StartPlanet(true), true, false);
 
 			if (input == null)
 			{
@@ -297,8 +297,7 @@ class EnterMoves
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.DestinationPlanet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.DestinationPlanet(true), true, false); 
 
 			if (input == null)
 			{
@@ -1011,8 +1010,7 @@ class EnterMoves
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.StartPlanet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.StartPlanet(true), true, false);
 
 			if (input == null)
 			{
@@ -1133,7 +1131,8 @@ class EnterMoves
 					transfer ?
 							VegaResources.DestinationPlanet(true) :
 							VegaResources.DestinationSectorOrPlanet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_SECTOR);
+					true,
+					true);
 
 			if (inputDestination == null)
 			{
@@ -1232,8 +1231,7 @@ class EnterMoves
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.Planet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.Planet(true), true, false);
 
 			if (input == null)
 			{
@@ -1414,8 +1412,7 @@ class EnterMoves
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.StartPlanet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.StartPlanet(true), true, true);
 
 			if (input == null)
 			{
@@ -1451,8 +1448,7 @@ class EnterMoves
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.DestinationPlanet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.DestinationPlanet(true), true, true); 
 
 			if (input == null)
 			{

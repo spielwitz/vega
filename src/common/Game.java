@@ -868,7 +868,7 @@ public class Game extends EmailTransportBase implements Serializable
 			return planetIndex.intValue();
 	}
 	
-	PlanetInputStruct getPlanetInput(String label, int allowedInput)
+	PlanetInputStruct getPlanetInput(String label, boolean allowPlanet, boolean allowSector)
   	{
   		ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();			  		
   		
@@ -884,7 +884,7 @@ public class Game extends EmailTransportBase implements Serializable
 				return null;
 			}
 	
-			if (allowedInput == PlanetInputStruct.ALLOWED_INPUT_SECTOR)
+			if (allowSector)
 			{
 				Point positionDestination = this.getPositionFromSectorName(input.getInputText());
 				
@@ -896,7 +896,7 @@ public class Game extends EmailTransportBase implements Serializable
 				}
 			}
 			
-			if (allowedInput == PlanetInputStruct.ALLOWED_INPUT_PLANET)
+			if (allowPlanet)
 			{
 				int planetIndexDestination = this.getPlanetIndexFromName(input.getInputText());
 				

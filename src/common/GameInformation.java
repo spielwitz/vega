@@ -178,8 +178,7 @@ class GameInformation
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.DisplayAllianceOnPlanet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.DisplayAllianceOnPlanet(true), true, false);
 
 			if (input == null)
 			{
@@ -336,8 +335,7 @@ class GameInformation
 			this.game.getConsole().setHeaderText(this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.GameInfo(true)+" -> "+VegaResources.Planet(true), Colors.NEUTRAL);
 
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.Planet(true), 
-					PlanetInputStruct.ALLOWED_INPUT_PLANET);
+					VegaResources.Planet(true), true, false);
 
 			if (input == null)
 			{

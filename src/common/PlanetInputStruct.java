@@ -18,9 +18,6 @@ package common;
 
 class PlanetInputStruct
 {
-	static final int ALLOWED_INPUT_PLANET = 1;
-	static final int ALLOWED_INPUT_SECTOR = 2;
-	
 	int planetIndex = Planet.NO_PLANET;
 	Point sector = null;
 	
@@ -29,15 +26,4 @@ class PlanetInputStruct
 		this.sector = sector;
 		this.planetIndex = planetIndex;
 	}
-	
-//	PlanetInputStruct(int planetIndex)
-//	{
-//		this.planetIndex = planetIndex;
-//	}
-//	
-//	PlanetInputStruct(Point position, int planetIndex)
-//	{
-//		this.sector = position;
-//		this.planetIndex = planetIndex;
-//	}
 }
