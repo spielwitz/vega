@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FP
+		// Last used symbolic key: FS
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -452,7 +452,7 @@ public class VegaResources
 		symbolDict.put("BV","DeleteUserQuestion_BV");
 		symbolDict.put("BW","DeleteUser_BW");
 		symbolDict.put("BX","Delete_BX");
-		symbolDict.put("BY","DestinationOfTransferMustBePlanet_BY");
+		symbolDict.put("BY","YouMustSelectAPlanet_BY");
 		symbolDict.put("BZ","DestinationPlanet_BZ");
 		symbolDict.put("C0","DestinationSectorOrPlanet_C0");
 		symbolDict.put("C1","DestinationShort_C1");
@@ -581,6 +581,9 @@ public class VegaResources
 		symbolDict.put("FN","CapitulationRegistered_FN");
 		symbolDict.put("FO","PlanetChanged_FO");
 		symbolDict.put("FP","EventLineStart_FP");
+		symbolDict.put("FQ","DestinationSector_FQ");
+		symbolDict.put("FR","YouMustSelectASector_FR");
+		symbolDict.put("FS","NoShipOfSelectedTypeAvailable_FS");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -2145,7 +2148,7 @@ public class VegaResources
 	}
 
 	/**
-	   * This is the start planet. Enter another planet. [6A]
+	   * This is the start planet. Enter a different destination. [6A]
 	   */
 	public static String ThisIsTheStartPlanet(boolean symbol) {
 		return symbol ? "£6A£":messages.getString("ThisIsTheStartPlanet_6A");
@@ -3538,10 +3541,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Destination of a transfer must be a planet. [BY]
+	   * You must select a planet. [BY]
 	   */
-	public static String DestinationOfTransferMustBePlanet(boolean symbol) {
-		return symbol ? "£BY£":messages.getString("DestinationOfTransferMustBePlanet_BY");
+	public static String YouMustSelectAPlanet(boolean symbol) {
+		return symbol ? "£BY£":messages.getString("YouMustSelectAPlanet_BY");
 	}
 
 	/**
@@ -4438,5 +4441,26 @@ public class VegaResources
 	   */
 	public static String EventLineStart(boolean symbol, String arg0) {
 		return symbol ? "£FP§"+arg0+"£":format(messages.getString("EventLineStart_FP"), new Object[]{arg0});
+	}
+
+	/**
+	   * Destination sector [FQ]
+	   */
+	public static String DestinationSector(boolean symbol) {
+		return symbol ? "£FQ£":messages.getString("DestinationSector_FQ");
+	}
+
+	/**
+	   * You must select a sector. [FR]
+	   */
+	public static String YouMustSelectASector(boolean symbol) {
+		return symbol ? "£FR£":messages.getString("YouMustSelectASector_FR");
+	}
+
+	/**
+	   * You don't have a ship of the selected type. [FS]
+	   */
+	public static String NoShipOfSelectedTypeAvailable(boolean symbol) {
+		return symbol ? "£FS£":messages.getString("NoShipOfSelectedTypeAvailable_FS");
 	}
 }

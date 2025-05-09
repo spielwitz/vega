@@ -883,33 +883,34 @@ public class Game extends EmailTransportBase implements Serializable
 				this.console.outAbort();
 				return null;
 			}
-	
-			if (allowSector)
+			
+			Point ptSector = this.getPositionFromSectorName(input.getInputText());
+			
+			if (ptSector == null)
 			{
-				Point positionDestination = this.getPositionFromSectorName(input.getInputText());
-				
-				if (positionDestination != null)
-				{
-					return new PlanetInputStruct(
-							this.getPlanetIndexFromName(input.getInputText()),
-							positionDestination);
-				}
+				this.console.outInvalidInput();
+				continue;
 			}
 			
-			if (allowPlanet)
+			int planetIndex = this.getPlanetIndexFromPosition(ptSector);
+			
+			if (planetIndex != Planet.NO_PLANET && !allowPlanet)
 			{
-				int planetIndexDestination = this.getPlanetIndexFromName(input.getInputText());
-				
-				if (planetIndexDestination != Planet.NO_PLANET)
-				{
-					return new PlanetInputStruct(
-							planetIndexDestination,
-							this.planets[planetIndexDestination].getPosition());
-				}
+				this.console.appendText(VegaResources.YouMustSelectASector(true));
+				this.console.lineBreak();
+				continue;
 			}
 			
-			this.console.outInvalidInput();
+			if (planetIndex == Planet.NO_PLANET && !allowSector)
+			{
+				this.console.appendText(VegaResources.YouMustSelectAPlanet(true));
+				this.console.lineBreak();
+				continue;
+			}
 
+			return new PlanetInputStruct(
+					planetIndex,
+					ptSector);
 		}
   		
 		while (true);
