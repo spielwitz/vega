@@ -1621,9 +1621,10 @@ class EnterMoves
 
 			do
 			{
+				int maxCount = Math.min(this.game.getPlanets()[planetIndexStart].getMoneySupply(), Game.TRANSPORT_MONEY_MAX);
+				
 				this.game.getConsole().appendText(
-						VegaResources.HowMuchMoney(true,
-								Integer.toString(Game.TRANSPORT_MONEY_MAX)) + " ");
+						VegaResources.HowMuchMoney(true, Integer.toString(maxCount)) + " ");
 
 				ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, true);
 
@@ -1635,7 +1636,7 @@ class EnterMoves
 				}
 
 				if (input.getInputText().toUpperCase().equals("+"))
-					count = Math.min(this.game.getPlanets()[planetIndexStart].getMoneySupply(), Game.TRANSPORT_MONEY_MAX);
+					count = maxCount;
 				else
 				{
 					try
@@ -1648,7 +1649,7 @@ class EnterMoves
 						continue;
 					}
 
-					if (count < 0 || count > Math.min(this.game.getPlanets()[planetIndexStart].getMoneySupply(), Game.TRANSPORT_MONEY_MAX))
+					if (count < 0 || count > maxCount)
 					{
 						this.game.getConsole().appendText(VegaResources.YouCannotTransportThisAmountOfMoney(true));
 						this.game.getConsole().lineBreak();
