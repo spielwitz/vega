@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FS
+		// Last used symbolic key: FV
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -347,7 +347,6 @@ public class VegaResources
 		symbolDict.put("8X","Years_8X");
 		symbolDict.put("8Y","Yes_8Y");
 		symbolDict.put("8Z","YouAreNotGameHost_8Z");
-		symbolDict.put("90","YouAreNotOwnerOfPlanet_90");
 		symbolDict.put("91","Distance_91");
 		symbolDict.put("92","YouCannotTransportThisAmountOfMoney_92");
 		symbolDict.put("93","YouHaveNoPlanets_93");
@@ -584,6 +583,8 @@ public class VegaResources
 		symbolDict.put("FQ","DestinationSector_FQ");
 		symbolDict.put("FR","YouMustSelectASector_FR");
 		symbolDict.put("FS","NoShipOfSelectedTypeAvailable_FS");
+		symbolDict.put("FU","NoBattleships_FU");
+		symbolDict.put("FV","NotAnAllianceMember_FV");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -2449,7 +2450,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Mines]\n\n![img=tutorial/mines.png]\n\nWith mines you can make sectors of the playing field impassable for battleships. Send a mine from a planet into a sector. There the minelayer turns into a live mine and destroys battleships that cross the sector boundaries, including your own battleships. You can recognize minelayers by the symbol ![img=tutorial/iconMineLayer12x12.png]. Minelayers fly 2 light years per year. You can transfer minelayers to one of your planets to use them from there.\n\nThere are 50, 100, 250 and 500 mines. A 50 mine can destroy up to 50 battleships before it disappears. Accordingly, a 100 mine can destroy 100 battleships, and so on. If you place more mines in a mined sector, the strengths of the mines add up to a large mine. You can recognize the strength of a mine by the number in the diamond symbol.\n\n![size=1.5;color=1;bold|Minesweeper]\n\nSend a minesweeper to a sector or planet. On the way there, it flies at 1 light year/year and removes the mines from all the sectors it flies through. If the minesweeper's destination is a sector, it turns around and flies back to its starting planet at 2 light years/year, but does not clear any mines on the way back.\n\nYou can recognize minesweepers by the symbol ![img=tutorial/iconMineSweeper12x12.png]. [7I]
+	   * ![size=1.5;color=1;bold|Mines]\n\n![img=tutorial/mines.png]\n\nWith mines you can make sectors of the playing field impassable for battleships. Send a mine from a planet into a sector. There the minelayer turns into a live mine and destroys battleships that cross the sector boundaries, including your own battleships. You can recognize minelayers by the symbol ![img=tutorial/iconMineLayer12x12.png]. Minelayers fly 2 light years per year. You can transfer minelayers to one of your planets to use them from there.\n\nThere are 50, 100, 250 and 500 mines. A 50 mine can destroy up to 50 battleships before it disappears. Accordingly, a 100 mine can destroy 100 battleships, and so on. If you place more mines in a mined sector, the strengths of the mines add up to a large mine. You can recognize the strength of a mine by the number in the diamond symbol.\n\n![size=1.5;color=1;bold|Minesweeper]\n\nSend a minesweeper to a sector to clear all mines there. It flies 1 ly/year on the outward journey and 2 ly/year on the return journey. You can transfer a minelayer to one of your planets at a speed of 2 ly/year to use it from there.\n\nYou can recognize minesweepers by the symbol ![img=tutorial/iconMineSweeper12x12.png]. [7I]
 	   */
 	public static String TutorialText17(boolean symbol) {
 		return symbol ? "£7I£":messages.getString("TutorialText17_7I");
@@ -2803,13 +2804,6 @@ public class VegaResources
 	   */
 	public static String YouAreNotGameHost(boolean symbol, String arg0) {
 		return symbol ? "£8Z§"+arg0+"£":format(messages.getString("YouAreNotGameHost_8Z"), new Object[]{arg0});
-	}
-
-	/**
-	   * You are not the owner of the planet. [90]
-	   */
-	public static String YouAreNotOwnerOfPlanet(boolean symbol) {
-		return symbol ? "£90£":messages.getString("YouAreNotOwnerOfPlanet_90");
 	}
 
 	/**
@@ -4462,5 +4456,19 @@ public class VegaResources
 	   */
 	public static String NoShipOfSelectedTypeAvailable(boolean symbol) {
 		return symbol ? "£FS£":messages.getString("NoShipOfSelectedTypeAvailable_FS");
+	}
+
+	/**
+	   * No battleships available. [FU]
+	   */
+	public static String NoBattleships(boolean symbol) {
+		return symbol ? "£FU£":messages.getString("NoBattleships_FU");
+	}
+
+	/**
+	   * You are not an alliance member on this planet. [FV]
+	   */
+	public static String NotAnAllianceMember(boolean symbol) {
+		return symbol ? "£FV£":messages.getString("NotAnAllianceMember_FV");
 	}
 }

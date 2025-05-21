@@ -256,10 +256,21 @@ class EnterMoves
 		} while (true);
 	}
 
-	private void battleships(boolean isAlliance)
+	private void battleships(boolean alliedFleet)
 	{
+		String shipType = 
+				alliedFleet ?
+						VegaResources.AlliedBattleships(true) :
+						VegaResources.Battleships(true);
+		
 		this.game.getConsole().setHeaderText(
-				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" " + this.game.getPlayers()[this.playerIndexNow].getName() + " -> "+VegaResources.Battleships(true),
+				this.game.mainMenuGetYearDisplayText() 
+				+ " -> "
+				+ VegaResources.EnterMoves(true)+" " 
+				+ this.game.getPlayers()[this.playerIndexNow].getName() 
+				+ " -> "
+				+ shipType,
+				
 				this.game.getPlayers()[this.playerIndexNow].getColorIndex());
 
 		this.game.getConsole().clear();
@@ -279,17 +290,29 @@ class EnterMoves
 			}
 
 			planetIndexStart = input.planetIndex;
-
-			if (!isAlliance && this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-				break;
-			else if (isAlliance && this.game.getPlanets()[planetIndexStart].allianceExists() && this.game.getPlanets()[planetIndexStart].getBattleshipsCount(this.playerIndexNow) > 0)
-				break;
-			else
+			
+			if (this.game.getPlanets()[planetIndexStart].isPlayerInvolved(this.playerIndexNow))
 			{
-				this.game.getConsole().appendText(VegaResources.ActionNotPossible(true));
+				if (alliedFleet)
+				{
+					if (!this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
+						this.game.getConsole().appendText(VegaResources.NotAnAllianceMember(true));
+					else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
+						break;
+					else
+						this.game.getConsole().appendText(VegaResources.NoBattleships(true));
+				}
+				else
+				{
+					if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
+						break;
+					else
+						this.game.getConsole().appendText(VegaResources.NoBattleships(true));
+				}
+				
 				this.game.getConsole().lineBreak();
 			}
-
+			
 		} while (true);
 
 		int planetIndexDestination = -1;
@@ -354,7 +377,7 @@ class EnterMoves
 			int countTemp = 0;
 			int countMaxTemp = 0;
 
-			if (isAlliance)
+			if (alliedFleet)
 				countMaxTemp = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS);
 			else
 				countMaxTemp = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS, this.playerIndexNow);
@@ -392,11 +415,11 @@ class EnterMoves
 		Planet planetCopy = (Planet)CommonUtils.klon(this.game.getPlanets()[planetIndexStart]);
 
 		int[] reductions = 
-				this.game.getPlanets()[planetIndexStart].subtractBattleshipsCount(this.game.getPlayersCount(), count, this.playerIndexNow, isAlliance, false);
+				this.game.getPlanets()[planetIndexStart].subtractBattleshipsCount(this.game.getPlayersCount(), count, this.playerIndexNow, alliedFleet, false);
 
 		Alliance alliance = null;
 
-		if (isAlliance)
+		if (alliedFleet)
 			alliance = this.game.getPlanets()[planetIndexStart].copyAllianceStructure(reductions);
 
 		Ship ship = new Ship(
@@ -988,8 +1011,6 @@ class EnterMoves
 
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
-				this.game.getConsole().appendText(VegaResources.YouAreNotOwnerOfPlanet(true));
-				this.game.getConsole().lineBreak();
 				continue;
 			}
 
@@ -1212,8 +1233,6 @@ class EnterMoves
 
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
-				this.game.getConsole().appendText(VegaResources.YouAreNotOwnerOfPlanet(true));
-				this.game.getConsole().lineBreak();
 				continue;
 			}
 
@@ -1319,12 +1338,7 @@ class EnterMoves
 
 			if (this.game.getPlanets()[planetIndex].areDetailsVisibleForPlayer(playerIndexNow))
 				break;
-			else
-			{
-				this.game.getConsole().appendText(VegaResources.ActionNotPossible(true));
-				this.game.getConsole().lineBreak();
-			}
-
+			
 		} while (true);
 
 		if (planetIndex < 0)
@@ -1531,8 +1545,6 @@ class EnterMoves
 			
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
-				this.game.getConsole().appendText(VegaResources.YouAreNotOwnerOfPlanet(true));
-				this.game.getConsole().lineBreak();
 				continue;
 			}
 
