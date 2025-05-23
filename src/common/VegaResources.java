@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FV
+		// Last used symbolic key: FW
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -585,6 +585,7 @@ public class VegaResources
 		symbolDict.put("FS","NoShipOfSelectedTypeAvailable_FS");
 		symbolDict.put("FU","NoBattleships_FU");
 		symbolDict.put("FV","NotAnAllianceMember_FV");
+		symbolDict.put("FW","CountBattleshipsStart_FW");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -2940,10 +2941,10 @@ public class VegaResources
 	}
 
 	/**
-	   * All battleships [9K]
+	   * All available ({0}) [9K]
 	   */
-	public static String AllBattleships(boolean symbol) {
-		return symbol ? "£9K£":messages.getString("AllBattleships_9K");
+	public static String AllBattleships(boolean symbol, String arg0) {
+		return symbol ? "£9K§"+arg0+"£":format(messages.getString("AllBattleships_9K"), new Object[]{arg0});
 	}
 
 	/**
@@ -4470,5 +4471,12 @@ public class VegaResources
 	   */
 	public static String NotAnAllianceMember(boolean symbol) {
 		return symbol ? "£FV£":messages.getString("NotAnAllianceMember_FV");
+	}
+
+	/**
+	   * Count (max. {0}): [FW]
+	   */
+	public static String CountBattleshipsStart(boolean symbol, String arg0) {
+		return symbol ? "£FW§"+arg0+"£":format(messages.getString("CountBattleshipsStart_FW"), new Object[]{arg0});
 	}
 }

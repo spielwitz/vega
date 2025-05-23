@@ -291,27 +291,26 @@ class EnterMoves
 
 			planetIndexStart = input.planetIndex;
 			
-			if (this.game.getPlanets()[planetIndexStart].isPlayerInvolved(this.playerIndexNow))
+			if (alliedFleet)
 			{
-				if (alliedFleet)
-				{
-					if (!this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
-						this.game.getConsole().appendText(VegaResources.NotAnAllianceMember(true));
-					else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-						break;
-					else
-						this.game.getConsole().appendText(VegaResources.NoBattleships(true));
-				}
+				if (!this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
+					this.game.getConsole().appendText(VegaResources.NotAnAllianceMember(true));
+				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
+					break;
 				else
-				{
-					if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-						break;
-					else
-						this.game.getConsole().appendText(VegaResources.NoBattleships(true));
-				}
-				
-				this.game.getConsole().lineBreak();
+					this.game.getConsole().appendText(VegaResources.NoBattleships(true));
 			}
+			else
+			{
+				if (!this.game.getPlanets()[planetIndexStart].isPlayerInvolved(this.playerIndexNow))
+					continue;
+				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
+					break;
+				else
+					this.game.getConsole().appendText(VegaResources.NoBattleships(true));
+			}
+			
+			this.game.getConsole().lineBreak();
 			
 		} while (true);
 
@@ -347,15 +346,23 @@ class EnterMoves
 		} while (true);
 
 		int count = -1;
+		
+		int countMaxTemp = 0;
+
+		if (alliedFleet)
+			countMaxTemp = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS);
+		else
+			countMaxTemp = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS, this.playerIndexNow);
+		
 		String inputText = "";
 
 		allowedKeys = new ArrayList<ConsoleKey>();
 
-		allowedKeys.add(new ConsoleKey("+",VegaResources.AllBattleships(true)));
+		allowedKeys.add(new ConsoleKey("+",VegaResources.AllBattleships(true, Integer.toString(countMaxTemp))));
 
 		do
 		{
-			this.game.getConsole().appendText(VegaResources.Count(true)+": ");
+			this.game.getConsole().appendText(VegaResources.CountBattleshipsStart(true, Integer.toString(countMaxTemp))+" ");
 
 			ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, true);
 
@@ -375,12 +382,6 @@ class EnterMoves
 			}
 
 			int countTemp = 0;
-			int countMaxTemp = 0;
-
-			if (alliedFleet)
-				countMaxTemp = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS);
-			else
-				countMaxTemp = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS, this.playerIndexNow);
 
 			if (inputText.equals("+"))
 				countTemp = countMaxTemp;
