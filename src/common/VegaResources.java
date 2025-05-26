@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FW
+		// Last used symbolic key: FY
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -586,6 +586,8 @@ public class VegaResources
 		symbolDict.put("FU","NoBattleships_FU");
 		symbolDict.put("FV","NotAnAllianceMember_FV");
 		symbolDict.put("FW","CountBattleshipsStart_FW");
+		symbolDict.put("FX","NoRecentGames_FX");
+		symbolDict.put("FY","RecentGames_FY");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4478,5 +4480,19 @@ public class VegaResources
 	   */
 	public static String CountBattleshipsStart(boolean symbol, String arg0) {
 		return symbol ? "£FW§"+arg0+"£":format(messages.getString("CountBattleshipsStart_FW"), new Object[]{arg0});
+	}
+
+	/**
+	   * (No entries) [FX]
+	   */
+	public static String NoRecentGames(boolean symbol) {
+		return symbol ? "£FX£":messages.getString("NoRecentGames_FX");
+	}
+
+	/**
+	   * Recent local games [FY]
+	   */
+	public static String RecentGames(boolean symbol) {
+		return symbol ? "£FY£":messages.getString("RecentGames_FY");
 	}
 }

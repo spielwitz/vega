@@ -38,6 +38,7 @@ class VegaConfiguration
 {
 	private static String fileName = "VegaConfiguration";
 	private static final String PROPERTIES_FILE_NAME = "VegaProperties";
+	private static final int MAX_RECENT_GAMES_COUNT = 5;
 	private static Gson	serializer = new Gson();
 	
 	static VegaConfiguration get()
@@ -125,16 +126,18 @@ class VegaConfiguration
 	{
 		return Paths.get(CommonUtils.getHomeDir(), fileName).toFile();
 	}
+	
 	private String 				directoryNameLast;
 	
 	private int					displayServerPort;
 	private ArrayList<String> 	emailAddresses;
-	
 	private String				emailSeparator;
+	
 	private boolean				firstTimeStart;
+
 	private String				locale;
 	private String				myIpAddress;
-	
+	private ArrayList<String>	recentGames;
 	private ServerCredentials	serverCredentials;
 	
 	private int					webserverPort;
@@ -142,6 +145,7 @@ class VegaConfiguration
 	VegaConfiguration()
 	{
 		this.emailAddresses = new ArrayList<String>();
+		this.recentGames = new ArrayList<String>();
 		this.serverCredentials = new ServerCredentials();
 		this.firstTimeStart = true;
 		this.displayServerPort = DataTransferLib.SERVER_PORT;
@@ -161,7 +165,7 @@ class VegaConfiguration
 			return null;
 		}
 	}
-
+	
 	String getDirectoryNameLast()
 	{
 		return directoryNameLast;
@@ -181,10 +185,12 @@ class VegaConfiguration
 			
 		return retval;
 	}
+
 	String getEmailSeparator()
 	{
 		return emailSeparator;
 	}
+	
 	Messages getMessages()
 	{
 		if (this.serverCredentials == null) return null;
@@ -192,10 +198,36 @@ class VegaConfiguration
 		
 		return this.serverCredentials.getMessages();
 	}
-
+	
 	String getMyIpAddress()
 	{
 		return myIpAddress;
+	}
+
+	ArrayList<String> getRecentGames()
+	{
+		return recentGames;
+	}
+	
+	void addRecentGame(String filePath)
+	{
+		if (this.recentGames.contains(filePath))
+		{
+			this.recentGames.remove(filePath);
+		}
+		
+		this.recentGames.add(0, filePath);
+		
+		while (this.recentGames.size() > MAX_RECENT_GAMES_COUNT)
+			this.recentGames.remove(MAX_RECENT_GAMES_COUNT);
+		
+		this.writeToFile();
+	}
+	
+	void deleteRecentGame(String filePath)
+	{
+		this.recentGames.remove(filePath);
+		this.writeToFile();
 	}
 
 	ServerCredentials getServerCredentials()
