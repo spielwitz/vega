@@ -47,11 +47,11 @@ public class Game extends EmailTransportBase implements Serializable
 	public static final int 		BOARD_MAX_Y = 18;
 
 	/// The current build
-	public static final String		BUILD = "0015";
+	public static final String		BUILD = "0016";
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.
-	public static final String 		BUILD_COMPATIBLE = "0015";
+	public static final String 		BUILD_COMPATIBLE = "0016";
 	
 	public static final int 		GAME_NAME_LENGTH_MAX = 18;
 	public static final int 		GAME_NAME_LENGTH_MIN = 3;
@@ -868,7 +868,7 @@ public class Game extends EmailTransportBase implements Serializable
 			return planetIndex.intValue();
 	}
 	
-	PlanetInputStruct getPlanetInput(String label, int allowedInput)
+	PlanetInputStruct getPlanetInput(String label, boolean allowPlanet, boolean allowSector)
   	{
   		ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();			  		
   		
@@ -883,33 +883,34 @@ public class Game extends EmailTransportBase implements Serializable
 				this.console.outAbort();
 				return null;
 			}
-	
-			if (allowedInput == PlanetInputStruct.ALLOWED_INPUT_SECTOR)
+			
+			Point ptSector = this.getPositionFromSectorName(input.getInputText());
+			
+			if (ptSector == null)
 			{
-				Point positionDestination = this.getPositionFromSectorName(input.getInputText());
-				
-				if (positionDestination != null)
-				{
-					return new PlanetInputStruct(
-							this.getPlanetIndexFromName(input.getInputText()),
-							positionDestination);
-				}
+				this.console.outInvalidInput();
+				continue;
 			}
 			
-			if (allowedInput == PlanetInputStruct.ALLOWED_INPUT_PLANET)
+			int planetIndex = this.getPlanetIndexFromPosition(ptSector);
+			
+			if (planetIndex != Planet.NO_PLANET && !allowPlanet)
 			{
-				int planetIndexDestination = this.getPlanetIndexFromName(input.getInputText());
-				
-				if (planetIndexDestination != Planet.NO_PLANET)
-				{
-					return new PlanetInputStruct(
-							planetIndexDestination,
-							this.planets[planetIndexDestination].getPosition());
-				}
+				this.console.appendText(VegaResources.YouMustSelectASector(true));
+				this.console.lineBreak();
+				continue;
 			}
 			
-			this.console.outInvalidInput();
+			if (planetIndex == Planet.NO_PLANET && !allowSector)
+			{
+				this.console.appendText(VegaResources.YouMustSelectAPlanet(true));
+				this.console.lineBreak();
+				continue;
+			}
 
+			return new PlanetInputStruct(
+					planetIndex,
+					ptSector);
 		}
   		
 		while (true);

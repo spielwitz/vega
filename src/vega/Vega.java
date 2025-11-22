@@ -38,6 +38,7 @@ import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -183,6 +184,7 @@ public class Vega extends Frame // NO_UCD (use default)
 	private MenuItem menuOutputWindow;
 	private MenuItem menuParameters;
 	private MenuItem menuQuit;
+	private JMenu menuRecentGames;
 	
 	private MenuItem menuSave;
 	private MenuItem menuServer;
@@ -201,12 +203,11 @@ public class Vega extends Frame // NO_UCD (use default)
 	private JPopupMenu popupMenu;
 	
 	private GameThread t;
-
 	private GameThreadCommunicationStructure threadCommunicationStructure;
-	
 	private TutorialPanel tutorialPanel;
-		
 	private WebServer webserver;
+	private Hashtable<MenuItem, String> recentGames;
+	
 	private Vega()
 	{
 		super("", new BorderLayout());
@@ -282,6 +283,8 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.tutorialPanel = new TutorialPanel(this);
 		this.add(tutorialPanel, BorderLayout.EAST);
 		this.tutorialPanel.setVisible(false);
+		
+	    this.updateMenuRecentGames();
 		
 		this.setExtendedState(MAXIMIZED_BOTH);
 		this.setVisible(true);
@@ -450,12 +453,12 @@ public class Vega extends Frame // NO_UCD (use default)
 	@Override
 	public void menuItemSelected(MenuItem source)
 	{
-		if (source == this.menuLoad)
+		if (source == this.menuLoad || this.recentGames.containsKey(source))
 		{
 			this.inputEnabled = false;
 			this.redrawScreen();
 			
-			Game game = this.loadGame();
+			Game game = this.loadGame(this.recentGames.get(source));
 			if (game != null)
 			{
 				this.stopTutorial();
@@ -945,6 +948,8 @@ public class Vega extends Frame // NO_UCD (use default)
 			{
 				this.config.setDirectoryNameLast(directoryName);
 				this.fileNameLast = fileName;
+				this.config.addRecentGame(file.getAbsolutePath());
+				this.updateMenuRecentGames();
 			}
 		}
 		
@@ -1273,6 +1278,9 @@ public class Vega extends Frame // NO_UCD (use default)
 	    
 	    this.menuHighscore = new MenuItem(VegaResources.LocalHighScoreList(false), this);
 	    popupMenu.add(this.menuHighscore);
+	    
+	    this.menuRecentGames = new JMenu(VegaResources.RecentGames(false));
+	    popupMenu.add(this.menuRecentGames);
 
 	    popupMenu.addSeparator();
 	    
@@ -1419,30 +1427,38 @@ public class Vega extends Frame // NO_UCD (use default)
 		this.redrawScreen();
 	}
 	
-	private Game loadGame()
+	private Game loadGame(String filePath)
 	{
 		Game game = null;
+		File file = null;
 		
-		JFileChooser fc = new JFileChooser(this.config.getDirectoryNameLast());
-		
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		        VegaResources.FileFilterDescription(false), 
-		        FILE_SUFFIX.substring(1),
-		        FILE_SUFFIX_BACKUP.substring(1),
-		        FILE_SUFFIX_IMPORT.substring(1));
-		
-		fc.setFileFilter(filter);
-		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		fc.setDialogTitle(VegaResources.LoadGame(false));
-		
-		int returnVal = fc.showOpenDialog(this);
-		
-		if(returnVal != JFileChooser.APPROVE_OPTION)
+		if (filePath == null)
 		{
-			return null;
+			JFileChooser fc = new JFileChooser(this.config.getDirectoryNameLast());
+			
+			FileNameExtensionFilter filter = new FileNameExtensionFilter(
+			        VegaResources.FileFilterDescription(false), 
+			        FILE_SUFFIX.substring(1),
+			        FILE_SUFFIX_BACKUP.substring(1),
+			        FILE_SUFFIX_IMPORT.substring(1));
+			
+			fc.setFileFilter(filter);
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			fc.setDialogTitle(VegaResources.LoadGame(false));
+			
+			int returnVal = fc.showOpenDialog(this);
+			
+			if(returnVal != JFileChooser.APPROVE_OPTION)
+			{
+				return null;
+			}
+			
+			file = fc.getSelectedFile();
 		}
-		
-		File file = fc.getSelectedFile();
+		else
+		{
+			file = new File(filePath);
+		}
 		
 		if (file.exists())
 		{
@@ -1467,6 +1483,7 @@ public class Vega extends Frame // NO_UCD (use default)
 			
 			if (error == true)
 			{
+				this.config.deleteRecentGame(file.getAbsolutePath());
 				MessageBox.showError(
 						this,
 					    errorText,
@@ -1488,13 +1505,19 @@ public class Vega extends Frame // NO_UCD (use default)
 					this.fileNameLast = file.getName();
 				
 				game.getOptions().remove(GameOptions.SERVER_BASED);
+				
+				this.config.addRecentGame(file.getAbsolutePath());
+				this.updateMenuRecentGames();
 			}
 		}
 		else
+		{
+			this.config.deleteRecentGame(file.getAbsolutePath());
 			MessageBox.showError(
 					this, 
 					VegaResources.FileNotExists(false), 
 					VegaResources.LoadError(false));
+		}
 		
 		return game;
 	}
@@ -1849,6 +1872,38 @@ public class Vega extends Frame // NO_UCD (use default)
 							"";
 		
 		this.setTitle(VegaResources.Vega(false) + fileName);
+	}
+	
+	private void updateMenuRecentGames()
+	{
+		this.recentGames = new Hashtable<MenuItem,String>();
+		this.menuRecentGames.removeAll();
+		
+		ArrayList<String> filePaths = this.config.getRecentGames();
+		
+		if (filePaths == null || filePaths.size() == 0)
+		{
+			MenuItem itemNoGames = new MenuItem(VegaResources.NoRecentGames(false), this);
+			itemNoGames.setEnabled(false);
+			this.menuRecentGames.add(itemNoGames);
+		}
+		else
+		{
+			for (String filePath: filePaths)
+			{
+				File file = new File(filePath);
+				if (!file.exists())
+				{
+					this.config.deleteRecentGame(filePath);
+					continue;
+				}
+				
+				MenuItem item = new MenuItem(file.getName(), this);
+				item.setToolTipText(filePath);
+				this.menuRecentGames.add(item);
+				this.recentGames.put(item, filePath);
+			}
+		}
 	}
 	
 	private class WaitThread extends Thread

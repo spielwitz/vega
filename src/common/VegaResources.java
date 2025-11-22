@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FP
+		// Last used symbolic key: FY
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -347,7 +347,6 @@ public class VegaResources
 		symbolDict.put("8X","Years_8X");
 		symbolDict.put("8Y","Yes_8Y");
 		symbolDict.put("8Z","YouAreNotGameHost_8Z");
-		symbolDict.put("90","YouAreNotOwnerOfPlanet_90");
 		symbolDict.put("91","Distance_91");
 		symbolDict.put("92","YouCannotTransportThisAmountOfMoney_92");
 		symbolDict.put("93","YouHaveNoPlanets_93");
@@ -452,7 +451,7 @@ public class VegaResources
 		symbolDict.put("BV","DeleteUserQuestion_BV");
 		symbolDict.put("BW","DeleteUser_BW");
 		symbolDict.put("BX","Delete_BX");
-		symbolDict.put("BY","DestinationOfTransferMustBePlanet_BY");
+		symbolDict.put("BY","YouMustSelectAPlanet_BY");
 		symbolDict.put("BZ","DestinationPlanet_BZ");
 		symbolDict.put("C0","DestinationSectorOrPlanet_C0");
 		symbolDict.put("C1","DestinationShort_C1");
@@ -581,6 +580,14 @@ public class VegaResources
 		symbolDict.put("FN","CapitulationRegistered_FN");
 		symbolDict.put("FO","PlanetChanged_FO");
 		symbolDict.put("FP","EventLineStart_FP");
+		symbolDict.put("FQ","DestinationSector_FQ");
+		symbolDict.put("FR","YouMustSelectASector_FR");
+		symbolDict.put("FS","NoShipOfSelectedTypeAvailable_FS");
+		symbolDict.put("FU","NoBattleships_FU");
+		symbolDict.put("FV","NotAnAllianceMember_FV");
+		symbolDict.put("FW","CountBattleshipsStart_FW");
+		symbolDict.put("FX","NoRecentGames_FX");
+		symbolDict.put("FY","RecentGames_FY");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -2145,7 +2152,7 @@ public class VegaResources
 	}
 
 	/**
-	   * This is the start planet. Enter another planet. [6A]
+	   * This is the start planet. Enter a different destination. [6A]
 	   */
 	public static String ThisIsTheStartPlanet(boolean symbol) {
 		return symbol ? "£6A£":messages.getString("ThisIsTheStartPlanet_6A");
@@ -2446,7 +2453,7 @@ public class VegaResources
 	}
 
 	/**
-	   * ![size=1.5;color=1;bold|Mines]\n\n![img=tutorial/mines.png]\n\nWith mines you can make sectors of the playing field impassable for battleships. Send a mine from a planet into a sector. There the minelayer turns into a live mine and destroys battleships that cross the sector boundaries, including your own battleships. You can recognize minelayers by the symbol ![img=tutorial/iconMineLayer12x12.png]. Minelayers fly 2 light years per year. You can transfer minelayers to one of your planets to use them from there.\n\nThere are 50, 100, 250 and 500 mines. A 50 mine can destroy up to 50 battleships before it disappears. Accordingly, a 100 mine can destroy 100 battleships, and so on. If you place more mines in a mined sector, the strengths of the mines add up to a large mine. You can recognize the strength of a mine by the number in the diamond symbol.\n\n![size=1.5;color=1;bold|Minesweeper]\n\nSend a minesweeper to a sector or planet. On the way there, it flies at 1 light year/year and removes the mines from all the sectors it flies through. If the minesweeper's destination is a sector, it turns around and flies back to its starting planet at 2 light years/year, but does not clear any mines on the way back.\n\nYou can recognize minesweepers by the symbol ![img=tutorial/iconMineSweeper12x12.png]. [7I]
+	   * ![size=1.5;color=1;bold|Mines]\n\n![img=tutorial/mines.png]\n\nWith mines you can make sectors of the playing field impassable for battleships. Send a mine from a planet into a sector. There the minelayer turns into a live mine and destroys battleships that cross the sector boundaries, including your own battleships. You can recognize minelayers by the symbol ![img=tutorial/iconMineLayer12x12.png]. Minelayers fly 2 light years per year. You can transfer minelayers to one of your planets to use them from there.\n\nThere are 50, 100, 250 and 500 mines. A 50 mine can destroy up to 50 battleships before it disappears. Accordingly, a 100 mine can destroy 100 battleships, and so on. If you place more mines in a mined sector, the strengths of the mines add up to a large mine. You can recognize the strength of a mine by the number in the diamond symbol.\n\n![size=1.5;color=1;bold|Minesweeper]\n\nSend a minesweeper to a sector to clear all mines there. It flies 1 ly/year on the outward journey and 2 ly/year on the return journey. You can transfer a minelayer to one of your planets at a speed of 2 ly/year to use it from there.\n\nYou can recognize minesweepers by the symbol ![img=tutorial/iconMineSweeper12x12.png]. [7I]
 	   */
 	public static String TutorialText17(boolean symbol) {
 		return symbol ? "£7I£":messages.getString("TutorialText17_7I");
@@ -2803,13 +2810,6 @@ public class VegaResources
 	}
 
 	/**
-	   * You are not the owner of the planet. [90]
-	   */
-	public static String YouAreNotOwnerOfPlanet(boolean symbol) {
-		return symbol ? "£90£":messages.getString("YouAreNotOwnerOfPlanet_90");
-	}
-
-	/**
 	   * Distance: {0} ly [91]
 	   */
 	public static String Distance(boolean symbol, String arg0) {
@@ -2943,10 +2943,10 @@ public class VegaResources
 	}
 
 	/**
-	   * All battleships [9K]
+	   * All available ({0}) [9K]
 	   */
-	public static String AllBattleships(boolean symbol) {
-		return symbol ? "£9K£":messages.getString("AllBattleships_9K");
+	public static String AllBattleships(boolean symbol, String arg0) {
+		return symbol ? "£9K§"+arg0+"£":format(messages.getString("AllBattleships_9K"), new Object[]{arg0});
 	}
 
 	/**
@@ -3538,10 +3538,10 @@ public class VegaResources
 	}
 
 	/**
-	   * Destination of a transfer must be a planet. [BY]
+	   * You must select a planet. [BY]
 	   */
-	public static String DestinationOfTransferMustBePlanet(boolean symbol) {
-		return symbol ? "£BY£":messages.getString("DestinationOfTransferMustBePlanet_BY");
+	public static String YouMustSelectAPlanet(boolean symbol) {
+		return symbol ? "£BY£":messages.getString("YouMustSelectAPlanet_BY");
 	}
 
 	/**
@@ -4438,5 +4438,61 @@ public class VegaResources
 	   */
 	public static String EventLineStart(boolean symbol, String arg0) {
 		return symbol ? "£FP§"+arg0+"£":format(messages.getString("EventLineStart_FP"), new Object[]{arg0});
+	}
+
+	/**
+	   * Destination sector [FQ]
+	   */
+	public static String DestinationSector(boolean symbol) {
+		return symbol ? "£FQ£":messages.getString("DestinationSector_FQ");
+	}
+
+	/**
+	   * You must select a sector. [FR]
+	   */
+	public static String YouMustSelectASector(boolean symbol) {
+		return symbol ? "£FR£":messages.getString("YouMustSelectASector_FR");
+	}
+
+	/**
+	   * You don't have a ship of the selected type. [FS]
+	   */
+	public static String NoShipOfSelectedTypeAvailable(boolean symbol) {
+		return symbol ? "£FS£":messages.getString("NoShipOfSelectedTypeAvailable_FS");
+	}
+
+	/**
+	   * No battleships available. [FU]
+	   */
+	public static String NoBattleships(boolean symbol) {
+		return symbol ? "£FU£":messages.getString("NoBattleships_FU");
+	}
+
+	/**
+	   * You are not an alliance member on this planet. [FV]
+	   */
+	public static String NotAnAllianceMember(boolean symbol) {
+		return symbol ? "£FV£":messages.getString("NotAnAllianceMember_FV");
+	}
+
+	/**
+	   * Count (max. {0}): [FW]
+	   */
+	public static String CountBattleshipsStart(boolean symbol, String arg0) {
+		return symbol ? "£FW§"+arg0+"£":format(messages.getString("CountBattleshipsStart_FW"), new Object[]{arg0});
+	}
+
+	/**
+	   * (No entries) [FX]
+	   */
+	public static String NoRecentGames(boolean symbol) {
+		return symbol ? "£FX£":messages.getString("NoRecentGames_FX");
+	}
+
+	/**
+	   * Recent local games [FY]
+	   */
+	public static String RecentGames(boolean symbol) {
+		return symbol ? "£FY£":messages.getString("RecentGames_FY");
 	}
 }

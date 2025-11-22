@@ -659,9 +659,15 @@ class ServerGamesJDialog extends Dialog
 		
 		if (playersCountChanged)
 		{
-			String[] planets = this.getPlanetComboBoxValues(playersCount);
-			this.comboPlanets.setItems(planets);
-			this.comboPlanets.setSelectedIndex(0);
+			int planetCountSelected = Integer.parseInt((String)this.comboPlanets.getSelectedItem());
+			String[] planetComboBoxValues = this.getPlanetComboBoxValues(playersCount);
+			int minPlanetCount = Integer.parseInt(planetComboBoxValues[0]);
+			this.comboPlanets.setItems(planetComboBoxValues);
+			
+			if (planetCountSelected < minPlanetCount)
+				this.comboPlanets.setSelectedIndex(0);
+			else
+				this.comboPlanets.setSelectedItem(Integer.toString(planetCountSelected));
 		}
 		
 		int planetsCount = Integer.parseInt((String)this.comboPlanets.getSelectedItem());
