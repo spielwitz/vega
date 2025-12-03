@@ -39,7 +39,7 @@ class GameInformation
 		{
 			this.game.getConsole().clear();
 
-			this.game.updateBoard();
+			this.game.updateBoardGeneral();
 			this.game.updatePlanetList(false);
 
 			this.game.getConsole().setHeaderText(

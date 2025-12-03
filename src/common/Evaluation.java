@@ -119,1276 +119,1278 @@ class Evaluation
 	@SuppressWarnings("unchecked")
 	Evaluation(Game game)
 	{
-		this.game = game;
-
-		this.replay = new ArrayList<ScreenContent>();
-
-		this.game.getConsole().setMode(Console.ConsoleModus.EVALUATION);
-
-		this.game.getConsole().setHeaderText(
-				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.Evaluation(true),
-				Colors.NEUTRAL);
-
-		this.game.getConsole().clear();
-		this.printDayBeginOfYear(null);
-		this.game.getConsole().appendText(
-				VegaResources.EvaluationBegins(true));
-		this.waitForKeyPressed();
-
-		this.processMoves();
-
-		for (Ship ship: this.game.getShips())
-		{
-			ship.setStartedRecently(false);
-		}
-		
-		this.game.launchNeutralFleet();
-		Ship blackHoleShip = this.game.setBlackHoleDirection();
-
-		this.game.updatePlanetList(false);
-		this.game.updateBoard();
-
-		this.game.getConsole().appendText(
-				VegaResources.ShipsLaunched(true));
-		this.waitForKeyPressed();
-
-		this.processCapitulations();
-
-		for (int day = 0; day <= Game.DAYS_OF_YEAR_COUNT; day++)
-		{
-			if (day > 0)
-			{
-				int shipsSequence[] = CommonUtils.getRandomList(this.game.getShips().size());
-
-				for (int i = 0; i < shipsSequence.length; i ++)
-				{
-					this.moveShip(this.game.getShips().get(shipsSequence[i]), day);
-				}
-			}
-
-			this.blackHoleDoWatch(blackHoleShip, day);
-			this.patrolsDoWatch(day);
-
-			for (int i = this.game.getShips().size() - 1; i >= 0; i--)
-			{
-				Ship ships = this.game.getShips().get(i);
-
-				if (ships.isToBeDeleted())
-				{
-					this.game.getShips().remove(i);
-				}
-			}
-		}
-
-		this.game.updateBoard(Game.DAYS_OF_YEAR_COUNT);
-		this.game.updatePlanetList(false);
-
-		for (Ship ships: this.game.getShips())
-		{
-			if (ships.isToBeTurned())
-			{
-				ships.turn();
-			}
-			else if (!ships.isStopped())
-			{
-				ships.incrementYearCount();
-			}
-		}
-
-		this.checkIfPlayerIsDead();
-
-		this.game.getConsole().setLineColor(Colors.WHITE);
-		this.printDayEndOfYear(null);
-
-		this.game.getConsole().appendText(
-				VegaResources.PlanetsProducing(true));
-		this.waitForKeyPressed();
-
-		for (Planet planet: this.game.getPlanets())
-		{
-			planet.produceMoneySupply();
-			planet.produceBattleships();
-		}
-
-		this.game.updatePlanetList(false);
-
-		this.game.getConsole().appendText(VegaResources.EvaluationEnd(true));
-		this.waitForKeyPressed();
-
-		this.game.getConsole().enableEvaluationProgressBar(false);
-		this.game.getConsole().setMode(Console.ConsoleModus.TEXT_INPUT);
-
-		this.reducePatrolEvents(this.events);
-
-		this.game.setReplayLast((ArrayList<ScreenContent>) CommonUtils.klon(this.replay));
-
-		this.game.incYear();
-		this.game.calculateScores();
-		this.game.prepareYear();			
+		throw new UnsupportedOperationException("UpdateBoard");
+//		
+//		this.game = game;
+//
+//		this.replay = new ArrayList<ScreenContent>();
+//
+//		this.game.getConsole().setMode(Console.ConsoleModus.EVALUATION);
+//
+//		this.game.getConsole().setHeaderText(
+//				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.Evaluation(true),
+//				Colors.NEUTRAL);
+//
+//		this.game.getConsole().clear();
+//		this.printDayBeginOfYear(null);
+//		this.game.getConsole().appendText(
+//				VegaResources.EvaluationBegins(true));
+//		this.waitForKeyPressed();
+//
+//		this.processMoves();
+//
+//		for (Ship ship: this.game.getShips())
+//		{
+//			ship.setStartedRecently(false);
+//		}
+//		
+//		this.game.launchNeutralFleet();
+//		Ship blackHoleShip = this.game.setBlackHoleDirection();
+//
+//		this.game.updatePlanetList(false);
+//		this.game.updateBoard();
+//
+//		this.game.getConsole().appendText(
+//				VegaResources.ShipsLaunched(true));
+//		this.waitForKeyPressed();
+//
+//		this.processCapitulations();
+//
+//		for (int day = 0; day <= Game.DAYS_OF_YEAR_COUNT; day++)
+//		{
+//			if (day > 0)
+//			{
+//				int shipsSequence[] = CommonUtils.getRandomList(this.game.getShips().size());
+//
+//				for (int i = 0; i < shipsSequence.length; i ++)
+//				{
+//					this.moveShip(this.game.getShips().get(shipsSequence[i]), day);
+//				}
+//			}
+//
+//			this.blackHoleDoWatch(blackHoleShip, day);
+//			this.patrolsDoWatch(day);
+//
+//			for (int i = this.game.getShips().size() - 1; i >= 0; i--)
+//			{
+//				Ship ships = this.game.getShips().get(i);
+//
+//				if (ships.isToBeDeleted())
+//				{
+//					this.game.getShips().remove(i);
+//				}
+//			}
+//		}
+//
+//		this.game.updateBoard(Game.DAYS_OF_YEAR_COUNT);
+//		this.game.updatePlanetList(false);
+//
+//		for (Ship ships: this.game.getShips())
+//		{
+//			if (ships.isToBeTurned())
+//			{
+//				ships.turn();
+//			}
+//			else if (!ships.isStopped())
+//			{
+//				ships.incrementYearCount();
+//			}
+//		}
+//
+//		this.checkIfPlayerIsDead();
+//
+//		this.game.getConsole().setLineColor(Colors.WHITE);
+//		this.printDayEndOfYear(null);
+//
+//		this.game.getConsole().appendText(
+//				VegaResources.PlanetsProducing(true));
+//		this.waitForKeyPressed();
+//
+//		for (Planet planet: this.game.getPlanets())
+//		{
+//			planet.produceMoneySupply();
+//			planet.produceBattleships();
+//		}
+//
+//		this.game.updatePlanetList(false);
+//
+//		this.game.getConsole().appendText(VegaResources.EvaluationEnd(true));
+//		this.waitForKeyPressed();
+//
+//		this.game.getConsole().enableEvaluationProgressBar(false);
+//		this.game.getConsole().setMode(Console.ConsoleModus.TEXT_INPUT);
+//
+//		this.reducePatrolEvents(this.events);
+//
+//		this.game.setReplayLast((ArrayList<ScreenContent>) CommonUtils.klon(this.replay));
+//
+//		this.game.incYear();
+//		this.game.calculateScores();
+//		this.game.prepareYear();			
 	}
 
-	private void addScreenSnapshotToReplay(int day)
-	{
-		this.game.updateBoard(day);
-		ScreenContent cont = (ScreenContent)CommonUtils.klon(this.game.getScreenContent());
-		cont.setPlanetEditor(null);
-		cont.setSnapshot();
-		cont.getConsole().clearKeys();
-		cont.getConsole().setProgressBarDay(day);
-		this.replay.add(cont);
-	}
-
-	private void blackHoleDoWatch(Ship blackHoleShip, int day)
-	{
-		if (blackHoleShip == null)
-			return;
-		
-		for (Ship ship: this.game.getShips())
-		{
-			if (ship == blackHoleShip ||
-				ship.isToBeDeleted())
-			{
-				continue;
-			}
-			
-			if (blackHoleShip.getPositionOnDay(day).distance(ship.getPositionOnDay(day)) < Game.BLACK_HOLE_RANGE)
-			{
-				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-				
-				switch (ship.getType())
-				{
-					case BATTLESHIPS:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleDestroyedBattleships(
-										true, 
-										Integer.toString(ship.getCount())));
-						break;
-						
-					case SPY:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleSpy(true));
-						break;
-						
-					case TRANSPORT:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleTransport(true));
-						break;
-						
-					case PATROL:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHolePatrol(true));
-						break;
-						
-					case MINE50:
-					case MINE100:
-					case MINE250:
-					case MINE500:
-						this.game.getConsole().setLineColor(Colors.WHITE);
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleMine(true, CommonUtils.getMineStrength(ship.getType())));
-						break;
-						
-					case MINESWEEPER:
-						this.game.getConsole().appendText(
-								VegaResources.BlackHoleMinesweeper(true));
-						break;
-						
-					default:
-						continue;
-				}
-		
-				this.game.updateBoard(
-						this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
-						day);
-
-				this.waitForKeyPressed();
-				
-				ship.setToBeDeleted();
-			}
-		}
-	}
-	
-	private void checkForArrival(Ship ship, int day)
-	{
-		if (ship.getType() == ShipType.BLACK_HOLE)
-			return;
-		
-		double distanceTotal = ship.getPositionStart().distance(ship.getPositionDestination());
-		double distanceCurrent = ship.getPositionStart().distance(ship.getPositionOnDay(day));
-
-		if (distanceCurrent <= distanceTotal - Point.PRECISION)
-		{
-			return;
-		}
-
-		int planetIndex = ship.getPlanetIndexDestination();
-		Planet planet = null;
-
-		if (planetIndex != Planet.NO_PLANET)
-			planet = this.game.getPlanets()[planetIndex];
-		
-		if (planet == null)
-		{
-			switch (ship.getType())
-			{
-				case PATROL:
-					this.addScreenSnapshotToReplay(day);
-					ship.setToBeTurned();
-					
-					break;
-					
-				case MINESWEEPER:
-					Mine mine = this.game.getMines().get(ship.getPositionDestination().getString());
-					
-					if (mine != null)
-					{
-						this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-						
-						this.game.updateBoard(
-								this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
-								day);
-						this.printDayEvent(day, ship.getOwnerName(game));
-						this.game.getConsole().appendText (
-								VegaResources.MessageFromSector(true,
-										Game.getSectorNameFromPositionStatic(
-												new Point(mine.getPositionX(), mine.getPositionY())
-												)));
-						this.game.getConsole().appendText (
-								VegaResources.MineFieldSwept(
-										true,
-										Integer.toString(mine.getStrength())));
-
-						this.game.getMines().remove(ship.getPositionDestination().getString());
-						this.waitForKeyPressed();
-					}
-					
-					this.addScreenSnapshotToReplay(day);
-					ship.setToBeTurned();
-					
-					break;
-					
-				case MINE50:
-				case MINE100:
-				case MINE250:
-				case MINE500:
-					this.placeMine(ship);
-
-					this.game.updateBoard(
-							this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
-							day);
-
-					this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-					this.printDayEvent(day, ship.getOwnerName(game));
-					this.game.getConsole().appendText(
-							VegaResources.MinePlanted(
-									true, 
-									CommonUtils.getMineStrength(ship.getType())));
-					this.waitForKeyPressed();
-					ship.setToBeDeleted();
-
-					Point sectorShip = ship.getSectorOnDay(day);
-					int shipsSequence[] = CommonUtils.getRandomList(this.game.getShips().size());
-
-					for (int i = 0; i < shipsSequence.length; i++)
-					{
-						this.checkForMines(this.game.getShips().get(shipsSequence[i]), sectorShip, day);
-					}
-					break;
-					
-				default:
-					break;
-			}
-		}
-		else
-		{
-			String planetName = this.game.getPlanetNameFromIndex(planetIndex);
-
-			if (ship.getType() == ShipType.BATTLESHIPS)
-			{
-				boolean attack = true;
-				
-				for (int playerIndex = Player.NEUTRAL; playerIndex < this.game.getPlayersCount(); playerIndex++)
-				{
-					if (planet.isPlayerInvolved(playerIndex) && ship.isPlayerInvolved(playerIndex))
-					{
-						attack = false;
-						break;
-					}
-				}
-				
-				if (attack)
-				{
-					this.game.getConsole().setLineColor(
-							planet.getOwner() == Player.NEUTRAL ?
-									Colors.WHITE :
-									planet.getOwnerColorIndex(this.game));
-					
-					String planetOwnerName =
-							planet.getOwner() == Player.NEUTRAL ?
-									null :
-									game.getPlayers()[planet.getOwner()].getName();
-					
-					this.printDayEvent(day, planetOwnerName);
-					this.battleshipsAttack(planet, ship, planetIndex, day);
-				}
-				else
-				{
-					this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-					this.printDayEvent(day, ship.getOwnerName(game));
-					
-					planet.mergeBattleships(this.game.getPlayersCount(), ship);
-
-					this.game.getConsole().appendText(
-							VegaResources.BattleshipsArrivedAtPlanet(
-									true,
-									Integer.toString(ship.getCount()),
-									planetName));
-				}
-				
-				this.game.updatePlanetList(false);
-			}
-			else
-			{
-				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-				this.printDayEvent(day, ship.getOwnerName(game));
-				
-				planet.incrementShipsCount(ship.getType(), 1);
-				
-				switch (ship.getType())
-				{
-					case SPY:
-						if (ship.isTransfer())
-						{
-							this.game.getConsole().appendText(
-											VegaResources.SpyArrived(
-													true,
-													planetName));
-						}
-						else
-						{
-							planet.setRadioStation(ship.getOwner());
-							planet.incrementShipsCount(ship.getType(), -1);
-							
-							this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-							
-							this.game.getConsole().appendText(
-								VegaResources.SpyDropped(
-										true,
-										planetName));
-						}
-						break;
-						
-					case PATROL:
-						this.game.getConsole().appendText(
-								VegaResources.PatrolArrived(
-												true, 
-												planetName));
-						break;
-						
-					case TRANSPORT:
-						planet.addToMoneySupply(ship.getCount());
-						
-						this.game.getConsole().appendText(
-								VegaResources.TransporterArrived(
-											true, 
-											planetName));
-						break;
-						
-					case MINE50:
-					case MINE100:
-					case MINE250:
-					case MINE500:
-						this.game.getConsole().appendText(
-								VegaResources.MinelayerArrived(
-												true, 
-												planetName,
-												CommonUtils.getMineStrength(ship.getType())));
-						break;
-						
-					case MINESWEEPER:
-						this.game.getConsole().appendText(
-								VegaResources.MinesweeperArrived(
-												true,
-												planetName));
-						break;
-					
-					default:
-						break;
-				}
-			}
-			
-			this.game.updateBoard(
-					this.game.getSimpleFrameObjekt(planetIndex, Colors.WHITE),
-					day);
-
-			this.waitForKeyPressed();
-			ship.setToBeDeleted();
-		}
-	}  		
-
-	private void checkForMines(Ship ship, Point sector, int day)
-	{
-		if (ship.isToBeDeleted() ||
-				sector == null ||
-				this.game.getMines() == null || 
-				this.game.getMines().size() == 0)
-		{
-			return;
-		}
-
-		Point positionShip = ship.getSectorOnDay(day);
-		if (positionShip == null || !positionShip.equals(sector))
-		{
-			return;
-		}
-
-		Mine mine = this.game.getMines().get(sector.getString());
-		if (mine == null)
-			return;
-
-		boolean deleteShip = false;
-		
-		if (ship.getType() == ShipType.BLACK_HOLE)
-		{
-			this.game.getMines().remove(sector.getString());
-			
-			this.printDayEvent(day, null);
-			
-			this.game.getConsole().appendText(
-					VegaResources.BlackHoleMines(
-							true, 
-							Integer.toString(mine.getStrength())));
-		}
-		else
-		{
-			this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-	
-			if (ship.getType() == ShipType.BATTLESHIPS)
-			{
-				this.printDayEvent(day, ship.getOwnerName(game));
-	
-				if (ship.getCount() >= mine.getStrength())
-				{
-					this.game.getConsole().appendText(
-							VegaResources.BattleshipsKilledByMine2(
-									true,
-									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
-	
-					ship.subtractBattleships(mine.getStrength(), ship.getOwner());
-	
-					if (ship.getCount() <= 0)
-						deleteShip = true;
-	
-					this.game.getMines().remove(sector.getString());
-				}
-				else
-				{
-					this.game.getConsole().appendText(
-							VegaResources.BattleshipsKilledByMine(
-									true, 
-									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
-	
-					deleteShip = true;
-	
-					mine.setStrength(mine.getStrength() - ship.getCount());
-				}
-			}
-			else
-				return;
-	
-		}
-		
-		this.game.updateBoard(
-				this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
-				day);
-
-		this.waitForKeyPressed();
-
-		if (deleteShip)
-			ship.setToBeDeleted();
-	}
-
-	private void checkIfPlayerIsDead()
-	{
-		for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
-		{
-			if (this.game.getPlayers()[playerIndex].isDead())
-				continue;
-
-			boolean playerHasPlanet = false;
-			for (Planet planet: game.getPlanets())
-			{
-				if (planet.getOwner() == playerIndex)
-				{
-					playerHasPlanet = true;
-					break;
-				}
-			}
-			if (playerHasPlanet)
-				continue;
-
-			boolean playerHasShips = false;
-
-			for (Ship ship: game.getShips())
-			{
-				if (ship.getOwner() == playerIndex ||
-					ship.getBattleshipsCount(playerIndex) > 0)
-				{
-					playerHasShips = true;
-					break;
-				}
-			}
-
-			if (playerHasShips)
-				continue;
-
-			this.game.getPlayers()[playerIndex].setDead(true);
-
-			this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
-			this.printDayEndOfYear(null);
-			this.game.getConsole().appendText(
-					VegaResources.PlayerGameOver(
-							true, 
-							this.game.getPlayers()[playerIndex].getName()));
-			this.waitForKeyPressed();
-		}
-	}
-
-	private void battleshipsAttack(Planet planet, Ship ship, int planetIndex, int day)
-	{
-		int offenderCount = ship.getCount();
-		int defenderCount = planet.getShipsCount(ShipType.BATTLESHIPS) + planet.getDefensiveBattleshipsCount();
-		int defenderCountStart = defenderCount;
-
-		this.game.getConsole().appendText(
-				VegaResources.PlanetIsAttacked(
-						true,
-						this.game.getPlanetNameFromIndex(planetIndex)));
-
-		this.game.getConsole().lineBreak();
-		this.game.getConsole().setLineColor(Colors.WHITE);
-		
-		Tuple<Integer,Integer> countsAfterFight = fight(
-				this.game.getConsole(), 
-				offenderCount, 
-				ship.getBonus(),
-				defenderCount,
-				planet.getBonus());
-		
-		offenderCount = countsAfterFight.getE1();
-		defenderCount = countsAfterFight.getE2();
-
-		if (offenderCount > defenderCount)
-		{
-			ship.subtractBattleships(ship.getCount() - offenderCount,ship.getOwner());
-
-			planet.conquer(this.game.getPlayersCount(), ship.getOwner(), ship);
-
-			this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-			
-			if (ship.getOwner() == Player.NEUTRAL)
-			{
-				this.game.getConsole().appendText(
-						VegaResources.PlanetConqueredNeutral(
-								true));
-			}
-			else
-			{
-				this.game.getConsole().appendText(
-						VegaResources.PlanetConquered(
-								true,
-								ship.getOwnerName(this.game)));
-			}
-		}
-		else
-		{
-			planet.subtractBattleshipsCount(this.game.getPlayersCount(), defenderCountStart - defenderCount, planet.getOwner(), true, true);
-
-			this.game.getConsole().appendText(
-					VegaResources.AttackFailed(true));					
-		}
-	}
-
-	private void moveShip(Ship ship, int day)
-	{
-		if (ship.isToBeDeleted() || ship.isToBeTurned() || ship.isStopped())
-		{
-			return;
-		}
-
-		Point sectorCurrent = ship.getSectorOnDay(day);
-
-		if (sectorCurrent != null)
-		{
-			Point sectorPrevious = ship.getSectorOnDay(day-1);
-
-			if (sectorPrevious == null || !sectorCurrent.equals(sectorPrevious))
-			{
-				this.checkForMines(ship, sectorCurrent, day);
-			}
-		}
-
-		if (ship.isToBeDeleted())
-		{
-			return;
-		}
-
-		this.checkForArrival(ship, day);
-	}
-
-	private void patrolAddEvent(
-			int patrolHashCode, 
-			int otherShipHashCode, 
-			Hashtable<Integer, Hashtable<Integer, ArrayList<ScreenContent>>> list)
-	{
-		Hashtable<Integer, ArrayList<ScreenContent>> patrols = list.get(otherShipHashCode);
-
-		if (patrols == null)
-		{
-			patrols = new Hashtable<Integer, ArrayList<ScreenContent>>();
-			list.put(otherShipHashCode, patrols);
-		}
-
-		ArrayList<ScreenContent> eventList = patrols.get(patrolHashCode);
-
-		if (eventList == null)
-		{
-			eventList = new ArrayList<ScreenContent>();
-			patrols.put(patrolHashCode, eventList);
-		}
-
-		eventList.add(this.replay.get(this.replay.size() - 1));
-	}
-
-	private boolean patrolCombat(Ship patrol, Ship otherPatrol, int day)
-	{
-		Point patrolFlightDirection = patrol.getPositionDestination().subtract(patrol.getPositionStart());
-		Point patrolShootDirection = otherPatrol.getPositionOnDay(day).subtract(patrol.getPositionOnDay(day));
-		int patrolShootAngle = patrolFlightDirection.getAngleBetweenVectors(patrolShootDirection);
-
-		Point otherPatrolFlightDirection = otherPatrol.getPositionDestination().subtract(otherPatrol.getPositionStart());
-		Point otherPatrolShootDirection = patrol.getPositionOnDay(day).subtract(otherPatrol.getPositionOnDay(day));
-		int otherPatrolShootAngle = otherPatrolFlightDirection.getAngleBetweenVectors(otherPatrolShootDirection);
-
-		if (otherPatrolShootAngle == patrolShootAngle)
-		{
-			return CommonUtils.getRandomInteger(10) < 5;
-		}
-		else if (otherPatrolShootAngle < patrolShootAngle)
-		{
-			return true;
-		}
-
-		return false;
-	}
-	
-	private void patrolEvent(
-			Ship patrol1, 
-			Ship otherShip1, 
-			int day)
-	{
-		if (patrol1.isToBeDeleted() || otherShip1.isToBeDeleted() || patrol1.isTransfer() || patrol1.isStopped())
-		{
-			return;
-		}
-
-		if (patrol1.getOwner() == otherShip1.getOwner())
-		{
-			return;
-		}
-
-		if (otherShip1.getType() == ShipType.BATTLESHIPS &&
-				otherShip1.getCount() > Game.PATROL_CAPUTURES_BATTLESHIPS_COUNT_MAX)
-		{
-			return;
-		}
-
-		if (otherShip1.getType() == ShipType.BLACK_HOLE ||
-			otherShip1.isPlayerInvolved(patrol1.getOwner()))
-		{
-			return;
-		}				
-
-		boolean swapObjects = false;
-
-		if (otherShip1.getType() == ShipType.PATROL &&
-				!otherShip1.isTransfer())
-		{
-			swapObjects = this.patrolCombat(patrol1, otherShip1, day); 
-		}
-
-		Ship patrol = swapObjects ? otherShip1 : patrol1;
-		Ship otherShip = swapObjects ? patrol1 : otherShip1;
-
-		this.printDayEvent(day, patrol.getOwnerName(game));			
-		this.game.getConsole().setLineColor(patrol.getOwnerColorIndex(this.game));
-
-		Point otherShipPosition = otherShip.getPositionOnDay(day);
-
-		String otherShipOwnerName = otherShip.getOwnerName(this.game);
-		String otherShipDestinationName = this.game.getSectorNameFromPosition(otherShip.getPositionDestination());
-
-		this.game.updateBoard(
-				null,
-				this.game.getSimpleMarkedPosition(otherShipPosition),
-				patrol.hashCode(),
-				Player.NEUTRAL, 
-				day);
-
-		this.game.getConsole().setLineColor(patrol.getOwnerColorIndex(this.game));
-
-		if (otherShip.getType() == ShipType.SPY)
-			this.game.getConsole().appendText(
-					VegaResources.PatrolCapturedSpy(
-							true, 
-							otherShipDestinationName, 
-							otherShipOwnerName));
-		else if (otherShip.getType() == ShipType.TRANSPORT)
-			this.game.getConsole().appendText(
-					VegaResources.PatrolCapturedTransporter(
-							true, 
-							otherShipDestinationName, 
-							otherShipOwnerName));
-		else if (otherShip.getType() == ShipType.MINESWEEPER)
-			this.game.getConsole().appendText(
-					VegaResources.PatrolCapturedMinesweeper(
-							true, 
-							otherShipDestinationName, 
-							otherShipOwnerName));
-		else if (otherShip.getType() == ShipType.MINE50 ||
-				otherShip.getType() == ShipType.MINE100 ||
-				otherShip.getType() == ShipType.MINE250 ||
-				otherShip.getType() == ShipType.MINE500)
-			this.game.getConsole().appendText(
-					VegaResources.PatrolCapturedMinelayer(
-							true, 
-							CommonUtils.getMineStrength(otherShip.getType()), 
-							otherShipDestinationName, 
-							otherShipOwnerName));
-		else if (otherShip.getType() == ShipType.PATROL)
-			this.game.getConsole().appendText(
-					VegaResources.PatrolCapturedPatrol(
-							true, 
-							otherShipDestinationName, 
-							otherShipOwnerName));
-		else if (otherShip.getType() == ShipType.BATTLESHIPS)
-		{
-			this.game.getConsole().appendText(
-					VegaResources.PatrolCapturedBattleships(
-							true, 
-							Integer.toString(otherShip.getCount()), 
-							otherShipDestinationName, 
-							otherShipOwnerName));
-		}
-
-		otherShip.capture(
-				patrol.getOwner(),
-				otherShipPosition);
-
-		this.game.updateBoard(
-				null,
-				this.game.getSimpleMarkedPosition(otherShipPosition),
-				patrol.hashCode(),
-				Player.NEUTRAL, 
-				day);
-
-		this.waitForKeyPressed();
-
-		this.patrolAddEvent(
-				otherShip.hashCode(),
-				patrol.hashCode(),
-				this.events);
-	}
-
-	private void patrolsDoWatch(int day)
-	{
-		ArrayList<Ship> eventPatrols = new ArrayList<Ship>();
-		ArrayList<Ship> eventOtherShips = new ArrayList<Ship>();
-
-		for (Ship patrol: this.game.getShips())
-		{
-			if (!patrol.isToBeDeleted() && 
-					patrol.getType() == ShipType.PATROL &&
-					!patrol.isTransfer())
-			{
-				Point patrolPosition = patrol.getPositionOnDay(day);
-
-				for (Ship otherShip: this.game.getShips())
-				{
-					if (otherShip == patrol || otherShip.isToBeDeleted())
-					{
-						continue;
-					}
-
-					Point otherShipPosition = otherShip.getPositionOnDay(day);
-
-					if (patrolPosition.distance(otherShipPosition) > Game.PATROL_RADAR_RANGE + Point.PRECISION)
-					{
-						continue;
-					}
-
-					eventPatrols.add(patrol);
-					eventOtherShips.add(otherShip);
-				}
-			}
-		}
-
-		if (eventPatrols.size() == 0)
-		{
-			return;
-		}
-
-		int seq[] = CommonUtils.getRandomList(eventPatrols.size());
-
-		for (int i = 0; i < seq.length; i++)
-		{
-			int eventIndex = seq[i];
-
-			this.patrolEvent(
-					eventPatrols.get(eventIndex), 
-					eventOtherShips.get(eventIndex), 
-					day);
-		}
-	}
-
-	private void placeMine(Ship obj)
-	{
-		if (this.game.getMines() == null)
-			this.game.setMines(new Hashtable<String,Mine>());
-
-		int strength = Integer.parseInt(CommonUtils.getMineStrength(obj.getType()));
-
-		String positionString = obj.getPositionDestination().getString();
-		Mine mine = this.game.getMines().get(positionString);
-
-		if (mine == null)
-		{
-			this.game.getMines().put(positionString, new Mine((int)obj.getPositionDestination().x, (int)obj.getPositionDestination().y, strength));
-		}
-		else
-			mine.addToStrength(strength);
-	}
-
-	private void printDayBeginOfYear(String playerName)
-	{
-		this.printDayEventLineStart(playerName);
-		this.game.getConsole().enableEvaluationProgressBar(true);
-	}
-
-	private void printDayEndOfYear(String playerName)
-	{
-		this.printDayEventLineStart(playerName);
-		this.game.getConsole().setEvaluationProgressBarDay(Game.DAYS_OF_YEAR_COUNT);
-	}
-
-	private void printDayEvent(int day, String playerName)
-	{
-		if (day < 1)
-			printDayBeginOfYear(playerName);
-		else if (day >= Game.DAYS_OF_YEAR_COUNT)
-			printDayEndOfYear(playerName);
-		else
-		{		
-			this.printDayEventLineStart(playerName);
-			this.game.getConsole().setEvaluationProgressBarDay(day);
-		}
-	}
-	
-	private void printDayEventLineStart(String playerName)
-	{
-		if (playerName != null)
-		{
-			this.game.getConsole().appendText(
-					VegaResources.EventLineStart(true, playerName) + " ");
-		}
-		else
-		{
-			this.game.getConsole().appendText(">>> ");
-		}
-	}
-
-	private HashSet<Integer> processAllianceChanges()
-	{
-		Hashtable<Integer, Hashtable<Integer,Integer>> allianceChangesPerPlanet =
-				new Hashtable<Integer, Hashtable<Integer,Integer>>();
-		
-		HashSet<Integer> planetsWithTerminatedAlliances = new HashSet<Integer>(); 
-
-		for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
-		{
-			ArrayList<Move> moves = this.game.getMoves().get(playerIndex);
-
-			if (moves == null)
-			{
-				continue;
-			}
-
-			for (Move move: moves)
-			{
-				boolean[] allianceChanges = move.getAllianceChanges();
-
-				if (allianceChanges == null)
-				{
-					continue;
-				}
-
-				int bitSum = 0;
-
-				for (int playerIndex2 = 0; playerIndex2 < this.game.getPlayersCount(); playerIndex2++)
-				{
-					if (allianceChanges[playerIndex2])
-					{
-						bitSum += Math.pow(2, playerIndex2);
-					}
-				}
-
-				Hashtable<Integer,Integer> allianceChangesPerPlayer = 
-						allianceChangesPerPlanet.get(move.getPlanetIndex());
-
-				if (allianceChangesPerPlayer == null)
-				{
-					allianceChangesPerPlayer = new Hashtable<Integer,Integer>();
-					allianceChangesPerPlanet.put(move.getPlanetIndex(), allianceChangesPerPlayer);
-				}
-
-				allianceChangesPerPlayer.put(playerIndex, bitSum);
-			}
-		}
-
-		for (int planetIndex: allianceChangesPerPlanet.keySet())
-		{
-			Planet planet = this.game.getPlanets()[planetIndex];
-
-			Hashtable<Integer,Integer> allianceChangesPerPlayer = allianceChangesPerPlanet.get(planetIndex);
-
-			boolean terminateAlliance = false;
-
-			for (int playerIndex: allianceChangesPerPlayer.keySet())
-			{
-				if (allianceChangesPerPlayer.get(playerIndex) == 0 &&
-						planet.isAllianceMember(playerIndex))
-				{
-					terminateAlliance = true;
-					break;
-				}
-			}
-
-			if (terminateAlliance)
-			{
-				planetsWithTerminatedAlliances.add(planetIndex);
-				continue;
-			}
-
-			int planetOwner = planet.getOwner();
-
-			if (!allianceChangesPerPlayer.containsKey(planetOwner))
-			{
-				continue;
-			}
-
-			int bitSetOwner = allianceChangesPerPlayer.get(planetOwner);
-			boolean abortAllianceChange = false;
-
-			for (int playerIndex = 0; playerIndex < this.game.getPlayers().length; playerIndex++)
-			{
-				if (playerIndex != planetOwner &&
-						(bitSetOwner & (int)Math.pow(2, playerIndex)) > 0)
-				{
-					if (!allianceChangesPerPlayer.containsKey(playerIndex))
-					{
-						abortAllianceChange = true;
-						break;
-					}
-
-					int bitSetMember = allianceChangesPerPlayer.get(playerIndex);
-
-					if (bitSetOwner != bitSetMember)
-					{
-						abortAllianceChange = true;
-						break;
-					}
-				}
-			}
-
-			if (abortAllianceChange)
-			{
-				continue;
-			}
-
-			for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
-			{
-				if (playerIndex != planetOwner &&
-						(bitSetOwner & (int)Math.pow(2, playerIndex)) > 0)
-				{
-					planet.addPlayerToAlliance(this.game.getPlayersCount(), playerIndex);
-				}
-			}	
-		}
-		
-		return planetsWithTerminatedAlliances;
-	}
-	
-	private void processAllianceTerminations(HashSet<Integer> planetsWithTerminatedAlliances)
-	{
-		for (int planetIndex: planetsWithTerminatedAlliances)
-		{
-			Planet planet = this.game.getPlanets()[planetIndex];
-			
-			for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
-			{
-				if (playerIndex == planet.getOwner())
-				{
-					continue;
-				}
-
-				int battleshipsCount = planet.getBattleshipsCount(playerIndex);
-
-				if (battleshipsCount > 0)
-				{
-					Ship obj = new Ship(
-							Planet.NO_PLANET,
-							Planet.NO_PLANET,
-							this.game.getPlanets()[planetIndex].getPosition(),
-							this.game.getPlanets()[planetIndex].getPosition(),
-							ShipType.BATTLESHIPS,
-							battleshipsCount,
-							playerIndex,
-							false,
-							false,
-							null,
-							0);
-
-					obj.setStopped(true);
-
-					this.game.getShips().add(obj);
-
-					this.game.updateBoard(this.game.getSimpleFrameObjekt(planetIndex, Colors.WHITE), 0);
-
-					this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
-
-					this.game.getConsole().appendText(
-							VegaResources.BattleshipsMustLeavePlanet(
-									true,
-									Integer.toString(obj.getCount()),
-									this.game.getPlayers()[playerIndex].getName(),
-									this.game.getPlanetNameFromIndex(planetIndex)));
-					this.game.getConsole().lineBreak();
-					this.game.getConsole().appendText(
-							VegaResources.BattleshipsWaiting(true));
-					this.waitForKeyPressed();
-				}
-			}
-
-			planet.dissolveAlliance();
-
-		}
-	}
-
-	private void processCapitulations()
-	{
-		List<Ship> capitulationShips =
-			game.getShips().stream()
-				.filter(s -> !s.isToBeDeleted() && s.getType() == ShipType.CAPITULATION)
-				.collect(Collectors.toList());
-		
-		for (Ship capitulationShip: capitulationShips)
-		{
-			capitulationShip.setToBeDeleted();
-			
-			this.printDayEvent(0, null);
-
-			this.game.getConsole().setLineColor(capitulationShip.getOwnerColorIndex(this.game));
-			this.game.getConsole().appendText(
-					VegaResources.PlayerCapitulated(
-							true,
-							capitulationShip.getOwnerName(this.game)));
-
-			for (Planet planet: this.game.getPlanets())
-			{
-				planet.changeOwner(capitulationShip.getOwner(), Player.NEUTRAL);
-			}
-			
-			List<Ship> shipsWithPlayerInvolement =
-					game.getShips().stream()
-						.filter(s -> s.isPlayerInvolved(capitulationShip.getOwner()))
-						.collect(Collectors.toList());
-
-			for (Ship shipWithPlayerInvolement: shipsWithPlayerInvolement)
-			{
-				shipWithPlayerInvolement.setToBeDeleted();
-			}
-
-			this.game.updatePlanetList(false);
-			this.game.updateBoard(0);
-			
-			this.waitForKeyPressed();
-		}
-	}
-
-	private void processMoves()
-	{
-		HashSet<Integer> planetsWithTerminatedAlliances = this.processAllianceChanges();
-		
-		int[] playersSequence = CommonUtils.getRandomList(this.game.getPlayersCount());
-
-		for (int i = 0; i < this.game.getPlayersCount(); i++)
-		{
-			int playerIndex = playersSequence[i];
-			ArrayList<Move> movesOfPlayer = this.game.getMoves().get(playerIndex);
-
-			if (movesOfPlayer == null)
-				continue;
-
-			for (Move move: movesOfPlayer)
-			{
-				if (move.getStopLabel() != null)
-				{
-					Ship ship = null;
-
-					for (Ship ship2: this.game.getShips())
-					{
-						if (ship2.getStopLabel() != null && ship2.getStopLabel().equals(move.getStopLabel()))
-						{
-							ship = ship2;
-							break;
-						}
-					}
-
-					ship.setPositionStart(ship.getPositionDestination());
-					ship.setPlanetIndexStart(Planet.NO_PLANET);
-					ship.setPlanetIndexDestination(move.getPlanetIndex());
-					ship.setPositionDestination(this.game.getPlanets()[move.getPlanetIndex()].getPosition());
-					ship.setStopped(false);
-				}
-				else if (move.getShip() != null)
-				{
-					Ship ship = move.getShip();
-					Planet planet = this.game.getPlanets()[ship.getPlanetIndexStart()];
-
-					if (ship.getType() == ShipType.BATTLESHIPS)
-					{
-						if (ship.isAlliance())
-						{
-							boolean ok = true;
-
-							if (planet.getAllianceMembers() == null ||
-								planet.getAllianceMembers().length <= 1 ||
-								planetsWithTerminatedAlliances.contains(ship.getPlanetIndexStart()))
-							{
-								ok = false;
-							}
-							else if (!(planet.getBattleshipsCount(playerIndex) > 0  &&
-									planet.getShipsCount(ShipType.BATTLESHIPS) >= ship.getCount()))
-							{
-								ok = false;
-							}
-
-							if (ok)
-							{
-								int[] reductions = 
-										planet.subtractBattleshipsCount(this.game.getPlayersCount(), ship.getCount(), playerIndex, true, false);
-
-								Alliance alliance = planet.copyAllianceStructure(reductions);
-								if (alliance == null)
-									ok = false;
-								else
-									ship.setAlliance(alliance);
-							}
-
-							if (!ok)
-							{
-								this.game.updateBoard(this.game.getSimpleFrameObjekt(ship.getPlanetIndexStart(), Colors.WHITE), 0);
-								this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-								this.game.getConsole().appendText(
-										VegaResources.BattleshipsNotLaunchedFromPlanet(
-												true,
-												ship.getOwnerName(this.game),
-												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())));
-								this.waitForKeyPressed();
-								continue;
-							}
-						}
-						else
-						{
-							if (planet.getBattleshipsCount(ship.getOwner()) < ship.getCount())
-							{
-								this.game.updateBoard(this.game.getSimpleFrameObjekt(ship.getPlanetIndexStart(), Colors.WHITE), 0);
-								this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
-								this.game.getConsole().appendText(
-										VegaResources.BattleshipsNotLaunchedFromPlanet(
-												true,
-												ship.getOwnerName(this.game),
-												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())));
-								this.waitForKeyPressed();
-
-								continue;
-							}
-
-							if (planet.isAllianceMember(playerIndex))
-								planet.subtractBattleshipsCount(this.game.getPlayersCount(), ship.getCount(), playerIndex, false, false);
-							else
-								planet.decrementShipsCount(ShipType.BATTLESHIPS, ship.getCount());
-						}
-
-						this.game.getShips().add(ship);
-					}
-					else
-					{
-						if (ship.getType() == ShipType.TRANSPORT)
-						{
-							planet.subtractMoneySupply(ship.getCount());
-						}
-
-						planet.decrementShipsCount(ship.getType(), 1);
-						this.game.getShips().add(ship);  					
-					}
-				}
-				else if (move.getAllianceChanges() != null)
-				{
-					// Alliance change moves have already been processed
-				}
-				else if (move.getPlanetAfter() != null)
-				{
-					this.game.getPlanets()[move.getPlanetIndex()].acceptPlanetDataChange(move.getPlanetAfter());
-				}
-			}
-		}
-		
-		this.processAllianceTerminations(planetsWithTerminatedAlliances);
-
-		this.game.setMoves(new Hashtable<Integer, ArrayList<Move>>());
-	}
-
-	private void reducePatrolEvents(
-			Hashtable<Integer, Hashtable<Integer, ArrayList<ScreenContent>>> list)
-	{
-		for (Integer i1: list.keySet())
-		{
-			Hashtable<Integer, ArrayList<ScreenContent>> patrols = list.get(i1);
-
-			for (Integer i2: patrols.keySet())
-			{
-				ArrayList<ScreenContent> eventList = patrols.get(i2);
-
-				for (int eventIndex = 0; eventIndex < eventList.size(); eventIndex++)
-				{
-					if (eventIndex == 0 || eventIndex == eventList.size() - 1)
-					{
-						continue;
-					}
-
-					this.replay.remove(eventList.get(eventIndex));
-				}
-			}
-		}
-	}
-	
-	private void waitForKeyPressed()
-	{
-		this.game.getConsole().waitForKeyPressedEvaluation();
-
-		ScreenContent cont = (ScreenContent)CommonUtils.klon(this.game.getScreenContent());
-		cont.setPlanetEditor(null);
-		this.replay.add(cont);
-	}
+//	private void addScreenSnapshotToReplay(int day)
+//	{
+//		this.game.updateBoard(day);
+//		ScreenContent cont = (ScreenContent)CommonUtils.klon(this.game.getScreenContent());
+//		cont.setPlanetEditor(null);
+//		cont.setSnapshot();
+//		cont.getConsole().clearKeys();
+//		cont.getConsole().setProgressBarDay(day);
+//		this.replay.add(cont);
+//	}
+//
+//	private void blackHoleDoWatch(Ship blackHoleShip, int day)
+//	{
+//		if (blackHoleShip == null)
+//			return;
+//		
+//		for (Ship ship: this.game.getShips())
+//		{
+//			if (ship == blackHoleShip ||
+//				ship.isToBeDeleted())
+//			{
+//				continue;
+//			}
+//			
+//			if (blackHoleShip.getPositionOnDay(day).distance(ship.getPositionOnDay(day)) < Game.BLACK_HOLE_RANGE)
+//			{
+//				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//				
+//				switch (ship.getType())
+//				{
+//					case BATTLESHIPS:
+//						this.game.getConsole().appendText(
+//								VegaResources.BlackHoleDestroyedBattleships(
+//										true, 
+//										Integer.toString(ship.getCount())));
+//						break;
+//						
+//					case SPY:
+//						this.game.getConsole().appendText(
+//								VegaResources.BlackHoleSpy(true));
+//						break;
+//						
+//					case TRANSPORT:
+//						this.game.getConsole().appendText(
+//								VegaResources.BlackHoleTransport(true));
+//						break;
+//						
+//					case PATROL:
+//						this.game.getConsole().appendText(
+//								VegaResources.BlackHolePatrol(true));
+//						break;
+//						
+//					case MINE50:
+//					case MINE100:
+//					case MINE250:
+//					case MINE500:
+//						this.game.getConsole().setLineColor(Colors.WHITE);
+//						this.game.getConsole().appendText(
+//								VegaResources.BlackHoleMine(true, CommonUtils.getMineStrength(ship.getType())));
+//						break;
+//						
+//					case MINESWEEPER:
+//						this.game.getConsole().appendText(
+//								VegaResources.BlackHoleMinesweeper(true));
+//						break;
+//						
+//					default:
+//						continue;
+//				}
+//		
+//				this.game.updateBoard(
+//						this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
+//						day);
+//
+//				this.waitForKeyPressed();
+//				
+//				ship.setToBeDeleted();
+//			}
+//		}
+//	}
+//	
+//	private void checkForArrival(Ship ship, int day)
+//	{
+//		if (ship.getType() == ShipType.BLACK_HOLE)
+//			return;
+//		
+//		double distanceTotal = ship.getPositionStart().distance(ship.getPositionDestination());
+//		double distanceCurrent = ship.getPositionStart().distance(ship.getPositionOnDay(day));
+//
+//		if (distanceCurrent <= distanceTotal - Point.PRECISION)
+//		{
+//			return;
+//		}
+//
+//		int planetIndex = ship.getPlanetIndexDestination();
+//		Planet planet = null;
+//
+//		if (planetIndex != Planet.NO_PLANET)
+//			planet = this.game.getPlanets()[planetIndex];
+//		
+//		if (planet == null)
+//		{
+//			switch (ship.getType())
+//			{
+//				case PATROL:
+//					this.addScreenSnapshotToReplay(day);
+//					ship.setToBeTurned();
+//					
+//					break;
+//					
+//				case MINESWEEPER:
+//					Mine mine = this.game.getMines().get(ship.getPositionDestination().getString());
+//					
+//					if (mine != null)
+//					{
+//						this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//						
+//						this.game.updateBoard(
+//								this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
+//								day);
+//						this.printDayEvent(day, ship.getOwnerName(game));
+//						this.game.getConsole().appendText (
+//								VegaResources.MessageFromSector(true,
+//										Game.getSectorNameFromPositionStatic(
+//												new Point(mine.getPositionX(), mine.getPositionY())
+//												)));
+//						this.game.getConsole().appendText (
+//								VegaResources.MineFieldSwept(
+//										true,
+//										Integer.toString(mine.getStrength())));
+//
+//						this.game.getMines().remove(ship.getPositionDestination().getString());
+//						this.waitForKeyPressed();
+//					}
+//					
+//					this.addScreenSnapshotToReplay(day);
+//					ship.setToBeTurned();
+//					
+//					break;
+//					
+//				case MINE50:
+//				case MINE100:
+//				case MINE250:
+//				case MINE500:
+//					this.placeMine(ship);
+//
+//					this.game.updateBoard(
+//							this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
+//							day);
+//
+//					this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//					this.printDayEvent(day, ship.getOwnerName(game));
+//					this.game.getConsole().appendText(
+//							VegaResources.MinePlanted(
+//									true, 
+//									CommonUtils.getMineStrength(ship.getType())));
+//					this.waitForKeyPressed();
+//					ship.setToBeDeleted();
+//
+//					Point sectorShip = ship.getSectorOnDay(day);
+//					int shipsSequence[] = CommonUtils.getRandomList(this.game.getShips().size());
+//
+//					for (int i = 0; i < shipsSequence.length; i++)
+//					{
+//						this.checkForMines(this.game.getShips().get(shipsSequence[i]), sectorShip, day);
+//					}
+//					break;
+//					
+//				default:
+//					break;
+//			}
+//		}
+//		else
+//		{
+//			String planetName = this.game.getPlanetNameFromIndex(planetIndex);
+//
+//			if (ship.getType() == ShipType.BATTLESHIPS)
+//			{
+//				boolean attack = true;
+//				
+//				for (int playerIndex = Player.NEUTRAL; playerIndex < this.game.getPlayersCount(); playerIndex++)
+//				{
+//					if (planet.isPlayerInvolved(playerIndex) && ship.isPlayerInvolved(playerIndex))
+//					{
+//						attack = false;
+//						break;
+//					}
+//				}
+//				
+//				if (attack)
+//				{
+//					this.game.getConsole().setLineColor(
+//							planet.getOwner() == Player.NEUTRAL ?
+//									Colors.WHITE :
+//									planet.getOwnerColorIndex(this.game));
+//					
+//					String planetOwnerName =
+//							planet.getOwner() == Player.NEUTRAL ?
+//									null :
+//									game.getPlayers()[planet.getOwner()].getName();
+//					
+//					this.printDayEvent(day, planetOwnerName);
+//					this.battleshipsAttack(planet, ship, planetIndex, day);
+//				}
+//				else
+//				{
+//					this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//					this.printDayEvent(day, ship.getOwnerName(game));
+//					
+//					planet.mergeBattleships(this.game.getPlayersCount(), ship);
+//
+//					this.game.getConsole().appendText(
+//							VegaResources.BattleshipsArrivedAtPlanet(
+//									true,
+//									Integer.toString(ship.getCount()),
+//									planetName));
+//				}
+//				
+//				this.game.updatePlanetList(false);
+//			}
+//			else
+//			{
+//				this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//				this.printDayEvent(day, ship.getOwnerName(game));
+//				
+//				planet.incrementShipsCount(ship.getType(), 1);
+//				
+//				switch (ship.getType())
+//				{
+//					case SPY:
+//						if (ship.isTransfer())
+//						{
+//							this.game.getConsole().appendText(
+//											VegaResources.SpyArrived(
+//													true,
+//													planetName));
+//						}
+//						else
+//						{
+//							planet.setRadioStation(ship.getOwner());
+//							planet.incrementShipsCount(ship.getType(), -1);
+//							
+//							this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//							
+//							this.game.getConsole().appendText(
+//								VegaResources.SpyDropped(
+//										true,
+//										planetName));
+//						}
+//						break;
+//						
+//					case PATROL:
+//						this.game.getConsole().appendText(
+//								VegaResources.PatrolArrived(
+//												true, 
+//												planetName));
+//						break;
+//						
+//					case TRANSPORT:
+//						planet.addToMoneySupply(ship.getCount());
+//						
+//						this.game.getConsole().appendText(
+//								VegaResources.TransporterArrived(
+//											true, 
+//											planetName));
+//						break;
+//						
+//					case MINE50:
+//					case MINE100:
+//					case MINE250:
+//					case MINE500:
+//						this.game.getConsole().appendText(
+//								VegaResources.MinelayerArrived(
+//												true, 
+//												planetName,
+//												CommonUtils.getMineStrength(ship.getType())));
+//						break;
+//						
+//					case MINESWEEPER:
+//						this.game.getConsole().appendText(
+//								VegaResources.MinesweeperArrived(
+//												true,
+//												planetName));
+//						break;
+//					
+//					default:
+//						break;
+//				}
+//			}
+//			
+//			this.game.updateBoard(
+//					this.game.getSimpleFrameObjekt(planetIndex, Colors.WHITE),
+//					day);
+//
+//			this.waitForKeyPressed();
+//			ship.setToBeDeleted();
+//		}
+//	}  		
+//
+//	private void checkForMines(Ship ship, Point sector, int day)
+//	{
+//		if (ship.isToBeDeleted() ||
+//				sector == null ||
+//				this.game.getMines() == null || 
+//				this.game.getMines().size() == 0)
+//		{
+//			return;
+//		}
+//
+//		Point positionShip = ship.getSectorOnDay(day);
+//		if (positionShip == null || !positionShip.equals(sector))
+//		{
+//			return;
+//		}
+//
+//		Mine mine = this.game.getMines().get(sector.getString());
+//		if (mine == null)
+//			return;
+//
+//		boolean deleteShip = false;
+//		
+//		if (ship.getType() == ShipType.BLACK_HOLE)
+//		{
+//			this.game.getMines().remove(sector.getString());
+//			
+//			this.printDayEvent(day, null);
+//			
+//			this.game.getConsole().appendText(
+//					VegaResources.BlackHoleMines(
+//							true, 
+//							Integer.toString(mine.getStrength())));
+//		}
+//		else
+//		{
+//			this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//	
+//			if (ship.getType() == ShipType.BATTLESHIPS)
+//			{
+//				this.printDayEvent(day, ship.getOwnerName(game));
+//	
+//				if (ship.getCount() >= mine.getStrength())
+//				{
+//					this.game.getConsole().appendText(
+//							VegaResources.BattleshipsKilledByMine2(
+//									true,
+//									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
+//	
+//					ship.subtractBattleships(mine.getStrength(), ship.getOwner());
+//	
+//					if (ship.getCount() <= 0)
+//						deleteShip = true;
+//	
+//					this.game.getMines().remove(sector.getString());
+//				}
+//				else
+//				{
+//					this.game.getConsole().appendText(
+//							VegaResources.BattleshipsKilledByMine(
+//									true, 
+//									Integer.toString(Math.min(ship.getCount(),mine.getStrength()))));
+//	
+//					deleteShip = true;
+//	
+//					mine.setStrength(mine.getStrength() - ship.getCount());
+//				}
+//			}
+//			else
+//				return;
+//	
+//		}
+//		
+//		this.game.updateBoard(
+//				this.game.getSimpleMarkedPosition(ship.getPositionOnDay(day)),
+//				day);
+//
+//		this.waitForKeyPressed();
+//
+//		if (deleteShip)
+//			ship.setToBeDeleted();
+//	}
+//
+//	private void checkIfPlayerIsDead()
+//	{
+//		for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
+//		{
+//			if (this.game.getPlayers()[playerIndex].isDead())
+//				continue;
+//
+//			boolean playerHasPlanet = false;
+//			for (Planet planet: game.getPlanets())
+//			{
+//				if (planet.getOwner() == playerIndex)
+//				{
+//					playerHasPlanet = true;
+//					break;
+//				}
+//			}
+//			if (playerHasPlanet)
+//				continue;
+//
+//			boolean playerHasShips = false;
+//
+//			for (Ship ship: game.getShips())
+//			{
+//				if (ship.getOwner() == playerIndex ||
+//					ship.getBattleshipsCount(playerIndex) > 0)
+//				{
+//					playerHasShips = true;
+//					break;
+//				}
+//			}
+//
+//			if (playerHasShips)
+//				continue;
+//
+//			this.game.getPlayers()[playerIndex].setDead(true);
+//
+//			this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
+//			this.printDayEndOfYear(null);
+//			this.game.getConsole().appendText(
+//					VegaResources.PlayerGameOver(
+//							true, 
+//							this.game.getPlayers()[playerIndex].getName()));
+//			this.waitForKeyPressed();
+//		}
+//	}
+//
+//	private void battleshipsAttack(Planet planet, Ship ship, int planetIndex, int day)
+//	{
+//		int offenderCount = ship.getCount();
+//		int defenderCount = planet.getShipsCount(ShipType.BATTLESHIPS) + planet.getDefensiveBattleshipsCount();
+//		int defenderCountStart = defenderCount;
+//
+//		this.game.getConsole().appendText(
+//				VegaResources.PlanetIsAttacked(
+//						true,
+//						this.game.getPlanetNameFromIndex(planetIndex)));
+//
+//		this.game.getConsole().lineBreak();
+//		this.game.getConsole().setLineColor(Colors.WHITE);
+//		
+//		Tuple<Integer,Integer> countsAfterFight = fight(
+//				this.game.getConsole(), 
+//				offenderCount, 
+//				ship.getBonus(),
+//				defenderCount,
+//				planet.getBonus());
+//		
+//		offenderCount = countsAfterFight.getE1();
+//		defenderCount = countsAfterFight.getE2();
+//
+//		if (offenderCount > defenderCount)
+//		{
+//			ship.subtractBattleships(ship.getCount() - offenderCount,ship.getOwner());
+//
+//			planet.conquer(this.game.getPlayersCount(), ship.getOwner(), ship);
+//
+//			this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//			
+//			if (ship.getOwner() == Player.NEUTRAL)
+//			{
+//				this.game.getConsole().appendText(
+//						VegaResources.PlanetConqueredNeutral(
+//								true));
+//			}
+//			else
+//			{
+//				this.game.getConsole().appendText(
+//						VegaResources.PlanetConquered(
+//								true,
+//								ship.getOwnerName(this.game)));
+//			}
+//		}
+//		else
+//		{
+//			planet.subtractBattleshipsCount(this.game.getPlayersCount(), defenderCountStart - defenderCount, planet.getOwner(), true, true);
+//
+//			this.game.getConsole().appendText(
+//					VegaResources.AttackFailed(true));					
+//		}
+//	}
+//
+//	private void moveShip(Ship ship, int day)
+//	{
+//		if (ship.isToBeDeleted() || ship.isToBeTurned() || ship.isStopped())
+//		{
+//			return;
+//		}
+//
+//		Point sectorCurrent = ship.getSectorOnDay(day);
+//
+//		if (sectorCurrent != null)
+//		{
+//			Point sectorPrevious = ship.getSectorOnDay(day-1);
+//
+//			if (sectorPrevious == null || !sectorCurrent.equals(sectorPrevious))
+//			{
+//				this.checkForMines(ship, sectorCurrent, day);
+//			}
+//		}
+//
+//		if (ship.isToBeDeleted())
+//		{
+//			return;
+//		}
+//
+//		this.checkForArrival(ship, day);
+//	}
+//
+//	private void patrolAddEvent(
+//			int patrolHashCode, 
+//			int otherShipHashCode, 
+//			Hashtable<Integer, Hashtable<Integer, ArrayList<ScreenContent>>> list)
+//	{
+//		Hashtable<Integer, ArrayList<ScreenContent>> patrols = list.get(otherShipHashCode);
+//
+//		if (patrols == null)
+//		{
+//			patrols = new Hashtable<Integer, ArrayList<ScreenContent>>();
+//			list.put(otherShipHashCode, patrols);
+//		}
+//
+//		ArrayList<ScreenContent> eventList = patrols.get(patrolHashCode);
+//
+//		if (eventList == null)
+//		{
+//			eventList = new ArrayList<ScreenContent>();
+//			patrols.put(patrolHashCode, eventList);
+//		}
+//
+//		eventList.add(this.replay.get(this.replay.size() - 1));
+//	}
+//
+//	private boolean patrolCombat(Ship patrol, Ship otherPatrol, int day)
+//	{
+//		Point patrolFlightDirection = patrol.getPositionDestination().subtract(patrol.getPositionStart());
+//		Point patrolShootDirection = otherPatrol.getPositionOnDay(day).subtract(patrol.getPositionOnDay(day));
+//		int patrolShootAngle = patrolFlightDirection.getAngleBetweenVectors(patrolShootDirection);
+//
+//		Point otherPatrolFlightDirection = otherPatrol.getPositionDestination().subtract(otherPatrol.getPositionStart());
+//		Point otherPatrolShootDirection = patrol.getPositionOnDay(day).subtract(otherPatrol.getPositionOnDay(day));
+//		int otherPatrolShootAngle = otherPatrolFlightDirection.getAngleBetweenVectors(otherPatrolShootDirection);
+//
+//		if (otherPatrolShootAngle == patrolShootAngle)
+//		{
+//			return CommonUtils.getRandomInteger(10) < 5;
+//		}
+//		else if (otherPatrolShootAngle < patrolShootAngle)
+//		{
+//			return true;
+//		}
+//
+//		return false;
+//	}
+//	
+//	private void patrolEvent(
+//			Ship patrol1, 
+//			Ship otherShip1, 
+//			int day)
+//	{
+//		if (patrol1.isToBeDeleted() || otherShip1.isToBeDeleted() || patrol1.isTransfer() || patrol1.isStopped())
+//		{
+//			return;
+//		}
+//
+//		if (patrol1.getOwner() == otherShip1.getOwner())
+//		{
+//			return;
+//		}
+//
+//		if (otherShip1.getType() == ShipType.BATTLESHIPS &&
+//				otherShip1.getCount() > Game.PATROL_CAPUTURES_BATTLESHIPS_COUNT_MAX)
+//		{
+//			return;
+//		}
+//
+//		if (otherShip1.getType() == ShipType.BLACK_HOLE ||
+//			otherShip1.isPlayerInvolved(patrol1.getOwner()))
+//		{
+//			return;
+//		}				
+//
+//		boolean swapObjects = false;
+//
+//		if (otherShip1.getType() == ShipType.PATROL &&
+//				!otherShip1.isTransfer())
+//		{
+//			swapObjects = this.patrolCombat(patrol1, otherShip1, day); 
+//		}
+//
+//		Ship patrol = swapObjects ? otherShip1 : patrol1;
+//		Ship otherShip = swapObjects ? patrol1 : otherShip1;
+//
+//		this.printDayEvent(day, patrol.getOwnerName(game));			
+//		this.game.getConsole().setLineColor(patrol.getOwnerColorIndex(this.game));
+//
+//		Point otherShipPosition = otherShip.getPositionOnDay(day);
+//
+//		String otherShipOwnerName = otherShip.getOwnerName(this.game);
+//		String otherShipDestinationName = this.game.getSectorNameFromPosition(otherShip.getPositionDestination());
+//
+//		this.game.updateBoard(
+//				null,
+//				this.game.getSimpleMarkedPosition(otherShipPosition),
+//				patrol.hashCode(),
+//				Player.NEUTRAL, 
+//				day);
+//
+//		this.game.getConsole().setLineColor(patrol.getOwnerColorIndex(this.game));
+//
+//		if (otherShip.getType() == ShipType.SPY)
+//			this.game.getConsole().appendText(
+//					VegaResources.PatrolCapturedSpy(
+//							true, 
+//							otherShipDestinationName, 
+//							otherShipOwnerName));
+//		else if (otherShip.getType() == ShipType.TRANSPORT)
+//			this.game.getConsole().appendText(
+//					VegaResources.PatrolCapturedTransporter(
+//							true, 
+//							otherShipDestinationName, 
+//							otherShipOwnerName));
+//		else if (otherShip.getType() == ShipType.MINESWEEPER)
+//			this.game.getConsole().appendText(
+//					VegaResources.PatrolCapturedMinesweeper(
+//							true, 
+//							otherShipDestinationName, 
+//							otherShipOwnerName));
+//		else if (otherShip.getType() == ShipType.MINE50 ||
+//				otherShip.getType() == ShipType.MINE100 ||
+//				otherShip.getType() == ShipType.MINE250 ||
+//				otherShip.getType() == ShipType.MINE500)
+//			this.game.getConsole().appendText(
+//					VegaResources.PatrolCapturedMinelayer(
+//							true, 
+//							CommonUtils.getMineStrength(otherShip.getType()), 
+//							otherShipDestinationName, 
+//							otherShipOwnerName));
+//		else if (otherShip.getType() == ShipType.PATROL)
+//			this.game.getConsole().appendText(
+//					VegaResources.PatrolCapturedPatrol(
+//							true, 
+//							otherShipDestinationName, 
+//							otherShipOwnerName));
+//		else if (otherShip.getType() == ShipType.BATTLESHIPS)
+//		{
+//			this.game.getConsole().appendText(
+//					VegaResources.PatrolCapturedBattleships(
+//							true, 
+//							Integer.toString(otherShip.getCount()), 
+//							otherShipDestinationName, 
+//							otherShipOwnerName));
+//		}
+//
+//		otherShip.capture(
+//				patrol.getOwner(),
+//				otherShipPosition);
+//
+//		this.game.updateBoard(
+//				null,
+//				this.game.getSimpleMarkedPosition(otherShipPosition),
+//				patrol.hashCode(),
+//				Player.NEUTRAL, 
+//				day);
+//
+//		this.waitForKeyPressed();
+//
+//		this.patrolAddEvent(
+//				otherShip.hashCode(),
+//				patrol.hashCode(),
+//				this.events);
+//	}
+//
+//	private void patrolsDoWatch(int day)
+//	{
+//		ArrayList<Ship> eventPatrols = new ArrayList<Ship>();
+//		ArrayList<Ship> eventOtherShips = new ArrayList<Ship>();
+//
+//		for (Ship patrol: this.game.getShips())
+//		{
+//			if (!patrol.isToBeDeleted() && 
+//					patrol.getType() == ShipType.PATROL &&
+//					!patrol.isTransfer())
+//			{
+//				Point patrolPosition = patrol.getPositionOnDay(day);
+//
+//				for (Ship otherShip: this.game.getShips())
+//				{
+//					if (otherShip == patrol || otherShip.isToBeDeleted())
+//					{
+//						continue;
+//					}
+//
+//					Point otherShipPosition = otherShip.getPositionOnDay(day);
+//
+//					if (patrolPosition.distance(otherShipPosition) > Game.PATROL_RADAR_RANGE + Point.PRECISION)
+//					{
+//						continue;
+//					}
+//
+//					eventPatrols.add(patrol);
+//					eventOtherShips.add(otherShip);
+//				}
+//			}
+//		}
+//
+//		if (eventPatrols.size() == 0)
+//		{
+//			return;
+//		}
+//
+//		int seq[] = CommonUtils.getRandomList(eventPatrols.size());
+//
+//		for (int i = 0; i < seq.length; i++)
+//		{
+//			int eventIndex = seq[i];
+//
+//			this.patrolEvent(
+//					eventPatrols.get(eventIndex), 
+//					eventOtherShips.get(eventIndex), 
+//					day);
+//		}
+//	}
+//
+//	private void placeMine(Ship obj)
+//	{
+//		if (this.game.getMines() == null)
+//			this.game.setMines(new Hashtable<String,Mine>());
+//
+//		int strength = Integer.parseInt(CommonUtils.getMineStrength(obj.getType()));
+//
+//		String positionString = obj.getPositionDestination().getString();
+//		Mine mine = this.game.getMines().get(positionString);
+//
+//		if (mine == null)
+//		{
+//			this.game.getMines().put(positionString, new Mine((int)obj.getPositionDestination().x, (int)obj.getPositionDestination().y, strength));
+//		}
+//		else
+//			mine.addToStrength(strength);
+//	}
+//
+//	private void printDayBeginOfYear(String playerName)
+//	{
+//		this.printDayEventLineStart(playerName);
+//		this.game.getConsole().enableEvaluationProgressBar(true);
+//	}
+//
+//	private void printDayEndOfYear(String playerName)
+//	{
+//		this.printDayEventLineStart(playerName);
+//		this.game.getConsole().setEvaluationProgressBarDay(Game.DAYS_OF_YEAR_COUNT);
+//	}
+//
+//	private void printDayEvent(int day, String playerName)
+//	{
+//		if (day < 1)
+//			printDayBeginOfYear(playerName);
+//		else if (day >= Game.DAYS_OF_YEAR_COUNT)
+//			printDayEndOfYear(playerName);
+//		else
+//		{		
+//			this.printDayEventLineStart(playerName);
+//			this.game.getConsole().setEvaluationProgressBarDay(day);
+//		}
+//	}
+//	
+//	private void printDayEventLineStart(String playerName)
+//	{
+//		if (playerName != null)
+//		{
+//			this.game.getConsole().appendText(
+//					VegaResources.EventLineStart(true, playerName) + " ");
+//		}
+//		else
+//		{
+//			this.game.getConsole().appendText(">>> ");
+//		}
+//	}
+//
+//	private HashSet<Integer> processAllianceChanges()
+//	{
+//		Hashtable<Integer, Hashtable<Integer,Integer>> allianceChangesPerPlanet =
+//				new Hashtable<Integer, Hashtable<Integer,Integer>>();
+//		
+//		HashSet<Integer> planetsWithTerminatedAlliances = new HashSet<Integer>(); 
+//
+//		for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
+//		{
+//			ArrayList<Move> moves = this.game.getMoves().get(playerIndex);
+//
+//			if (moves == null)
+//			{
+//				continue;
+//			}
+//
+//			for (Move move: moves)
+//			{
+//				boolean[] allianceChanges = move.getAllianceChanges();
+//
+//				if (allianceChanges == null)
+//				{
+//					continue;
+//				}
+//
+//				int bitSum = 0;
+//
+//				for (int playerIndex2 = 0; playerIndex2 < this.game.getPlayersCount(); playerIndex2++)
+//				{
+//					if (allianceChanges[playerIndex2])
+//					{
+//						bitSum += Math.pow(2, playerIndex2);
+//					}
+//				}
+//
+//				Hashtable<Integer,Integer> allianceChangesPerPlayer = 
+//						allianceChangesPerPlanet.get(move.getPlanetIndex());
+//
+//				if (allianceChangesPerPlayer == null)
+//				{
+//					allianceChangesPerPlayer = new Hashtable<Integer,Integer>();
+//					allianceChangesPerPlanet.put(move.getPlanetIndex(), allianceChangesPerPlayer);
+//				}
+//
+//				allianceChangesPerPlayer.put(playerIndex, bitSum);
+//			}
+//		}
+//
+//		for (int planetIndex: allianceChangesPerPlanet.keySet())
+//		{
+//			Planet planet = this.game.getPlanets()[planetIndex];
+//
+//			Hashtable<Integer,Integer> allianceChangesPerPlayer = allianceChangesPerPlanet.get(planetIndex);
+//
+//			boolean terminateAlliance = false;
+//
+//			for (int playerIndex: allianceChangesPerPlayer.keySet())
+//			{
+//				if (allianceChangesPerPlayer.get(playerIndex) == 0 &&
+//						planet.isAllianceMember(playerIndex))
+//				{
+//					terminateAlliance = true;
+//					break;
+//				}
+//			}
+//
+//			if (terminateAlliance)
+//			{
+//				planetsWithTerminatedAlliances.add(planetIndex);
+//				continue;
+//			}
+//
+//			int planetOwner = planet.getOwner();
+//
+//			if (!allianceChangesPerPlayer.containsKey(planetOwner))
+//			{
+//				continue;
+//			}
+//
+//			int bitSetOwner = allianceChangesPerPlayer.get(planetOwner);
+//			boolean abortAllianceChange = false;
+//
+//			for (int playerIndex = 0; playerIndex < this.game.getPlayers().length; playerIndex++)
+//			{
+//				if (playerIndex != planetOwner &&
+//						(bitSetOwner & (int)Math.pow(2, playerIndex)) > 0)
+//				{
+//					if (!allianceChangesPerPlayer.containsKey(playerIndex))
+//					{
+//						abortAllianceChange = true;
+//						break;
+//					}
+//
+//					int bitSetMember = allianceChangesPerPlayer.get(playerIndex);
+//
+//					if (bitSetOwner != bitSetMember)
+//					{
+//						abortAllianceChange = true;
+//						break;
+//					}
+//				}
+//			}
+//
+//			if (abortAllianceChange)
+//			{
+//				continue;
+//			}
+//
+//			for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
+//			{
+//				if (playerIndex != planetOwner &&
+//						(bitSetOwner & (int)Math.pow(2, playerIndex)) > 0)
+//				{
+//					planet.addPlayerToAlliance(this.game.getPlayersCount(), playerIndex);
+//				}
+//			}	
+//		}
+//		
+//		return planetsWithTerminatedAlliances;
+//	}
+//	
+//	private void processAllianceTerminations(HashSet<Integer> planetsWithTerminatedAlliances)
+//	{
+//		for (int planetIndex: planetsWithTerminatedAlliances)
+//		{
+//			Planet planet = this.game.getPlanets()[planetIndex];
+//			
+//			for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
+//			{
+//				if (playerIndex == planet.getOwner())
+//				{
+//					continue;
+//				}
+//
+//				int battleshipsCount = planet.getBattleshipsCount(playerIndex);
+//
+//				if (battleshipsCount > 0)
+//				{
+//					Ship obj = new Ship(
+//							Planet.NO_PLANET,
+//							Planet.NO_PLANET,
+//							this.game.getPlanets()[planetIndex].getPosition(),
+//							this.game.getPlanets()[planetIndex].getPosition(),
+//							ShipType.BATTLESHIPS,
+//							battleshipsCount,
+//							playerIndex,
+//							false,
+//							false,
+//							null,
+//							0);
+//
+//					obj.setStopped(true);
+//
+//					this.game.getShips().add(obj);
+//
+//					this.game.updateBoard(this.game.getSimpleFrameObjekt(planetIndex, Colors.WHITE), 0);
+//
+//					this.game.getConsole().setLineColor(this.game.getPlayers()[playerIndex].getColorIndex());
+//
+//					this.game.getConsole().appendText(
+//							VegaResources.BattleshipsMustLeavePlanet(
+//									true,
+//									Integer.toString(obj.getCount()),
+//									this.game.getPlayers()[playerIndex].getName(),
+//									this.game.getPlanetNameFromIndex(planetIndex)));
+//					this.game.getConsole().lineBreak();
+//					this.game.getConsole().appendText(
+//							VegaResources.BattleshipsWaiting(true));
+//					this.waitForKeyPressed();
+//				}
+//			}
+//
+//			planet.dissolveAlliance();
+//
+//		}
+//	}
+//
+//	private void processCapitulations()
+//	{
+//		List<Ship> capitulationShips =
+//			game.getShips().stream()
+//				.filter(s -> !s.isToBeDeleted() && s.getType() == ShipType.CAPITULATION)
+//				.collect(Collectors.toList());
+//		
+//		for (Ship capitulationShip: capitulationShips)
+//		{
+//			capitulationShip.setToBeDeleted();
+//			
+//			this.printDayEvent(0, null);
+//
+//			this.game.getConsole().setLineColor(capitulationShip.getOwnerColorIndex(this.game));
+//			this.game.getConsole().appendText(
+//					VegaResources.PlayerCapitulated(
+//							true,
+//							capitulationShip.getOwnerName(this.game)));
+//
+//			for (Planet planet: this.game.getPlanets())
+//			{
+//				planet.changeOwner(capitulationShip.getOwner(), Player.NEUTRAL);
+//			}
+//			
+//			List<Ship> shipsWithPlayerInvolement =
+//					game.getShips().stream()
+//						.filter(s -> s.isPlayerInvolved(capitulationShip.getOwner()))
+//						.collect(Collectors.toList());
+//
+//			for (Ship shipWithPlayerInvolement: shipsWithPlayerInvolement)
+//			{
+//				shipWithPlayerInvolement.setToBeDeleted();
+//			}
+//
+//			this.game.updatePlanetList(false);
+//			this.game.updateBoard(0);
+//			
+//			this.waitForKeyPressed();
+//		}
+//	}
+//
+//	private void processMoves()
+//	{
+//		HashSet<Integer> planetsWithTerminatedAlliances = this.processAllianceChanges();
+//		
+//		int[] playersSequence = CommonUtils.getRandomList(this.game.getPlayersCount());
+//
+//		for (int i = 0; i < this.game.getPlayersCount(); i++)
+//		{
+//			int playerIndex = playersSequence[i];
+//			ArrayList<Move> movesOfPlayer = this.game.getMoves().get(playerIndex);
+//
+//			if (movesOfPlayer == null)
+//				continue;
+//
+//			for (Move move: movesOfPlayer)
+//			{
+//				if (move.getStopLabel() != null)
+//				{
+//					Ship ship = null;
+//
+//					for (Ship ship2: this.game.getShips())
+//					{
+//						if (ship2.getStopLabel() != null && ship2.getStopLabel().equals(move.getStopLabel()))
+//						{
+//							ship = ship2;
+//							break;
+//						}
+//					}
+//
+//					ship.setPositionStart(ship.getPositionDestination());
+//					ship.setPlanetIndexStart(Planet.NO_PLANET);
+//					ship.setPlanetIndexDestination(move.getPlanetIndex());
+//					ship.setPositionDestination(this.game.getPlanets()[move.getPlanetIndex()].getPosition());
+//					ship.setStopped(false);
+//				}
+//				else if (move.getShip() != null)
+//				{
+//					Ship ship = move.getShip();
+//					Planet planet = this.game.getPlanets()[ship.getPlanetIndexStart()];
+//
+//					if (ship.getType() == ShipType.BATTLESHIPS)
+//					{
+//						if (ship.isAlliance())
+//						{
+//							boolean ok = true;
+//
+//							if (planet.getAllianceMembers() == null ||
+//								planet.getAllianceMembers().length <= 1 ||
+//								planetsWithTerminatedAlliances.contains(ship.getPlanetIndexStart()))
+//							{
+//								ok = false;
+//							}
+//							else if (!(planet.getBattleshipsCount(playerIndex) > 0  &&
+//									planet.getShipsCount(ShipType.BATTLESHIPS) >= ship.getCount()))
+//							{
+//								ok = false;
+//							}
+//
+//							if (ok)
+//							{
+//								int[] reductions = 
+//										planet.subtractBattleshipsCount(this.game.getPlayersCount(), ship.getCount(), playerIndex, true, false);
+//
+//								Alliance alliance = planet.copyAllianceStructure(reductions);
+//								if (alliance == null)
+//									ok = false;
+//								else
+//									ship.setAlliance(alliance);
+//							}
+//
+//							if (!ok)
+//							{
+//								this.game.updateBoard(this.game.getSimpleFrameObjekt(ship.getPlanetIndexStart(), Colors.WHITE), 0);
+//								this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//								this.game.getConsole().appendText(
+//										VegaResources.BattleshipsNotLaunchedFromPlanet(
+//												true,
+//												ship.getOwnerName(this.game),
+//												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())));
+//								this.waitForKeyPressed();
+//								continue;
+//							}
+//						}
+//						else
+//						{
+//							if (planet.getBattleshipsCount(ship.getOwner()) < ship.getCount())
+//							{
+//								this.game.updateBoard(this.game.getSimpleFrameObjekt(ship.getPlanetIndexStart(), Colors.WHITE), 0);
+//								this.game.getConsole().setLineColor(ship.getOwnerColorIndex(this.game));
+//								this.game.getConsole().appendText(
+//										VegaResources.BattleshipsNotLaunchedFromPlanet(
+//												true,
+//												ship.getOwnerName(this.game),
+//												this.game.getPlanetNameFromIndex(ship.getPlanetIndexStart())));
+//								this.waitForKeyPressed();
+//
+//								continue;
+//							}
+//
+//							if (planet.isAllianceMember(playerIndex))
+//								planet.subtractBattleshipsCount(this.game.getPlayersCount(), ship.getCount(), playerIndex, false, false);
+//							else
+//								planet.decrementShipsCount(ShipType.BATTLESHIPS, ship.getCount());
+//						}
+//
+//						this.game.getShips().add(ship);
+//					}
+//					else
+//					{
+//						if (ship.getType() == ShipType.TRANSPORT)
+//						{
+//							planet.subtractMoneySupply(ship.getCount());
+//						}
+//
+//						planet.decrementShipsCount(ship.getType(), 1);
+//						this.game.getShips().add(ship);  					
+//					}
+//				}
+//				else if (move.getAllianceChanges() != null)
+//				{
+//					// Alliance change moves have already been processed
+//				}
+//				else if (move.getPlanetAfter() != null)
+//				{
+//					this.game.getPlanets()[move.getPlanetIndex()].acceptPlanetDataChange(move.getPlanetAfter());
+//				}
+//			}
+//		}
+//		
+//		this.processAllianceTerminations(planetsWithTerminatedAlliances);
+//
+//		this.game.setMoves(new Hashtable<Integer, ArrayList<Move>>());
+//	}
+//
+//	private void reducePatrolEvents(
+//			Hashtable<Integer, Hashtable<Integer, ArrayList<ScreenContent>>> list)
+//	{
+//		for (Integer i1: list.keySet())
+//		{
+//			Hashtable<Integer, ArrayList<ScreenContent>> patrols = list.get(i1);
+//
+//			for (Integer i2: patrols.keySet())
+//			{
+//				ArrayList<ScreenContent> eventList = patrols.get(i2);
+//
+//				for (int eventIndex = 0; eventIndex < eventList.size(); eventIndex++)
+//				{
+//					if (eventIndex == 0 || eventIndex == eventList.size() - 1)
+//					{
+//						continue;
+//					}
+//
+//					this.replay.remove(eventList.get(eventIndex));
+//				}
+//			}
+//		}
+//	}
+//	
+//	private void waitForKeyPressed()
+//	{
+//		this.game.getConsole().waitForKeyPressedEvaluation();
+//
+//		ScreenContent cont = (ScreenContent)CommonUtils.klon(this.game.getScreenContent());
+//		cont.setPlanetEditor(null);
+//		this.replay.add(cont);
+//	}
 }

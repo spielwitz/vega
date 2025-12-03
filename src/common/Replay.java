@@ -54,7 +54,7 @@ class Replay
 		this.replayArchive();
 
 		this.game.updatePlanetList(false);
-		this.game.updateBoard();
+		this.game.updateBoardGeneral();
 	}
 
 	private void animate(ScreenContent screenContentDayEventPrevious, ScreenContent screenContentDayEventCurrent)

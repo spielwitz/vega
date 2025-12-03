@@ -258,21 +258,22 @@ public class Game extends EmailTransportBase implements Serializable
 			String emailAddressGameHost,
 			ArrayList<Player> players)
 	{
-		this.options = (HashSet<GameOptions>) CommonUtils.klon(options);
-		
-		for (int playerIndex = 0; playerIndex < players.size(); playerIndex++)
-		{
-			this.players[playerIndex].setName(players.get(playerIndex).getName());
-			this.players[playerIndex].setColorIndex(players.get(playerIndex).getColorIndex());
-			this.players[playerIndex].setEmailPlayer(players.get(playerIndex).isEmailPlayer());
-			this.players[playerIndex].setEmail(players.get(playerIndex).getEmail());
-		}
-		
-		this.emailAddressGameHost = emailAddressGameHost;
-		this.yearMax = yearMax;
-		
-		this.updateBoard();
-		this.updatePlanetList(false);
+		throw new UnsupportedOperationException("UpdateBoard not implemented");
+//		this.options = (HashSet<GameOptions>) CommonUtils.klon(options);
+//		
+//		for (int playerIndex = 0; playerIndex < players.size(); playerIndex++)
+//		{
+//			this.players[playerIndex].setName(players.get(playerIndex).getName());
+//			this.players[playerIndex].setColorIndex(players.get(playerIndex).getColorIndex());
+//			this.players[playerIndex].setEmailPlayer(players.get(playerIndex).isEmailPlayer());
+//			this.players[playerIndex].setEmail(players.get(playerIndex).getEmail());
+//		}
+//		
+//		this.emailAddressGameHost = emailAddressGameHost;
+//		this.yearMax = yearMax;
+//		
+//		this.updateBoardGeneral(); // ######
+//		this.updatePlanetList(false);
 	}
 	
 	public Game createCopyForPlayer(int playerIndex)
@@ -687,23 +688,24 @@ public class Game extends EmailTransportBase implements Serializable
 	
 	public boolean startEvaluationServer()
   	{
-		boolean allPlayersHaveEnteredMoves = this.getPlayersMovesNotEntered().size() == 0;
-		
-  		if (allPlayersHaveEnteredMoves)
-  		{
-  			this.console = new Console(this, true);
-  			
-			this.updateBoard();
-			this.updatePlanetList(false);
-  			
-	  		new Evaluation(this);
-	  		
-	  		this.checkIsGameFinalized(true);
-  		}
-  		
-  		this.setDateUpdate();
-  		
-  		return allPlayersHaveEnteredMoves;
+		throw new UnsupportedOperationException("UpdateBoard not implemented");
+//		boolean allPlayersHaveEnteredMoves = this.getPlayersMovesNotEntered().size() == 0;
+//		
+//  		if (allPlayersHaveEnteredMoves)
+//  		{
+//  			this.console = new Console(this, true);
+//  			
+//			this.updateBoardGeneral(); // #####
+//			this.updatePlanetList(false); 
+//  			
+//	  		new Evaluation(this);
+//	  		
+//	  		this.checkIsGameFinalized(true);
+//  		}
+//  		
+//  		this.setDateUpdate();
+//  		
+//  		return allPlayersHaveEnteredMoves;
   	}
 	
 	public String toFile(File file)
@@ -1026,33 +1028,35 @@ public class Game extends EmailTransportBase implements Serializable
 			GameThread gameThread)
 			
 	{
-		this.gameThread = gameThread;
-		this.console = new Console(this, false);
+		throw new UnsupportedOperationException("UpdateBoard not implemented");
 		
-		do
-		{
-			this.createBoard();
-			
-			this.gameThread.checkMenueEnabled();
-			
-			this.updateBoardNewGame();
-			this.updatePlanetList(true);
-			
-			this.console.clear();
-			this.console.appendText(
-					VegaResources.AgreeWithGameBoardQuestion(true) + " ");
-			String input = this.console.waitForKeyPressedYesNo().getInputText().toUpperCase();
-			
-			if (input.equals(Console.KEY_YES))
-				break;
-			
-		} while (true);
-		
-		this.initial = false;
-		this.gameThread.checkMenueEnabled();
-		
-		this.prepareYear();
-		this.mainLoop();
+//		this.gameThread = gameThread;
+//		this.console = new Console(this, false);
+//		
+//		do
+//		{
+//			this.createBoard();
+//			
+//			this.gameThread.checkMenueEnabled();
+//			
+//			this.updateBoardNewGame(); // ####
+//			this.updatePlanetList(true);
+//			
+//			this.console.clear();
+//			this.console.appendText(
+//					VegaResources.AgreeWithGameBoardQuestion(true) + " ");
+//			String input = this.console.waitForKeyPressedYesNo().getInputText().toUpperCase();
+//			
+//			if (input.equals(Console.KEY_YES))
+//				break;
+//			
+//		} while (true);
+//		
+//		this.initial = false;
+//		this.gameThread.checkMenueEnabled();
+//		
+//		this.prepareYear();
+//		this.mainLoop();
 	}
 	
 	boolean isGoToReplay()
@@ -1310,6 +1314,13 @@ public class Game extends EmailTransportBase implements Serializable
 		this.screenContent = screenContent;
 	}
 	
+	void setScreenContentBoard(ScreenContentBoard scb)
+	{
+		if (this.screenContent == null) this.screenContent = new ScreenContent();
+		this.screenContent.setBoard(scb);
+		this.gameThread.updateDisplay(this.screenContent);
+	}
+	
 	void setScreenContentMode (int mode)
 	{
 		if (this.screenContent == null)
@@ -1363,7 +1374,7 @@ public class Game extends EmailTransportBase implements Serializable
 			
 			int maxIndex = 
 					currentPlayerIndex == Player.NEUTRAL ?
-							3 : contentTypes.length;
+							1 : contentTypes.length;
 			
 			if (keyCode == KeyEvent.VK_LEFT)
 			{
@@ -1390,132 +1401,132 @@ public class Game extends EmailTransportBase implements Serializable
 		this.updatePlanetList(Player.NEUTRAL, false);
 	}
 	
-	void updateBoard()
-	{
-		this.updateBoard(null, null, 0);
-	}
+//	void updateBoard()
+//	{
+//		this.updateBoard(null, null, 0);
+//	}
+//	
+//	void updateBoard (
+//			ArrayList<Point> positionsMarked, 
+//			int day)
+//	{
+//		this.updateBoard(null, positionsMarked, day);
+//	}
 	
-	void updateBoard (
-			ArrayList<Point> positionsMarked, 
-			int day)
-	{
-		this.updateBoard(null, positionsMarked, day);
-	}
-	
-	void updateBoard (
-			Hashtable<Integer, ArrayList<Byte>> frames, 
-			ArrayList<Point> positionsMarked, 
-			int radarShipHashCode,
-			int playerIndexDisplayedShips,
-			int day)
-	{
-		ArrayList<ScreenContentBoardPlanet> plData = new ArrayList<ScreenContentBoardPlanet>(this.planetsCount);
-		
-		for (int planetIndex = 0; planetIndex < this.planetsCount; planetIndex++)
-		{
-			ArrayList<Byte> frameCol = null;
-			
-			if (frames != null)
-				frameCol = frames.get(planetIndex);
-			
-			plData.add(new ScreenContentBoardPlanet(
-					this.getPlanetNameFromIndex(planetIndex),
-					this.planets[planetIndex].getPosition(),
-					this.planets[planetIndex].getOwnerColorIndex(this),
-					frameCol));
-		}
-		
-		ArrayList<ScreenContentBoardObject> objects = new ArrayList<ScreenContentBoardObject>(); 
-
-		for (Ship ship: this.ships)
-		{
-			if (ship.isToBeDeleted()
-				|| ship.getType() == ShipType.CAPITULATION)
-				continue;
-			
-			if (this.shipsOfPlayerHidden != null &&
-				ship.getType() != ShipType.BLACK_HOLE &&
-				this.shipsOfPlayerHidden.contains(ship.getOwner()))
-			{
-				continue;
-			}
-			
-			Point shipPosition = ship.getPositionOnDay(day);
-			
-			boolean drawSymbol = 
-					ship.wasStoppedBefore() ||
-					!(ship.getOwner() == playerIndexDisplayedShips && ship.isStartedRecently());
-			
-			ScreenContentBoardRadar radar = null;
-			
-			if (ship.getType() == ShipType.PATROL && !ship.isTransfer())
-				radar = new ScreenContentBoardRadar(
-						ship.hashCode() == radarShipHashCode,
-						false,
-						Game.PATROL_RADAR_RANGE);
-			else if (ship.getType() == ShipType.BLACK_HOLE)
-				radar = new ScreenContentBoardRadar(
-						ship.hashCode() == radarShipHashCode,
-						true,
-						Game.BLACK_HOLE_RANGE);
-			
-			boolean drawLine =
-					(ship.getOwner() == playerIndexDisplayedShips && ship.isStartedRecently()) ||
-					(!ship.wasStoppedBefore() &&
-					!ship.isStopped());
-			
-			ScreenContentBoardObject object =
-					new ScreenContentBoardObject(
-							ship.hashCode(),
-							shipPosition,
-							drawLine ? ship.getPositionDestination() : null,
-							drawSymbol ? ship.getScreenDisplaySymbol() : (byte)-1,
-							ship.getOwnerColorIndex(this),
-							drawSymbol,
-							drawLine && ship.getPlanetIndexDestination() == Planet.NO_PLANET,
-							radar);
-			
-			objects.add(object);
-		}
-		
-		ArrayList<ScreenContentBoardMine> mines = new ArrayList<ScreenContentBoardMine>();
-		
-		for (Mine mine: this.mines.values())
-		{
-			mines.add(
-					new ScreenContentBoardMine(
-							mine.getPositionX(), 
-							mine.getPositionY(), 
-							mine.getStrength()));
-		}
-		
-		if (this.screenContent == null)
-			this.screenContent = new ScreenContent();
-		
-		this.screenContent.setBoard(
-				new ScreenContentBoard(
-						plData,
-						positionsMarked,
-						objects,
-						mines));
-		
-		this.screenContent.setEventDay(day);
-		
-		if (!this.console.isBackground())
-			this.gameThread.updateDisplay(this.screenContent);
-	}
-	
-	void updateBoard (
-			Hashtable<Integer,ArrayList<Byte>> frames, 
-			int day)
-	{
-		this.updateBoard(frames, null, day);
-	}
-	
-	void updateBoard (int day)
-	{
-		this.updateBoard(null, null, day);
-	}
+//	void updateBoard (
+//			Hashtable<Integer, ArrayList<Byte>> frames, 
+//			ArrayList<Point> positionsMarked, 
+//			int radarShipHashCode,
+//			int playerIndexDisplayedShips,
+//			int day)
+//	{
+//		ArrayList<ScreenContentBoardPlanet> plData = new ArrayList<ScreenContentBoardPlanet>(this.planetsCount);
+//		
+//		for (int planetIndex = 0; planetIndex < this.planetsCount; planetIndex++)
+//		{
+//			ArrayList<Byte> frameCol = null;
+//			
+//			if (frames != null)
+//				frameCol = frames.get(planetIndex);
+//			
+//			plData.add(new ScreenContentBoardPlanet(
+//					this.getPlanetNameFromIndex(planetIndex),
+//					this.planets[planetIndex].getPosition(),
+//					this.planets[planetIndex].getOwnerColorIndex(this),
+//					frameCol));
+//		}
+//		
+//		ArrayList<ScreenContentBoardObject> objects = new ArrayList<ScreenContentBoardObject>(); 
+//
+//		for (Ship ship: this.ships)
+//		{
+//			if (ship.isToBeDeleted()
+//				|| ship.getType() == ShipType.CAPITULATION)
+//				continue;
+//			
+//			if (this.shipsOfPlayerHidden != null &&
+//				ship.getType() != ShipType.BLACK_HOLE &&
+//				this.shipsOfPlayerHidden.contains(ship.getOwner()))
+//			{
+//				continue;
+//			}
+//			
+//			Point shipPosition = ship.getPositionOnDay(day);
+//			
+//			boolean drawSymbol = 
+//					ship.wasStoppedBefore() ||
+//					!(ship.getOwner() == playerIndexDisplayedShips && ship.isStartedRecently());
+//			
+//			ScreenContentBoardRadar radar = null;
+//			
+//			if (ship.getType() == ShipType.PATROL && !ship.isTransfer())
+//				radar = new ScreenContentBoardRadar(
+//						ship.hashCode() == radarShipHashCode,
+//						false,
+//						Game.PATROL_RADAR_RANGE);
+//			else if (ship.getType() == ShipType.BLACK_HOLE)
+//				radar = new ScreenContentBoardRadar(
+//						ship.hashCode() == radarShipHashCode,
+//						true,
+//						Game.BLACK_HOLE_RANGE);
+//			
+//			boolean drawLine =
+//					(ship.getOwner() == playerIndexDisplayedShips && ship.isStartedRecently()) ||
+//					(!ship.wasStoppedBefore() &&
+//					!ship.isStopped());
+//			
+//			ScreenContentBoardObject object =
+//					new ScreenContentBoardObject(
+//							ship.hashCode(),
+//							shipPosition,
+//							drawLine ? ship.getPositionDestination() : null,
+//							drawSymbol ? ship.getScreenDisplaySymbol() : (byte)-1,
+//							ship.getOwnerColorIndex(this),
+//							drawSymbol,
+//							drawLine && ship.getPlanetIndexDestination() == Planet.NO_PLANET,
+//							radar);
+//			
+//			objects.add(object);
+//		}
+//		
+//		ArrayList<ScreenContentBoardMine> mines = new ArrayList<ScreenContentBoardMine>();
+//		
+//		for (Mine mine: this.mines.values())
+//		{
+//			mines.add(
+//					new ScreenContentBoardMine(
+//							mine.getPositionX(), 
+//							mine.getPositionY(), 
+//							mine.getStrength()));
+//		}
+//		
+//		if (this.screenContent == null)
+//			this.screenContent = new ScreenContent();
+//		
+//		this.screenContent.setBoard(
+//				new ScreenContentBoard(
+//						plData,
+//						positionsMarked,
+//						objects,
+//						mines));
+//		
+//		this.screenContent.setEventDay(day);
+//		
+//		if (!this.console.isBackground())
+//			this.gameThread.updateDisplay(this.screenContent);
+//	}
+//	
+//	void updateBoard (
+//			Hashtable<Integer,ArrayList<Byte>> frames, 
+//			int day)
+//	{
+//		this.updateBoard(frames, null, day);
+//	}
+//	
+//	void updateBoard (int day)
+//	{
+//		this.updateBoard(null, null, day);
+//	}
 	
 	void updateConsole(ScreenContentConsole contentConsole, boolean isBackground)
 	{
@@ -1958,7 +1969,7 @@ public class Game extends EmailTransportBase implements Serializable
 		do
 		{
 			this.console.enablePlanetListContentToggle(true);
-			this.updateBoard();
+			this.updateBoardGeneral();
 			this.updatePlanetList(false);
 			
 			this.console.clear();
@@ -2289,46 +2300,96 @@ public class Game extends EmailTransportBase implements Serializable
 		}
 	}
 	
-	private void updateBoard (
-			Hashtable<Integer, ArrayList<Byte>> frames, 
-			ArrayList<Point> positionsMarked, 
-			int day)
-	{
-		this.updateBoard(frames, positionsMarked, 0, Player.NEUTRAL, day);
-	}
+//	private void updateBoard (
+//			Hashtable<Integer, ArrayList<Byte>> frames, 
+//			ArrayList<Point> positionsMarked, 
+//			int day)
+//	{
+//		this.updateBoard(frames, positionsMarked, 0, Player.NEUTRAL, day);
+//	}
+//	
+//	private void updateBoardNewGame()
+//	{
+//		ArrayList<ScreenContentBoardPlanet> plData = new ArrayList<ScreenContentBoardPlanet>(this.planetsCount);
+//		
+//		for (int planetIndex = 0; planetIndex < this.planetsCount; planetIndex++)
+//		{
+//			if (this.planets[planetIndex].isNeutral())
+//				plData.add(new ScreenContentBoardPlanet(
+//						this.getPlanetNameFromIndex(planetIndex),
+//						this.planets[planetIndex].getPosition(),
+//						Colors.NEUTRAL,
+//						null));
+//			else
+//				plData.add(new ScreenContentBoardPlanet(
+//						this.getPlanetNameFromIndex(planetIndex),
+//						this.planets[planetIndex].getPosition(),
+//						Colors.WHITE,
+//						null));
+//		}
+//		
+//		if (this.screenContent == null)
+//			this.screenContent = new ScreenContent();
+//		
+//		this.screenContent.setBoard(
+//				new ScreenContentBoard(
+//						plData,
+//						null,
+//						null,
+//						null));
+//		
+//		this.gameThread.updateDisplay(this.screenContent);
+//	}
 	
-	private void updateBoardNewGame()
+	void updateBoardGeneral()
 	{
-		ArrayList<ScreenContentBoardPlanet> plData = new ArrayList<ScreenContentBoardPlanet>(this.planetsCount);
+		if (this.screenContent == null) this.screenContent = new ScreenContent();
+		
+		// Planets
+		ArrayList<ScreenContentBoardPlanet> scbPlanets = new ArrayList<ScreenContentBoardPlanet>();
 		
 		for (int planetIndex = 0; planetIndex < this.planetsCount; planetIndex++)
 		{
-			if (this.planets[planetIndex].isNeutral())
-				plData.add(new ScreenContentBoardPlanet(
-						this.getPlanetNameFromIndex(planetIndex),
-						this.planets[planetIndex].getPosition(),
-						Colors.NEUTRAL,
-						null));
-			else
-				plData.add(new ScreenContentBoardPlanet(
-						this.getPlanetNameFromIndex(planetIndex),
-						this.planets[planetIndex].getPosition(),
-						Colors.WHITE,
-						null));
+			scbPlanets.add(new ScreenContentBoardPlanet(
+								this.getPlanetNameFromIndex(planetIndex),
+								this.planets[planetIndex].getPosition(),
+								this.planets[planetIndex].getOwnerColorIndex(this),
+								null));
 		}
 		
-		if (this.screenContent == null)
-			this.screenContent = new ScreenContent();
+		// Objects (draw Black Hole only)
+		ArrayList<ScreenContentBoardObject> scbObjects = new ArrayList<ScreenContentBoardObject>(); 
 		
-		this.screenContent.setBoard(
-				new ScreenContentBoard(
-						plData,
-						null,
-						null,
-						null));
+		Optional<Ship> ship = this.ships.stream().filter(s -> s.getType() == ShipType.BLACK_HOLE).findFirst();
+		if (ship.isPresent())
+		{
+			scbObjects.add(this.updateBoardGetBlackHoleScreenContentBoardObject(ship.get()));
+		}
 		
-		this.gameThread.updateDisplay(this.screenContent);
+		this.setScreenContentBoard(
+			new ScreenContentBoard(
+				scbPlanets,
+				null,
+				scbObjects,
+				null));
 	}
+	
+	ScreenContentBoardObject updateBoardGetBlackHoleScreenContentBoardObject(Ship ship)
+	{
+		return new ScreenContentBoardObject(
+				ship.hashCode(),
+				ship.getPositionOnDay(0),
+				null,
+				ship.getScreenDisplaySymbol(),
+				ship.getOwnerColorIndex(this),
+				false,
+				false,
+				new ScreenContentBoardRadar(
+						false,
+						true,
+						Game.BLACK_HOLE_RANGE));
+	}
+	
 	
 	private void updatePlanetListAllShips (int playerIndexEnterMoves)
 	{
@@ -2570,6 +2631,9 @@ public class Game extends EmailTransportBase implements Serializable
 				if (newGame && planet.getOwner() == Player.NEUTRAL)
 					continue;
 				
+				if (playerIndexEnterMoves == Player.NEUTRAL && planet.getOwner() == Player.NEUTRAL)
+					continue;
+				
 				if (isFirstLine)
 				{
 					if (playerIndex != Player.NEUTRAL)
@@ -2738,7 +2802,7 @@ public class Game extends EmailTransportBase implements Serializable
 				new ScreenContentPlanets(
 						title,
 						Colors.NEUTRAL,
-						this.console.isEnablePlanetListContentToggle(),
+						playerIndexEnterMoves != Player.NEUTRAL && this.console.isEnablePlanetListContentToggle(),
 						text, 
 						textCol));
 		
