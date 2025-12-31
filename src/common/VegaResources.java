@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FY
+		// Last used symbolic key: FZ
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -588,6 +588,7 @@ public class VegaResources
 		symbolDict.put("FW","CountBattleshipsStart_FW");
 		symbolDict.put("FX","NoRecentGames_FX");
 		symbolDict.put("FY","RecentGames_FY");
+		symbolDict.put("FZ","ToFrom_FZ");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4494,5 +4495,12 @@ public class VegaResources
 	   */
 	public static String RecentGames(boolean symbol) {
 		return symbol ? "£FY£":messages.getString("RecentGames_FY");
+	}
+
+	/**
+	   * To/From [FZ]
+	   */
+	public static String ToFrom(boolean symbol) {
+		return symbol ? "£FZ£":messages.getString("ToFrom_FZ");
 	}
 }
