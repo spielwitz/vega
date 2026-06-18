@@ -1346,7 +1346,7 @@ class EnterMoves
 			return;
 
 		this.game.getConsole().setHeaderText(
-				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" " + this.game.getPlayers()[this.playerIndexNow].getName() + " -> " + VegaResources.Planet(true, this.game.getPlanetNameFromIndex(planetIndex)),
+				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" " + this.game.getPlayers()[this.playerIndexNow].getName() + " -> " + VegaResources.Planet(false),
 				this.game.getPlayers()[this.playerIndexNow].getColorIndex());
 
 		new PlanetEditor(

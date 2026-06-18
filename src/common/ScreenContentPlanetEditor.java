@@ -37,6 +37,8 @@ class ScreenContentPlanetEditor implements Serializable
 	private int combatFactorBuy;
 	private int defensiveBattleshipsBuy;
 	private int defensiveBattleshipsSell;
+	private String planetName;
+	private String ownerName;
 	
 	ScreenContentPlanetEditor(
 			ShipType typeHighlighted,
@@ -45,6 +47,8 @@ class ScreenContentPlanetEditor implements Serializable
 			Hashtable<ShipType, Integer> pricesSell,
 			HashSet<ShipType> buyImpossible,
 			HashSet<ShipType> sellImpossible,
+			String planetName,
+			String ownerName,
 			byte colorIndex,
 			int moneySupply,
 			int productionIncrese,
@@ -67,6 +71,8 @@ class ScreenContentPlanetEditor implements Serializable
 		this.combatFactorBuy = combatFactorBuy;
 		this.defensiveBattleshipsBuy = defensiveBattleshipsBuy;
 		this.defensiveBattleshipsSell = defensiveBattleshipsSell;
+		this.planetName = planetName;
+		this.ownerName = ownerName;
 	}
 
 	HashSet<ShipType> getBuyImpossible() {
@@ -85,23 +91,19 @@ class ScreenContentPlanetEditor implements Serializable
 		return moneySupply;
 	}
 
-
 	int getPriceBuy(ShipType shipType) 
 	{
 		return this.pricesBuy.get(shipType);
 	}
-
 
 	int getPriceSell(ShipType shipType) 
 	{
 		return this.pricesSell.get(shipType);
 	}
 
-
 	HashSet<ShipType> getSellImpossible() {
 		return sellImpossible;
 	}
-
 
 	ShipType getTypeHighlighted() {
 		return typeHighlighted;
@@ -130,5 +132,15 @@ class ScreenContentPlanetEditor implements Serializable
 	int getDefensiveBattleshipsSell()
 	{
 		return defensiveBattleshipsSell;
+	}
+	
+	String getPlanetName()
+	{
+		return planetName;
+	}
+
+	String getOwnerName()
+	{
+		return ownerName;
 	}
 }

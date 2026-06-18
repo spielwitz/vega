@@ -667,41 +667,80 @@ public class ScreenPainter
 			return;
 		
 		this.setColor(new Color(50, 50, 50));
+		
 		this.drawRect(
 				BOARD_OFFSET_X,
 				BOARD_OFFSET_Y,
 				SCREEN_WIDTH - 2 * BOARD_OFFSET_X,
 				Game.BOARD_MAX_Y * BOARD_DX);
 		
-		this.drawPlanetEditorTextLeft(CommonUtils.padString(screenContentPlanetEditor.getMoneySupply(),4), PLANET_EDITOR_COLUMN1, 1, Colors.get(screenContentPlanetEditor.getColorIndex()));
-		this.drawPlanetEditorTextLeft(VegaResources.MoneySupply(false), PLANET_EDITOR_COLUMN1+5, 1, Colors.get(Colors.NEUTRAL));
+		this.drawPlanetEditorTextLeft(
+				VegaResources.PlanetEditorTitle(
+						false, 
+						screenContentPlanetEditor.getPlanetName(),
+						screenContentPlanetEditor.getOwnerName()),
+				PLANET_EDITOR_COLUMN1 + 5, 
+				1, 
+				Colors.get(screenContentPlanetEditor.getColorIndex()));
 		
-		this.drawPlanetEditorTextCentered(VegaResources.BuyPrice(false), PLANET_EDITOR_COLUMN2+9, 1, Colors.get(Colors.NEUTRAL));
-		this.drawPlanetEditorTextCentered(VegaResources.SellPrice(false), PLANET_EDITOR_COLUMN3+9, 1, Colors.get(Colors.NEUTRAL));
+		this.drawPlanetEditorTextCentered(
+				VegaResources.BuyPrice(false), 
+				PLANET_EDITOR_COLUMN2+9, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
 		
-		this.drawPlanetEditorLine(ShipType.MONEY_PRODUCTION, screenContentPlanetEditor, 
+		this.drawPlanetEditorTextCentered(
+				VegaResources.SellPrice(false), 
+				PLANET_EDITOR_COLUMN3+9, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				CommonUtils.padString(screenContentPlanetEditor.getMoneySupply(),4), 
+				PLANET_EDITOR_COLUMN1, 
+				3, 
+				Color.WHITE);
+		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.MoneySupply(false),
+				PLANET_EDITOR_COLUMN1+5,
+				3, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorLine(
+				ShipType.MONEY_PRODUCTION, 
+				screenContentPlanetEditor, 
 				VegaResources.IncreaseMoneyProduction(
 						false, 
 						Integer.toString(screenContentPlanetEditor.getProductionIncrese())), 
-				3);
-		this.drawPlanetEditorLine(ShipType.BATTLESHIP_PRODUCTION, screenContentPlanetEditor, VegaResources.ProductionOfBattleships(false), 4);
-		this.drawPlanetEditorLine(ShipType.DEFENSIVE_BATTLESHIPS, screenContentPlanetEditor, 
+				4);
+		
+		this.drawPlanetEditorLine(
+				ShipType.BATTLESHIP_PRODUCTION, 
+				screenContentPlanetEditor, 
+				VegaResources.ProductionOfBattleships(false), 
+				5);
+		
+		this.drawPlanetEditorLine(
+				ShipType.DEFENSIVE_BATTLESHIPS, 
+				screenContentPlanetEditor, 
 				VegaResources.BuySellDefensiveBattleships(
 						false, 
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsBuy()), 
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsSell())), 
-				5);
-		this.drawPlanetEditorLine(ShipType.BONUS, screenContentPlanetEditor, 
+				6);
+		
+		this.drawPlanetEditorLine(
+				ShipType.BONUS, screenContentPlanetEditor, 
 				VegaResources.BuySellCombatStrength(
 						false,
 						Integer.toString(screenContentPlanetEditor.getCombatFactorBuy())), 
-				6);
+				7);
 		
-		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 8);
-		this.drawPlanetEditorLine(ShipType.TRANSPORT, screenContentPlanetEditor, VegaResources.TransporterPlural(false), 9);
-		this.drawPlanetEditorLine(ShipType.PATROL, screenContentPlanetEditor, VegaResources.PatrouillePlural(false), 10);
-		this.drawPlanetEditorLine(ShipType.MINESWEEPER, screenContentPlanetEditor, VegaResources.MinenraeumerPlural(false), 11);
-		
+		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 9);
+		this.drawPlanetEditorLine(ShipType.TRANSPORT, screenContentPlanetEditor, VegaResources.TransporterPlural(false), 10);
+		this.drawPlanetEditorLine(ShipType.PATROL, screenContentPlanetEditor, VegaResources.PatrouillePlural(false), 11);
+		this.drawPlanetEditorLine(ShipType.MINESWEEPER, screenContentPlanetEditor, VegaResources.MinenraeumerPlural(false), 12);
 		this.drawPlanetEditorLine(ShipType.MINE50, screenContentPlanetEditor, VegaResources.Mine50Plural(false), 13);
 		this.drawPlanetEditorLine(ShipType.MINE100, screenContentPlanetEditor, VegaResources.Mine100Plural(false), 14);
 		this.drawPlanetEditorLine(ShipType.MINE250, screenContentPlanetEditor, VegaResources.Mine250Plural(false), 15);
@@ -714,7 +753,12 @@ public class ScreenPainter
 			String name, 
 			int line)
 	{
-		this.drawPlanetEditorTextLeft(CommonUtils.padString(screenContentPlanetEditor.getCount().get(type),4), PLANET_EDITOR_COLUMN1, line, Colors.get(screenContentPlanetEditor.getColorIndex()));
+		this.drawPlanetEditorTextLeft(
+				CommonUtils.padString(screenContentPlanetEditor.getCount().get(type),4), 
+				PLANET_EDITOR_COLUMN1, 
+				line, 
+				Color.WHITE);
+		
 		this.drawPlanetEditorTextLeft(name, PLANET_EDITOR_COLUMN1+5, line, 
 				!screenContentPlanetEditor.isReadOnly() && screenContentPlanetEditor.getTypeHighlighted() == type ?
 						Color.white :
@@ -726,7 +770,7 @@ public class ScreenPainter
 		if (type == ShipType.BATTLESHIP_PRODUCTION)
 			return;
 		
-		byte colorIndex = screenContentPlanetEditor.getColorIndex();
+		byte colorIndex = Colors.WHITE;
 		if (screenContentPlanetEditor.getBuyImpossible().contains(type))
 			colorIndex = Colors.NEUTRAL;
 				
@@ -734,16 +778,27 @@ public class ScreenPainter
 				CommonUtils.padString(
 						screenContentPlanetEditor.getPriceBuy(type),
 						2), 
-				PLANET_EDITOR_COLUMN2 + 4, line, Colors.get(colorIndex));
-		this.drawPlanetEditorTextLeft(VegaResources.Money(false), PLANET_EDITOR_COLUMN2+7, line, Colors.get(colorIndex));
+				PLANET_EDITOR_COLUMN2 + 4, 
+				line, 
+				Colors.get(colorIndex));
 		
-		this.drawPlanetEditorTextLeft(this.getPriceRangeString(type, false), PLANET_EDITOR_COLUMN2+9, line, Colors.get(Colors.NEUTRAL));
+		this.drawPlanetEditorTextLeft(
+				VegaResources.Money(false), 
+				PLANET_EDITOR_COLUMN2+7, 
+				line, 
+				Colors.get(colorIndex));
+		
+		this.drawPlanetEditorTextLeft(
+				this.getPriceRangeString(type, false), 
+				PLANET_EDITOR_COLUMN2+9, 
+				line, 
+				Colors.get(Colors.NEUTRAL));
 		
 		if (type == ShipType.MONEY_PRODUCTION ||
 			type == ShipType.BONUS)
 			return;
 		
-		colorIndex = screenContentPlanetEditor.getColorIndex();
+		colorIndex = Colors.WHITE;
 		if (screenContentPlanetEditor.getSellImpossible().contains(type))
 			colorIndex = Colors.NEUTRAL;
 		
@@ -751,10 +806,21 @@ public class ScreenPainter
 				CommonUtils.padString(
 						screenContentPlanetEditor.getPriceSell(type),
 						2), 
-				PLANET_EDITOR_COLUMN3 + 4, line, Colors.get(colorIndex));
-		this.drawPlanetEditorTextLeft(VegaResources.Money(false), PLANET_EDITOR_COLUMN3+7, line, Colors.get(colorIndex));
+				PLANET_EDITOR_COLUMN3 + 4, 
+				line, 
+				Colors.get(colorIndex));
 		
-		this.drawPlanetEditorTextLeft(this.getPriceRangeString(type, true), PLANET_EDITOR_COLUMN3+9, line, Colors.get(Colors.NEUTRAL));
+		this.drawPlanetEditorTextLeft(
+				VegaResources.Money(false), 
+				PLANET_EDITOR_COLUMN3+7, 
+				line, 
+				Colors.get(colorIndex));
+		
+		this.drawPlanetEditorTextLeft(
+				this.getPriceRangeString(type, true), 
+				PLANET_EDITOR_COLUMN3+9, 
+				line, 
+				Colors.get(Colors.NEUTRAL));
 		
 	}
 		

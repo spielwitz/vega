@@ -49,6 +49,24 @@ public class Migrator
 			jobj.addProperty(PROP_BUILD, "0004");
 			migrate(jobj);
 		}
+		else if (build.compareTo("0009") < 0)
+		{
+			JsonObject jsonObjectEditorPrices = (JsonObject)jobj.get("editorPrices");
+			
+			if (jsonObjectEditorPrices != null)
+			{
+				int bonusPrice =
+						CommonUtils.getRandomInteger(
+								Planet.PRICES_MIN_MAX.get(ShipType.BONUS).getMax() -
+								Planet.PRICES_MIN_MAX.get(ShipType.BONUS).getMin() + 1) +
+						Planet.PRICES_MIN_MAX.get(ShipType.BONUS).getMin();
+				
+				jsonObjectEditorPrices.add("BONUS", new JsonPrimitive(bonusPrice));
+			}
+			
+			jobj.addProperty(PROP_BUILD, "0009");
+			migrate(jobj);
+		}
 		else if (build.compareTo("0012") < 0)
 		{
 			JsonArray jsonArrayOptions = (JsonArray)jobj.get("options");

@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FZ
+		// Last used symbolic key: G0
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -589,6 +589,7 @@ public class VegaResources
 		symbolDict.put("FX","NoRecentGames_FX");
 		symbolDict.put("FY","RecentGames_FY");
 		symbolDict.put("FZ","ToFrom_FZ");
+		symbolDict.put("G0","PlanetEditorTitle_G0");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4502,5 +4503,12 @@ public class VegaResources
 	   */
 	public static String ToFrom(boolean symbol) {
 		return symbol ? "£FZ£":messages.getString("ToFrom_FZ");
+	}
+
+	/**
+	   * Planet {0} ({1}) [G0]
+	   */
+	public static String PlanetEditorTitle(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£G0§"+arg0+"§"+arg1+"£":format(messages.getString("PlanetEditorTitle_G0"), new Object[]{arg0,arg1});
 	}
 }

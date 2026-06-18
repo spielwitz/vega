@@ -308,7 +308,7 @@ class PlanetEditor
 		if (this.game.getScreenContent() == null)
 			this.game.setScreenContent(new ScreenContent());
 
-		byte colorIndex = Colors.WHITE;
+		byte colorIndex = planet.getOwnerColorIndex(game);
 		
 		@SuppressWarnings("unchecked")
 		Hashtable<ShipType,Integer> pricesBuyClone = (Hashtable<ShipType, Integer>) CommonUtils.klon(this.pricesBuy);
@@ -336,6 +336,10 @@ class PlanetEditor
 						pricesSellClone,
 						buyImpossible,
 						sellImpossible,
+						game.getPlanetNameFromIndex(planetIndex),
+						planet.getOwner() == Player.NEUTRAL ? 
+								VegaResources.Neutral(true) : 
+								game.getPlayers()[planet.getOwner()].getName(),
 						colorIndex,
 						planet.getMoneySupply(),
 						planet.getMoneyProductionMaxIncrease(),
