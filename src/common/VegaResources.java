@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: G1
+		// Last used symbolic key: G2
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -590,6 +590,7 @@ public class VegaResources
 		symbolDict.put("FZ","ToFrom_FZ");
 		symbolDict.put("G0","PlanetEditorTitle_G0");
 		symbolDict.put("G1","None_G1");
+		symbolDict.put("G2","Allies_G2");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4510,5 +4511,12 @@ public class VegaResources
 	   */
 	public static String None(boolean symbol) {
 		return symbol ? "£G1£":messages.getString("None_G1");
+	}
+
+	/**
+	   * Allies [G2]
+	   */
+	public static String Allies(boolean symbol) {
+		return symbol ? "£G2£":messages.getString("Allies_G2");
 	}
 }

@@ -31,6 +31,7 @@ class ScreenContentPlanetEditor implements Serializable
 	private HashSet<ShipType> buyImpossible;
 	private HashSet<ShipType> sellImpossible;
 	
+	private ArrayList<String> alliancePartners;
 	private ArrayList<String> activeSpies;
 	
 	private boolean readOnly;
@@ -50,6 +51,7 @@ class ScreenContentPlanetEditor implements Serializable
 			Hashtable<ShipType, Integer> pricesSell,
 			HashSet<ShipType> buyImpossible,
 			HashSet<ShipType> sellImpossible,
+			ArrayList<String> alliancePartners,
 			ArrayList<String> activeSpies,
 			String planetName,
 			String ownerName,
@@ -68,6 +70,7 @@ class ScreenContentPlanetEditor implements Serializable
 		this.pricesSell = pricesSell;
 		this.buyImpossible = buyImpossible;
 		this.sellImpossible = sellImpossible;
+		this.alliancePartners = alliancePartners;
 		this.activeSpies = activeSpies;
 		this.colorIndex = colorIndex;
 		this.moneySupply = moneySupply;
@@ -147,6 +150,11 @@ class ScreenContentPlanetEditor implements Serializable
 	String getOwnerName()
 	{
 		return ownerName;
+	}
+	
+	ArrayList<String> getAlliancePartners()
+	{
+		return alliancePartners;
 	}
 	
 	ArrayList<String> getActiveSpies()

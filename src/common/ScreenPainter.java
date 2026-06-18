@@ -703,12 +703,6 @@ public class ScreenPainter
 				Colors.get(Colors.NEUTRAL));
 		
 		this.drawPlanetEditorTextLeft(
-				VegaResources.ActiveSpies(false), 
-				PLANET_EDITOR_COLUMN4, 
-				2, 
-				Colors.get(Colors.NEUTRAL));
-
-		this.drawPlanetEditorTextLeft(
 				CommonUtils.padString(screenContentPlanetEditor.getMoneySupply(),4), 
 				PLANET_EDITOR_COLUMN1, 
 				3, 
@@ -771,6 +765,41 @@ public class ScreenPainter
 		this.drawPlanetEditorLine(ShipType.MINE250, screenContentPlanetEditor, VegaResources.Mine250Plural(false), 15);
 		this.drawPlanetEditorLine(ShipType.MINE500, screenContentPlanetEditor, VegaResources.Mine500Plural(false), 16);
 		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.Allies(false), 
+				PLANET_EDITOR_COLUMN4, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
+		
+		if (screenContentPlanetEditor.getAlliancePartners().size() > 0)
+		{
+			for (String allyString: screenContentPlanetEditor.getAlliancePartners())
+			{
+				byte colorIndex = Byte.parseByte(allyString.substring(0, 1));
+				String playerName = allyString.substring(1);
+				
+				this.drawPlanetEditorTextLeft(
+						playerName, 
+						PLANET_EDITOR_COLUMN4, 
+						3 + screenContentPlanetEditor.getAlliancePartners().indexOf(allyString), 
+						Colors.get(colorIndex));
+			}
+		}
+		else
+		{
+			this.drawPlanetEditorTextLeft(
+					VegaResources.None(false), 
+					PLANET_EDITOR_COLUMN4, 
+					3, 
+					Colors.get(Colors.NEUTRAL));
+		}
+		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.ActiveSpies(false), 
+				PLANET_EDITOR_COLUMN4, 
+				10, 
+				Colors.get(Colors.NEUTRAL));
+		
 		if (screenContentPlanetEditor.getActiveSpies().size() > 0)
 		{
 			for (String activeSpyString: screenContentPlanetEditor.getActiveSpies())
@@ -781,7 +810,7 @@ public class ScreenPainter
 				this.drawPlanetEditorTextLeft(
 						playerName, 
 						PLANET_EDITOR_COLUMN4, 
-						3 + screenContentPlanetEditor.getActiveSpies().indexOf(activeSpyString), 
+						11 + screenContentPlanetEditor.getActiveSpies().indexOf(activeSpyString), 
 						Colors.get(colorIndex));
 			}
 		}
@@ -790,7 +819,7 @@ public class ScreenPainter
 			this.drawPlanetEditorTextLeft(
 					VegaResources.None(false), 
 					PLANET_EDITOR_COLUMN4, 
-					3, 
+					11, 
 					Colors.get(Colors.NEUTRAL));
 		}
 	}

@@ -328,6 +328,17 @@ class PlanetEditor
 				ShipType.DEFENSIVE_BATTLESHIPS, 
 				planet.getDefensiveBattleshipsSellActualPrice(this.pricesSell.get(ShipType.DEFENSIVE_BATTLESHIPS)));
 		
+		ArrayList<String> alliancePartners = new ArrayList<String>();
+		
+		for (int playerIndex = 0; playerIndex < game.getPlayers().length; playerIndex++)
+		{
+			if (planet.isAllianceMember(playerIndex))
+			{
+				Player player = game.getPlayers()[playerIndex];
+				alliancePartners.add(Integer.toString(player.getColorIndex()) + game.getPlayers()[playerIndex].getName());
+			}
+		}
+		
 		ArrayList<String> activeSpies = new ArrayList<String>();
 		
 		for (int playerIndex = 0; playerIndex < game.getPlayers().length; playerIndex++)
@@ -347,6 +358,7 @@ class PlanetEditor
 						pricesSellClone,
 						buyImpossible,
 						sellImpossible,
+						alliancePartners,
 						activeSpies,
 						game.getPlanetNameFromIndex(planetIndex),
 						planet.getOwner() == Player.NEUTRAL ? 
