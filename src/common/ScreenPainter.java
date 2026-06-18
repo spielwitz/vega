@@ -43,8 +43,9 @@ public class ScreenPainter
 	private static final int		SHIP_SIZE_PIXEL_MIN = 2;
 	
 	private static final int 		PLANET_EDITOR_COLUMN1 = 5;
-	private static final int 		PLANET_EDITOR_COLUMN2 = 49;
-	private static final int 		PLANET_EDITOR_COLUMN3 = 70;
+	private static final int 		PLANET_EDITOR_COLUMN2 = 40; // 49
+	private static final int 		PLANET_EDITOR_COLUMN3 = 58; // 70
+	private static final int 		PLANET_EDITOR_COLUMN4 = 80;
 	
 	private static final String 	CURSOR_CHARACTER = "_";
 	
@@ -696,6 +697,18 @@ public class ScreenPainter
 				Colors.get(Colors.NEUTRAL));
 		
 		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.ActiveSpies(false), 
+				PLANET_EDITOR_COLUMN4, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
+
+		this.drawPlanetEditorTextLeft(
 				CommonUtils.padString(screenContentPlanetEditor.getMoneySupply(),4), 
 				PLANET_EDITOR_COLUMN1, 
 				3, 
@@ -704,6 +717,12 @@ public class ScreenPainter
 		this.drawPlanetEditorTextLeft(
 				VegaResources.MoneySupply(false),
 				PLANET_EDITOR_COLUMN1+5,
+				3, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
 				3, 
 				Colors.get(Colors.NEUTRAL));
 		
@@ -737,6 +756,12 @@ public class ScreenPainter
 						Integer.toString(screenContentPlanetEditor.getCombatFactorBuy())), 
 				7);
 		
+		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
+				8, 
+				Colors.get(Colors.NEUTRAL));
+		
 		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 9);
 		this.drawPlanetEditorLine(ShipType.TRANSPORT, screenContentPlanetEditor, VegaResources.TransporterPlural(false), 10);
 		this.drawPlanetEditorLine(ShipType.PATROL, screenContentPlanetEditor, VegaResources.PatrouillePlural(false), 11);
@@ -745,6 +770,29 @@ public class ScreenPainter
 		this.drawPlanetEditorLine(ShipType.MINE100, screenContentPlanetEditor, VegaResources.Mine100Plural(false), 14);
 		this.drawPlanetEditorLine(ShipType.MINE250, screenContentPlanetEditor, VegaResources.Mine250Plural(false), 15);
 		this.drawPlanetEditorLine(ShipType.MINE500, screenContentPlanetEditor, VegaResources.Mine500Plural(false), 16);
+		
+		if (screenContentPlanetEditor.getActiveSpies().size() > 0)
+		{
+			for (String activeSpyString: screenContentPlanetEditor.getActiveSpies())
+			{
+				byte colorIndex = Byte.parseByte(activeSpyString.substring(0, 1));
+				String playerName = activeSpyString.substring(1);
+				
+				this.drawPlanetEditorTextLeft(
+						playerName, 
+						PLANET_EDITOR_COLUMN4, 
+						3 + screenContentPlanetEditor.getActiveSpies().indexOf(activeSpyString), 
+						Colors.get(colorIndex));
+			}
+		}
+		else
+		{
+			this.drawPlanetEditorTextLeft(
+					VegaResources.None(false), 
+					PLANET_EDITOR_COLUMN4, 
+					3, 
+					Colors.get(Colors.NEUTRAL));
+		}
 	}
 	
 	private void drawPlanetEditorLine(
@@ -763,6 +811,12 @@ public class ScreenPainter
 				!screenContentPlanetEditor.isReadOnly() && screenContentPlanetEditor.getTypeHighlighted() == type ?
 						Color.white :
 						Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
+				line, 
+				Colors.get(Colors.NEUTRAL));
 		
 		if (!screenContentPlanetEditor.isReadOnly() && screenContentPlanetEditor.getTypeHighlighted() == type)
 			this.drawPlanetEditorTextLeft(">>>>", 0, line, Color.white);

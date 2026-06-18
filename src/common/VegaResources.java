@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: G0
+		// Last used symbolic key: G1
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -172,7 +172,6 @@ public class VegaResources
 		symbolDict.put("3U","PlanetIsAttacked_3U");
 		symbolDict.put("3V","PlanetShort_3V");
 		symbolDict.put("3W","Planet_3W");
-		symbolDict.put("3X","Planet_3X");
 		symbolDict.put("3Y","PlanetsAlliancesSpies_3Y");
 		symbolDict.put("3Z","PlanetsInYear_3Z");
 		symbolDict.put("40","PlanetsProducing_40");
@@ -590,6 +589,7 @@ public class VegaResources
 		symbolDict.put("FY","RecentGames_FY");
 		symbolDict.put("FZ","ToFrom_FZ");
 		symbolDict.put("G0","PlanetEditorTitle_G0");
+		symbolDict.put("G1","None_G1");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -1584,13 +1584,6 @@ public class VegaResources
 	   */
 	public static String Planet(boolean symbol) {
 		return symbol ? "£3W£":messages.getString("Planet_3W");
-	}
-
-	/**
-	   * Planet {0} [3X]
-	   */
-	public static String Planet(boolean symbol, String arg0) {
-		return symbol ? "£3X§"+arg0+"£":format(messages.getString("Planet_3X"), new Object[]{arg0});
 	}
 
 	/**
@@ -4510,5 +4503,12 @@ public class VegaResources
 	   */
 	public static String PlanetEditorTitle(boolean symbol, String arg0, String arg1) {
 		return symbol ? "£G0§"+arg0+"§"+arg1+"£":format(messages.getString("PlanetEditorTitle_G0"), new Object[]{arg0,arg1});
+	}
+
+	/**
+	   * (none) [G1]
+	   */
+	public static String None(boolean symbol) {
+		return symbol ? "£G1£":messages.getString("None_G1");
 	}
 }

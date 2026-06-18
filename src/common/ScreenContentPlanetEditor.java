@@ -17,6 +17,7 @@
 package common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -29,6 +30,8 @@ class ScreenContentPlanetEditor implements Serializable
 	private Hashtable<ShipType, Integer> pricesSell;
 	private HashSet<ShipType> buyImpossible;
 	private HashSet<ShipType> sellImpossible;
+	
+	private ArrayList<String> activeSpies;
 	
 	private boolean readOnly;
 	private byte colorIndex;
@@ -47,6 +50,7 @@ class ScreenContentPlanetEditor implements Serializable
 			Hashtable<ShipType, Integer> pricesSell,
 			HashSet<ShipType> buyImpossible,
 			HashSet<ShipType> sellImpossible,
+			ArrayList<String> activeSpies,
 			String planetName,
 			String ownerName,
 			byte colorIndex,
@@ -64,6 +68,7 @@ class ScreenContentPlanetEditor implements Serializable
 		this.pricesSell = pricesSell;
 		this.buyImpossible = buyImpossible;
 		this.sellImpossible = sellImpossible;
+		this.activeSpies = activeSpies;
 		this.colorIndex = colorIndex;
 		this.moneySupply = moneySupply;
 		this.readOnly = readOnly;
@@ -142,5 +147,10 @@ class ScreenContentPlanetEditor implements Serializable
 	String getOwnerName()
 	{
 		return ownerName;
+	}
+	
+	ArrayList<String> getActiveSpies()
+	{
+		return activeSpies;
 	}
 }

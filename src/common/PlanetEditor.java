@@ -327,6 +327,17 @@ class PlanetEditor
 		pricesSellClone.put(
 				ShipType.DEFENSIVE_BATTLESHIPS, 
 				planet.getDefensiveBattleshipsSellActualPrice(this.pricesSell.get(ShipType.DEFENSIVE_BATTLESHIPS)));
+		
+		ArrayList<String> activeSpies = new ArrayList<String>();
+		
+		for (int playerIndex = 0; playerIndex < game.getPlayers().length; playerIndex++)
+		{
+			if (planet.hasRadioStation(playerIndex))
+			{
+				Player player = game.getPlayers()[playerIndex];
+				activeSpies.add(Integer.toString(player.getColorIndex()) + game.getPlayers()[playerIndex].getName());
+			}
+		}
 
 		this.game.getScreenContent().setPlanetEditor(
 				new ScreenContentPlanetEditor(
@@ -336,6 +347,7 @@ class PlanetEditor
 						pricesSellClone,
 						buyImpossible,
 						sellImpossible,
+						activeSpies,
 						game.getPlanetNameFromIndex(planetIndex),
 						planet.getOwner() == Player.NEUTRAL ? 
 								VegaResources.Neutral(false) : 
