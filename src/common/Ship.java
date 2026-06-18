@@ -32,6 +32,11 @@ class Ship implements Serializable
 			Point positionStart,
 			Point positionDestination)
 	{
+		if (positionStart.equals(positionDestination))
+		{
+			return new ShipTravelTime(0, 0);
+		}
+		
 		double dist = positionStart.distance(positionDestination);
 		double v = (double)getSpeed(type, transfer);
 		
@@ -50,6 +55,11 @@ class Ship implements Serializable
 	}
 	private static ShipTravelTime getTravelTimeInternal(double dist, double v)
 	{
+		if (dist == 0.0)
+		{
+			return new ShipTravelTime(0, 0);
+		}
+		
 		double yearFraction = dist/v;
 		
 		int daysCount = CommonUtils.round(yearFraction * (double)Game.DAYS_OF_YEAR_COUNT);

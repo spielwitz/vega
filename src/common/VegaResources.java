@@ -252,7 +252,6 @@ public class VegaResources
 		symbolDict.put("67","TerminateAlliance_67");
 		symbolDict.put("68","TextFile_68");
 		symbolDict.put("69","ThereAreNoMoves_69");
-		symbolDict.put("6A","ThisIsTheStartPlanet_6A");
 		symbolDict.put("6B","Timeout_6B");
 		symbolDict.put("6C","ToShort_6C");
 		symbolDict.put("6D","ToWhichPlanetBattleships_6D");
@@ -2145,13 +2144,6 @@ public class VegaResources
 	   */
 	public static String ThereAreNoMoves(boolean symbol) {
 		return symbol ? "£69£":messages.getString("ThereAreNoMoves_69");
-	}
-
-	/**
-	   * This is the start planet. Enter a different destination. [6A]
-	   */
-	public static String ThisIsTheStartPlanet(boolean symbol) {
-		return symbol ? "£6A£":messages.getString("ThisIsTheStartPlanet_6A");
 	}
 
 	/**

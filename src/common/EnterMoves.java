@@ -328,20 +328,12 @@ class EnterMoves
 
 			planetIndexDestination = input.planetIndex;
 
-			if (planetIndexStart != planetIndexDestination)
-			{
-				this.showArrivalDate(
-						ShipType.BATTLESHIPS, 
-						false, 
-						this.game.getPlanets()[planetIndexStart].getPosition(), 
-						this.game.getPlanets()[planetIndexDestination].getPosition());
-				break;
-			}
-			else
-			{
-				this.game.getConsole().appendText(VegaResources.ThisIsTheStartPlanet(true));
-				this.game.getConsole().lineBreak();
-			}
+			this.showArrivalDate(
+					ShipType.BATTLESHIPS, 
+					false, 
+					this.game.getPlanets()[planetIndexStart].getPosition(), 
+					this.game.getPlanets()[planetIndexDestination].getPosition());
+			break;
 
 		} while (true);
 
@@ -1113,13 +1105,6 @@ class EnterMoves
 				return;
 			}
 
-			if (inputDestination.sector.equals(this.game.getPlanets()[planetIndexStart].getPosition()))
-			{
-				this.game.getConsole().appendText(VegaResources.ThisIsTheStartPlanet(true));
-				this.game.getConsole().lineBreak();
-				continue;
-			}
-			
 			this.showArrivalDate(
 					type, 
 					transfer, 
@@ -1268,13 +1253,6 @@ class EnterMoves
 			if (inputDestination == null)
 			{
 				return;
-			}
-
-			if (inputDestination.sector.equals(this.game.getPlanets()[planetIndexStart].getPosition()))
-			{
-				this.game.getConsole().appendText(VegaResources.ThisIsTheStartPlanet(true));
-				this.game.getConsole().lineBreak();
-				continue;
 			}
 
 			this.showArrivalDate(
@@ -1501,10 +1479,10 @@ class EnterMoves
 		this.game.getConsole().appendText(VegaResources.Distance(true, distanceString) + ", ");
 		
 		ShipTravelTime travelTime = Ship.getTravelTime(
-				type, 
-				transfer, 
-				posStart, 
-				posDest);
+								type, 
+								transfer, 
+								posStart, 
+								posDest);
 
 		this.game.getConsole().appendText(VegaResources.Arrival2(true));
 
@@ -1584,16 +1562,6 @@ class EnterMoves
 			}
 
 			planetIndexDestination = input.planetIndex;
-
-			if (planetIndexDestination == planetIndexStart &&
-				(type == ShipType.TRANSPORT ||
-				 (type == ShipType.SPY && transfer)))
-			{
-				this.game.getConsole().appendText(
-						VegaResources.ThisIsTheStartPlanet(true));
-				this.game.getConsole().lineBreak();
-				continue;
-			}
 			
 			this.showArrivalDate(
 					type, 

@@ -22,8 +22,8 @@ import java.io.Serializable;
 @SuppressWarnings("serial") 
 class Point extends Point2D.Double implements Serializable
 {
-	private static final 	Point zeroPoint = new Point(0, 0);
-	static final 			double PRECISION = 0.000001;
+	static final 	Point zeroPoint = new Point(0, 0);
+	static final 	double PRECISION = 0.000001;
 
 	Point(double x, double y)
 	{
