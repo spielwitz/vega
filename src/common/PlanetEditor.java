@@ -338,7 +338,7 @@ class PlanetEditor
 						sellImpossible,
 						game.getPlanetNameFromIndex(planetIndex),
 						planet.getOwner() == Player.NEUTRAL ? 
-								VegaResources.Neutral(true) : 
+								VegaResources.Neutral(false) : 
 								game.getPlayers()[planet.getOwner()].getName(),
 						colorIndex,
 						planet.getMoneySupply(),
