@@ -734,6 +734,24 @@ public class ScreenPainter
 				VegaResources.ProductionOfBattleships(false), 
 				5);
 		
+		this.drawPlanetEditorTextLeft(
+				CommonUtils.padString(screenContentPlanetEditor.getCount().get(ShipType.BATTLESHIPS),4), 
+				PLANET_EDITOR_COLUMN1, 
+				6, 
+				Color.WHITE);
+		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.Battleships(false),
+				PLANET_EDITOR_COLUMN1+5,
+				6, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
+				6, 
+				Colors.get(Colors.NEUTRAL));
+		
 		this.drawPlanetEditorLine(
 				ShipType.DEFENSIVE_BATTLESHIPS, 
 				screenContentPlanetEditor, 
@@ -741,20 +759,14 @@ public class ScreenPainter
 						false, 
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsBuy()), 
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsSell())), 
-				6);
+				7);
 		
 		this.drawPlanetEditorLine(
 				ShipType.BONUS, screenContentPlanetEditor, 
 				VegaResources.BuySellCombatStrength(
 						false,
 						Integer.toString(screenContentPlanetEditor.getCombatFactorBuy())), 
-				7);
-		
-		this.drawPlanetEditorTextLeft(
-				"|", 
-				PLANET_EDITOR_COLUMN4 - 2, 
-				8, 
-				Colors.get(Colors.NEUTRAL));
+				8);
 		
 		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 9);
 		this.drawPlanetEditorLine(ShipType.TRANSPORT, screenContentPlanetEditor, VegaResources.TransporterPlural(false), 10);
@@ -850,7 +862,7 @@ public class ScreenPainter
 		if (!screenContentPlanetEditor.isReadOnly() && screenContentPlanetEditor.getTypeHighlighted() == type)
 			this.drawPlanetEditorTextLeft(">>>>", 0, line, Color.white);
 
-		if (type == ShipType.BATTLESHIP_PRODUCTION)
+		if (type == ShipType.BATTLESHIP_PRODUCTION || type == ShipType.BATTLESHIPS)
 			return;
 		
 		byte colorIndex = Colors.WHITE;

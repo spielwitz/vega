@@ -304,6 +304,8 @@ class PlanetEditor
 			if (count < 1)
 				sellImpossible.add(itemType);
 		}
+		
+		ships.put(ShipType.BATTLESHIPS, CommonUtils.convertToString(planet.getShipsCount(ShipType.BATTLESHIPS)));
 
 		if (this.game.getScreenContent() == null)
 			this.game.setScreenContent(new ScreenContent());
