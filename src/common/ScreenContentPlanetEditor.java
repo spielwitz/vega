@@ -31,8 +31,8 @@ class ScreenContentPlanetEditor implements Serializable
 	private HashSet<ShipType> buyImpossible;
 	private HashSet<ShipType> sellImpossible;
 	
-	private ArrayList<String> alliancePartners;
-	private ArrayList<String> activeSpies;
+	private ArrayList<ScreenContentPlanetEditorPlayerInfo> alliancePartners;
+	private ArrayList<ScreenContentPlanetEditorPlayerInfo> activeSpies;
 	
 	private boolean readOnly;
 	private byte colorIndex;
@@ -51,8 +51,8 @@ class ScreenContentPlanetEditor implements Serializable
 			Hashtable<ShipType, Integer> pricesSell,
 			HashSet<ShipType> buyImpossible,
 			HashSet<ShipType> sellImpossible,
-			ArrayList<String> alliancePartners,
-			ArrayList<String> activeSpies,
+			ArrayList<ScreenContentPlanetEditorPlayerInfo> alliancePartners,
+			ArrayList<ScreenContentPlanetEditorPlayerInfo> activeSpies,
 			String planetName,
 			String ownerName,
 			byte colorIndex,
@@ -152,12 +152,12 @@ class ScreenContentPlanetEditor implements Serializable
 		return ownerName;
 	}
 	
-	ArrayList<String> getAlliancePartners()
+	ArrayList<ScreenContentPlanetEditorPlayerInfo> getAlliancePartners()
 	{
 		return alliancePartners;
 	}
 	
-	ArrayList<String> getActiveSpies()
+	ArrayList<ScreenContentPlanetEditorPlayerInfo> getActiveSpies()
 	{
 		return activeSpies;
 	}

@@ -45,7 +45,7 @@ public class ScreenPainter
 	private static final int 		PLANET_EDITOR_COLUMN1 = 5;
 	private static final int 		PLANET_EDITOR_COLUMN2 = 40; // 49
 	private static final int 		PLANET_EDITOR_COLUMN3 = 58; // 70
-	private static final int 		PLANET_EDITOR_COLUMN4 = 80;
+	private static final int 		PLANET_EDITOR_COLUMN4 = 79;
 	
 	private static final String 	CURSOR_CHARACTER = "_";
 	
@@ -785,16 +785,19 @@ public class ScreenPainter
 		
 		if (screenContentPlanetEditor.getAlliancePartners().size() > 0)
 		{
-			for (String allyString: screenContentPlanetEditor.getAlliancePartners())
+			for (ScreenContentPlanetEditorPlayerInfo ally: screenContentPlanetEditor.getAlliancePartners())
 			{
-				byte colorIndex = Byte.parseByte(allyString.substring(0, 1));
-				String playerName = allyString.substring(1);
+				this.drawPlanetEditorTextLeft(
+						ally.getPlayerName(), 
+						PLANET_EDITOR_COLUMN4, 
+						3 + screenContentPlanetEditor.getAlliancePartners().indexOf(ally), 
+						Colors.get(ally.getColorIndex()));
 				
 				this.drawPlanetEditorTextLeft(
-						playerName, 
-						PLANET_EDITOR_COLUMN4, 
-						3 + screenContentPlanetEditor.getAlliancePartners().indexOf(allyString), 
-						Colors.get(colorIndex));
+						CommonUtils.padString(ally.getCount(), 5),
+						PLANET_EDITOR_COLUMN4 + 11, 
+						3 + screenContentPlanetEditor.getAlliancePartners().indexOf(ally), 
+						Color.WHITE);
 			}
 		}
 		else
@@ -814,16 +817,13 @@ public class ScreenPainter
 		
 		if (screenContentPlanetEditor.getActiveSpies().size() > 0)
 		{
-			for (String activeSpyString: screenContentPlanetEditor.getActiveSpies())
+			for (ScreenContentPlanetEditorPlayerInfo activeSpy: screenContentPlanetEditor.getActiveSpies())
 			{
-				byte colorIndex = Byte.parseByte(activeSpyString.substring(0, 1));
-				String playerName = activeSpyString.substring(1);
-				
 				this.drawPlanetEditorTextLeft(
-						playerName, 
+						activeSpy.getPlayerName(), 
 						PLANET_EDITOR_COLUMN4, 
-						11 + screenContentPlanetEditor.getActiveSpies().indexOf(activeSpyString), 
-						Colors.get(colorIndex));
+						11 + screenContentPlanetEditor.getActiveSpies().indexOf(activeSpy), 
+						Colors.get(activeSpy.getColorIndex()));
 			}
 		}
 		else

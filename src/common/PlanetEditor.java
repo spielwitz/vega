@@ -330,25 +330,35 @@ class PlanetEditor
 				ShipType.DEFENSIVE_BATTLESHIPS, 
 				planet.getDefensiveBattleshipsSellActualPrice(this.pricesSell.get(ShipType.DEFENSIVE_BATTLESHIPS)));
 		
-		ArrayList<String> alliancePartners = new ArrayList<String>();
+		ArrayList<ScreenContentPlanetEditorPlayerInfo> alliancePartners = new ArrayList<ScreenContentPlanetEditorPlayerInfo>();
 		
 		for (int playerIndex = 0; playerIndex < game.getPlayers().length; playerIndex++)
 		{
 			if (planet.isAllianceMember(playerIndex))
 			{
 				Player player = game.getPlayers()[playerIndex];
-				alliancePartners.add(Integer.toString(player.getColorIndex()) + game.getPlayers()[playerIndex].getName());
+				
+				alliancePartners.add(
+						new ScreenContentPlanetEditorPlayerInfo(
+								player.getColorIndex(),
+								game.getPlayers()[playerIndex].getName(),
+								planet.getBattleshipsCount(playerIndex)));
 			}
 		}
 		
-		ArrayList<String> activeSpies = new ArrayList<String>();
+		ArrayList<ScreenContentPlanetEditorPlayerInfo> activeSpies = new ArrayList<ScreenContentPlanetEditorPlayerInfo>();
 		
 		for (int playerIndex = 0; playerIndex < game.getPlayers().length; playerIndex++)
 		{
 			if (planet.hasRadioStation(playerIndex))
 			{
 				Player player = game.getPlayers()[playerIndex];
-				activeSpies.add(Integer.toString(player.getColorIndex()) + game.getPlayers()[playerIndex].getName());
+				
+				activeSpies.add(
+						new ScreenContentPlanetEditorPlayerInfo(
+								player.getColorIndex(),
+								game.getPlayers()[playerIndex].getName(),
+								0));
 			}
 		}
 
