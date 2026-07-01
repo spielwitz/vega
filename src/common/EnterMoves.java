@@ -107,7 +107,12 @@ class EnterMoves
 
 			break;
 		} while (true);
+		
+		// ----------
+		new EnterAlliance(this.game, this.playerIndexNow, planetIndex, null);
+		// ----------
 
+		/*
 		allowedKeys = new ArrayList<ConsoleKey>();
 
 		if (planet.isAllianceMember(this.playerIndexNow))
@@ -254,6 +259,7 @@ class EnterMoves
 
 			break;
 		} while (true);
+		*/
 	}
 
 	private void battleships(boolean alliedFleet)

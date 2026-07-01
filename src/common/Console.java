@@ -266,6 +266,11 @@ class Console
 					break;
 				}
 			}
+			else if (this.mode == ConsoleModus.ENTER_ALLIANCE)
+			{
+				inputText.append(keyEvent.keyEvent.getKeyChar());
+				break;
+			}
 			else if (this.mode == ConsoleModus.STATISTICS)
 			{
 				if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT)
@@ -382,7 +387,8 @@ class Console
 		TEXT_INPUT,
 		PLANET_EDITOR,
 		EVALUATION,
-		STATISTICS
+		STATISTICS,
+		ENTER_ALLIANCE
 	}
 }
 
