@@ -18,7 +18,6 @@ package common;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.BitSet;
 
 class EnterAlliance
 {
@@ -33,7 +32,6 @@ class EnterAlliance
 	private ScreenContentPlanetEditorPlayerInfo[] playerInfos;
 	private int[] allianceMembersCurrent;
 	private Planet planet;
-	private boolean canCreateNewAlliance = false;
 	private boolean canTerminateAlliance = false;
 
 	EnterAlliance(
@@ -65,13 +63,12 @@ class EnterAlliance
 		// Current changes to alliance members
 		this.allianceMembersChanged = new boolean[game.getPlayersCount()];
 		
-		if (allianceMembersNewLast != null)
+		for (int i = 0; i < game.getPlayersCount(); i++)
 		{
-			for (int i = 0; i < game.getPlayersCount(); i++)
-			{
-				this.allianceMembersChanged[i] = allianceMembersNewLast[i];
-
-			}
+			this.allianceMembersChanged[i] = 
+					allianceMembersNewLast != null ?
+							allianceMembersNewLast[i] :
+							this.allianceMembersCurrent[i] == IS_MEMBER;
 		}
 		
 		// Names and number of ships
@@ -95,95 +92,46 @@ class EnterAlliance
 			}
 		}
 		
-		// What can the user change?
-		boolean[] canBeChanged = new boolean[game.getPlayersCount()];
-		
 		if (planet.isAllianceMember(playerIndex))
 		{
-			canCreateNewAlliance = false;
 			canTerminateAlliance = true;
 		}
-		else
-		{
-			// Player cannot see t
-			for (int i = 0; i < this.game.getPlayersCount(); i++)
-			{
-				if (this.planet.getOwner() == i ||
-						playerIndex == i)
-				{
-					canBeChanged[i] = false;
-				}
-				else
-				{
-					canBeChanged[i] = true;
-				}
-			}
-			
-			canCreateNewAlliance = true;
-			canTerminateAlliance = false;
-		}
-		
-		if (this.allianceMembersChanged[playerIndex])
-		{
-			canCreateNewAlliance = false;
-			canTerminateAlliance = true;
-			
-			for (int i = 0; i < this.game.getPlayersCount(); i++)
-			{
-				if (this.planet.getOwner() == i ||
-						playerIndex == i ||
-						this.allianceMembersChanged[i])
-				{
-					canBeChanged[i] = false;
-				}
-				else
-				{
-					canBeChanged[i] = true;
-				}
-			}
-		}
-		else
-		{
-			canCreateNewAlliance = true;
-			canTerminateAlliance = false;
-		}
-		
-
-		
+				
 		game.getConsole().clear();
 		game.getConsole().setMode(Console.ConsoleModus.ENTER_ALLIANCE);
 		this.updateDisplay();
 		game.setScreenContentMode(ScreenContent.MODE_ENTER_ALLIANCE);
 
+		ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();
+		
+		// Set allowed keys
+		boolean canBeChanged[] = new boolean[this.game.getPlayersCount()];
+		
+		for (int i = 0; i < this.game.getPlayersCount(); i++)
+		{
+			if (this.allianceMembersCurrent[i] == IS_MEMBER &&
+				i != playerIndex &&
+				i != planet.getOwner())
+				continue;
+			
+			allowedKeys.add(
+				new ConsoleKey(
+						Integer.toString(i + 1),
+						this.game.getPlayers()[i].getName()));
+			
+			canBeChanged[i] = true;
+		}
+
+		if (canTerminateAlliance)
+		{
+			allowedKeys.add(new ConsoleKey("0",VegaResources.TerminateAlliance(true)));
+		}
+			
+		allowedKeys.add(new ConsoleKey("ENTER",VegaResources.AcceptChanges(true)));
+		allowedKeys.add(new ConsoleKey("ESC",VegaResources.Cancel(true)));
+
 		do
 		{
-			ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();
-			
-			// Set allowed keys
-			for (int i = 0; i < this.game.getPlayersCount(); i++)
-			{
-				if (canBeChanged[i])
-				{
-					allowedKeys.add(
-							new ConsoleKey(
-									Integer.toString(i + 1),
-									this.game.getPlayers()[i].getName()));
-				}
-			}
-
-			if (canCreateNewAlliance)
-			{
-				allowedKeys.add(new ConsoleKey("9","Neues Bündnis"));
-			}
-			if (canTerminateAlliance)
-			{
-				allowedKeys.add(new ConsoleKey("0",VegaResources.TerminateAlliance(true)));
-			}
-				
-			allowedKeys.add(new ConsoleKey("ENTER",VegaResources.AcceptChanges(true)));
-			allowedKeys.add(new ConsoleKey("ESC",VegaResources.Cancel(true)));
-
-			
 			ConsoleInput input = game.getConsole().waitForKeyPressed(allowedKeys);
 
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
@@ -215,24 +163,44 @@ class EnterAlliance
 						this.allianceMembersChanged = new boolean[this.game.getPlayersCount()];
 					}
 					break;
-					
-				case 9:
-					if (canCreateNewAlliance)
-					{
-						this.allianceMembersChanged = new boolean[this.game.getPlayersCount()];
-						this.allianceMembersChanged[playerIndex] = true;
-						this.allianceMembersChanged[planet.getOwner()] = true;	
-					}
-					break;
-					
+										
 				default:
 					if (numberInput >= 1 && numberInput <= this.game.getPlayersCount())
 					{
 						int playerIndexSelected = numberInput - 1;
 						
-						if (canBeChanged[playerIndexSelected])
+						if (!canBeChanged[playerIndexSelected])
 						{
-							this.allianceMembersChanged[playerIndexSelected] = true;
+							continue;
+						}
+						
+						if (playerIndexSelected == playerIndex ||
+							playerIndexSelected == planet.getOwner())
+						{
+							if (this.allianceMembersChanged[playerIndexSelected])
+							{
+								// Terminate alliance
+								this.allianceMembersChanged = new boolean[this.game.getPlayersCount()];
+							}
+							else
+							{
+								// Create new alliance with all current members
+								for (int i = 0; i < this.game.getPlayersCount(); i++)
+								{
+									if (this.allianceMembersCurrent[i] == IS_MEMBER)
+									{
+										this.allianceMembersChanged[i] = true;
+									}
+								}
+								
+								this.allianceMembersChanged[playerIndex] = true;
+								this.allianceMembersChanged[planet.getOwner()] = true;
+							}
+						}
+						else
+						{
+							this.allianceMembersChanged[playerIndexSelected] =
+									!this.allianceMembersChanged[playerIndexSelected];
 						}
 					}
 			}
