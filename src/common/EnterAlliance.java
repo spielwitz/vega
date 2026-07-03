@@ -40,9 +40,6 @@ class EnterAlliance
 	{
 		this.game = game;
 		
-		boolean canCreateAlliance = false;
-		boolean canTerminateAlliance = false;
-
 		Planet planet = game.getPlanets()[planetIndex];
 		
 		// Current alliance members
@@ -64,6 +61,7 @@ class EnterAlliance
 		
 		// Current changes to alliance members
 		this.allianceMembersChanged = new boolean[game.getPlayersCount()];
+		boolean[] allianceMembersChangedStart = new boolean[game.getPlayersCount()];
 		
 		for (int i = 0; i < game.getPlayersCount(); i++)
 		{
@@ -71,6 +69,8 @@ class EnterAlliance
 					allianceMembersNewLast != null ?
 							allianceMembersNewLast[i] :
 							this.allianceMembersCurrent[i] == IS_MEMBER;
+			
+			allianceMembersChangedStart[i] = this.allianceMembersChanged[i];
 		}
 		
 		// Names and number of ships
@@ -105,6 +105,9 @@ class EnterAlliance
 			
 			// Which players can be changed (not the current player and not the owner of the planet)
 			boolean canBeChanged[] = new boolean[this.game.getPlayersCount()];
+			boolean canCreateAlliance = false;
+			boolean canTerminateAlliance = false;
+			boolean canAcceptChanges = false;
 			
 			if (allianceMembersChanged[playerIndex])
 			{			
@@ -138,8 +141,31 @@ class EnterAlliance
 				allowedKeys.add(new ConsoleKey("9","Bündnis erstellen"));
 			}
 				
-			allowedKeys.add(new ConsoleKey("ENTER",VegaResources.AcceptChanges(true)));
 			allowedKeys.add(new ConsoleKey("ESC",VegaResources.Cancel(true)));
+			
+			// Can accept changes if the alliance members have changed compared to the start and
+			// if there are at least two members in the alliance (including the current player)
+			int allianceMembersCount = 0;
+			boolean allianceMembersChangedComparedToStart = false;
+			
+			for (int i = 0; i < this.game.getPlayersCount(); i++)
+			{
+				if (this.allianceMembersChanged[i])
+				{
+					allianceMembersCount++;
+				}
+				allianceMembersChangedComparedToStart |= this.allianceMembersChanged[i] != allianceMembersChangedStart[i];
+			}
+			
+			if (allianceMembersChangedComparedToStart && allianceMembersCount != 1)
+			{
+				canAcceptChanges = true;
+				allowedKeys.add(new ConsoleKey("ENTER",VegaResources.AcceptChanges(true)));
+			}
+			else
+			{
+				canAcceptChanges = false;
+			}
 			
 			ConsoleInput input = game.getConsole().waitForKeyPressed(allowedKeys);
 
@@ -149,6 +175,11 @@ class EnterAlliance
 			}
 			else if (input.getLastKeyCode() == KeyEvent.VK_ENTER)
 			{
+				if (!canAcceptChanges)
+				{
+					continue;
+				}
+				
 				takeOverChanges = true;
 				break;
 			}
