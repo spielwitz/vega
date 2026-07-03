@@ -152,6 +152,8 @@ public class ScreenPainter
 				this.drawStatistics();
 			else if (this.screenContent.getMode() == ScreenContent.MODE_DISTANCE_MATRIX)
 				this.drawBoard();
+			else if (this.screenContent.getMode() == ScreenContent.MODE_ENTER_ALLIANCE)
+				this.drawEnterAlliance();
 			else
 				this.drawPlanetEditor();
 			
@@ -1434,6 +1436,60 @@ public class ScreenPainter
 		this.dbGraphics.setColor(Color.white);
 		int xx0 = x0 + CommonUtils.round((double)screenContentStatistics.getSelectedYearIndex() * dx);
 		this.dbGraphics.drawLine(xx0, y0, xx0, y1 + 2 * height - 1);		
+	}
+	
+	private void drawEnterAlliance()
+	{
+		if (this.screenContent == null)
+			return;
+		
+		ScreenContentEnterAlliance screenContentEnterAlliance = this.screenContent.getEnterAlliance();
+		if (screenContentEnterAlliance == null)
+			return;
+		
+		this.setColor(new Color(50, 50, 50));
+		this.drawRect(BOARD_OFFSET_X, BOARD_OFFSET_Y, SCREEN_WIDTH - 2 * BOARD_OFFSET_X, Game.BOARD_MAX_Y * BOARD_DX);
+		
+		for (int line = 0; line < screenContentEnterAlliance.getPlayerInfos().length; line++)
+		{
+			this.drawPlanetEditorTextLeft(
+					screenContentEnterAlliance.getPlayerInfos()[line].getPlayerName(),
+					0,
+					line,
+					Colors.get(screenContentEnterAlliance.getPlayerInfos()[line].getColorIndex()));
+			
+			String selectedIndicator = null;
+			
+			switch (screenContentEnterAlliance.getAllianceMembersCurrent()[line])
+			{
+				case EnterAlliance.IS_MEMBER:
+					selectedIndicator = "[X]";
+					break;
+				case EnterAlliance.IS_NOT_MEMBER:
+					selectedIndicator = "[ ]";
+					break;
+				case EnterAlliance.IS_NOT_VISIBLE:
+					selectedIndicator = "[?]";
+					break;
+			}
+
+			this.drawPlanetEditorTextLeft(
+					selectedIndicator,
+					15,
+					line,
+					Color.white);
+			
+			selectedIndicator =
+					screenContentEnterAlliance.getAllianceMembersNew()[line] ?
+							"[X]" :
+							"[ ]";
+			
+			this.drawPlanetEditorTextLeft(
+					selectedIndicator,
+					20,
+					line,
+					Color.white);
+		}
 	}
 	
 	private void drawTitle()
