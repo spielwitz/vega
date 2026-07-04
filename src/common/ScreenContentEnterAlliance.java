@@ -1,6 +1,7 @@
 package common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 class ScreenContentEnterAlliance implements Serializable
@@ -10,13 +11,15 @@ class ScreenContentEnterAlliance implements Serializable
 	private ScreenContentPlanetEditorPlayerInfo[] playerInfos;
 	private int[] allianceMembersCurrent;
 	private boolean[] allianceMembersNew;
+	private ArrayList<String> explanations;
 	
 	ScreenContentEnterAlliance(
 			String title,
 			byte titleColorIndex,
 			ScreenContentPlanetEditorPlayerInfo[] playerInfos,
 			int[] allianceMembersCurrent,
-			boolean[] allianceMembersNew)
+			boolean[] allianceMembersNew,
+			ArrayList<String> explanations)
 	{
 		super();
 		this.title = title;
@@ -24,6 +27,7 @@ class ScreenContentEnterAlliance implements Serializable
 		this.playerInfos = playerInfos;
 		this.allianceMembersCurrent = allianceMembersCurrent;
 		this.allianceMembersNew = allianceMembersNew;
+		this.explanations = explanations;
 	}
 
 	String getTitle()
@@ -49,5 +53,10 @@ class ScreenContentEnterAlliance implements Serializable
 	boolean[] getAllianceMembersNew()
 	{
 		return allianceMembersNew;
+	}
+	
+	ArrayList<String> getExplanations()
+	{
+		return explanations;
 	}
 }

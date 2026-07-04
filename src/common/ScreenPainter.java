@@ -44,8 +44,15 @@ public class ScreenPainter
 	
 	private static final int 		PLANET_EDITOR_COLUMN1 = 5;
 	private static final int 		PLANET_EDITOR_COLUMN2 = 40; // 49
-	private static final int 		PLANET_EDITOR_COLUMN3 = 58; // 70
-	private static final int 		PLANET_EDITOR_COLUMN4 = 79;
+	private static final int 		PLANET_EDITOR_COLUMN3 = 57; // 70
+	private static final int 		PLANET_EDITOR_COLUMN4 = 78;
+	
+	private static final int 		ENTER_ALLIANCE_LINE1 = 1;
+	private static final int 		ENTER_ALLIANCE_LINE2 = 3;
+	private static final int 		ENTER_ALLIANCE_COLUMN1 = 1;
+	private static final int 		ENTER_ALLIANCE_COLUMN2 = 11;
+	private static final int 		ENTER_ALLIANCE_COLUMN3 = 25;
+	private static final int 		ENTER_ALLIANCE_COLUMN4 = 40;
 	
 	private static final String 	CURSOR_CHARACTER = "_";
 	
@@ -1450,13 +1457,39 @@ public class ScreenPainter
 		this.setColor(new Color(50, 50, 50));
 		this.drawRect(BOARD_OFFSET_X, BOARD_OFFSET_Y, SCREEN_WIDTH - 2 * BOARD_OFFSET_X, Game.BOARD_MAX_Y * BOARD_DX);
 		
+		this.drawPlanetEditorTextLeft(
+				screenContentEnterAlliance.getTitle(),
+				ENTER_ALLIANCE_COLUMN1,
+				ENTER_ALLIANCE_LINE1,
+				Colors.get(screenContentEnterAlliance.getTitleColorIndex()));
+		
+		this.drawPlanetEditorTextCentered(
+				"Aktuell",
+				ENTER_ALLIANCE_COLUMN3,
+				ENTER_ALLIANCE_LINE2,
+				Color.white);
+		
+		this.drawPlanetEditorTextCentered(
+				"Ab Auswertung",
+				ENTER_ALLIANCE_COLUMN4,
+				ENTER_ALLIANCE_LINE2,
+				Color.white);
+		
 		for (int line = 0; line < screenContentEnterAlliance.getPlayerInfos().length; line++)
 		{
 			this.drawPlanetEditorTextLeft(
 					screenContentEnterAlliance.getPlayerInfos()[line].getPlayerName(),
-					0,
-					line,
+					ENTER_ALLIANCE_COLUMN1,
+					ENTER_ALLIANCE_LINE2 + 1 + line,
 					Colors.get(screenContentEnterAlliance.getPlayerInfos()[line].getColorIndex()));
+			
+			this.drawPlanetEditorTextLeft(
+					screenContentEnterAlliance.getPlayerInfos()[line].getCount() >= 0 ?
+							CommonUtils.padString(Integer.toString(screenContentEnterAlliance.getPlayerInfos()[line].getCount()), 5) :
+							"",
+					ENTER_ALLIANCE_COLUMN2,
+					ENTER_ALLIANCE_LINE2 + 1 + line,
+					Color.white);
 			
 			String selectedIndicator = null;
 			
@@ -1473,10 +1506,10 @@ public class ScreenPainter
 					break;
 			}
 
-			this.drawPlanetEditorTextLeft(
+			this.drawPlanetEditorTextCentered(
 					selectedIndicator,
-					15,
-					line,
+					ENTER_ALLIANCE_COLUMN3,
+					ENTER_ALLIANCE_LINE2 + 1 + line,
 					Color.white);
 			
 			selectedIndicator =
@@ -1484,10 +1517,10 @@ public class ScreenPainter
 							"[X]" :
 							"[ ]";
 			
-			this.drawPlanetEditorTextLeft(
+			this.drawPlanetEditorTextCentered(
 					selectedIndicator,
-					20,
-					line,
+					ENTER_ALLIANCE_COLUMN4,
+					ENTER_ALLIANCE_LINE2 + 1 + line,
 					Color.white);
 		}
 	}

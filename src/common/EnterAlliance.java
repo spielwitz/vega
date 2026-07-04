@@ -83,20 +83,21 @@ class EnterAlliance
 				this.playerInfos[i] = new ScreenContentPlanetEditorPlayerInfo(
 						game.getPlayers()[i].getColorIndex(),
 						game.getPlayers()[i].getName(),
-						planet.getBattleshipsCount(i));
+						this.allianceMembersCurrent[i] == IS_MEMBER ?
+								planet.getBattleshipsCount(i) : -1);
 			}
 			else
 			{
 				this.playerInfos[i] = new ScreenContentPlanetEditorPlayerInfo(
 						game.getPlayers()[i].getColorIndex(),
 						game.getPlayers()[i].getName(),
-						i == playerIndex ? 0 : -1);
+						-1);
 			}
 		}
 		
 		game.getConsole().clear();
 		game.getConsole().setMode(Console.ConsoleModus.ENTER_ALLIANCE);
-		this.updateDisplay();
+		this.updateDisplay(planet, planetIndex);
 		game.setScreenContentMode(ScreenContent.MODE_ENTER_ALLIANCE);
 
 		do
@@ -241,7 +242,7 @@ class EnterAlliance
 					}
 			}
 			
-			this.updateDisplay();
+			this.updateDisplay(planet, planetIndex);
 
 		} while (true);
 
@@ -252,18 +253,24 @@ class EnterAlliance
 		game.getConsole().lineBreak();
 	}
 
-	private void updateDisplay()
+	private void updateDisplay(Planet planet, int planetIndex)
 	{
 		if (this.game.getScreenContent() == null)
 			this.game.setScreenContent(new ScreenContent());
 		
+		ArrayList<String> explanations = new ArrayList<String>();
+		
 		this.game.getScreenContent().setEnterAlliance(
 				new ScreenContentEnterAlliance(
-						"Bla",
-						Colors.NEUTRAL,
+						VegaResources.PlanetEditorTitle(
+								false, 
+								this.game.getPlanetNameFromIndex(planetIndex),
+								this.game.getPlayers()[planet.getOwner()].getName()),
+						planet.getOwnerColorIndex(this.game),
 						this.playerInfos, 
 						this.allianceMembersCurrent,
-						this.allianceMembersChanged));
+						this.allianceMembersChanged,
+						explanations));
 
 		this.game.getGameThread().updateDisplay(this.game.getScreenContent());
 	}	
