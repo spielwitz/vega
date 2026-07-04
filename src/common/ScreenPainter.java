@@ -49,10 +49,10 @@ public class ScreenPainter
 	
 	private static final int 		ENTER_ALLIANCE_LINE1 = 1;
 	private static final int 		ENTER_ALLIANCE_LINE2 = 3;
-	private static final int 		ENTER_ALLIANCE_COLUMN1 = 1;
-	private static final int 		ENTER_ALLIANCE_COLUMN2 = 12;
-	private static final int 		ENTER_ALLIANCE_COLUMN3 = 26;
-	private static final int 		ENTER_ALLIANCE_COLUMN4 = 40;
+	private static final int 		ENTER_ALLIANCE_COLUMN1 = 2;
+	private static final int 		ENTER_ALLIANCE_COLUMN2 = 13;
+	private static final int 		ENTER_ALLIANCE_COLUMN3 = 27;
+	private static final int 		ENTER_ALLIANCE_COLUMN4 = 41;
 	
 	private static final String 	CURSOR_CHARACTER = "_";
 	
