@@ -97,7 +97,7 @@ class EnterAlliance
 		
 		game.getConsole().clear();
 		game.getConsole().setMode(Console.ConsoleModus.ENTER_ALLIANCE);
-		this.updateDisplay(planet, planetIndex);
+		this.updateDisplay(planet, planetIndex, false);
 		game.setScreenContentMode(ScreenContent.MODE_ENTER_ALLIANCE);
 
 		do
@@ -176,6 +176,7 @@ class EnterAlliance
 				canAcceptChanges = false;
 			}
 			
+			this.updateDisplay(planet, planetIndex, canAcceptChanges);
 			ConsoleInput input = game.getConsole().waitForKeyPressed(allowedKeys);
 
 			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
@@ -241,8 +242,6 @@ class EnterAlliance
 									!this.allianceMembersChanged[playerIndexSelected];
 					}
 			}
-			
-			this.updateDisplay(planet, planetIndex);
 
 		} while (true);
 
@@ -253,13 +252,33 @@ class EnterAlliance
 		game.getConsole().lineBreak();
 	}
 
-	private void updateDisplay(Planet planet, int planetIndex)
+	private void updateDisplay(Planet planet, int planetIndex, boolean canAcceptChanges)
 	{
 		if (this.game.getScreenContent() == null)
 			this.game.setScreenContent(new ScreenContent());
 		
 		ArrayList<String> explanations = new ArrayList<String>();
 		
+		if (canAcceptChanges)
+		{
+			int allianceMembersCount = 0;
+			for (boolean b : this.allianceMembersChanged) {
+			    if (b) allianceMembersCount++;
+			}
+			
+			if (allianceMembersCount > 0)
+			{
+				explanations.add(VegaResources.AllianceSameStructure(false));
+				explanations.add(VegaResources.AllianceSameStructure2(false));
+			}
+			else
+			{
+				explanations.add(VegaResources.AllianceTerminated(false));
+				explanations.add(VegaResources.AllianceTerminated3(false));
+				explanations.add(VegaResources.AllianceTerminated2(false));
+			}
+		}
+				
 		this.game.getScreenContent().setEnterAlliance(
 				new ScreenContentEnterAlliance(
 						VegaResources.PlanetEditorTitle(

@@ -50,8 +50,8 @@ public class ScreenPainter
 	private static final int 		ENTER_ALLIANCE_LINE1 = 1;
 	private static final int 		ENTER_ALLIANCE_LINE2 = 3;
 	private static final int 		ENTER_ALLIANCE_COLUMN1 = 1;
-	private static final int 		ENTER_ALLIANCE_COLUMN2 = 11;
-	private static final int 		ENTER_ALLIANCE_COLUMN3 = 25;
+	private static final int 		ENTER_ALLIANCE_COLUMN2 = 12;
+	private static final int 		ENTER_ALLIANCE_COLUMN3 = 26;
 	private static final int 		ENTER_ALLIANCE_COLUMN4 = 40;
 	
 	private static final String 	CURSOR_CHARACTER = "_";
@@ -1457,20 +1457,28 @@ public class ScreenPainter
 		this.setColor(new Color(50, 50, 50));
 		this.drawRect(BOARD_OFFSET_X, BOARD_OFFSET_Y, SCREEN_WIDTH - 2 * BOARD_OFFSET_X, Game.BOARD_MAX_Y * BOARD_DX);
 		
+		String allianceStructureStr = VegaResources.AllianceStructure(false) + ": ";
+				
+		this.drawPlanetEditorTextLeft(
+				allianceStructureStr,
+				ENTER_ALLIANCE_COLUMN1,
+				ENTER_ALLIANCE_LINE1,
+				Color.white);
+		
 		this.drawPlanetEditorTextLeft(
 				screenContentEnterAlliance.getTitle(),
-				ENTER_ALLIANCE_COLUMN1,
+				ENTER_ALLIANCE_COLUMN1 + allianceStructureStr.length(),
 				ENTER_ALLIANCE_LINE1,
 				Colors.get(screenContentEnterAlliance.getTitleColorIndex()));
 		
 		this.drawPlanetEditorTextCentered(
-				"Aktuell",
+				VegaResources.Current(false),
 				ENTER_ALLIANCE_COLUMN3,
 				ENTER_ALLIANCE_LINE2,
 				Color.white);
 		
 		this.drawPlanetEditorTextCentered(
-				"Ab Auswertung",
+				VegaResources.FromEvaluation(false),
 				ENTER_ALLIANCE_COLUMN4,
 				ENTER_ALLIANCE_LINE2,
 				Color.white);
@@ -1521,6 +1529,15 @@ public class ScreenPainter
 					selectedIndicator,
 					ENTER_ALLIANCE_COLUMN4,
 					ENTER_ALLIANCE_LINE2 + 1 + line,
+					Color.white);
+		}
+		
+		for (int i = 0; i < screenContentEnterAlliance.getExplanations().size(); i++)
+		{
+			this.drawPlanetEditorTextLeft(
+					screenContentEnterAlliance.getExplanations().get(i),
+					ENTER_ALLIANCE_COLUMN1,
+					ENTER_ALLIANCE_LINE2 + 2 + screenContentEnterAlliance.getPlayerInfos().length + i,
 					Color.white);
 		}
 	}

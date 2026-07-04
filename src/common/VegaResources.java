@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: G2
+		// Last used symbolic key: GA
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -590,6 +590,14 @@ public class VegaResources
 		symbolDict.put("G0","PlanetEditorTitle_G0");
 		symbolDict.put("G1","None_G1");
 		symbolDict.put("G2","Allies_G2");
+		symbolDict.put("G3","Current_G3");
+		symbolDict.put("G4","FromEvaluation_G4");
+		symbolDict.put("G5","AllianceStructure_G5");
+		symbolDict.put("G6","AllianceTerminated_G6");
+		symbolDict.put("G7","AllianceTerminated2_G7");
+		symbolDict.put("G8","AllianceSameStructure_G8");
+		symbolDict.put("G9","AllianceSameStructure2_G9");
+		symbolDict.put("GA","AllianceTerminated3_GA");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4510,5 +4518,61 @@ public class VegaResources
 	   */
 	public static String Allies(boolean symbol) {
 		return symbol ? "£G2£":messages.getString("Allies_G2");
+	}
+
+	/**
+	   * Current [G3]
+	   */
+	public static String Current(boolean symbol) {
+		return symbol ? "£G3£":messages.getString("Current_G3");
+	}
+
+	/**
+	   * New [G4]
+	   */
+	public static String FromEvaluation(boolean symbol) {
+		return symbol ? "£G4£":messages.getString("FromEvaluation_G4");
+	}
+
+	/**
+	   * Alliance structure [G5]
+	   */
+	public static String AllianceStructure(boolean symbol) {
+		return symbol ? "£G5£":messages.getString("AllianceStructure_G5");
+	}
+
+	/**
+	   * The alliance will be dissolved at the start of the evaluation. [G6]
+	   */
+	public static String AllianceTerminated(boolean symbol) {
+		return symbol ? "£G6£":messages.getString("AllianceTerminated_G6");
+	}
+
+	/**
+	   * All foreign ships must leave the planet at the start of the evaluation. [G7]
+	   */
+	public static String AllianceTerminated2(boolean symbol) {
+		return symbol ? "£G7£":messages.getString("AllianceTerminated2_G7");
+	}
+
+	/**
+	   * All alliance partners must define the same new structure this year. [G8]
+	   */
+	public static String AllianceSameStructure(boolean symbol) {
+		return symbol ? "£G8£":messages.getString("AllianceSameStructure_G8");
+	}
+
+	/**
+	   * Only then will the new structure take effect at the start of the evaluation. [G9]
+	   */
+	public static String AllianceSameStructure2(boolean symbol) {
+		return symbol ? "£G9£":messages.getString("AllianceSameStructure2_G9");
+	}
+
+	/**
+	   * Allied battleship fleets will not be launched. [GA]
+	   */
+	public static String AllianceTerminated3(boolean symbol) {
+		return symbol ? "£GA£":messages.getString("AllianceTerminated3_GA");
 	}
 }
