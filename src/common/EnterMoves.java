@@ -132,20 +132,15 @@ class EnterMoves
 		}
 	}
 
-	private void battleships(boolean alliedFleet)
+	private void battleships()
 	{
-		String shipType = 
-				alliedFleet ?
-						VegaResources.AlliedBattleships(true) :
-						VegaResources.Battleships(true);
-		
 		this.game.getConsole().setHeaderText(
 				this.game.mainMenuGetYearDisplayText() 
 				+ " -> "
 				+ VegaResources.EnterMoves(true)+" " 
 				+ this.game.getPlayers()[this.playerIndexNow].getName() 
 				+ " -> "
-				+ shipType,
+				+ VegaResources.Battleships(true),
 				
 				this.game.getPlayers()[this.playerIndexNow].getColorIndex());
 
@@ -167,24 +162,27 @@ class EnterMoves
 
 			planetIndexStart = input.planetIndex;
 			
-			if (alliedFleet)
-			{
-				if (!this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
-					this.game.getConsole().appendText(VegaResources.NotAnAllianceMember(true));
-				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-					break;
-				else
-					this.game.getConsole().appendText(VegaResources.NoBattleships(true));
-			}
-			else
-			{
-				if (!this.game.getPlanets()[planetIndexStart].isPlayerInvolved(this.playerIndexNow))
-					continue;
-				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-					break;
-				else
-					this.game.getConsole().appendText(VegaResources.NoBattleships(true));
-			}
+			if (this.game.getPlanets()[planetIndexStart].getBattleshipsCount(this.playerIndexNow) > 0)
+				break;
+			
+//			if (alliedFleet)
+//			{
+//				if (!this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
+//					this.game.getConsole().appendText(VegaResources.NotAnAllianceMember(true));
+//				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
+//					break;
+//				else
+//					this.game.getConsole().appendText(VegaResources.NoBattleships(true));
+//			}
+//			else
+//			{
+//				if (!this.game.getPlanets()[planetIndexStart].isPlayerInvolved(this.playerIndexNow))
+//					continue;
+//				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
+//					break;
+//				else
+			this.game.getConsole().appendText(VegaResources.NoBattleships(true));
+			//}
 			
 			this.game.getConsole().lineBreak();
 			
@@ -212,6 +210,45 @@ class EnterMoves
 			break;
 
 		} while (true);
+		
+		boolean alliedFleet = false;
+		
+		if (this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
+		{
+			allowedKeys.clear();
+			allowedKeys.add(new ConsoleKey("1",VegaResources.Yes(true)));
+			allowedKeys.add(new ConsoleKey("2",VegaResources.No(true)));
+			allowedKeys.add(new ConsoleKey("ESC",VegaResources.Cancel(true)));
+			
+			do
+			{
+				this.game.getConsole().appendText(VegaResources.AlliedBattleships(true)+ " ");
+				
+				ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys);
+				
+				if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
+				{
+					this.game.getConsole().outAbort();
+					return;
+				}
+				
+				if (input.getInputText().equals("1"))
+				{
+					alliedFleet = true;
+					break;
+				}
+				else if (input.getInputText().equals("2"))
+				{
+					alliedFleet = false;
+					break;
+				}
+				else
+				{
+					this.game.getConsole().outInvalidInput();
+				}
+			}
+			while (true);
+		}
 
 		int count = -1;
 		
@@ -406,7 +443,6 @@ class EnterMoves
 			{
 				allowedKeys.add(new ConsoleKey("0",VegaResources.Planet(true))); 					
 				allowedKeys.add(new ConsoleKey("1",VegaResources.Battleships(true))); 					
-				allowedKeys.add(new ConsoleKey("2",VegaResources.AlliedBattleships(true)));
 				allowedKeys.add(new ConsoleKey("3",VegaResources.Spy(true)));
 				allowedKeys.add(new ConsoleKey("4",VegaResources.Patrol(true)));
 				allowedKeys.add(new ConsoleKey("5",VegaResources.Transporter(true)));
@@ -433,9 +469,7 @@ class EnterMoves
 			else if (input.equals("\t"))
 				exit = this.finish();
 			else if (!capitulated && input.equals("1"))
-				this.battleships(false);
-			else if (!capitulated && input.equals("2"))
-				this.battleships(true);
+				this.battleships();
 			else if (!capitulated && input.equals("3"))
 				this.spiesTransports(ShipType.SPY);
 			else if (!capitulated && input.equals("4"))

@@ -2969,7 +2969,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Allied b'ships [9V]
+	   * Allied battleship fleet? [9V]
 	   */
 	public static String AlliedBattleships(boolean symbol) {
 		return symbol ? "£9V£":messages.getString("AlliedBattleships_9V");
