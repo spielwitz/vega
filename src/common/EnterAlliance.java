@@ -147,7 +147,7 @@ class EnterAlliance
 			canCreateAlliance = !this.allianceMembersChanged[planet.getOwner()];
 			if (canCreateAlliance)
 			{
-				allowedKeys.add(new ConsoleKey("9","Bündnis erstellen"));
+				allowedKeys.add(new ConsoleKey("9",VegaResources.CreateAlliance(true)));
 			}
 				
 			allowedKeys.add(new ConsoleKey("ESC",VegaResources.Cancel(true)));
@@ -190,7 +190,7 @@ class EnterAlliance
 					continue;
 				}
 				
-				takeOverChanges = true;
+				this.takeOverChanges = true;
 				break;
 			}
 			
@@ -248,8 +248,6 @@ class EnterAlliance
 		game.getConsole().clear();
 		game.getConsole().setMode(Console.ConsoleModus.TEXT_INPUT);
 		game.setScreenContentMode(ScreenContent.MODE_BOARD);
-
-		game.getConsole().lineBreak();
 	}
 
 	private void updateDisplay(Planet planet, int planetIndex, boolean canAcceptChanges)
@@ -258,14 +256,14 @@ class EnterAlliance
 			this.game.setScreenContent(new ScreenContent());
 		
 		ArrayList<String> explanations = new ArrayList<String>();
+
+		int allianceMembersCount = 0;
+		for (boolean b : this.allianceMembersChanged) {
+		    if (b) allianceMembersCount++;
+		}
 		
 		if (canAcceptChanges)
 		{
-			int allianceMembersCount = 0;
-			for (boolean b : this.allianceMembersChanged) {
-			    if (b) allianceMembersCount++;
-			}
-			
 			if (allianceMembersCount > 0)
 			{
 				explanations.add(VegaResources.AllianceSameStructure(false));
@@ -277,6 +275,10 @@ class EnterAlliance
 				explanations.add(VegaResources.AllianceTerminated3(false));
 				explanations.add(VegaResources.AllianceTerminated2(false));
 			}
+		}
+		else if (allianceMembersCount == 1)
+		{
+			explanations.add(VegaResources.AllianceNotEnoughMembers(false));
 		}
 				
 		this.game.getScreenContent().setEnterAlliance(

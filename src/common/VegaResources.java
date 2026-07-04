@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: GA
+		// Last used symbolic key: GD
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -43,7 +43,6 @@ public class VegaResources
 		symbolDict.put("04","ImportGameFromClipboard_04");
 		symbolDict.put("05","ImportMovesOfPlayer_05");
 		symbolDict.put("06","IncreaseMoneyProduction_06");
-		symbolDict.put("08","Info_08");
 		symbolDict.put("09","InputDisabled_09");
 		symbolDict.put("0A","Insert_0A");
 		symbolDict.put("0B","InvalidInput_0B");
@@ -132,7 +131,6 @@ public class VegaResources
 		symbolDict.put("2P","NextEvent_2P");
 		symbolDict.put("2Q","Next_2Q");
 		symbolDict.put("2R","NoAllianceOnPlanet_2R");
-		symbolDict.put("2S","NoAlliance_2S");
 		symbolDict.put("2T","ConnectionErrorSecurityCode_2T");
 		symbolDict.put("2U","Credentials_2U");
 		symbolDict.put("2V","NoPlanetsWithAlliances_2V");
@@ -352,7 +350,6 @@ public class VegaResources
 		symbolDict.put("95","AboutVega_95");
 		symbolDict.put("96","AcceptChanges_96");
 		symbolDict.put("97","ActionCancelled_97");
-		symbolDict.put("98","ActionNotPossible_98");
 		symbolDict.put("99","ActionNotPossible_99");
 		symbolDict.put("9A","ActivateServer_9A");
 		symbolDict.put("9B","ActivateUser_9B");
@@ -368,9 +365,6 @@ public class VegaResources
 		symbolDict.put("9L","AllEmailPlayerMovesImported_9L");
 		symbolDict.put("9M","AllOff_9M");
 		symbolDict.put("9N","AllOn_9N");
-		symbolDict.put("9O","AllianceDefinitionError_9O");
-		symbolDict.put("9P","AllianceOwnerNotIncluded2_9P");
-		symbolDict.put("9Q","AllianceOwnerNotIncluded_9Q");
 		symbolDict.put("9R","AllianceShort_9R");
 		symbolDict.put("9S","AllianceStructureOnPlanet_9S");
 		symbolDict.put("9T","Alliance_9T");
@@ -438,7 +432,6 @@ public class VegaResources
 		symbolDict.put("BK","CreateEmail_BK");
 		symbolDict.put("BL","CreateNewUser_BL");
 		symbolDict.put("BM","CreateUserQuestion_BM");
-		symbolDict.put("BN","CurrentAllies_BN");
 		symbolDict.put("BO","DateFormatted_BO");
 		symbolDict.put("BP","DayOf_BP");
 		symbolDict.put("BQ","Default_BQ");
@@ -478,7 +471,6 @@ public class VegaResources
 		symbolDict.put("CO","Email_CO");
 		symbolDict.put("CP","EmailsWereCreated_CP");
 		symbolDict.put("CQ","EndOfYear_CQ");
-		symbolDict.put("CR","EnterAllianceMembers_CR");
 		symbolDict.put("CS","EnterMoves_CS");
 		symbolDict.put("CT","EntriesCorrectQuestion_CT");
 		symbolDict.put("CU","Error_CU");
@@ -598,6 +590,9 @@ public class VegaResources
 		symbolDict.put("G8","AllianceSameStructure_G8");
 		symbolDict.put("G9","AllianceSameStructure2_G9");
 		symbolDict.put("GA","AllianceTerminated3_GA");
+		symbolDict.put("GB","NoAllianceOnNeutralPlanets_GB");
+		symbolDict.put("GC","CreateAlliance_GC");
+		symbolDict.put("GD","AllianceNotEnoughMembers_GD");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -689,13 +684,6 @@ public class VegaResources
 	   */
 	public static String IncreaseMoneyProduction(boolean symbol, String arg0) {
 		return symbol ? "£06§"+arg0+"£":format(messages.getString("IncreaseMoneyProduction_06"), new Object[]{arg0});
-	}
-
-	/**
-	   * Info [08]
-	   */
-	public static String Info(boolean symbol) {
-		return symbol ? "£08£":messages.getString("Info_08");
 	}
 
 	/**
@@ -1312,13 +1300,6 @@ public class VegaResources
 	   */
 	public static String NoAllianceOnPlanet(boolean symbol, String arg0) {
 		return symbol ? "£2R§"+arg0+"£":format(messages.getString("NoAllianceOnPlanet_2R"), new Object[]{arg0});
-	}
-
-	/**
-	   * No alliance. [2S]
-	   */
-	public static String NoAlliance(boolean symbol) {
-		return symbol ? "£2S£":messages.getString("NoAlliance_2S");
 	}
 
 	/**
@@ -2855,13 +2836,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Action not possible. [98]
-	   */
-	public static String ActionNotPossible(boolean symbol) {
-		return symbol ? "£98£":messages.getString("ActionNotPossible_98");
-	}
-
-	/**
 	   * Action not possible: {0} [99]
 	   */
 	public static String ActionNotPossible(boolean symbol, String arg0) {
@@ -2964,27 +2938,6 @@ public class VegaResources
 	   */
 	public static String AllOn(boolean symbol) {
 		return symbol ? "£9N£":messages.getString("AllOn_9N");
-	}
-
-	/**
-	   * You must not combine '0' with other inputs. [9O]
-	   */
-	public static String AllianceDefinitionError(boolean symbol) {
-		return symbol ? "£9O£":messages.getString("AllianceDefinitionError_9O");
-	}
-
-	/**
-	   * You must also enter the current alliance members! [9P]
-	   */
-	public static String AllianceOwnerNotIncluded2(boolean symbol) {
-		return symbol ? "£9P£":messages.getString("AllianceOwnerNotIncluded2_9P");
-	}
-
-	/**
-	   * You must at least enter the owner of the planet and yourself! [9Q]
-	   */
-	public static String AllianceOwnerNotIncluded(boolean symbol) {
-		return symbol ? "£9Q£":messages.getString("AllianceOwnerNotIncluded_9Q");
 	}
 
 	/**
@@ -3457,13 +3410,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Current allies [BN]
-	   */
-	public static String CurrentAllies(boolean symbol) {
-		return symbol ? "£BN£":messages.getString("CurrentAllies_BN");
-	}
-
-	/**
 	   * {1}/{0}/{2} [BO]
 	   */
 	public static String DateFormatted(boolean symbol, String arg0, String arg1, String arg2) {
@@ -3734,13 +3680,6 @@ public class VegaResources
 	   */
 	public static String EndOfYear(boolean symbol) {
 		return symbol ? "£CQ£":messages.getString("EndOfYear_CQ");
-	}
-
-	/**
-	   * Enter alliance members [CR]
-	   */
-	public static String EnterAllianceMembers(boolean symbol) {
-		return symbol ? "£CR£":messages.getString("EnterAllianceMembers_CR");
 	}
 
 	/**
@@ -4574,5 +4513,26 @@ public class VegaResources
 	   */
 	public static String AllianceTerminated3(boolean symbol) {
 		return symbol ? "£GA£":messages.getString("AllianceTerminated3_GA");
+	}
+
+	/**
+	   * There can be no alliance on neutral planets. [GB]
+	   */
+	public static String NoAllianceOnNeutralPlanets(boolean symbol) {
+		return symbol ? "£GB£":messages.getString("NoAllianceOnNeutralPlanets_GB");
+	}
+
+	/**
+	   * New alliance [GC]
+	   */
+	public static String CreateAlliance(boolean symbol) {
+		return symbol ? "£GC£":messages.getString("CreateAlliance_GC");
+	}
+
+	/**
+	   * You must select at least one additional ally. [GD]
+	   */
+	public static String AllianceNotEnoughMembers(boolean symbol) {
+		return symbol ? "£GD£":messages.getString("AllianceNotEnoughMembers_GD");
 	}
 }
