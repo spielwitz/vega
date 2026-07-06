@@ -1214,6 +1214,9 @@ class EnterMoves
 			if (this.game.getPlanets()[planetIndex].areDetailsVisibleForPlayer(playerIndexNow))
 				break;
 			
+			this.game.getConsole().appendText(VegaResources.PlanetDetailsNotVisible(true));
+			this.game.getConsole().lineBreak();
+			
 		} while (true);
 
 		if (planetIndex < 0)

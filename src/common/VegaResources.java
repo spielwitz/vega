@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: GE
+		// Last used symbolic key: GF
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -594,6 +594,7 @@ public class VegaResources
 		symbolDict.put("GC","CreateAlliance_GC");
 		symbolDict.put("GD","AllianceNotEnoughMembers_GD");
 		symbolDict.put("GE","CantStartShipsFromThisPlanet_GE");
+		symbolDict.put("GF","PlanetDetailsNotVisible_GF");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4542,5 +4543,12 @@ public class VegaResources
 	   */
 	public static String CantStartShipsFromThisPlanet(boolean symbol) {
 		return symbol ? "£GE£":messages.getString("CantStartShipsFromThisPlanet_GE");
+	}
+
+	/**
+	   * You are not allowed to view the details of the planet. [GF]
+	   */
+	public static String PlanetDetailsNotVisible(boolean symbol) {
+		return symbol ? "£GF£":messages.getString("PlanetDetailsNotVisible_GF");
 	}
 }
