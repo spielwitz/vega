@@ -574,7 +574,6 @@ public class VegaResources
 		symbolDict.put("FR","YouMustSelectASector_FR");
 		symbolDict.put("FS","NoShipOfSelectedTypeAvailable_FS");
 		symbolDict.put("FU","NoBattleships_FU");
-		symbolDict.put("FV","NotAnAllianceMember_FV");
 		symbolDict.put("FW","CountBattleshipsStart_FW");
 		symbolDict.put("FX","NoRecentGames_FX");
 		symbolDict.put("FY","RecentGames_FY");
@@ -4403,13 +4402,6 @@ public class VegaResources
 	   */
 	public static String NoBattleships(boolean symbol) {
 		return symbol ? "£FU£":messages.getString("NoBattleships_FU");
-	}
-
-	/**
-	   * You are not an alliance member on this planet. [FV]
-	   */
-	public static String NotAnAllianceMember(boolean symbol) {
-		return symbol ? "£FV£":messages.getString("NotAnAllianceMember_FV");
 	}
 
 	/**
