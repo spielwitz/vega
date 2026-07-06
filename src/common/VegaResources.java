@@ -4531,7 +4531,7 @@ public class VegaResources
 	}
 
 	/**
-	   * You can't launch ships from this planet. [GE]
+	   * You can't launch ships of the selected type from this planet. [GE]
 	   */
 	public static String CantStartShipsFromThisPlanet(boolean symbol) {
 		return symbol ? "£GE£":messages.getString("CantStartShipsFromThisPlanet_GE");
