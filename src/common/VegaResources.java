@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: GD
+		// Last used symbolic key: GE
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -593,6 +593,7 @@ public class VegaResources
 		symbolDict.put("GB","NoAllianceOnNeutralPlanets_GB");
 		symbolDict.put("GC","CreateAlliance_GC");
 		symbolDict.put("GD","AllianceNotEnoughMembers_GD");
+		symbolDict.put("GE","CantStartShipsFromThisPlanet_GE");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -4534,5 +4535,12 @@ public class VegaResources
 	   */
 	public static String AllianceNotEnoughMembers(boolean symbol) {
 		return symbol ? "£GD£":messages.getString("AllianceNotEnoughMembers_GD");
+	}
+
+	/**
+	   * You can't launch ships from this planet. [GE]
+	   */
+	public static String CantStartShipsFromThisPlanet(boolean symbol) {
+		return symbol ? "£GE£":messages.getString("CantStartShipsFromThisPlanet_GE");
 	}
 }

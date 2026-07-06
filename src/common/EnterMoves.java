@@ -165,25 +165,7 @@ class EnterMoves
 			if (this.game.getPlanets()[planetIndexStart].getBattleshipsCount(this.playerIndexNow) > 0)
 				break;
 			
-//			if (alliedFleet)
-//			{
-//				if (!this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
-//					this.game.getConsole().appendText(VegaResources.NotAnAllianceMember(true));
-//				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-//					break;
-//				else
-//					this.game.getConsole().appendText(VegaResources.NoBattleships(true));
-//			}
-//			else
-//			{
-//				if (!this.game.getPlanets()[planetIndexStart].isPlayerInvolved(this.playerIndexNow))
-//					continue;
-//				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-//					break;
-//				else
 			this.game.getConsole().appendText(VegaResources.NoBattleships(true));
-			//}
-			
 			this.game.getConsole().lineBreak();
 			
 		} while (true);
@@ -914,6 +896,8 @@ class EnterMoves
 
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
+				this.game.getConsole().appendText(VegaResources.CantStartShipsFromThisPlanet(true));
+				this.game.getConsole().lineBreak();
 				continue;
 			}
 
@@ -1129,6 +1113,8 @@ class EnterMoves
 
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
+				this.game.getConsole().appendText(VegaResources.CantStartShipsFromThisPlanet(true));
+				this.game.getConsole().lineBreak();
 				continue;
 			}
 
@@ -1417,6 +1403,8 @@ class EnterMoves
 			
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
+				this.game.getConsole().appendText(VegaResources.CantStartShipsFromThisPlanet(true));
+				this.game.getConsole().lineBreak();
 				continue;
 			}
 
