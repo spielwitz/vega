@@ -500,6 +500,16 @@ class EnterMoves
 			else
 				this.game.getConsole().outInvalidInput();
 
+			// Remove dummy ships from the list of ships. They are only used to show the arrival date of a ship.
+			for (int i = this.game.getShips().size() - 1; i >= 0; i--)
+			{
+				Ship ship = this.game.getShips().get(i);
+
+				if (ship.getType() == ShipType.DUMMY_SHIP)
+					this.game.getShips().remove(i);
+			}
+			this.game.updateBoard(null, null, 0, playerIndex, 0);
+
 			if (this.game.isTutorial())
 			{
 				int movesAfterCount = this.game.getMoves().get(this.playerIndexNow).size();
@@ -519,14 +529,6 @@ class EnterMoves
 				}
 			}
 
-			for (int i = this.game.getShips().size() - 1; i >= 0; i--)
-			{
-				Ship ship = this.game.getShips().get(i);
-
-				if (ship.getType() == ShipType.DUMMY_SHIP)
-					this.game.getShips().remove(i);
-			}
-			this.game.updateBoard(null, null, 0, playerIndex, 0);
 			game.updatePlanetList(this.playerIndexNow, false);
 			
 		} while (!exit);
