@@ -193,6 +193,12 @@ class EnterMoves
 
 		} while (true);
 		
+		this.createDummyShip(
+				planetIndexStart,
+				planetIndexDestination,
+				this.game.getPlanets()[planetIndexStart].getPosition(),
+				this.game.getPlanets()[planetIndexDestination].getPosition());
+		
 		boolean alliedFleet = false;
 		
 		if (this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
@@ -231,7 +237,7 @@ class EnterMoves
 			}
 			while (true);
 		}
-
+		
 		int count = -1;
 		
 		int countMaxTemp = 0;
@@ -513,6 +519,13 @@ class EnterMoves
 				}
 			}
 
+			for (int i = this.game.getShips().size() - 1; i >= 0; i--)
+			{
+				Ship ship = this.game.getShips().get(i);
+
+				if (ship.getType() == ShipType.DUMMY_SHIP)
+					this.game.getShips().remove(i);
+			}
 			this.game.updateBoard(null, null, 0, playerIndex, 0);
 			game.updatePlanetList(this.playerIndexNow, false);
 			
@@ -881,6 +894,8 @@ class EnterMoves
 
 		int planetIndexStart = -1;
 		ShipType type = shipCategory;
+		boolean[] minesAvailable = new boolean[4];
+		ArrayList<ConsoleKey> allowedKeysMineType = new ArrayList<ConsoleKey>();
 
 		do
 		{
@@ -914,63 +929,24 @@ class EnterMoves
 			}
 			else
 			{
-				ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();
+				minesAvailable[0] = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.MINE50) > 0;
+				minesAvailable[1] = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.MINE100) > 0;
+				minesAvailable[2] = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.MINE250) > 0;
+				minesAvailable[3] = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.MINE500) > 0;
+				
+				allowedKeysMineType.clear();
 
-				allowedKeys.add(new ConsoleKey("1",VegaResources.Mine50(true)));
-				allowedKeys.add(new ConsoleKey("2",VegaResources.Mine100(true)));
-				allowedKeys.add(new ConsoleKey("3",VegaResources.Mine250(true)));
-				allowedKeys.add(new ConsoleKey("4",VegaResources.Mine500(true)));
-
-				boolean abort = false;
-
-				do
+				if (minesAvailable[0]) allowedKeysMineType.add(new ConsoleKey("1",VegaResources.Mine50(true)));
+				if (minesAvailable[1]) allowedKeysMineType.add(new ConsoleKey("2",VegaResources.Mine100(true)));
+				if (minesAvailable[2]) allowedKeysMineType.add(new ConsoleKey("3",VegaResources.Mine250(true)));
+				if (minesAvailable[3]) allowedKeysMineType.add(new ConsoleKey("4",VegaResources.Mine500(true)));
+				
+				if (allowedKeysMineType.size() == 0)
 				{
-					this.game.getConsole().appendText(VegaResources.WhichType(true) + " ");
-
-					ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeys);
-
-					if (consoleInput.getLastKeyCode() == KeyEvent.VK_ESCAPE)
-					{
-						this.game.getConsole().outAbort();
-						abort = true;
-						break;
-					}
-
-					if (consoleInput.getInputText().equals("1"))
-					{
-						type = ShipType.MINE50;
-					}
-					else if (consoleInput.getInputText().equals("2"))
-					{
-						type = ShipType.MINE100;
-					}
-					else if (consoleInput.getInputText().equals("3"))
-					{
-						type = ShipType.MINE250;
-					}
-					else if (consoleInput.getInputText().equals("4"))
-					{
-						type = ShipType.MINE500;
-					}
-					else
-					{
-						this.game.getConsole().outInvalidInput();
-						continue;
-					}
-					
-					if (this.game.getPlanets()[planetIndexStart].getShipsCount(type) <= 0)
-					{
-						this.game.getConsole().appendText(VegaResources.NoShipOfSelectedTypeAvailable(true));
-						this.game.getConsole().lineBreak();
-						continue;
-					}
-
-					break;
-
-				} while (true);
-
-				if (abort)
-					return;
+					this.game.getConsole().appendText(VegaResources.NoShipOfSelectedTypeAvailable(true));
+					this.game.getConsole().lineBreak();
+					continue;
+				}
 			}
 
 			break;
@@ -1007,6 +983,53 @@ class EnterMoves
 
 			break;
 		} while (true);
+		
+		if (shipCategory != ShipType.MINESWEEPER)
+		{
+			this.createDummyShip(
+					planetIndexStart,
+					inputDestination.planetIndex,
+					this.game.getPlanets()[planetIndexStart].getPosition(),
+					inputDestination.sector);
+
+			do
+			{
+				this.game.getConsole().appendText(VegaResources.WhichType(true) + " ");
+	
+				ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeysMineType);
+	
+				if (consoleInput.getLastKeyCode() == KeyEvent.VK_ESCAPE)
+				{
+					this.game.getConsole().outAbort();
+					return;
+				}
+	
+				if (minesAvailable[0] && consoleInput.getInputText().equals("1"))
+				{
+					type = ShipType.MINE50;
+				}
+				else if (minesAvailable[1] && consoleInput.getInputText().equals("2"))
+				{
+					type = ShipType.MINE100;
+				}
+				else if (minesAvailable[2] && consoleInput.getInputText().equals("3"))
+				{
+					type = ShipType.MINE250;
+				}
+				else if (minesAvailable[3] && consoleInput.getInputText().equals("4"))
+				{
+					type = ShipType.MINE500;
+				}
+				else
+				{
+					this.game.getConsole().outInvalidInput();
+					continue;
+				}
+				
+				break;
+	
+			} while (true);
+		}
 
 		Planet planetCopy = (Planet)CommonUtils.klon(this.game.getPlanets()[planetIndexStart]);
 
@@ -1432,13 +1455,13 @@ class EnterMoves
 			
 			transfer = transferOptional.get();
 		}
-
+		
 		int planetIndexDestination = -1;
 
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.DestinationPlanet(true), true, true); 
+					VegaResources.DestinationPlanet(true), true, false); 
 
 			if (input == null)
 			{
@@ -1456,7 +1479,7 @@ class EnterMoves
 			break;
 
 		} while (true);
-
+		
 		Planet planetCopy = (Planet)CommonUtils.klon(this.game.getPlanets()[planetIndexStart]);
 
 		Ship ship = null;
@@ -1478,8 +1501,13 @@ class EnterMoves
 		}
 		else if (type == ShipType.TRANSPORT)
 		{
+			this.createDummyShip(
+					planetIndexStart,
+					planetIndexDestination,
+					this.game.getPlanets()[planetIndexStart].getPosition(),
+					this.game.getPlanets()[planetIndexDestination].getPosition());
+			
 			allowedKeys = new ArrayList<ConsoleKey>();
-
 			allowedKeys.add(new ConsoleKey("+",VegaResources.MaximumLoad(true)));
 
 			int count = -1;
@@ -1772,5 +1800,27 @@ class EnterMoves
 			this.game.getConsole().outAbort();
 
 		return false;
+	}
+	
+	private void createDummyShip(
+			int planetIndexStart, 
+			int planetIndexDestination,
+			Point start,
+			Point destination)
+	{
+		Ship dummyShip = new Ship(
+				planetIndexStart,
+				planetIndexDestination,
+				start,
+				destination,
+				ShipType.DUMMY_SHIP,	
+				0,
+				this.playerIndexNow,
+				false,
+				true,
+				null,
+				this.game.getPlanets()[planetIndexStart].getBonus());
+		this.game.getShips().add(dummyShip);
+		this.game.updateBoard(null, null, 0, this.playerIndexNow, 0);
 	}
 }
