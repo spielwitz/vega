@@ -262,7 +262,11 @@ class EnterAlliance
 		    if (b) allianceMembersCount++;
 		}
 		
-		if (canAcceptChanges)
+		if (allianceMembersCount == 1)
+		{
+			explanations.add(VegaResources.AllianceNotEnoughMembers(false));
+		}
+		else if (this.hasChanges())
 		{
 			if (allianceMembersCount > 0)
 			{
@@ -275,10 +279,6 @@ class EnterAlliance
 				explanations.add(VegaResources.AllianceTerminated3(false));
 				explanations.add(VegaResources.AllianceTerminated2(false));
 			}
-		}
-		else if (allianceMembersCount == 1)
-		{
-			explanations.add(VegaResources.AllianceNotEnoughMembers(false));
 		}
 				
 		this.game.getScreenContent().setEnterAlliance(
@@ -294,5 +294,18 @@ class EnterAlliance
 						explanations));
 
 		this.game.getGameThread().updateDisplay(this.game.getScreenContent());
-	}	
+	}
+	
+	private boolean hasChanges()
+	{
+		for (int i = 0; i < this.game.getPlayersCount(); i++)
+		{
+			if (this.allianceMembersChanged[i] != (this.allianceMembersCurrent[i] == IS_MEMBER))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }
