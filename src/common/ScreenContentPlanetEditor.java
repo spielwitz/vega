@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General License as
@@ -17,6 +17,7 @@
 package common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -30,6 +31,9 @@ class ScreenContentPlanetEditor implements Serializable
 	private HashSet<ShipType> buyImpossible;
 	private HashSet<ShipType> sellImpossible;
 	
+	private ArrayList<ScreenContentPlanetEditorPlayerInfo> alliancePartners;
+	private ArrayList<ScreenContentPlanetEditorPlayerInfo> activeSpies;
+	
 	private boolean readOnly;
 	private byte colorIndex;
 	private int moneySupply;
@@ -37,6 +41,8 @@ class ScreenContentPlanetEditor implements Serializable
 	private int combatFactorBuy;
 	private int defensiveBattleshipsBuy;
 	private int defensiveBattleshipsSell;
+	private String planetName;
+	private String ownerName;
 	
 	ScreenContentPlanetEditor(
 			ShipType typeHighlighted,
@@ -45,6 +51,10 @@ class ScreenContentPlanetEditor implements Serializable
 			Hashtable<ShipType, Integer> pricesSell,
 			HashSet<ShipType> buyImpossible,
 			HashSet<ShipType> sellImpossible,
+			ArrayList<ScreenContentPlanetEditorPlayerInfo> alliancePartners,
+			ArrayList<ScreenContentPlanetEditorPlayerInfo> activeSpies,
+			String planetName,
+			String ownerName,
 			byte colorIndex,
 			int moneySupply,
 			int productionIncrese,
@@ -60,6 +70,8 @@ class ScreenContentPlanetEditor implements Serializable
 		this.pricesSell = pricesSell;
 		this.buyImpossible = buyImpossible;
 		this.sellImpossible = sellImpossible;
+		this.alliancePartners = alliancePartners;
+		this.activeSpies = activeSpies;
 		this.colorIndex = colorIndex;
 		this.moneySupply = moneySupply;
 		this.readOnly = readOnly;
@@ -67,6 +79,8 @@ class ScreenContentPlanetEditor implements Serializable
 		this.combatFactorBuy = combatFactorBuy;
 		this.defensiveBattleshipsBuy = defensiveBattleshipsBuy;
 		this.defensiveBattleshipsSell = defensiveBattleshipsSell;
+		this.planetName = planetName;
+		this.ownerName = ownerName;
 	}
 
 	HashSet<ShipType> getBuyImpossible() {
@@ -85,23 +99,19 @@ class ScreenContentPlanetEditor implements Serializable
 		return moneySupply;
 	}
 
-
 	int getPriceBuy(ShipType shipType) 
 	{
 		return this.pricesBuy.get(shipType);
 	}
-
 
 	int getPriceSell(ShipType shipType) 
 	{
 		return this.pricesSell.get(shipType);
 	}
 
-
 	HashSet<ShipType> getSellImpossible() {
 		return sellImpossible;
 	}
-
 
 	ShipType getTypeHighlighted() {
 		return typeHighlighted;
@@ -130,5 +140,25 @@ class ScreenContentPlanetEditor implements Serializable
 	int getDefensiveBattleshipsSell()
 	{
 		return defensiveBattleshipsSell;
+	}
+	
+	String getPlanetName()
+	{
+		return planetName;
+	}
+
+	String getOwnerName()
+	{
+		return ownerName;
+	}
+	
+	ArrayList<ScreenContentPlanetEditorPlayerInfo> getAlliancePartners()
+	{
+		return alliancePartners;
+	}
+	
+	ArrayList<ScreenContentPlanetEditorPlayerInfo> getActiveSpies()
+	{
+		return activeSpies;
 	}
 }

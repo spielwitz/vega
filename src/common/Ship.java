@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -32,6 +32,11 @@ class Ship implements Serializable
 			Point positionStart,
 			Point positionDestination)
 	{
+		if (positionStart.equals(positionDestination))
+		{
+			return new ShipTravelTime(0, 0);
+		}
+		
 		double dist = positionStart.distance(positionDestination);
 		double v = (double)getSpeed(type, transfer);
 		
@@ -50,6 +55,11 @@ class Ship implements Serializable
 	}
 	private static ShipTravelTime getTravelTimeInternal(double dist, double v)
 	{
+		if (dist == 0.0)
+		{
+			return new ShipTravelTime(0, 0);
+		}
+		
 		double yearFraction = dist/v;
 		
 		int daysCount = CommonUtils.round(yearFraction * (double)Game.DAYS_OF_YEAR_COUNT);

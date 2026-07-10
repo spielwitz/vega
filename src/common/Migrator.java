@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -47,6 +47,24 @@ public class Migrator
 			}
 			
 			jobj.addProperty(PROP_BUILD, "0004");
+			migrate(jobj);
+		}
+		else if (build.compareTo("0009") < 0)
+		{
+			JsonObject jsonObjectEditorPrices = (JsonObject)jobj.get("editorPrices");
+			
+			if (jsonObjectEditorPrices != null)
+			{
+				int bonusPrice =
+						CommonUtils.getRandomInteger(
+								Planet.PRICES_MIN_MAX.get(ShipType.BONUS).getMax() -
+								Planet.PRICES_MIN_MAX.get(ShipType.BONUS).getMin() + 1) +
+						Planet.PRICES_MIN_MAX.get(ShipType.BONUS).getMin();
+				
+				jsonObjectEditorPrices.add("BONUS", new JsonPrimitive(bonusPrice));
+			}
+			
+			jobj.addProperty(PROP_BUILD, "0009");
 			migrate(jobj);
 		}
 		else if (build.compareTo("0012") < 0)

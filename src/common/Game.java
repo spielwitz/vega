@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -47,7 +47,7 @@ public class Game extends EmailTransportBase implements Serializable
 	public static final int 		BOARD_MAX_Y = 18;
 
 	/// The current build
-	public static final String		BUILD = "0016";
+	public static final String		BUILD = "0017";
 	// Minimum required build version when reading games or when exchanging data
 	// with the VEGA server to avoid incompatibilities and advantages caused
 	// by program errors.

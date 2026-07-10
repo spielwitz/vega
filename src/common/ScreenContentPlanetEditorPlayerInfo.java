@@ -19,28 +19,35 @@ package common;
 import java.io.Serializable;
 
 @SuppressWarnings("serial") 
-class ScreenContentBoardMine implements Serializable
+class ScreenContentPlanetEditorPlayerInfo implements Serializable
 {
-	private int x;
-	private int y;
-	private int s;
-
-	ScreenContentBoardMine(int positionX, int positionY, int strength) {
+	private byte colorIndex;
+	private String playerName;
+	private int count;
+	
+	ScreenContentPlanetEditorPlayerInfo(
+			byte colorIndex,
+			String playerName,
+			int count) 
+	{
 		super();
-		this.x = positionX;
-		this.y = positionY;
-		this.s = strength;
+		this.count = count;
+		this.colorIndex = colorIndex;
+		this.playerName = playerName;
 	}
-	
-	int getPositionX() {
-		return x;
+
+	byte getColorIndex()
+	{
+		return colorIndex;
 	}
-	
-	int getPositionY() {
-		return y;
+
+	String getPlayerName()
+	{
+		return playerName;
 	}
-	
-	int getStrength() {
-		return s;
+
+	int getCount()
+	{
+		return count;
 	}
 }

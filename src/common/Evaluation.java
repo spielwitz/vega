@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -763,10 +763,17 @@ class Evaluation
 	private boolean patrolCombat(Ship patrol, Ship otherPatrol, int day)
 	{
 		Point patrolFlightDirection = patrol.getPositionDestination().subtract(patrol.getPositionStart());
+		Point otherPatrolFlightDirection = otherPatrol.getPositionDestination().subtract(otherPatrol.getPositionStart());
+
+		if (patrolFlightDirection.equals(Point.zeroPoint) || 
+			otherPatrolFlightDirection.equals(Point.zeroPoint))
+		{
+			return CommonUtils.getRandomInteger(10) < 5;
+		}
+		
 		Point patrolShootDirection = otherPatrol.getPositionOnDay(day).subtract(patrol.getPositionOnDay(day));
 		int patrolShootAngle = patrolFlightDirection.getAngleBetweenVectors(patrolShootDirection);
 
-		Point otherPatrolFlightDirection = otherPatrol.getPositionDestination().subtract(otherPatrol.getPositionStart());
 		Point otherPatrolShootDirection = patrol.getPositionOnDay(day).subtract(otherPatrol.getPositionOnDay(day));
 		int otherPatrolShootAngle = otherPatrolFlightDirection.getAngleBetweenVectors(otherPatrolShootDirection);
 

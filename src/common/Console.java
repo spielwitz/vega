@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General License as
@@ -266,6 +266,11 @@ class Console
 					break;
 				}
 			}
+			else if (this.mode == ConsoleModus.ENTER_ALLIANCE)
+			{
+				inputText.append(keyEvent.keyEvent.getKeyChar());
+				break;
+			}
 			else if (this.mode == ConsoleModus.STATISTICS)
 			{
 				if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT)
@@ -382,7 +387,8 @@ class Console
 		TEXT_INPUT,
 		PLANET_EDITOR,
 		EVALUATION,
-		STATISTICS
+		STATISTICS,
+		ENTER_ALLIANCE
 	}
 }
 

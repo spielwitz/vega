@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -43,8 +43,16 @@ public class ScreenPainter
 	private static final int		SHIP_SIZE_PIXEL_MIN = 2;
 	
 	private static final int 		PLANET_EDITOR_COLUMN1 = 5;
-	private static final int 		PLANET_EDITOR_COLUMN2 = 49;
-	private static final int 		PLANET_EDITOR_COLUMN3 = 70;
+	private static final int 		PLANET_EDITOR_COLUMN2 = 40; // 49
+	private static final int 		PLANET_EDITOR_COLUMN3 = 57; // 70
+	private static final int 		PLANET_EDITOR_COLUMN4 = 78;
+	
+	private static final int 		ENTER_ALLIANCE_LINE1 = 1;
+	private static final int 		ENTER_ALLIANCE_LINE2 = 3;
+	private static final int 		ENTER_ALLIANCE_COLUMN1 = 2;
+	private static final int 		ENTER_ALLIANCE_COLUMN2 = 13;
+	private static final int 		ENTER_ALLIANCE_COLUMN3 = 27;
+	private static final int 		ENTER_ALLIANCE_COLUMN4 = 41;
 	
 	private static final String 	CURSOR_CHARACTER = "_";
 	
@@ -93,7 +101,7 @@ public class ScreenPainter
 		titleLinesCount.add("  `   .@@##Qm `:jjjwW$#pgpP                  `    `                         ");
 		titleLinesCount.add("  `  .@@kh###D#VyyppogpP`   `           `              `  `                 ");
 		titleLinesCount.add("`   .@$kh#opV#pppgpHT`      `    `      `                `         `        ");
-		titleLinesCount.add("   .@$#k3f#gg#H='                `           `    `      (c) 1989-2025      ");
+		titleLinesCount.add("   .@$#k3f#gg#H='                `           `    `      (c) 1989-2026      ");
 		titleLinesCount.add("   @@$@8PT'           `     `    `      `              Michael Schweitzer   ");
 		titleLinesCount.add("`              `  `    `                     `    `        Build " + Game.BUILD + "       ");
 
@@ -151,6 +159,8 @@ public class ScreenPainter
 				this.drawStatistics();
 			else if (this.screenContent.getMode() == ScreenContent.MODE_DISTANCE_MATRIX)
 				this.drawBoard();
+			else if (this.screenContent.getMode() == ScreenContent.MODE_ENTER_ALLIANCE)
+				this.drawEnterAlliance();
 			else
 				this.drawPlanetEditor();
 			
@@ -667,45 +677,172 @@ public class ScreenPainter
 			return;
 		
 		this.setColor(new Color(50, 50, 50));
+		
 		this.drawRect(
 				BOARD_OFFSET_X,
 				BOARD_OFFSET_Y,
 				SCREEN_WIDTH - 2 * BOARD_OFFSET_X,
 				Game.BOARD_MAX_Y * BOARD_DX);
 		
-		this.drawPlanetEditorTextLeft(CommonUtils.padString(screenContentPlanetEditor.getMoneySupply(),4), PLANET_EDITOR_COLUMN1, 1, Colors.get(screenContentPlanetEditor.getColorIndex()));
-		this.drawPlanetEditorTextLeft(VegaResources.MoneySupply(false), PLANET_EDITOR_COLUMN1+5, 1, Colors.get(Colors.NEUTRAL));
+		this.drawPlanetEditorTextLeft(
+				VegaResources.PlanetEditorTitle(
+						false, 
+						screenContentPlanetEditor.getPlanetName(),
+						screenContentPlanetEditor.getOwnerName()),
+				PLANET_EDITOR_COLUMN1 + 5, 
+				1, 
+				Colors.get(screenContentPlanetEditor.getColorIndex()));
 		
-		this.drawPlanetEditorTextCentered(VegaResources.BuyPrice(false), PLANET_EDITOR_COLUMN2+9, 1, Colors.get(Colors.NEUTRAL));
-		this.drawPlanetEditorTextCentered(VegaResources.SellPrice(false), PLANET_EDITOR_COLUMN3+9, 1, Colors.get(Colors.NEUTRAL));
+		this.drawPlanetEditorTextCentered(
+				VegaResources.BuyPrice(false), 
+				PLANET_EDITOR_COLUMN2+9, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
 		
-		this.drawPlanetEditorLine(ShipType.MONEY_PRODUCTION, screenContentPlanetEditor, 
+		this.drawPlanetEditorTextCentered(
+				VegaResources.SellPrice(false), 
+				PLANET_EDITOR_COLUMN3+9, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				CommonUtils.padString(screenContentPlanetEditor.getMoneySupply(),4), 
+				PLANET_EDITOR_COLUMN1, 
+				3, 
+				Color.WHITE);
+		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.MoneySupply(false),
+				PLANET_EDITOR_COLUMN1+5,
+				3, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
+				3, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorLine(
+				ShipType.MONEY_PRODUCTION, 
+				screenContentPlanetEditor, 
 				VegaResources.IncreaseMoneyProduction(
 						false, 
 						Integer.toString(screenContentPlanetEditor.getProductionIncrese())), 
-				3);
-		this.drawPlanetEditorLine(ShipType.BATTLESHIP_PRODUCTION, screenContentPlanetEditor, VegaResources.ProductionOfBattleships(false), 4);
-		this.drawPlanetEditorLine(ShipType.DEFENSIVE_BATTLESHIPS, screenContentPlanetEditor, 
+				4);
+		
+		this.drawPlanetEditorLine(
+				ShipType.BATTLESHIP_PRODUCTION, 
+				screenContentPlanetEditor, 
+				VegaResources.ProductionOfBattleships(false), 
+				5);
+		
+		this.drawPlanetEditorTextLeft(
+				CommonUtils.padString(screenContentPlanetEditor.getCount().get(ShipType.BATTLESHIPS),4), 
+				PLANET_EDITOR_COLUMN1, 
+				6, 
+				Color.WHITE);
+		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.Battleships(false),
+				PLANET_EDITOR_COLUMN1+5,
+				6, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
+				6, 
+				Colors.get(Colors.NEUTRAL));
+		
+		this.drawPlanetEditorLine(
+				ShipType.DEFENSIVE_BATTLESHIPS, 
+				screenContentPlanetEditor, 
 				VegaResources.BuySellDefensiveBattleships(
 						false, 
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsBuy()), 
 						Integer.toString(screenContentPlanetEditor.getDefensiveBattleshipsSell())), 
-				5);
-		this.drawPlanetEditorLine(ShipType.BONUS, screenContentPlanetEditor, 
+				7);
+		
+		this.drawPlanetEditorLine(
+				ShipType.BONUS, screenContentPlanetEditor, 
 				VegaResources.BuySellCombatStrength(
 						false,
 						Integer.toString(screenContentPlanetEditor.getCombatFactorBuy())), 
-				6);
+				8);
 		
-		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 8);
-		this.drawPlanetEditorLine(ShipType.TRANSPORT, screenContentPlanetEditor, VegaResources.TransporterPlural(false), 9);
-		this.drawPlanetEditorLine(ShipType.PATROL, screenContentPlanetEditor, VegaResources.PatrouillePlural(false), 10);
-		this.drawPlanetEditorLine(ShipType.MINESWEEPER, screenContentPlanetEditor, VegaResources.MinenraeumerPlural(false), 11);
-		
+		this.drawPlanetEditorLine(ShipType.SPY, screenContentPlanetEditor, VegaResources.Spies(false), 9);
+		this.drawPlanetEditorLine(ShipType.TRANSPORT, screenContentPlanetEditor, VegaResources.TransporterPlural(false), 10);
+		this.drawPlanetEditorLine(ShipType.PATROL, screenContentPlanetEditor, VegaResources.PatrouillePlural(false), 11);
+		this.drawPlanetEditorLine(ShipType.MINESWEEPER, screenContentPlanetEditor, VegaResources.MinenraeumerPlural(false), 12);
 		this.drawPlanetEditorLine(ShipType.MINE50, screenContentPlanetEditor, VegaResources.Mine50Plural(false), 13);
 		this.drawPlanetEditorLine(ShipType.MINE100, screenContentPlanetEditor, VegaResources.Mine100Plural(false), 14);
 		this.drawPlanetEditorLine(ShipType.MINE250, screenContentPlanetEditor, VegaResources.Mine250Plural(false), 15);
 		this.drawPlanetEditorLine(ShipType.MINE500, screenContentPlanetEditor, VegaResources.Mine500Plural(false), 16);
+		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.Allies(false), 
+				PLANET_EDITOR_COLUMN4, 
+				2, 
+				Colors.get(Colors.NEUTRAL));
+		
+		if (screenContentPlanetEditor.getAlliancePartners().size() > 0)
+		{
+			for (ScreenContentPlanetEditorPlayerInfo ally: screenContentPlanetEditor.getAlliancePartners())
+			{
+				this.drawPlanetEditorTextLeft(
+						ally.getPlayerName(), 
+						PLANET_EDITOR_COLUMN4, 
+						3 + screenContentPlanetEditor.getAlliancePartners().indexOf(ally), 
+						Colors.get(ally.getColorIndex()));
+				
+				this.drawPlanetEditorTextLeft(
+						CommonUtils.padString(ally.getCount(), 5),
+						PLANET_EDITOR_COLUMN4 + 11, 
+						3 + screenContentPlanetEditor.getAlliancePartners().indexOf(ally), 
+						Color.WHITE);
+			}
+		}
+		else
+		{
+			this.drawPlanetEditorTextLeft(
+					VegaResources.None(false), 
+					PLANET_EDITOR_COLUMN4, 
+					3, 
+					Colors.get(Colors.NEUTRAL));
+		}
+		
+		this.drawPlanetEditorTextLeft(
+				VegaResources.ActiveSpies(false), 
+				PLANET_EDITOR_COLUMN4, 
+				10, 
+				Colors.get(Colors.NEUTRAL));
+		
+		if (screenContentPlanetEditor.getActiveSpies().size() > 0)
+		{
+			for (ScreenContentPlanetEditorPlayerInfo activeSpy: screenContentPlanetEditor.getActiveSpies())
+			{
+				this.drawPlanetEditorTextLeft(
+						activeSpy.getPlayerName(), 
+						PLANET_EDITOR_COLUMN4, 
+						11 + screenContentPlanetEditor.getActiveSpies().indexOf(activeSpy), 
+						Colors.get(activeSpy.getColorIndex()));
+			}
+		}
+		else
+		{
+			this.drawPlanetEditorTextLeft(
+					VegaResources.None(false), 
+					PLANET_EDITOR_COLUMN4, 
+					11, 
+					Colors.get(Colors.NEUTRAL));
+		}
 	}
 	
 	private void drawPlanetEditorLine(
@@ -714,19 +851,30 @@ public class ScreenPainter
 			String name, 
 			int line)
 	{
-		this.drawPlanetEditorTextLeft(CommonUtils.padString(screenContentPlanetEditor.getCount().get(type),4), PLANET_EDITOR_COLUMN1, line, Colors.get(screenContentPlanetEditor.getColorIndex()));
+		this.drawPlanetEditorTextLeft(
+				CommonUtils.padString(screenContentPlanetEditor.getCount().get(type),4), 
+				PLANET_EDITOR_COLUMN1, 
+				line, 
+				Color.WHITE);
+		
 		this.drawPlanetEditorTextLeft(name, PLANET_EDITOR_COLUMN1+5, line, 
 				!screenContentPlanetEditor.isReadOnly() && screenContentPlanetEditor.getTypeHighlighted() == type ?
 						Color.white :
 						Colors.get(Colors.NEUTRAL));
 		
+		this.drawPlanetEditorTextLeft(
+				"|", 
+				PLANET_EDITOR_COLUMN4 - 2, 
+				line, 
+				Colors.get(Colors.NEUTRAL));
+		
 		if (!screenContentPlanetEditor.isReadOnly() && screenContentPlanetEditor.getTypeHighlighted() == type)
 			this.drawPlanetEditorTextLeft(">>>>", 0, line, Color.white);
 
-		if (type == ShipType.BATTLESHIP_PRODUCTION)
+		if (type == ShipType.BATTLESHIP_PRODUCTION || type == ShipType.BATTLESHIPS)
 			return;
 		
-		byte colorIndex = screenContentPlanetEditor.getColorIndex();
+		byte colorIndex = Colors.WHITE;
 		if (screenContentPlanetEditor.getBuyImpossible().contains(type))
 			colorIndex = Colors.NEUTRAL;
 				
@@ -734,16 +882,27 @@ public class ScreenPainter
 				CommonUtils.padString(
 						screenContentPlanetEditor.getPriceBuy(type),
 						2), 
-				PLANET_EDITOR_COLUMN2 + 4, line, Colors.get(colorIndex));
-		this.drawPlanetEditorTextLeft(VegaResources.Money(false), PLANET_EDITOR_COLUMN2+7, line, Colors.get(colorIndex));
+				PLANET_EDITOR_COLUMN2 + 4, 
+				line, 
+				Colors.get(colorIndex));
 		
-		this.drawPlanetEditorTextLeft(this.getPriceRangeString(type, false), PLANET_EDITOR_COLUMN2+9, line, Colors.get(Colors.NEUTRAL));
+		this.drawPlanetEditorTextLeft(
+				VegaResources.Money(false), 
+				PLANET_EDITOR_COLUMN2+7, 
+				line, 
+				Colors.get(colorIndex));
+		
+		this.drawPlanetEditorTextLeft(
+				this.getPriceRangeString(type, false), 
+				PLANET_EDITOR_COLUMN2+9, 
+				line, 
+				Colors.get(Colors.NEUTRAL));
 		
 		if (type == ShipType.MONEY_PRODUCTION ||
 			type == ShipType.BONUS)
 			return;
 		
-		colorIndex = screenContentPlanetEditor.getColorIndex();
+		colorIndex = Colors.WHITE;
 		if (screenContentPlanetEditor.getSellImpossible().contains(type))
 			colorIndex = Colors.NEUTRAL;
 		
@@ -751,10 +910,21 @@ public class ScreenPainter
 				CommonUtils.padString(
 						screenContentPlanetEditor.getPriceSell(type),
 						2), 
-				PLANET_EDITOR_COLUMN3 + 4, line, Colors.get(colorIndex));
-		this.drawPlanetEditorTextLeft(VegaResources.Money(false), PLANET_EDITOR_COLUMN3+7, line, Colors.get(colorIndex));
+				PLANET_EDITOR_COLUMN3 + 4, 
+				line, 
+				Colors.get(colorIndex));
 		
-		this.drawPlanetEditorTextLeft(this.getPriceRangeString(type, true), PLANET_EDITOR_COLUMN3+9, line, Colors.get(Colors.NEUTRAL));
+		this.drawPlanetEditorTextLeft(
+				VegaResources.Money(false), 
+				PLANET_EDITOR_COLUMN3+7, 
+				line, 
+				Colors.get(colorIndex));
+		
+		this.drawPlanetEditorTextLeft(
+				this.getPriceRangeString(type, true), 
+				PLANET_EDITOR_COLUMN3+9, 
+				line, 
+				Colors.get(Colors.NEUTRAL));
 		
 	}
 		
@@ -1273,6 +1443,103 @@ public class ScreenPainter
 		this.dbGraphics.setColor(Color.white);
 		int xx0 = x0 + CommonUtils.round((double)screenContentStatistics.getSelectedYearIndex() * dx);
 		this.dbGraphics.drawLine(xx0, y0, xx0, y1 + 2 * height - 1);		
+	}
+	
+	private void drawEnterAlliance()
+	{
+		if (this.screenContent == null)
+			return;
+		
+		ScreenContentEnterAlliance screenContentEnterAlliance = this.screenContent.getEnterAlliance();
+		if (screenContentEnterAlliance == null)
+			return;
+		
+		this.setColor(new Color(50, 50, 50));
+		this.drawRect(BOARD_OFFSET_X, BOARD_OFFSET_Y, SCREEN_WIDTH - 2 * BOARD_OFFSET_X, Game.BOARD_MAX_Y * BOARD_DX);
+		
+		String allianceStructureStr = VegaResources.AllianceStructure(false) + ": ";
+				
+		this.drawPlanetEditorTextLeft(
+				allianceStructureStr,
+				ENTER_ALLIANCE_COLUMN1,
+				ENTER_ALLIANCE_LINE1,
+				Color.white);
+		
+		this.drawPlanetEditorTextLeft(
+				screenContentEnterAlliance.getTitle(),
+				ENTER_ALLIANCE_COLUMN1 + allianceStructureStr.length(),
+				ENTER_ALLIANCE_LINE1,
+				Colors.get(screenContentEnterAlliance.getTitleColorIndex()));
+		
+		this.drawPlanetEditorTextCentered(
+				VegaResources.Current(false),
+				ENTER_ALLIANCE_COLUMN3,
+				ENTER_ALLIANCE_LINE2,
+				Color.white);
+		
+		this.drawPlanetEditorTextCentered(
+				VegaResources.FromEvaluation(false),
+				ENTER_ALLIANCE_COLUMN4,
+				ENTER_ALLIANCE_LINE2,
+				Color.white);
+		
+		for (int line = 0; line < screenContentEnterAlliance.getPlayerInfos().length; line++)
+		{
+			this.drawPlanetEditorTextLeft(
+					screenContentEnterAlliance.getPlayerInfos()[line].getPlayerName(),
+					ENTER_ALLIANCE_COLUMN1,
+					ENTER_ALLIANCE_LINE2 + 1 + line,
+					Colors.get(screenContentEnterAlliance.getPlayerInfos()[line].getColorIndex()));
+			
+			this.drawPlanetEditorTextLeft(
+					screenContentEnterAlliance.getPlayerInfos()[line].getCount() >= 0 ?
+							CommonUtils.padString(Integer.toString(screenContentEnterAlliance.getPlayerInfos()[line].getCount()), 5) :
+							"",
+					ENTER_ALLIANCE_COLUMN2,
+					ENTER_ALLIANCE_LINE2 + 1 + line,
+					Color.white);
+			
+			String selectedIndicator = null;
+			
+			switch (screenContentEnterAlliance.getAllianceMembersCurrent()[line])
+			{
+				case EnterAlliance.IS_MEMBER:
+					selectedIndicator = "[X]";
+					break;
+				case EnterAlliance.IS_NOT_MEMBER:
+					selectedIndicator = "[ ]";
+					break;
+				case EnterAlliance.IS_NOT_VISIBLE:
+					selectedIndicator = "[?]";
+					break;
+			}
+
+			this.drawPlanetEditorTextCentered(
+					selectedIndicator,
+					ENTER_ALLIANCE_COLUMN3,
+					ENTER_ALLIANCE_LINE2 + 1 + line,
+					Color.white);
+			
+			selectedIndicator =
+					screenContentEnterAlliance.getAllianceMembersNew()[line] ?
+							"[X]" :
+							"[ ]";
+			
+			this.drawPlanetEditorTextCentered(
+					selectedIndicator,
+					ENTER_ALLIANCE_COLUMN4,
+					ENTER_ALLIANCE_LINE2 + 1 + line,
+					Color.white);
+		}
+		
+		for (int i = 0; i < screenContentEnterAlliance.getExplanations().size(); i++)
+		{
+			this.drawPlanetEditorTextLeft(
+					screenContentEnterAlliance.getExplanations().get(i),
+					ENTER_ALLIANCE_COLUMN1,
+					ENTER_ALLIANCE_LINE2 + 2 + screenContentEnterAlliance.getPlayerInfos().length + i,
+					Color.white);
+		}
 	}
 	
 	private void drawTitle()

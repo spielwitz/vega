@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -304,11 +304,13 @@ class PlanetEditor
 			if (count < 1)
 				sellImpossible.add(itemType);
 		}
+		
+		ships.put(ShipType.BATTLESHIPS, CommonUtils.convertToString(planet.getShipsCount(ShipType.BATTLESHIPS)));
 
 		if (this.game.getScreenContent() == null)
 			this.game.setScreenContent(new ScreenContent());
 
-		byte colorIndex = Colors.WHITE;
+		byte colorIndex = planet.getOwnerColorIndex(game);
 		
 		@SuppressWarnings("unchecked")
 		Hashtable<ShipType,Integer> pricesBuyClone = (Hashtable<ShipType, Integer>) CommonUtils.klon(this.pricesBuy);
@@ -327,6 +329,38 @@ class PlanetEditor
 		pricesSellClone.put(
 				ShipType.DEFENSIVE_BATTLESHIPS, 
 				planet.getDefensiveBattleshipsSellActualPrice(this.pricesSell.get(ShipType.DEFENSIVE_BATTLESHIPS)));
+		
+		ArrayList<ScreenContentPlanetEditorPlayerInfo> alliancePartners = new ArrayList<ScreenContentPlanetEditorPlayerInfo>();
+		
+		for (int playerIndex = 0; playerIndex < game.getPlayers().length; playerIndex++)
+		{
+			if (planet.isAllianceMember(playerIndex))
+			{
+				Player player = game.getPlayers()[playerIndex];
+				
+				alliancePartners.add(
+						new ScreenContentPlanetEditorPlayerInfo(
+								player.getColorIndex(),
+								game.getPlayers()[playerIndex].getName(),
+								planet.getBattleshipsCount(playerIndex)));
+			}
+		}
+		
+		ArrayList<ScreenContentPlanetEditorPlayerInfo> activeSpies = new ArrayList<ScreenContentPlanetEditorPlayerInfo>();
+		
+		for (int playerIndex = 0; playerIndex < game.getPlayers().length; playerIndex++)
+		{
+			if (planet.hasRadioStation(playerIndex))
+			{
+				Player player = game.getPlayers()[playerIndex];
+				
+				activeSpies.add(
+						new ScreenContentPlanetEditorPlayerInfo(
+								player.getColorIndex(),
+								game.getPlayers()[playerIndex].getName(),
+								0));
+			}
+		}
 
 		this.game.getScreenContent().setPlanetEditor(
 				new ScreenContentPlanetEditor(
@@ -336,6 +370,12 @@ class PlanetEditor
 						pricesSellClone,
 						buyImpossible,
 						sellImpossible,
+						alliancePartners,
+						activeSpies,
+						game.getPlanetNameFromIndex(planetIndex),
+						planet.getOwner() == Player.NEUTRAL ? 
+								VegaResources.Neutral(false) : 
+								game.getPlayers()[planet.getOwner()].getName(),
 						colorIndex,
 						planet.getMoneySupply(),
 						planet.getMoneyProductionMaxIncrease(),

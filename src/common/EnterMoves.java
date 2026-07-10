@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -78,8 +78,6 @@ class EnterMoves
 
 		this.game.getConsole().clear();
 
-		ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();
-
 		int planetIndex = -1;
 		Planet planet = null;
 
@@ -100,176 +98,49 @@ class EnterMoves
 
 			if (planet.getOwner() == Player.NEUTRAL)
 			{
-				this.game.getConsole().appendText(VegaResources.ActionNotPossible(true));
+				this.game.getConsole().appendText(VegaResources.NoAllianceOnNeutralPlanets(true));
 				this.game.getConsole().lineBreak();
 				continue;
 			}
 
 			break;
 		} while (true);
-
-		allowedKeys = new ArrayList<ConsoleKey>();
-
-		if (planet.isAllianceMember(this.playerIndexNow))
+		
+		// Get last alliance change.
+		boolean[] allianceChanges = null; 
+		
+		for (int i = this.game.getMoves().get(this.playerIndexNow).size() - 1; i >= 0; i--)
 		{
-			allowedKeys.add(new ConsoleKey("0",VegaResources.TerminateAlliance(true)));
+			Move move = this.game.getMoves().get(this.playerIndexNow).get(i);
+			
+			if (move.getAllianceChanges() != null)
+			{
+				allianceChanges = move.getAllianceChanges();
+				break;
+			}
 		}
-
-		for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
+		
+		EnterAlliance ea = new EnterAlliance(this.game, this.playerIndexNow, planetIndex, allianceChanges);
+		
+		if (ea.takeOverChanges)
 		{
-			allowedKeys.add(new ConsoleKey(
-					Integer.toString(playerIndex+1), 
-					this.game.getPlayers()[playerIndex].getName()));
-		}
-
-		allowedKeys.add(new ConsoleKey("-", VegaResources.Info(true)));
-
-		do
-		{
-			this.game.getConsole().appendText(
-					VegaResources.EnterAllianceMembers(true)+": ");
-
-			ConsoleInput input = this.game.getConsole().waitForTextEntered(10, allowedKeys, true);
-
-			if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
-			{
-				this.game.getConsole().outAbort();
-				return;
-			}
-
-			if (input.getInputText().toUpperCase().equals("-"))
-			{
-				if (!planet.areDetailsVisibleForPlayer(this.playerIndexNow))
-				{
-					this.game.getConsole().appendText(VegaResources.ActionNotPossible(true));
-					this.game.getConsole().lineBreak();
-					continue;
-				}
-
-				this.printAlliance(planet, planetIndex);
-				this.game.getConsole().waitForKeyPressed();
-				continue;
-			}
-
-			try
-			{
-				Integer.parseInt(input.getInputText());
-			}
-			catch (Exception e)
-			{
-				this.game.getConsole().outInvalidInput();
-				continue;
-			}
-
-			if (input.getInputText().indexOf('0') >= 0 && input.getInputText().length() > 1)
-			{
-				this.game.getConsole().appendText(
-						VegaResources.AllianceDefinitionError(true));
-				this.game.getConsole().lineBreak();
-				continue;
-			}
-
-			boolean[] allianceChanges = new boolean[this.game.getPlayersCount()];
-
-			if (input.getInputText().equals("0"))
-			{
-				if (!planet.isAllianceMember(this.playerIndexNow))
-				{
-					this.game.getConsole().appendText(VegaResources.ActionNotPossible(true));
-					this.game.getConsole().lineBreak();
-					continue;
-				}
-			}
-			else
-			{
-				boolean error = false;
-
-				for (int i = 0; i < input.getInputText().length(); i++)
-				{
-					int playerIndex = Integer.parseInt(input.getInputText().substring(i,i+1)) - 1;
-
-					if (playerIndex < 0 || playerIndex >= this.game.getPlayersCount())
-					{
-						error = true;
-						break;
-					}
-
-					allianceChanges[playerIndex] = true;
-				}
-
-				if (error)
-				{
-					this.game.getConsole().outInvalidInput();
-					continue;
-				}
-
-				int playersCount = 0;
-
-				for (int playerIndex = 0; playerIndex < this.game.getPlayersCount(); playerIndex++)
-				{
-					if (allianceChanges[playerIndex])
-					{
-						playersCount++;
-					}
-					else
-					{
-						if (playerIndex == planet.getOwner() ||
-								playerIndex == this.playerIndexNow)
-						{
-							this.game.getConsole().appendText(
-									VegaResources.AllianceOwnerNotIncluded(true));
-							this.game.getConsole().lineBreak();
-							error = true;
-							break;
-						}
-						else if (planet.isAllianceMember(this.playerIndexNow) &&
-								planet.isAllianceMember(playerIndex))
-						{
-							this.game.getConsole().appendText(
-									VegaResources.AllianceOwnerNotIncluded2(true));
-							this.game.getConsole().lineBreak();
-							error = true;
-							break;
-						}
-					}
-				}
-
-				if (error)
-				{
-					continue;
-				}
-
-				if (playersCount <= 1)
-				{
-					this.game.getConsole().outInvalidInput();
-					continue;
-				}
-			}
-
 			this.game.getMoves().get(this.playerIndexNow).add(
-					new Move(planetIndex, allianceChanges));
+					new Move(planetIndex, ea.allianceMembersChanged));
 
 			this.game.getConsole().appendText(VegaResources.AllianceChanged(true));
 			this.game.getConsole().lineBreak();
-
-			break;
-		} while (true);
+		}
 	}
 
-	private void battleships(boolean alliedFleet)
+	private void battleships()
 	{
-		String shipType = 
-				alliedFleet ?
-						VegaResources.AlliedBattleships(true) :
-						VegaResources.Battleships(true);
-		
 		this.game.getConsole().setHeaderText(
 				this.game.mainMenuGetYearDisplayText() 
 				+ " -> "
 				+ VegaResources.EnterMoves(true)+" " 
 				+ this.game.getPlayers()[this.playerIndexNow].getName() 
 				+ " -> "
-				+ shipType,
+				+ VegaResources.Battleships(true),
 				
 				this.game.getPlayers()[this.playerIndexNow].getColorIndex());
 
@@ -291,25 +162,10 @@ class EnterMoves
 
 			planetIndexStart = input.planetIndex;
 			
-			if (alliedFleet)
-			{
-				if (!this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
-					this.game.getConsole().appendText(VegaResources.NotAnAllianceMember(true));
-				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-					break;
-				else
-					this.game.getConsole().appendText(VegaResources.NoBattleships(true));
-			}
-			else
-			{
-				if (!this.game.getPlanets()[planetIndexStart].isPlayerInvolved(this.playerIndexNow))
-					continue;
-				else if (this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.BATTLESHIPS,this.playerIndexNow) > 0)
-					break;
-				else
-					this.game.getConsole().appendText(VegaResources.NoBattleships(true));
-			}
+			if (this.game.getPlanets()[planetIndexStart].getBattleshipsCount(this.playerIndexNow) > 0)
+				break;
 			
+			this.game.getConsole().appendText(VegaResources.NoBattleships(true));
 			this.game.getConsole().lineBreak();
 			
 		} while (true);
@@ -328,23 +184,60 @@ class EnterMoves
 
 			planetIndexDestination = input.planetIndex;
 
-			if (planetIndexStart != planetIndexDestination)
-			{
-				this.showArrivalDate(
-						ShipType.BATTLESHIPS, 
-						false, 
-						this.game.getPlanets()[planetIndexStart].getPosition(), 
-						this.game.getPlanets()[planetIndexDestination].getPosition());
-				break;
-			}
-			else
-			{
-				this.game.getConsole().appendText(VegaResources.ThisIsTheStartPlanet(true));
-				this.game.getConsole().lineBreak();
-			}
+			this.showArrivalDate(
+					ShipType.BATTLESHIPS, 
+					false, 
+					this.game.getPlanets()[planetIndexStart].getPosition(), 
+					this.game.getPlanets()[planetIndexDestination].getPosition());
+			break;
 
 		} while (true);
-
+		
+		this.createDummyShip(
+				planetIndexStart,
+				planetIndexDestination,
+				this.game.getPlanets()[planetIndexStart].getPosition(),
+				this.game.getPlanets()[planetIndexDestination].getPosition());
+		
+		boolean alliedFleet = false;
+		
+		if (this.game.getPlanets()[planetIndexStart].isAllianceMember(this.playerIndexNow))
+		{
+			allowedKeys.clear();
+			allowedKeys.add(new ConsoleKey("1",VegaResources.Yes(true)));
+			allowedKeys.add(new ConsoleKey("2",VegaResources.No(true)));
+			allowedKeys.add(new ConsoleKey("ESC",VegaResources.Cancel(true)));
+			
+			do
+			{
+				this.game.getConsole().appendText(VegaResources.AlliedBattleships(true)+ " ");
+				
+				ConsoleInput input = this.game.getConsole().waitForKeyPressed(allowedKeys);
+				
+				if (input.getLastKeyCode() == KeyEvent.VK_ESCAPE)
+				{
+					this.game.getConsole().outAbort();
+					return;
+				}
+				
+				if (input.getInputText().equals("1"))
+				{
+					alliedFleet = true;
+					break;
+				}
+				else if (input.getInputText().equals("2"))
+				{
+					alliedFleet = false;
+					break;
+				}
+				else
+				{
+					this.game.getConsole().outInvalidInput();
+				}
+			}
+			while (true);
+		}
+		
 		int count = -1;
 		
 		int countMaxTemp = 0;
@@ -538,7 +431,6 @@ class EnterMoves
 			{
 				allowedKeys.add(new ConsoleKey("0",VegaResources.Planet(true))); 					
 				allowedKeys.add(new ConsoleKey("1",VegaResources.Battleships(true))); 					
-				allowedKeys.add(new ConsoleKey("2",VegaResources.AlliedBattleships(true)));
 				allowedKeys.add(new ConsoleKey("3",VegaResources.Spy(true)));
 				allowedKeys.add(new ConsoleKey("4",VegaResources.Patrol(true)));
 				allowedKeys.add(new ConsoleKey("5",VegaResources.Transporter(true)));
@@ -565,9 +457,7 @@ class EnterMoves
 			else if (input.equals("\t"))
 				exit = this.finish();
 			else if (!capitulated && input.equals("1"))
-				this.battleships(false);
-			else if (!capitulated && input.equals("2"))
-				this.battleships(true);
+				this.battleships();
 			else if (!capitulated && input.equals("3"))
 				this.spiesTransports(ShipType.SPY);
 			else if (!capitulated && input.equals("4"))
@@ -610,6 +500,16 @@ class EnterMoves
 			else
 				this.game.getConsole().outInvalidInput();
 
+			// Remove dummy ships from the list of ships. They are only used to show the arrival date of a ship.
+			for (int i = this.game.getShips().size() - 1; i >= 0; i--)
+			{
+				Ship ship = this.game.getShips().get(i);
+
+				if (ship.getType() == ShipType.DUMMY_SHIP)
+					this.game.getShips().remove(i);
+			}
+			this.game.updateBoard(null, null, 0, playerIndex, 0);
+
 			if (this.game.isTutorial())
 			{
 				int movesAfterCount = this.game.getMoves().get(this.playerIndexNow).size();
@@ -629,7 +529,6 @@ class EnterMoves
 				}
 			}
 
-			this.game.updateBoard(null, null, 0, playerIndex, 0);
 			game.updatePlanetList(this.playerIndexNow, false);
 			
 		} while (!exit);
@@ -997,6 +896,8 @@ class EnterMoves
 
 		int planetIndexStart = -1;
 		ShipType type = shipCategory;
+		boolean[] minesAvailable = new boolean[4];
+		ArrayList<ConsoleKey> allowedKeysMineType = new ArrayList<ConsoleKey>();
 
 		do
 		{
@@ -1012,6 +913,8 @@ class EnterMoves
 
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
+				this.game.getConsole().appendText(VegaResources.CantStartShipsFromThisPlanet(true));
+				this.game.getConsole().lineBreak();
 				continue;
 			}
 
@@ -1028,63 +931,24 @@ class EnterMoves
 			}
 			else
 			{
-				ArrayList<ConsoleKey> allowedKeys = new ArrayList<ConsoleKey>();
+				minesAvailable[0] = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.MINE50) > 0;
+				minesAvailable[1] = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.MINE100) > 0;
+				minesAvailable[2] = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.MINE250) > 0;
+				minesAvailable[3] = this.game.getPlanets()[planetIndexStart].getShipsCount(ShipType.MINE500) > 0;
+				
+				allowedKeysMineType.clear();
 
-				allowedKeys.add(new ConsoleKey("1",VegaResources.Mine50(true)));
-				allowedKeys.add(new ConsoleKey("2",VegaResources.Mine100(true)));
-				allowedKeys.add(new ConsoleKey("3",VegaResources.Mine250(true)));
-				allowedKeys.add(new ConsoleKey("4",VegaResources.Mine500(true)));
-
-				boolean abort = false;
-
-				do
+				if (minesAvailable[0]) allowedKeysMineType.add(new ConsoleKey("1",VegaResources.Mine50(true)));
+				if (minesAvailable[1]) allowedKeysMineType.add(new ConsoleKey("2",VegaResources.Mine100(true)));
+				if (minesAvailable[2]) allowedKeysMineType.add(new ConsoleKey("3",VegaResources.Mine250(true)));
+				if (minesAvailable[3]) allowedKeysMineType.add(new ConsoleKey("4",VegaResources.Mine500(true)));
+				
+				if (allowedKeysMineType.size() == 0)
 				{
-					this.game.getConsole().appendText(VegaResources.WhichType(true) + " ");
-
-					ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeys);
-
-					if (consoleInput.getLastKeyCode() == KeyEvent.VK_ESCAPE)
-					{
-						this.game.getConsole().outAbort();
-						abort = true;
-						break;
-					}
-
-					if (consoleInput.getInputText().equals("1"))
-					{
-						type = ShipType.MINE50;
-					}
-					else if (consoleInput.getInputText().equals("2"))
-					{
-						type = ShipType.MINE100;
-					}
-					else if (consoleInput.getInputText().equals("3"))
-					{
-						type = ShipType.MINE250;
-					}
-					else if (consoleInput.getInputText().equals("4"))
-					{
-						type = ShipType.MINE500;
-					}
-					else
-					{
-						this.game.getConsole().outInvalidInput();
-						continue;
-					}
-					
-					if (this.game.getPlanets()[planetIndexStart].getShipsCount(type) <= 0)
-					{
-						this.game.getConsole().appendText(VegaResources.NoShipOfSelectedTypeAvailable(true));
-						this.game.getConsole().lineBreak();
-						continue;
-					}
-
-					break;
-
-				} while (true);
-
-				if (abort)
-					return;
+					this.game.getConsole().appendText(VegaResources.NoShipOfSelectedTypeAvailable(true));
+					this.game.getConsole().lineBreak();
+					continue;
+				}
 			}
 
 			break;
@@ -1113,13 +977,6 @@ class EnterMoves
 				return;
 			}
 
-			if (inputDestination.sector.equals(this.game.getPlanets()[planetIndexStart].getPosition()))
-			{
-				this.game.getConsole().appendText(VegaResources.ThisIsTheStartPlanet(true));
-				this.game.getConsole().lineBreak();
-				continue;
-			}
-			
 			this.showArrivalDate(
 					type, 
 					transfer, 
@@ -1128,6 +985,53 @@ class EnterMoves
 
 			break;
 		} while (true);
+		
+		if (shipCategory != ShipType.MINESWEEPER)
+		{
+			this.createDummyShip(
+					planetIndexStart,
+					inputDestination.planetIndex,
+					this.game.getPlanets()[planetIndexStart].getPosition(),
+					inputDestination.sector);
+
+			do
+			{
+				this.game.getConsole().appendText(VegaResources.WhichType(true) + " ");
+	
+				ConsoleInput consoleInput = this.game.getConsole().waitForKeyPressed(allowedKeysMineType);
+	
+				if (consoleInput.getLastKeyCode() == KeyEvent.VK_ESCAPE)
+				{
+					this.game.getConsole().outAbort();
+					return;
+				}
+	
+				if (minesAvailable[0] && consoleInput.getInputText().equals("1"))
+				{
+					type = ShipType.MINE50;
+				}
+				else if (minesAvailable[1] && consoleInput.getInputText().equals("2"))
+				{
+					type = ShipType.MINE100;
+				}
+				else if (minesAvailable[2] && consoleInput.getInputText().equals("3"))
+				{
+					type = ShipType.MINE250;
+				}
+				else if (minesAvailable[3] && consoleInput.getInputText().equals("4"))
+				{
+					type = ShipType.MINE500;
+				}
+				else
+				{
+					this.game.getConsole().outInvalidInput();
+					continue;
+				}
+				
+				break;
+	
+			} while (true);
+		}
 
 		Planet planetCopy = (Planet)CommonUtils.klon(this.game.getPlanets()[planetIndexStart]);
 
@@ -1234,6 +1138,8 @@ class EnterMoves
 
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
+				this.game.getConsole().appendText(VegaResources.CantStartShipsFromThisPlanet(true));
+				this.game.getConsole().lineBreak();
 				continue;
 			}
 
@@ -1268,13 +1174,6 @@ class EnterMoves
 			if (inputDestination == null)
 			{
 				return;
-			}
-
-			if (inputDestination.sector.equals(this.game.getPlanets()[planetIndexStart].getPosition()))
-			{
-				this.game.getConsole().appendText(VegaResources.ThisIsTheStartPlanet(true));
-				this.game.getConsole().lineBreak();
-				continue;
 			}
 
 			this.showArrivalDate(
@@ -1340,13 +1239,16 @@ class EnterMoves
 			if (this.game.getPlanets()[planetIndex].areDetailsVisibleForPlayer(playerIndexNow))
 				break;
 			
+			this.game.getConsole().appendText(VegaResources.PlanetDetailsNotVisible(true));
+			this.game.getConsole().lineBreak();
+			
 		} while (true);
 
 		if (planetIndex < 0)
 			return;
 
 		this.game.getConsole().setHeaderText(
-				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" " + this.game.getPlayers()[this.playerIndexNow].getName() + " -> " + VegaResources.Planet(true, this.game.getPlanetNameFromIndex(planetIndex)),
+				this.game.mainMenuGetYearDisplayText() + " -> "+VegaResources.EnterMoves(true)+" " + this.game.getPlayers()[this.playerIndexNow].getName() + " -> " + VegaResources.Planet(false),
 				this.game.getPlayers()[this.playerIndexNow].getColorIndex());
 
 		new PlanetEditor(
@@ -1466,23 +1368,6 @@ class EnterMoves
 		} while (true);
 	}
 
-	private void printAlliance(Planet planet, int planetIndex)
-	{
-		if (planet.allianceExists())
-		{
-			this.game.getConsole().appendText(
-					VegaResources.CurrentAllies(true)+":");
-			this.game.getConsole().lineBreak();
-
-			this.game.printAllianceInfo(planetIndex);
-		}
-		else
-		{
-			this.game.getConsole().appendText(
-					VegaResources.NoAlliance(true));
-		}
-	}
-
 	private void showArrivalDate(
 			ShipType type, 
 			boolean transfer, 
@@ -1501,10 +1386,10 @@ class EnterMoves
 		this.game.getConsole().appendText(VegaResources.Distance(true, distanceString) + ", ");
 		
 		ShipTravelTime travelTime = Ship.getTravelTime(
-				type, 
-				transfer, 
-				posStart, 
-				posDest);
+								type, 
+								transfer, 
+								posStart, 
+								posDest);
 
 		this.game.getConsole().appendText(VegaResources.Arrival2(true));
 
@@ -1546,6 +1431,8 @@ class EnterMoves
 			
 			if (this.game.getPlanets()[planetIndexStart].getOwner() != this.playerIndexNow)
 			{
+				this.game.getConsole().appendText(VegaResources.CantStartShipsFromThisPlanet(true));
+				this.game.getConsole().lineBreak();
 				continue;
 			}
 
@@ -1570,13 +1457,13 @@ class EnterMoves
 			
 			transfer = transferOptional.get();
 		}
-
+		
 		int planetIndexDestination = -1;
 
 		do
 		{
 			PlanetInputStruct input = this.game.getPlanetInput(
-					VegaResources.DestinationPlanet(true), true, true); 
+					VegaResources.DestinationPlanet(true), true, false); 
 
 			if (input == null)
 			{
@@ -1584,16 +1471,6 @@ class EnterMoves
 			}
 
 			planetIndexDestination = input.planetIndex;
-
-			if (planetIndexDestination == planetIndexStart &&
-				(type == ShipType.TRANSPORT ||
-				 (type == ShipType.SPY && transfer)))
-			{
-				this.game.getConsole().appendText(
-						VegaResources.ThisIsTheStartPlanet(true));
-				this.game.getConsole().lineBreak();
-				continue;
-			}
 			
 			this.showArrivalDate(
 					type, 
@@ -1604,7 +1481,7 @@ class EnterMoves
 			break;
 
 		} while (true);
-
+		
 		Planet planetCopy = (Planet)CommonUtils.klon(this.game.getPlanets()[planetIndexStart]);
 
 		Ship ship = null;
@@ -1626,8 +1503,13 @@ class EnterMoves
 		}
 		else if (type == ShipType.TRANSPORT)
 		{
+			this.createDummyShip(
+					planetIndexStart,
+					planetIndexDestination,
+					this.game.getPlanets()[planetIndexStart].getPosition(),
+					this.game.getPlanets()[planetIndexDestination].getPosition());
+			
 			allowedKeys = new ArrayList<ConsoleKey>();
-
 			allowedKeys.add(new ConsoleKey("+",VegaResources.MaximumLoad(true)));
 
 			int count = -1;
@@ -1920,5 +1802,27 @@ class EnterMoves
 			this.game.getConsole().outAbort();
 
 		return false;
+	}
+	
+	private void createDummyShip(
+			int planetIndexStart, 
+			int planetIndexDestination,
+			Point start,
+			Point destination)
+	{
+		Ship dummyShip = new Ship(
+				planetIndexStart,
+				planetIndexDestination,
+				start,
+				destination,
+				ShipType.DUMMY_SHIP,	
+				0,
+				this.playerIndexNow,
+				false,
+				true,
+				null,
+				this.game.getPlanets()[planetIndexStart].getBonus());
+		this.game.getShips().add(dummyShip);
+		this.game.updateBoard(null, null, 0, this.playerIndexNow, 0);
 	}
 }

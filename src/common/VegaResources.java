@@ -35,7 +35,7 @@ public class VegaResources
 	}
 
 	private static void fillSymbolDict() {
-		// Last used symbolic key: FY
+		// Last used symbolic key: GF
 		symbolDict.put("00","HighScoreListOnServer_00");
 		symbolDict.put("01","HighScoreList_01");
 		symbolDict.put("02","HighScoresNoEntries_02");
@@ -43,7 +43,6 @@ public class VegaResources
 		symbolDict.put("04","ImportGameFromClipboard_04");
 		symbolDict.put("05","ImportMovesOfPlayer_05");
 		symbolDict.put("06","IncreaseMoneyProduction_06");
-		symbolDict.put("08","Info_08");
 		symbolDict.put("09","InputDisabled_09");
 		symbolDict.put("0A","Insert_0A");
 		symbolDict.put("0B","InvalidInput_0B");
@@ -132,7 +131,6 @@ public class VegaResources
 		symbolDict.put("2P","NextEvent_2P");
 		symbolDict.put("2Q","Next_2Q");
 		symbolDict.put("2R","NoAllianceOnPlanet_2R");
-		symbolDict.put("2S","NoAlliance_2S");
 		symbolDict.put("2T","ConnectionErrorSecurityCode_2T");
 		symbolDict.put("2U","Credentials_2U");
 		symbolDict.put("2V","NoPlanetsWithAlliances_2V");
@@ -172,7 +170,6 @@ public class VegaResources
 		symbolDict.put("3U","PlanetIsAttacked_3U");
 		symbolDict.put("3V","PlanetShort_3V");
 		symbolDict.put("3W","Planet_3W");
-		symbolDict.put("3X","Planet_3X");
 		symbolDict.put("3Y","PlanetsAlliancesSpies_3Y");
 		symbolDict.put("3Z","PlanetsInYear_3Z");
 		symbolDict.put("40","PlanetsProducing_40");
@@ -253,7 +250,6 @@ public class VegaResources
 		symbolDict.put("67","TerminateAlliance_67");
 		symbolDict.put("68","TextFile_68");
 		symbolDict.put("69","ThereAreNoMoves_69");
-		symbolDict.put("6A","ThisIsTheStartPlanet_6A");
 		symbolDict.put("6B","Timeout_6B");
 		symbolDict.put("6C","ToShort_6C");
 		symbolDict.put("6D","ToWhichPlanetBattleships_6D");
@@ -354,7 +350,6 @@ public class VegaResources
 		symbolDict.put("95","AboutVega_95");
 		symbolDict.put("96","AcceptChanges_96");
 		symbolDict.put("97","ActionCancelled_97");
-		symbolDict.put("98","ActionNotPossible_98");
 		symbolDict.put("99","ActionNotPossible_99");
 		symbolDict.put("9A","ActivateServer_9A");
 		symbolDict.put("9B","ActivateUser_9B");
@@ -370,9 +365,6 @@ public class VegaResources
 		symbolDict.put("9L","AllEmailPlayerMovesImported_9L");
 		symbolDict.put("9M","AllOff_9M");
 		symbolDict.put("9N","AllOn_9N");
-		symbolDict.put("9O","AllianceDefinitionError_9O");
-		symbolDict.put("9P","AllianceOwnerNotIncluded2_9P");
-		symbolDict.put("9Q","AllianceOwnerNotIncluded_9Q");
 		symbolDict.put("9R","AllianceShort_9R");
 		symbolDict.put("9S","AllianceStructureOnPlanet_9S");
 		symbolDict.put("9T","Alliance_9T");
@@ -440,7 +432,6 @@ public class VegaResources
 		symbolDict.put("BK","CreateEmail_BK");
 		symbolDict.put("BL","CreateNewUser_BL");
 		symbolDict.put("BM","CreateUserQuestion_BM");
-		symbolDict.put("BN","CurrentAllies_BN");
 		symbolDict.put("BO","DateFormatted_BO");
 		symbolDict.put("BP","DayOf_BP");
 		symbolDict.put("BQ","Default_BQ");
@@ -480,7 +471,6 @@ public class VegaResources
 		symbolDict.put("CO","Email_CO");
 		symbolDict.put("CP","EmailsWereCreated_CP");
 		symbolDict.put("CQ","EndOfYear_CQ");
-		symbolDict.put("CR","EnterAllianceMembers_CR");
 		symbolDict.put("CS","EnterMoves_CS");
 		symbolDict.put("CT","EntriesCorrectQuestion_CT");
 		symbolDict.put("CU","Error_CU");
@@ -584,10 +574,26 @@ public class VegaResources
 		symbolDict.put("FR","YouMustSelectASector_FR");
 		symbolDict.put("FS","NoShipOfSelectedTypeAvailable_FS");
 		symbolDict.put("FU","NoBattleships_FU");
-		symbolDict.put("FV","NotAnAllianceMember_FV");
 		symbolDict.put("FW","CountBattleshipsStart_FW");
 		symbolDict.put("FX","NoRecentGames_FX");
 		symbolDict.put("FY","RecentGames_FY");
+		symbolDict.put("FZ","ToFrom_FZ");
+		symbolDict.put("G0","PlanetEditorTitle_G0");
+		symbolDict.put("G1","None_G1");
+		symbolDict.put("G2","Allies_G2");
+		symbolDict.put("G3","Current_G3");
+		symbolDict.put("G4","FromEvaluation_G4");
+		symbolDict.put("G5","AllianceStructure_G5");
+		symbolDict.put("G6","AllianceTerminated_G6");
+		symbolDict.put("G7","AllianceTerminated2_G7");
+		symbolDict.put("G8","AllianceSameStructure_G8");
+		symbolDict.put("G9","AllianceSameStructure2_G9");
+		symbolDict.put("GA","AllianceTerminated3_GA");
+		symbolDict.put("GB","NoAllianceOnNeutralPlanets_GB");
+		symbolDict.put("GC","CreateAlliance_GC");
+		symbolDict.put("GD","AllianceNotEnoughMembers_GD");
+		symbolDict.put("GE","CantStartShipsFromThisPlanet_GE");
+		symbolDict.put("GF","PlanetDetailsNotVisible_GF");
 	}
 	public static String getString(String symbolString){
 		StringBuilder sb = new StringBuilder();
@@ -679,13 +685,6 @@ public class VegaResources
 	   */
 	public static String IncreaseMoneyProduction(boolean symbol, String arg0) {
 		return symbol ? "£06§"+arg0+"£":format(messages.getString("IncreaseMoneyProduction_06"), new Object[]{arg0});
-	}
-
-	/**
-	   * Info [08]
-	   */
-	public static String Info(boolean symbol) {
-		return symbol ? "£08£":messages.getString("Info_08");
 	}
 
 	/**
@@ -1305,13 +1304,6 @@ public class VegaResources
 	}
 
 	/**
-	   * No alliance. [2S]
-	   */
-	public static String NoAlliance(boolean symbol) {
-		return symbol ? "£2S£":messages.getString("NoAlliance_2S");
-	}
-
-	/**
 	   * Connection error. Check the security code. [2T]
 	   */
 	public static String ConnectionErrorSecurityCode(boolean symbol) {
@@ -1582,13 +1574,6 @@ public class VegaResources
 	   */
 	public static String Planet(boolean symbol) {
 		return symbol ? "£3W£":messages.getString("Planet_3W");
-	}
-
-	/**
-	   * Planet {0} [3X]
-	   */
-	public static String Planet(boolean symbol, String arg0) {
-		return symbol ? "£3X§"+arg0+"£":format(messages.getString("Planet_3X"), new Object[]{arg0});
 	}
 
 	/**
@@ -2149,13 +2134,6 @@ public class VegaResources
 	   */
 	public static String ThereAreNoMoves(boolean symbol) {
 		return symbol ? "£69£":messages.getString("ThereAreNoMoves_69");
-	}
-
-	/**
-	   * This is the start planet. Enter a different destination. [6A]
-	   */
-	public static String ThisIsTheStartPlanet(boolean symbol) {
-		return symbol ? "£6A£":messages.getString("ThisIsTheStartPlanet_6A");
 	}
 
 	/**
@@ -2859,13 +2837,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Action not possible. [98]
-	   */
-	public static String ActionNotPossible(boolean symbol) {
-		return symbol ? "£98£":messages.getString("ActionNotPossible_98");
-	}
-
-	/**
 	   * Action not possible: {0} [99]
 	   */
 	public static String ActionNotPossible(boolean symbol, String arg0) {
@@ -2971,27 +2942,6 @@ public class VegaResources
 	}
 
 	/**
-	   * You must not combine '0' with other inputs. [9O]
-	   */
-	public static String AllianceDefinitionError(boolean symbol) {
-		return symbol ? "£9O£":messages.getString("AllianceDefinitionError_9O");
-	}
-
-	/**
-	   * You must also enter the current alliance members! [9P]
-	   */
-	public static String AllianceOwnerNotIncluded2(boolean symbol) {
-		return symbol ? "£9P£":messages.getString("AllianceOwnerNotIncluded2_9P");
-	}
-
-	/**
-	   * You must at least enter the owner of the planet and yourself! [9Q]
-	   */
-	public static String AllianceOwnerNotIncluded(boolean symbol) {
-		return symbol ? "£9Q£":messages.getString("AllianceOwnerNotIncluded_9Q");
-	}
-
-	/**
 	   * Alliance [9R]
 	   */
 	public static String AllianceShort(boolean symbol) {
@@ -3020,7 +2970,7 @@ public class VegaResources
 	}
 
 	/**
-	   * Allied b'ships [9V]
+	   * Allied battleship fleet? [9V]
 	   */
 	public static String AlliedBattleships(boolean symbol) {
 		return symbol ? "£9V£":messages.getString("AlliedBattleships_9V");
@@ -3461,13 +3411,6 @@ public class VegaResources
 	}
 
 	/**
-	   * Current allies [BN]
-	   */
-	public static String CurrentAllies(boolean symbol) {
-		return symbol ? "£BN£":messages.getString("CurrentAllies_BN");
-	}
-
-	/**
 	   * {1}/{0}/{2} [BO]
 	   */
 	public static String DateFormatted(boolean symbol, String arg0, String arg1, String arg2) {
@@ -3738,13 +3681,6 @@ public class VegaResources
 	   */
 	public static String EndOfYear(boolean symbol) {
 		return symbol ? "£CQ£":messages.getString("EndOfYear_CQ");
-	}
-
-	/**
-	   * Enter alliance members [CR]
-	   */
-	public static String EnterAllianceMembers(boolean symbol) {
-		return symbol ? "£CR£":messages.getString("EnterAllianceMembers_CR");
 	}
 
 	/**
@@ -4469,13 +4405,6 @@ public class VegaResources
 	}
 
 	/**
-	   * You are not an alliance member on this planet. [FV]
-	   */
-	public static String NotAnAllianceMember(boolean symbol) {
-		return symbol ? "£FV£":messages.getString("NotAnAllianceMember_FV");
-	}
-
-	/**
 	   * Count (max. {0}): [FW]
 	   */
 	public static String CountBattleshipsStart(boolean symbol, String arg0) {
@@ -4494,5 +4423,124 @@ public class VegaResources
 	   */
 	public static String RecentGames(boolean symbol) {
 		return symbol ? "£FY£":messages.getString("RecentGames_FY");
+	}
+
+	/**
+	   * To/From [FZ]
+	   */
+	public static String ToFrom(boolean symbol) {
+		return symbol ? "£FZ£":messages.getString("ToFrom_FZ");
+	}
+
+	/**
+	   * Planet {0} ({1}) [G0]
+	   */
+	public static String PlanetEditorTitle(boolean symbol, String arg0, String arg1) {
+		return symbol ? "£G0§"+arg0+"§"+arg1+"£":format(messages.getString("PlanetEditorTitle_G0"), new Object[]{arg0,arg1});
+	}
+
+	/**
+	   * (none) [G1]
+	   */
+	public static String None(boolean symbol) {
+		return symbol ? "£G1£":messages.getString("None_G1");
+	}
+
+	/**
+	   * Allies [G2]
+	   */
+	public static String Allies(boolean symbol) {
+		return symbol ? "£G2£":messages.getString("Allies_G2");
+	}
+
+	/**
+	   * Current [G3]
+	   */
+	public static String Current(boolean symbol) {
+		return symbol ? "£G3£":messages.getString("Current_G3");
+	}
+
+	/**
+	   * New [G4]
+	   */
+	public static String FromEvaluation(boolean symbol) {
+		return symbol ? "£G4£":messages.getString("FromEvaluation_G4");
+	}
+
+	/**
+	   * Alliance structure [G5]
+	   */
+	public static String AllianceStructure(boolean symbol) {
+		return symbol ? "£G5£":messages.getString("AllianceStructure_G5");
+	}
+
+	/**
+	   * The alliance will be dissolved at the start of the evaluation. [G6]
+	   */
+	public static String AllianceTerminated(boolean symbol) {
+		return symbol ? "£G6£":messages.getString("AllianceTerminated_G6");
+	}
+
+	/**
+	   * All foreign ships must leave the planet at the start of the evaluation. [G7]
+	   */
+	public static String AllianceTerminated2(boolean symbol) {
+		return symbol ? "£G7£":messages.getString("AllianceTerminated2_G7");
+	}
+
+	/**
+	   * All alliance partners must define the same new structure this year. [G8]
+	   */
+	public static String AllianceSameStructure(boolean symbol) {
+		return symbol ? "£G8£":messages.getString("AllianceSameStructure_G8");
+	}
+
+	/**
+	   * Only then will the new structure take effect at the start of the evaluation. [G9]
+	   */
+	public static String AllianceSameStructure2(boolean symbol) {
+		return symbol ? "£G9£":messages.getString("AllianceSameStructure2_G9");
+	}
+
+	/**
+	   * Allied battleship fleets will not be launched. [GA]
+	   */
+	public static String AllianceTerminated3(boolean symbol) {
+		return symbol ? "£GA£":messages.getString("AllianceTerminated3_GA");
+	}
+
+	/**
+	   * There can be no alliance on neutral planets. [GB]
+	   */
+	public static String NoAllianceOnNeutralPlanets(boolean symbol) {
+		return symbol ? "£GB£":messages.getString("NoAllianceOnNeutralPlanets_GB");
+	}
+
+	/**
+	   * New alliance [GC]
+	   */
+	public static String CreateAlliance(boolean symbol) {
+		return symbol ? "£GC£":messages.getString("CreateAlliance_GC");
+	}
+
+	/**
+	   * You must select at least one additional ally. [GD]
+	   */
+	public static String AllianceNotEnoughMembers(boolean symbol) {
+		return symbol ? "£GD£":messages.getString("AllianceNotEnoughMembers_GD");
+	}
+
+	/**
+	   * You can't launch ships of the selected type from this planet. [GE]
+	   */
+	public static String CantStartShipsFromThisPlanet(boolean symbol) {
+		return symbol ? "£GE£":messages.getString("CantStartShipsFromThisPlanet_GE");
+	}
+
+	/**
+	   * You are not allowed to view the details of the planet. [GF]
+	   */
+	public static String PlanetDetailsNotVisible(boolean symbol) {
+		return symbol ? "£GF£":messages.getString("PlanetDetailsNotVisible_GF");
 	}
 }

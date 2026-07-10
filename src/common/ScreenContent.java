@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General License as
@@ -25,12 +25,14 @@ public class ScreenContent implements Serializable
 	transient final static int MODE_PLANET_EDITOR = 1;
 	transient final static int MODE_STATISTICS = 2;
 	transient final static int MODE_DISTANCE_MATRIX = 3;
+	transient final static int MODE_ENTER_ALLIANCE = 4;
 	
 	private ScreenContentConsole c;
 	private ScreenContentPlanets p;
 	private ScreenContentBoard f;
 	private ScreenContentPlanetEditor e;
 	private ScreenContentStatistics t;
+	private ScreenContentEnterAlliance a;
 	
 	private int m;
 	private boolean u;
@@ -71,6 +73,10 @@ public class ScreenContent implements Serializable
 		return t;
 	}
 	
+	ScreenContentEnterAlliance getEnterAlliance() {
+		return a;
+	}
+	
 	boolean isPause()
 	{
 		return this.u;
@@ -96,7 +102,10 @@ public class ScreenContent implements Serializable
 	
 	void setMode(int modus)
 	{
-		if (modus == MODE_PLANET_EDITOR || modus == MODE_STATISTICS || modus == MODE_DISTANCE_MATRIX)
+		if (modus == MODE_PLANET_EDITOR || 
+			modus == MODE_STATISTICS || 
+			modus == MODE_DISTANCE_MATRIX ||
+			modus == MODE_ENTER_ALLIANCE)
 			this.m = modus;
 		else
 			this.m = MODE_BOARD;
@@ -117,5 +126,10 @@ public class ScreenContent implements Serializable
 	
 	void setStatistik(ScreenContentStatistics screenContentStatistics) {
 		this.t = screenContentStatistics;
+	}
+	
+	void setEnterAlliance(ScreenContentEnterAlliance screenContentEnterAlliance)
+	{
+		this.a = screenContentEnterAlliance;
 	}
 }

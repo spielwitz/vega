@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -552,7 +552,7 @@ class MessengerJDialog extends Dialog implements IListListener, IButtonListener
 						content.recipientsString, callback.getClientUserIdForMessenger());
 				
 				StringBuilder sb = new StringBuilder();
-				sb.append("To/From: ");
+				sb.append(VegaResources.ToFrom(false)+": ");
 				for (int i = 0; i < recipients.size(); i++)
 				{
 					if (i > 0) sb.append(", ");
@@ -566,7 +566,7 @@ class MessengerJDialog extends Dialog implements IListListener, IButtonListener
 			}
 			else
 			{
-				this.taRecipients.setText("To/From: ");
+				this.taRecipients.setText(VegaResources.ToFrom(false)+": ");
 				this.taMessages.setText("");
 				this.taComposeMessage.setText("");
 			}

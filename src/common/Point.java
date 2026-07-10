@@ -1,5 +1,5 @@
 /**	VEGA - a strategy game
-    Copyright (C) 1989-2025 Michael Schweitzer, spielwitz@icloud.com
+    Copyright (C) 1989-2026 Michael Schweitzer, spielwitz@icloud.com
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -22,8 +22,8 @@ import java.io.Serializable;
 @SuppressWarnings("serial") 
 class Point extends Point2D.Double implements Serializable
 {
-	private static final 	Point zeroPoint = new Point(0, 0);
-	static final 			double PRECISION = 0.000001;
+	static final 	Point zeroPoint = new Point(0, 0);
+	static final 	double PRECISION = 0.000001;
 
 	Point(double x, double y)
 	{
